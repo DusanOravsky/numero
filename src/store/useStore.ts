@@ -26,6 +26,8 @@ export interface Client {
   birthPlace?: string;
   birthLatitude?: number;
   birthLongitude?: number;
+  partnerId?: string;
+  childrenIds?: string[];
   notes?: string;
   createdAt: string;
 }

@@ -18,6 +18,7 @@ import { calculateKabalah } from '../engine/kabalahEngine';
 import type { KabalahResult } from '../engine/kabalahEngine';
 import { calculateThetaHealing } from '../engine/thetaHealingEngine';
 import type { ThetaHealingResult } from '../engine/thetaHealingEngine';
+import { calculatePartnerCompatibility, calculateParentChild } from '../engine/compatibilityEngine';
 import { reduceToSingle } from '../engine/numerologyEngine';
 import lifePathsData from '../data/lifePaths.json';
 
@@ -35,9 +36,11 @@ interface AllResults {
 export function ClientDashboard() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { clients } = useStore();
+  const { clients, updateClient, addReport } = useStore();
   const client = clients.find(c => c.id === id);
   const [results, setResults] = useState<AllResults | null>(null);
+  const [showPartnerSelect, setShowPartnerSelect] = useState(false);
+  const [showChildSelect, setShowChildSelect] = useState(false);
 
   useEffect(() => {
     if (!client) return;
@@ -53,6 +56,16 @@ export function ClientDashboard() {
     const theta = calculateThetaHealing(lp);
 
     setResults({ numerology, astrology, humanDesign, chakras, kabalah, theta });
+
+    addReport({
+      id: crypto.randomUUID(),
+      profileId: '',
+      clientId: client.id,
+      type: 'Kompletný výklad',
+      title: `Výklad pre ${client.name}`,
+      data: { lifePathNumber: numerology.lifePathNumber, hdType: humanDesign.type },
+      createdAt: new Date().toISOString(),
+    });
   }, [client]);
 
   if (!client) {
@@ -243,6 +256,109 @@ export function ClientDashboard() {
               </div>
             ))}
           </div>
+        </GlassCard>
+      </motion.section>
+
+      {/* PARTNER A DETI */}
+      <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7 }}>
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="font-serif text-xl font-bold text-rose-300">Vzťahy</h2>
+          <button onClick={() => navigate('/relationships')} className="text-xs text-slate-400 hover:text-white">Plný výklad →</button>
+        </div>
+
+        {/* Partner */}
+        <GlassCard className="mb-4">
+          <div className="flex items-center justify-between mb-3">
+            <h4 className="text-sm font-medium text-white">Partner</h4>
+            {!client.partnerId && (
+              <button onClick={() => setShowPartnerSelect(true)} className="text-xs px-3 py-1 rounded-lg bg-rose-600 text-white hover:bg-rose-500">
+                + Priradiť partnera
+              </button>
+            )}
+          </div>
+          {client.partnerId && (() => {
+            const partner = clients.find(c => c.id === client.partnerId);
+            if (!partner) return <p className="text-xs text-slate-500">Partner nebol nájdený</p>;
+            const partnerNum = calculateFullNumerology(partner.birthDay, partner.birthMonth, partner.birthYear);
+            const compat = calculatePartnerCompatibility(numerology, partnerNum, client.name, partner.name);
+            return (
+              <div>
+                <div className="flex items-center justify-between p-3 rounded-xl glass-light">
+                  <div>
+                    <p className="text-sm font-medium text-white">{partner.name}</p>
+                    <p className="text-xs text-slate-400">{partner.birthDay}.{partner.birthMonth}.{partner.birthYear}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-lg font-bold text-rose-300">{compat.overallScore}%</p>
+                    <p className="text-xs text-slate-400">kompatibilita</p>
+                  </div>
+                </div>
+                <button onClick={() => updateClient(client.id, { partnerId: undefined })} className="text-xs text-red-400 mt-2 hover:text-red-300">
+                  Odstrániť partnera
+                </button>
+              </div>
+            );
+          })()}
+          {showPartnerSelect && (
+            <div className="mt-3 space-y-2">
+              <p className="text-xs text-slate-400">Vyberte klienta ako partnera:</p>
+              {clients.filter(c => c.id !== client.id && c.id !== client.partnerId).map(c => (
+                <button key={c.id} onClick={() => { updateClient(client.id, { partnerId: c.id }); setShowPartnerSelect(false); }}
+                  className="w-full text-left p-2 rounded-lg glass-light text-sm text-white hover:bg-indigo-500/20">
+                  {c.name} ({c.birthDay}.{c.birthMonth}.{c.birthYear})
+                </button>
+              ))}
+              <button onClick={() => setShowPartnerSelect(false)} className="text-xs text-slate-400">Zrušiť</button>
+            </div>
+          )}
+        </GlassCard>
+
+        {/* Deti */}
+        <GlassCard>
+          <div className="flex items-center justify-between mb-3">
+            <h4 className="text-sm font-medium text-white">Deti</h4>
+            <button onClick={() => setShowChildSelect(true)} className="text-xs px-3 py-1 rounded-lg bg-green-600 text-white hover:bg-green-500">
+              + Pridať dieťa
+            </button>
+          </div>
+          {(client.childrenIds || []).length > 0 && (
+            <div className="space-y-2">
+              {(client.childrenIds || []).map(childId => {
+                const child = clients.find(c => c.id === childId);
+                if (!child) return null;
+                const childNum = calculateFullNumerology(child.birthDay, child.birthMonth, child.birthYear);
+                const pcResult = calculateParentChild(numerology, childNum);
+                return (
+                  <div key={childId} className="flex items-center justify-between p-3 rounded-xl glass-light">
+                    <div>
+                      <p className="text-sm font-medium text-white">{child.name}</p>
+                      <p className="text-xs text-slate-400">{child.birthDay}.{child.birthMonth}.{child.birthYear}</p>
+                    </div>
+                    <div className="text-right flex items-center gap-3">
+                      <div>
+                        <p className="text-lg font-bold text-green-300">{pcResult.compatibility}%</p>
+                        <p className="text-xs text-slate-400">kompatibilita</p>
+                      </div>
+                      <button onClick={() => updateClient(client.id, { childrenIds: (client.childrenIds || []).filter(i => i !== childId) })}
+                        className="text-red-400 hover:text-red-300 text-xs">✕</button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+          {showChildSelect && (
+            <div className="mt-3 space-y-2">
+              <p className="text-xs text-slate-400">Vyberte klienta ako dieťa:</p>
+              {clients.filter(c => c.id !== client.id && !(client.childrenIds || []).includes(c.id)).map(c => (
+                <button key={c.id} onClick={() => { updateClient(client.id, { childrenIds: [...(client.childrenIds || []), c.id] }); setShowChildSelect(false); }}
+                  className="w-full text-left p-2 rounded-lg glass-light text-sm text-white hover:bg-indigo-500/20">
+                  {c.name} ({c.birthDay}.{c.birthMonth}.{c.birthYear})
+                </button>
+              ))}
+              <button onClick={() => setShowChildSelect(false)} className="text-xs text-slate-400">Zrušiť</button>
+            </div>
+          )}
         </GlassCard>
       </motion.section>
     </div>

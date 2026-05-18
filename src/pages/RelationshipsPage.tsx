@@ -464,6 +464,175 @@ export function RelationshipsPage() {
           <button onClick={reset} className="px-4 py-2 rounded-xl text-sm glass text-slate-400 hover:text-white">Nový výpočet</button>
         </div>
       )}
+
+      {/* ASTRO KOMPATIBILITA MÓD */}
+      {mode === 'astro' && !synastryResult && (
+        <GlassCard>
+          <p className="text-sm text-slate-400 mb-4">
+            <strong className="text-white">Astro kompatibilita</strong> porovnáva astrologické pozície oboch partnerov -- Slnko, Mesiac, Venušu a Mars. Výsledkom je synastria založená na elementálnej harmónii a planetárnej kompatibilite.
+          </p>
+        </GlassCard>
+      )}
+      {mode === 'astro' && !synastryResult && (
+        <GlassCard>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-3">
+              <p className="text-sm text-slate-400 font-medium">Partner 1</p>
+              <input
+                type="text"
+                placeholder="Meno"
+                value={astroPartner1.name}
+                onChange={e => setAstroPartner1({ ...astroPartner1, name: e.target.value })}
+                className="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white focus:outline-none focus:border-indigo-500/50"
+              />
+              <div className="flex gap-2">
+                <input type="number" placeholder="Deň" min={1} max={31} value={astroPartner1.day} onChange={e => setAstroPartner1({ ...astroPartner1, day: e.target.value })} className="w-20 px-3 py-3 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white text-center focus:outline-none focus:border-indigo-500/50" />
+                <input type="number" placeholder="Mesiac" min={1} max={12} value={astroPartner1.month} onChange={e => setAstroPartner1({ ...astroPartner1, month: e.target.value })} className="w-24 px-3 py-3 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white text-center focus:outline-none focus:border-indigo-500/50" />
+                <input type="number" placeholder="Rok" min={1900} max={2100} value={astroPartner1.year} onChange={e => setAstroPartner1({ ...astroPartner1, year: e.target.value })} className="flex-1 px-3 py-3 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white text-center focus:outline-none focus:border-indigo-500/50" />
+              </div>
+              <input type="number" placeholder="Hodina (voliteľné, 0-23)" min={0} max={23} value={astroPartner1.hour} onChange={e => setAstroPartner1({ ...astroPartner1, hour: e.target.value })} className="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white text-center focus:outline-none focus:border-indigo-500/50" />
+            </div>
+            <div className="space-y-3">
+              <p className="text-sm text-slate-400 font-medium">Partner 2</p>
+              <input
+                type="text"
+                placeholder="Meno"
+                value={astroPartner2.name}
+                onChange={e => setAstroPartner2({ ...astroPartner2, name: e.target.value })}
+                className="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white focus:outline-none focus:border-indigo-500/50"
+              />
+              <div className="flex gap-2">
+                <input type="number" placeholder="Deň" min={1} max={31} value={astroPartner2.day} onChange={e => setAstroPartner2({ ...astroPartner2, day: e.target.value })} className="w-20 px-3 py-3 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white text-center focus:outline-none focus:border-indigo-500/50" />
+                <input type="number" placeholder="Mesiac" min={1} max={12} value={astroPartner2.month} onChange={e => setAstroPartner2({ ...astroPartner2, month: e.target.value })} className="w-24 px-3 py-3 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white text-center focus:outline-none focus:border-indigo-500/50" />
+                <input type="number" placeholder="Rok" min={1900} max={2100} value={astroPartner2.year} onChange={e => setAstroPartner2({ ...astroPartner2, year: e.target.value })} className="flex-1 px-3 py-3 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white text-center focus:outline-none focus:border-indigo-500/50" />
+              </div>
+              <input type="number" placeholder="Hodina (voliteľné, 0-23)" min={0} max={23} value={astroPartner2.hour} onChange={e => setAstroPartner2({ ...astroPartner2, hour: e.target.value })} className="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white text-center focus:outline-none focus:border-indigo-500/50" />
+            </div>
+          </div>
+          <button
+            onClick={handleAstroCalc}
+            disabled={!isAstroPersonValid(astroPartner1) || !isAstroPersonValid(astroPartner2)}
+            className="w-full mt-6 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-medium hover:from-indigo-500 hover:to-violet-500 disabled:opacity-40 disabled:cursor-not-allowed glow"
+          >
+            Vypočítať astro kompatibilitu
+          </button>
+        </GlassCard>
+      )}
+
+      {mode === 'astro' && synastryResult && (
+        <div className="space-y-6">
+          <GlassCard glow>
+            <div className="text-center">
+              <p className="text-sm text-slate-400">{synastryResult.person1.name} & {synastryResult.person2.name}</p>
+              <div className="relative w-32 h-32 mx-auto my-4">
+                <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
+                  <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(99,102,241,0.2)" strokeWidth="8" />
+                  <motion.circle
+                    cx="50" cy="50" r="45" fill="none" stroke="url(#astroGrad)" strokeWidth="8"
+                    strokeLinecap="round"
+                    strokeDasharray={`${synastryResult.overallScore * 2.83} ${283 - synastryResult.overallScore * 2.83}`}
+                    initial={{ strokeDasharray: '0 283' }}
+                    animate={{ strokeDasharray: `${synastryResult.overallScore * 2.83} ${283 - synastryResult.overallScore * 2.83}` }}
+                    transition={{ duration: 1.5, ease: 'easeOut' }}
+                  />
+                  <defs><linearGradient id="astroGrad"><stop offset="0%" stopColor="#6366f1" /><stop offset="100%" stopColor="#a855f7" /></linearGradient></defs>
+                </svg>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span className="text-3xl font-serif font-bold text-white">{synastryResult.overallScore}%</span>
+                </div>
+              </div>
+              <p className="text-sm text-slate-400">Celková astro kompatibilita</p>
+            </div>
+          </GlassCard>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <GlassCard>
+              <div className="flex items-center justify-between mb-2">
+                <h4 className="text-sm text-slate-400">Slnko (identita)</h4>
+                <span className="text-lg font-bold text-amber-300">{synastryResult.sunCompatibility.score}%</span>
+              </div>
+              <p className="text-xs text-slate-400 mb-2">
+                {synastryResult.person1.name}: {synastryResult.person1.result.sunSign.symbol} {synastryResult.person1.result.sunSign.name} ({synastryResult.person1.result.sunSign.element})
+              </p>
+              <p className="text-xs text-slate-400 mb-2">
+                {synastryResult.person2.name}: {synastryResult.person2.result.sunSign.symbol} {synastryResult.person2.result.sunSign.name} ({synastryResult.person2.result.sunSign.element})
+              </p>
+              <p className="text-sm text-slate-300">{synastryResult.sunCompatibility.description}</p>
+            </GlassCard>
+
+            <GlassCard>
+              <div className="flex items-center justify-between mb-2">
+                <h4 className="text-sm text-slate-400">Mesiac (emócie)</h4>
+                <span className="text-lg font-bold text-blue-300">{synastryResult.moonCompatibility.score}%</span>
+              </div>
+              <p className="text-xs text-slate-400 mb-2">
+                {synastryResult.person1.name}: {synastryResult.person1.result.moonSign.symbol} {synastryResult.person1.result.moonSign.name} ({synastryResult.person1.result.moonSign.element})
+              </p>
+              <p className="text-xs text-slate-400 mb-2">
+                {synastryResult.person2.name}: {synastryResult.person2.result.moonSign.symbol} {synastryResult.person2.result.moonSign.name} ({synastryResult.person2.result.moonSign.element})
+              </p>
+              <p className="text-sm text-slate-300">{synastryResult.moonCompatibility.description}</p>
+            </GlassCard>
+
+            <GlassCard>
+              <div className="flex items-center justify-between mb-2">
+                <h4 className="text-sm text-slate-400">Venuša (láska)</h4>
+                <span className="text-lg font-bold text-pink-300">{synastryResult.venusCompatibility.score}%</span>
+              </div>
+              {(() => {
+                const v1 = getPlanetByName(synastryResult.person1.result, 'Venuša');
+                const v2 = getPlanetByName(synastryResult.person2.result, 'Venuša');
+                return (
+                  <>
+                    {v1 && <p className="text-xs text-slate-400 mb-2">{synastryResult.person1.name}: {v1.sign.symbol} {v1.sign.name} ({v1.sign.element})</p>}
+                    {v2 && <p className="text-xs text-slate-400 mb-2">{synastryResult.person2.name}: {v2.sign.symbol} {v2.sign.name} ({v2.sign.element})</p>}
+                  </>
+                );
+              })()}
+              <p className="text-sm text-slate-300">{synastryResult.venusCompatibility.description}</p>
+            </GlassCard>
+
+            <GlassCard>
+              <div className="flex items-center justify-between mb-2">
+                <h4 className="text-sm text-slate-400">Mars (energia)</h4>
+                <span className="text-lg font-bold text-red-300">{synastryResult.marsCompatibility.score}%</span>
+              </div>
+              {(() => {
+                const m1 = getPlanetByName(synastryResult.person1.result, 'Mars');
+                const m2 = getPlanetByName(synastryResult.person2.result, 'Mars');
+                return (
+                  <>
+                    {m1 && <p className="text-xs text-slate-400 mb-2">{synastryResult.person1.name}: {m1.sign.symbol} {m1.sign.name} ({m1.sign.element})</p>}
+                    {m2 && <p className="text-xs text-slate-400 mb-2">{synastryResult.person2.name}: {m2.sign.symbol} {m2.sign.name} ({m2.sign.element})</p>}
+                  </>
+                );
+              })()}
+              <p className="text-sm text-slate-300">{synastryResult.marsCompatibility.description}</p>
+            </GlassCard>
+          </div>
+
+          <GlassCard>
+            <h3 className="font-medium text-white mb-3">Elementálna rovnováha</h3>
+            <div className="flex items-center gap-4 mb-3">
+              <div className="flex-1 p-3 rounded-xl bg-slate-800/50">
+                <p className="text-xs text-slate-400">{synastryResult.person1.name}</p>
+                <p className="text-sm font-medium text-white">Dominantný živel: {synastryResult.elementBalance.person1}</p>
+              </div>
+              <div className="flex-1 p-3 rounded-xl bg-slate-800/50">
+                <p className="text-xs text-slate-400">{synastryResult.person2.name}</p>
+                <p className="text-sm font-medium text-white">Dominantný živel: {synastryResult.elementBalance.person2}</p>
+              </div>
+            </div>
+            <p className="text-sm text-slate-300">
+              {synastryResult.elementBalance.compatible
+                ? 'Vaše dominantné živly sú kompatibilné -- prirodzene sa dopĺňate a vaša energia ladí.'
+                : 'Vaše dominantné živly sú odlišné -- to prináša rôznorodosť, ale vyžaduje viac pochopenia a prispôsobenia.'}
+            </p>
+          </GlassCard>
+
+          <button onClick={reset} className="px-4 py-2 rounded-xl text-sm glass text-slate-400 hover:text-white">Nový výpočet</button>
+        </div>
+      )}
     </div>
   );
 }

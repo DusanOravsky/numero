@@ -413,7 +413,7 @@ export function ClientDashboard() {
               <div className="space-y-1">
                 {clients.filter(c => c.id !== client.id).map(c => (
                   <button key={c.id} onClick={() => { updateClient(client.id, { partnerId: c.id }); setShowPartnerSelect(false); }}
-                    className="w-full text-left p-2 rounded-lg glass-light text-sm text-white hover:bg-indigo-500/20">
+                    className="w-full text-left p-3 rounded-lg border border-slate-200 bg-white text-sm text-slate-800 hover:bg-indigo-50 hover:border-indigo-300 transition-colors">
                     {c.name} ({c.birthDay}.{c.birthMonth}.{c.birthYear})
                   </button>
                 ))}
@@ -493,7 +493,7 @@ export function ClientDashboard() {
               <div className="space-y-1">
                 {clients.filter(c => c.id !== client.id && !(client.childrenIds || []).includes(c.id)).map(c => (
                   <button key={c.id} onClick={() => { updateClient(client.id, { childrenIds: [...(client.childrenIds || []), c.id] }); setShowChildSelect(false); }}
-                    className="w-full text-left p-2 rounded-lg glass-light text-sm text-white hover:bg-indigo-500/20">
+                    className="w-full text-left p-3 rounded-lg border border-slate-200 bg-white text-sm text-slate-800 hover:bg-indigo-50 hover:border-indigo-300 transition-colors">
                     {c.name} ({c.birthDay}.{c.birthMonth}.{c.birthYear})
                   </button>
                 ))}

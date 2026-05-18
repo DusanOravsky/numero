@@ -37,6 +37,54 @@ export function Dashboard() {
     9: 'Dnes púšťam staré a vytváram priestor.',
   };
 
+  const dailyRituals: Record<number, { morning: string; evening: string; body: string }> = {
+    1: {
+      morning: 'Ranná meditácia zameraná na vizualizáciu nového začiatku. 5 minút dýchania ohňom (kapalabhati) pre aktiváciu energie.',
+      evening: 'Čo nové som dnes začal/a? Kde som prejavil/a odvahu?',
+      body: 'Kardio aktivita alebo rýchla prechádzka. Telo potrebuje pohyb a dynamiku.',
+    },
+    2: {
+      morning: 'Ranná meditácia v páre alebo so zameraním na srdcovú čakru. Pomalé, hlboké dýchanie (4-7-8) pre upokojenie.',
+      evening: 'Komu som dnes venoval/a pozornosť? Kde som prejavil/a trpezlivosť?',
+      body: 'Jemný strečing alebo joga. Telo potrebuje jemnosť a láskavý dotyk.',
+    },
+    3: {
+      morning: 'Ranná tvorivá meditácia – vizualizácia farieb a tvarov. Striedavé dýchanie nozdier (nadi shodhana) pre vyváženie.',
+      evening: 'Čo som dnes vytvoril/a? Ako som sa vyjadril/a?',
+      body: 'Tanec, spev alebo akákoľvek tvorivá pohybová aktivita. Telo chce tvoriť.',
+    },
+    4: {
+      morning: 'Ranná meditácia na zakorenenie – vizualizácia koreňov do zeme. Boxové dýchanie (4-4-4-4) pre stabilitu.',
+      evening: 'Čo som dnes vybudoval/a? Kde som prejavil/a disciplínu?',
+      body: 'Silový tréning alebo práca v záhrade. Telo potrebuje pocit stability a sily.',
+    },
+    5: {
+      morning: 'Ranná meditácia na otvorenosť – vizualizácia otvorených dverí a ciest. Energizujúce dýchanie (bhastrika) pre vitalitu.',
+      evening: 'Čo nové som dnes zažil/a? Kde som bol/a flexibilný/á?',
+      body: 'Nová pohybová aktivita – niečo, čo ste ešte neskúsili. Telo túži po novosti.',
+    },
+    6: {
+      morning: 'Ranná meditácia na srdcovú čakru s mantrou lásky. Dýchanie do srdca (coherent breathing) pre harmóniu.',
+      evening: 'Koho som dnes miloval/a? Kde som vytvoril/a harmóniu?',
+      body: 'Párová aktivita alebo masáž. Telo potrebuje láskyplný kontakt a starostlivosť.',
+    },
+    7: {
+      morning: 'Hlboká tichá meditácia – 10-15 minút v úplnom tichu. Pomalé brušné dýchanie pre vnútorný pokoj.',
+      evening: 'Čo som sa dnes naučil/a? Aký vnútorný hlas som počul/a?',
+      body: 'Prechádzka v prírode v tichu. Telo potrebuje pokoj a spojenie s prírodou.',
+    },
+    8: {
+      morning: 'Ranná vizualizácia úspechu a hojnosti. Silové dýchanie (wim hof metóda) pre energiu a odhodlanie.',
+      evening: 'Čo som dnes zmanifestoval/a? Kde som prejavil/a svoju silu?',
+      body: 'Intenzívny tréning alebo výzva. Telo potrebuje cítiť svoju moc a schopnosti.',
+    },
+    9: {
+      morning: 'Meditácia odpustenia a vďačnosti. Dýchanie s predĺženým výdychom pre uvoľnenie starého.',
+      evening: 'Čo som dnes pustil/a? Komu som odpustil/a?',
+      body: 'Jemná joga alebo plávanie. Telo potrebuje uvoľnenie a regeneráciu.',
+    },
+  };
+
   if (!profile) {
     return (
       <div className="min-h-[80vh] flex flex-col items-center justify-center">

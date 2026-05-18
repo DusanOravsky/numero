@@ -30,6 +30,7 @@ export default defineConfig({
       }
     })
   ],
+  base: '/numero/',
   resolve: {
     alias: { '@': '/src' }
   }

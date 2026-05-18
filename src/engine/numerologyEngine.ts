@@ -39,12 +39,10 @@ export function reduceDigits(n: number): number {
 }
 
 export function calculateLifePath(day: number, month: number, year: number): { number: number; from: number; formula: string; isMaster: boolean } {
-  const daySum = reduceToSingle(day, true);
-  const monthSum = reduceToSingle(month, true);
-  const yearSum = reduceToSingle(
-    String(year).split('').reduce((s, d) => s + parseInt(d, 10), 0),
-    true
-  );
+  // Podľa PDF Numero: sčítame číslice dňa, mesiaca a roku OSOBITNE (ale rok neredukujeme na jednociferné)
+  const daySum = String(day).split('').reduce((s, d) => s + parseInt(d, 10), 0);
+  const monthSum = String(month).split('').reduce((s, d) => s + parseInt(d, 10), 0);
+  const yearSum = String(year).split('').reduce((s, d) => s + parseInt(d, 10), 0);
 
   const total = daySum + monthSum + yearSum;
   const formula = `(${day}→${daySum}) + (${month}→${monthSum}) + (${year}→${yearSum}) = ${total}`;
@@ -54,16 +52,14 @@ export function calculateLifePath(day: number, month: number, year: number): { n
   }
 
   let current = total;
-  let prev = total;
   while (current > 9) {
-    prev = current;
-    current = reduceDigits(current);
     if (MASTER_NUMBERS.includes(current)) {
-      return { number: current, from: prev, formula, isMaster: true };
+      return { number: current, from: total, formula, isMaster: true };
     }
+    current = reduceDigits(current);
   }
 
-  return { number: current, from: prev, formula, isMaster: false };
+  return { number: current, from: total, formula, isMaster: false };
 }
 
 export function buildGrid(day: number, month: number, year: number): { value: number; isBase: boolean }[][] {

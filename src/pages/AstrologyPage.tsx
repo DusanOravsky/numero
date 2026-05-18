@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useStore } from '../store/useStore';
 import { GlassCard } from '../components/GlassCard';
 import { EnergyCard } from '../components/EnergyCard';
@@ -16,9 +16,11 @@ export function AstrologyPage() {
     setResult(calculateAstrology(day, month, year, hour || 12, minute || 0));
   };
 
-  if (profile && !result) {
-    handleCalculate(profile.birthDay, profile.birthMonth, profile.birthYear, profile.birthHour, profile.birthMinute);
-  }
+  useEffect(() => {
+    if (profile && !result) {
+      setResult(calculateAstrology(profile.birthDay, profile.birthMonth, profile.birthYear, profile.birthHour || 12, profile.birthMinute || 0));
+    }
+  }, [profile, result]);
 
   return (
     <div className="space-y-6">

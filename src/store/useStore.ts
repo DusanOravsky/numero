@@ -35,7 +35,6 @@ interface AppState {
   updateProfile: (id: string, data: Partial<UserProfile>) => void;
   deleteProfile: (id: string) => void;
   setActiveProfile: (id: string | null) => void;
-  getActiveProfile: () => UserProfile | null;
 
   addReport: (report: SavedReport) => void;
   deleteReport: (id: string) => void;
@@ -43,9 +42,11 @@ interface AppState {
   toggleFavorite: (section: string) => void;
 }
 
+const STORE_VERSION = 1;
+
 export const useStore = create<AppState>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       profiles: [],
       activeProfileId: null,
       reports: [],
@@ -62,10 +63,6 @@ export const useStore = create<AppState>()(
         activeProfileId: state.activeProfileId === id ? null : state.activeProfileId,
       })),
       setActiveProfile: (id) => set({ activeProfileId: id }),
-      getActiveProfile: () => {
-        const state = get();
-        return state.profiles.find(p => p.id === state.activeProfileId) || null;
-      },
 
       addReport: (report) => set((state) => ({ reports: [report, ...state.reports].slice(0, 50) })),
       deleteReport: (id) => set((state) => ({ reports: state.reports.filter(r => r.id !== id) })),
@@ -76,6 +73,17 @@ export const useStore = create<AppState>()(
           : [...state.favorites, section],
       })),
     }),
-    { name: 'numero-store' }
+    {
+      name: 'numero-store',
+      version: STORE_VERSION,
+      migrate: (persistedState, version) => {
+        const state = persistedState as Record<string, unknown>;
+        if (version < 1) {
+          state.reports = state.reports || [];
+          state.favorites = state.favorites || [];
+        }
+        return state as AppState;
+      },
+    }
   )
 );

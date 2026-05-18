@@ -1,8 +1,9 @@
 export interface NumerologyResult {
   lifePathNumber: number;
   lifePathFrom: number;
+  isMasterNumber: boolean;
   formula: string;
-  grid: number[][];
+  grid: { value: number; isBase: boolean }[][];
   gridNumbers: { value: number; isBase: boolean }[];
   supplementaryNumbers: number[];
   fullPlanes: string[];
@@ -12,7 +13,7 @@ export interface NumerologyResult {
   omv: number;
   odv: number;
   vdd: number;
-  spiritualChildhood: number;
+  oddPeriod: number;
   sigmaT: number;
   age: 'pisces' | 'aquarius';
   loveLanguages: { language: string; score: number }[];
@@ -21,35 +22,48 @@ export interface NumerologyResult {
   yearReduction: number;
 }
 
-export function reduceToSingle(n: number): number {
+const MASTER_NUMBERS = [11, 22, 33];
+
+export function reduceToSingle(n: number, preserveMaster = false): number {
+  if (n <= 0) return 1;
   while (n > 9) {
-    n = String(n).split('').reduce((sum, d) => sum + parseInt(d), 0);
+    if (preserveMaster && MASTER_NUMBERS.includes(n)) return n;
+    n = String(n).split('').reduce((sum, d) => sum + parseInt(d, 10), 0);
   }
   return n;
 }
 
-export function reduceToDouble(n: number): { reduced: number; from: number } {
-  let from = n;
-  while (n > 9) {
-    from = n;
-    n = String(n).split('').reduce((sum, d) => sum + parseInt(d), 0);
-  }
-  return { reduced: n, from };
+export function reduceDigits(n: number): number {
+  if (n <= 9) return n;
+  return String(n).split('').reduce((sum, d) => sum + parseInt(d, 10), 0);
 }
 
-export function calculateLifePath(day: number, month: number, year: number): { number: number; from: number; formula: string } {
-  const digits = `${day}${month}${year}`.split('').map(Number);
-  const sum = digits.reduce((a, b) => a + b, 0);
-  const formula = `${digits.join(' + ')} = ${sum}`;
+export function calculateLifePath(day: number, month: number, year: number): { number: number; from: number; formula: string; isMaster: boolean } {
+  const daySum = reduceToSingle(day, true);
+  const monthSum = reduceToSingle(month, true);
+  const yearSum = reduceToSingle(
+    String(year).split('').reduce((s, d) => s + parseInt(d, 10), 0),
+    true
+  );
 
-  let current = sum;
-  let prev = sum;
-  while (current > 9) {
-    prev = current;
-    current = String(current).split('').reduce((s, d) => s + parseInt(d), 0);
+  const total = daySum + monthSum + yearSum;
+  const formula = `(${day}→${daySum}) + (${month}→${monthSum}) + (${year}→${yearSum}) = ${total}`;
+
+  if (MASTER_NUMBERS.includes(total)) {
+    return { number: total, from: total, formula, isMaster: true };
   }
 
-  return { number: current, from: prev, formula };
+  let current = total;
+  let prev = total;
+  while (current > 9) {
+    prev = current;
+    current = reduceDigits(current);
+    if (MASTER_NUMBERS.includes(current)) {
+      return { number: current, from: prev, formula, isMaster: true };
+    }
+  }
+
+  return { number: current, from: prev, formula, isMaster: false };
 }
 
 export function buildGrid(day: number, month: number, year: number): { value: number; isBase: boolean }[][] {
@@ -65,9 +79,7 @@ export function buildGrid(day: number, month: number, year: number): { value: nu
   if (month > 9) supplementary.push(monthRed);
   if (year > 9) supplementary.push(yearRed);
 
-  const grid: { value: number; isBase: boolean }[][] = [
-    [], [], [], [], [], [], [], [], [], []
-  ];
+  const grid: { value: number; isBase: boolean }[][] = Array.from({ length: 10 }, () => []);
 
   baseDigits.forEach(d => {
     if (d >= 1 && d <= 9) grid[d].push({ value: d, isBase: true });
@@ -75,10 +87,7 @@ export function buildGrid(day: number, month: number, year: number): { value: nu
 
   supplementary.forEach(d => {
     if (d >= 1 && d <= 9) {
-      const alreadyHasBase = grid[d].some(item => item.isBase);
-      if (!(alreadyHasBase && baseDigits.filter(x => x === d).length > 0 && day <= 9 && d === dayRed)) {
-        grid[d].push({ value: d, isBase: false });
-      }
+      grid[d].push({ value: d, isBase: false });
     }
   });
 
@@ -88,7 +97,7 @@ export function buildGrid(day: number, month: number, year: number): { value: nu
 export function getGridCount(grid: { value: number; isBase: boolean }[][]): Map<number, number> {
   const counts = new Map<number, number>();
   for (let i = 1; i <= 9; i++) {
-    counts.set(i, grid[i].length);
+    counts.set(i, grid[i]?.length || 0);
   }
   return counts;
 }
@@ -163,7 +172,8 @@ export function findIsolatedNumbers(grid: { value: number; isBase: boolean }[][]
 }
 
 export function calculateORV(day: number, month: number, currentYear: number): number {
-  const sum = day + month + currentYear;
+  const sum = reduceToSingle(day) + reduceToSingle(month) +
+    reduceToSingle(String(currentYear).split('').reduce((s, d) => s + parseInt(d, 10), 0));
   return reduceToSingle(sum);
 }
 
@@ -175,15 +185,16 @@ export function calculateODV(orv: number, currentDay: number, currentMonth: numb
   return reduceToSingle(currentDay + currentMonth + orv);
 }
 
-export function calculateVDD(lifePathNumber: number): { vdd: number; spiritualChildhood: number } {
-  const vdd = 36 - lifePathNumber;
-  const spiritualChildhood = Math.round(vdd / 3);
-  return { vdd, spiritualChildhood };
+export function calculateVDD(lifePathNumber: number): { vdd: number; oddPeriod: number } {
+  const lpBase = lifePathNumber > 9 ? reduceToSingle(lifePathNumber) : lifePathNumber;
+  const vdd = 36 - lpBase;
+  const oddPeriod = Math.round(vdd / 3);
+  return { vdd, oddPeriod };
 }
 
 export function calculateSigmaT(day: number, month: number, year: number): { value: number; age: 'pisces' | 'aquarius' } {
   const value = day + month + year;
-  return { value, age: value >= 2000 ? 'aquarius' : 'pisces' };
+  return { value, age: year >= 2000 ? 'aquarius' : 'pisces' };
 }
 
 const LOVE_LANGUAGE_PLANES: { language: string; planes: number[][] }[] = [
@@ -204,6 +215,7 @@ export function calculateLoveLanguages(
   const counts = getGridCount(grid);
   const dayDigits = String(day).split('').map(Number).filter(d => d > 0);
   const monthDigits = String(month).split('').map(Number).filter(d => d > 0);
+  const lpBase = lifePathNumber > 9 ? reduceToSingle(lifePathNumber) : lifePathNumber;
 
   return LOVE_LANGUAGE_PLANES.map(({ language, planes }) => {
     let score = 0;
@@ -221,13 +233,19 @@ export function calculateLoveLanguages(
         if ((counts.get(n) || 0) > 2) score += 1;
         if (dayDigits.includes(n)) score += 1;
         if (monthDigits.includes(n)) score += 1;
-        if (n === lifePathNumber) score += 1;
+        if (n === lpBase) score += 1;
         if (isolatedNumbers.includes(n)) score -= 1;
       });
     });
 
     return { language, score };
   }).sort((a, b) => b.score - a.score);
+}
+
+export function isValidDate(day: number, month: number, year: number): boolean {
+  if (year < 1900 || year > 2100 || month < 1 || month > 12 || day < 1) return false;
+  const date = new Date(year, month - 1, day);
+  return date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day;
 }
 
 export function calculateFullNumerology(day: number, month: number, year: number): NumerologyResult {
@@ -244,13 +262,14 @@ export function calculateFullNumerology(day: number, month: number, year: number
   const orv = calculateORV(day, month, currentYear);
   const omv = calculateOMV(orv, currentMonth);
   const odv = calculateODV(orv, currentDay, currentMonth);
-  const { vdd, spiritualChildhood } = calculateVDD(lifePath.number);
+  const { vdd, oddPeriod } = calculateVDD(lifePath.number);
   const sigmaT = calculateSigmaT(day, month, year);
   const loveLanguages = calculateLoveLanguages(grid, day, month, lifePath.number, isolated);
 
   return {
     lifePathNumber: lifePath.number,
     lifePathFrom: lifePath.from,
+    isMasterNumber: lifePath.isMaster,
     formula: lifePath.formula,
     grid,
     gridNumbers: grid.flat(),
@@ -262,7 +281,7 @@ export function calculateFullNumerology(day: number, month: number, year: number
     omv,
     odv,
     vdd,
-    spiritualChildhood,
+    oddPeriod,
     sigmaT: sigmaT.value,
     age: sigmaT.age,
     loveLanguages,

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useStore } from '../store/useStore';
 import { GlassCard } from '../components/GlassCard';
@@ -21,9 +21,11 @@ export function NumerologyPage() {
     setResult(calculateFullNumerology(day, month, year));
   };
 
-  if (profile && !result) {
-    handleCalculate(profile.birthDay, profile.birthMonth, profile.birthYear);
-  }
+  useEffect(() => {
+    if (profile && !result) {
+      setResult(calculateFullNumerology(profile.birthDay, profile.birthMonth, profile.birthYear));
+    }
+  }, [profile, result]);
 
   const lifePathInfo = result ? lifePaths[String(result.lifePathNumber)] : null;
 
@@ -144,7 +146,7 @@ export function NumerologyPage() {
 
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
                 <EnergyCard title="VDD" value={result.vdd} subtitle="Vek duchovného detstva" icon="⟡" color="purple" />
-                <EnergyCard title="Duch. detstvo" value={`${result.spiritualChildhood} r.`} subtitle="Trvanie" icon="◇" color="cyan" />
+                <EnergyCard title="ODD" value={`${result.oddPeriod} r.`} subtitle="Obdobie duch. detstva" icon="◇" color="cyan" />
                 <EnergyCard title="ΣT" value={result.sigmaT} subtitle={result.age === 'aquarius' ? 'Vek Vodnára' : 'Vek Rýb'} icon="☿" color="gold" />
                 <EnergyCard title="Vek" value={result.age === 'aquarius' ? 'Vodnár' : 'Ryby'} subtitle="Kozmický vek" icon="⚛" color="indigo" />
               </div>

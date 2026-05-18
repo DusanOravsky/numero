@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useStore } from '../store/useStore';
 import { GlassCard } from '../components/GlassCard';
 import { DateInput } from '../components/DateInput';
@@ -18,9 +18,13 @@ export function KabalahPage() {
     setResult(calculateKabalah(lifePath, dayNum));
   };
 
-  if (profile && !result) {
-    handleCalculate(profile.birthDay, profile.birthMonth, profile.birthYear);
-  }
+  useEffect(() => {
+    if (profile && !result) {
+      const lifePath = reduceToSingle(profile.birthDay + profile.birthMonth + profile.birthYear);
+      const dayNum = reduceToSingle(profile.birthDay);
+      setResult(calculateKabalah(lifePath, dayNum));
+    }
+  }, [profile, result]);
 
   return (
     <div className="space-y-6">

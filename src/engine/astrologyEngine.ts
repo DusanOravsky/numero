@@ -171,8 +171,13 @@ export function calculateAstrology(
   const dominantQuality = Object.entries(qualityCounts).sort((a, b) => b[1] - a[1])[0][0];
   const dominantPlanet = Object.entries(planetRulerCounts).sort((a, b) => b[1] - a[1])[0][0];
 
-  const northNodeLong = (sunLong + 180) % 360;
-  const southNodeLong = sunLong;
+  // Approximate mean lunar node using simplified formula
+  // Mean node regresses ~19.355° per year from a reference epoch
+  const refDate = new Date(2000, 0, 1);
+  const daysSinceRef = (date.getTime() - refDate.getTime()) / (1000 * 60 * 60 * 24);
+  const meanNodeLong = (125.04 - 0.052954 * daysSinceRef) % 360;
+  const northNodeLong = ((meanNodeLong % 360) + 360) % 360;
+  const southNodeLong = (northNodeLong + 180) % 360;
   const northNodeInfo = getSignFromLongitude(northNodeLong);
   const southNodeInfo = getSignFromLongitude(southNodeLong);
 

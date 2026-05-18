@@ -1,5 +1,6 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import { MainLayout } from './layouts/MainLayout';
 import { Dashboard } from './pages/Dashboard';
 import { NumerologyPage } from './pages/NumerologyPage';
@@ -12,25 +13,36 @@ import { ThetaHealingPage } from './pages/ThetaHealingPage';
 import { SettingsPage } from './pages/SettingsPage';
 import { ProfileSetup } from './pages/ProfileSetup';
 
+function AnimatedRoutes() {
+  const location = useLocation();
+
+  return (
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
+        <Route path="/" element={<MainLayout />}>
+          <Route index element={<Dashboard />} />
+          <Route path="numerology" element={<NumerologyPage />} />
+          <Route path="astrology" element={<AstrologyPage />} />
+          <Route path="human-design" element={<HumanDesignPage />} />
+          <Route path="relationships" element={<RelationshipsPage />} />
+          <Route path="chakras" element={<ChakrasPage />} />
+          <Route path="kabalah" element={<KabalahPage />} />
+          <Route path="theta-healing" element={<ThetaHealingPage />} />
+          <Route path="settings" element={<SettingsPage />} />
+          <Route path="profile" element={<ProfileSetup />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Route>
+      </Routes>
+    </AnimatePresence>
+  );
+}
+
 export default function App() {
   return (
-    <BrowserRouter>
-      <AnimatePresence mode="wait">
-        <Routes>
-          <Route path="/" element={<MainLayout />}>
-            <Route index element={<Dashboard />} />
-            <Route path="numerology" element={<NumerologyPage />} />
-            <Route path="astrology" element={<AstrologyPage />} />
-            <Route path="human-design" element={<HumanDesignPage />} />
-            <Route path="relationships" element={<RelationshipsPage />} />
-            <Route path="chakras" element={<ChakrasPage />} />
-            <Route path="kabalah" element={<KabalahPage />} />
-            <Route path="theta-healing" element={<ThetaHealingPage />} />
-            <Route path="settings" element={<SettingsPage />} />
-            <Route path="profile" element={<ProfileSetup />} />
-          </Route>
-        </Routes>
-      </AnimatePresence>
-    </BrowserRouter>
+    <ErrorBoundary>
+      <BrowserRouter>
+        <AnimatedRoutes />
+      </BrowserRouter>
+    </ErrorBoundary>
   );
 }

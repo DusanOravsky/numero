@@ -58,20 +58,21 @@ export function MainLayout() {
         </motion.div>
       </main>
 
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 glass border-t border-indigo-500/10 z-50">
-        <div className="flex justify-around items-center py-2 px-2">
-          {NAV_ITEMS.slice(0, 5).map(item => (
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 glass border-t border-indigo-500/10 z-50" aria-label="Hlavná navigácia">
+        <div className="flex overflow-x-auto items-center py-2 px-1 gap-1 scrollbar-none">
+          {NAV_ITEMS.map(item => (
             <NavLink
               key={item.path}
               to={item.path}
+              aria-label={item.label}
               className={({ isActive }) =>
-                `flex flex-col items-center gap-0.5 px-3 py-2 rounded-xl transition-all ${
+                `flex flex-col items-center gap-0.5 px-3 py-2 rounded-xl transition-all shrink-0 ${
                   isActive ? 'text-indigo-400 glow' : 'text-slate-500'
                 }`
               }
             >
-              <span className="text-xl">{item.icon}</span>
-              <span className="text-[10px]">{item.label}</span>
+              <span className="text-lg">{item.icon}</span>
+              <span className="text-[9px]">{item.label}</span>
             </NavLink>
           ))}
         </div>

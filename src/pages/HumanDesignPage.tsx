@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useStore } from '../store/useStore';
 import { GlassCard } from '../components/GlassCard';
 import { EnergyCard } from '../components/EnergyCard';
@@ -16,9 +16,11 @@ export function HumanDesignPage() {
     setResult(calculateHumanDesign(day, month, year, hour || 12, minute || 0));
   };
 
-  if (profile && !result) {
-    handleCalculate(profile.birthDay, profile.birthMonth, profile.birthYear, profile.birthHour, profile.birthMinute);
-  }
+  useEffect(() => {
+    if (profile && !result) {
+      setResult(calculateHumanDesign(profile.birthDay, profile.birthMonth, profile.birthYear, profile.birthHour || 12, profile.birthMinute || 0));
+    }
+  }, [profile, result]);
 
   const typeColors: Record<string, string> = {
     'Manifestor': 'from-red-500/20 to-rose-500/20',

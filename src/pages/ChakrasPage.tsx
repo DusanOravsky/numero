@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useStore } from '../store/useStore';
 import { GlassCard } from '../components/GlassCard';
 import { ChakraWheel } from '../components/ChakraWheel';
@@ -30,9 +30,11 @@ export function ChakrasPage() {
     setChakras(result);
   };
 
-  if (profile && !chakras) {
-    handleCalculate(profile.birthDay, profile.birthMonth, profile.birthYear);
-  }
+  useEffect(() => {
+    if (profile && !chakras) {
+      handleCalculate(profile.birthDay, profile.birthMonth, profile.birthYear);
+    }
+  }, [profile, chakras]);
 
   return (
     <div className="space-y-6">

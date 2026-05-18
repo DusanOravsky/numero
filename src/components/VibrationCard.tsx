@@ -26,7 +26,7 @@ export function VibrationCard({ title, value, subtitle, icon, color, formula, de
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ delay, duration: 0.4 }}
-      className={`relative bg-gradient-to-br ${colorClasses[color] || colorClasses.indigo} border rounded-2xl p-5 backdrop-blur-sm cursor-pointer`}
+      className={`relative bg-gradient-to-br ${colorClasses[color] || colorClasses.indigo} border rounded-2xl p-5 backdrop-blur-sm cursor-pointer ${showTooltip ? 'z-50' : 'z-0'}`}
       onMouseEnter={() => setShowTooltip(true)}
       onMouseLeave={() => setShowTooltip(false)}
       onClick={() => setShowTooltip(!showTooltip)}
@@ -45,15 +45,17 @@ export function VibrationCard({ title, value, subtitle, icon, color, formula, de
       <AnimatePresence>
         {showTooltip && (
           <motion.div
-            initial={{ opacity: 0, y: 10, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 10, scale: 0.95 }}
-            transition={{ duration: 0.2 }}
-            className="absolute left-0 right-0 top-full mt-2 z-50 p-4 rounded-xl glass glow border border-indigo-500/20 shadow-xl"
+            initial={{ opacity: 0, y: 5 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 5 }}
+            transition={{ duration: 0.15 }}
+            className="absolute left-0 right-0 bottom-full mb-2 z-[100] p-4 rounded-xl bg-[#1a1545] border border-indigo-500/30 shadow-2xl shadow-indigo-900/50"
+            style={{ minWidth: '280px' }}
           >
             <p className="text-xs text-indigo-300 font-medium mb-2">Výpočet:</p>
-            <p className="text-sm text-white font-mono mb-3">{formula}</p>
+            <p className="text-sm text-white font-mono mb-3 break-all">{formula}</p>
             <p className="text-xs text-slate-300 leading-relaxed">{description}</p>
+            <div className="absolute left-1/2 -translate-x-1/2 -bottom-1.5 w-3 h-3 bg-[#1a1545] border-r border-b border-indigo-500/30 rotate-45"></div>
           </motion.div>
         )}
       </AnimatePresence>

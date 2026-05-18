@@ -10,6 +10,7 @@ const NAV_ITEMS = [
   { path: '/chakras', label: 'Čakry', icon: '◈' },
   { path: '/kabalah', label: 'Kabala', icon: '⚘' },
   { path: '/theta-healing', label: 'Theta', icon: '∞' },
+  { path: '/clients', label: 'Klienti', icon: '♟' },
   { path: '/settings', label: 'Nastavenia', icon: '⚙' },
 ];
 

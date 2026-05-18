@@ -12,6 +12,7 @@ import { KabalahPage } from './pages/KabalahPage';
 import { ThetaHealingPage } from './pages/ThetaHealingPage';
 import { SettingsPage } from './pages/SettingsPage';
 import { ProfileSetup } from './pages/ProfileSetup';
+import { ClientsPage } from './pages/ClientsPage';
 
 function AnimatedRoutes() {
   const location = useLocation();
@@ -28,6 +29,7 @@ function AnimatedRoutes() {
           <Route path="chakras" element={<ChakrasPage />} />
           <Route path="kabalah" element={<KabalahPage />} />
           <Route path="theta-healing" element={<ThetaHealingPage />} />
+          <Route path="clients" element={<ClientsPage />} />
           <Route path="settings" element={<SettingsPage />} />
           <Route path="profile" element={<ProfileSetup />} />
           <Route path="*" element={<Navigate to="/" replace />} />

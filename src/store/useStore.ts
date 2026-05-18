@@ -14,9 +14,22 @@ export interface UserProfile {
   createdAt: string;
 }
 
+export interface Client {
+  id: string;
+  name: string;
+  birthDay: number;
+  birthMonth: number;
+  birthYear: number;
+  birthHour?: number;
+  birthMinute?: number;
+  notes?: string;
+  createdAt: string;
+}
+
 export interface SavedReport {
   id: string;
   profileId: string;
+  clientId?: string;
   type: string;
   title: string;
   data: unknown;
@@ -26,6 +39,7 @@ export interface SavedReport {
 interface AppState {
   profiles: UserProfile[];
   activeProfileId: string | null;
+  clients: Client[];
   reports: SavedReport[];
   favorites: string[];
   theme: 'dark';
@@ -36,19 +50,24 @@ interface AppState {
   deleteProfile: (id: string) => void;
   setActiveProfile: (id: string | null) => void;
 
+  addClient: (client: Client) => void;
+  updateClient: (id: string, data: Partial<Client>) => void;
+  deleteClient: (id: string) => void;
+
   addReport: (report: SavedReport) => void;
   deleteReport: (id: string) => void;
 
   toggleFavorite: (section: string) => void;
 }
 
-const STORE_VERSION = 1;
+const STORE_VERSION = 2;
 
 export const useStore = create<AppState>()(
   persist(
     (set) => ({
       profiles: [],
       activeProfileId: null,
+      clients: [],
       reports: [],
       favorites: [],
       theme: 'dark',
@@ -64,7 +83,16 @@ export const useStore = create<AppState>()(
       })),
       setActiveProfile: (id) => set({ activeProfileId: id }),
 
-      addReport: (report) => set((state) => ({ reports: [report, ...state.reports].slice(0, 50) })),
+      addClient: (client) => set((state) => ({ clients: [...state.clients, client] })),
+      updateClient: (id, data) => set((state) => ({
+        clients: state.clients.map(c => c.id === id ? { ...c, ...data } : c),
+      })),
+      deleteClient: (id) => set((state) => ({
+        clients: state.clients.filter(c => c.id !== id),
+        reports: state.reports.filter(r => r.clientId !== id),
+      })),
+
+      addReport: (report) => set((state) => ({ reports: [report, ...state.reports].slice(0, 200) })),
       deleteReport: (id) => set((state) => ({ reports: state.reports.filter(r => r.id !== id) })),
 
       toggleFavorite: (section) => set((state) => ({
@@ -81,6 +109,9 @@ export const useStore = create<AppState>()(
         if (version < 1) {
           state.reports = state.reports || [];
           state.favorites = state.favorites || [];
+        }
+        if (version < 2) {
+          state.clients = state.clients || [];
         }
         return state as AppState;
       },

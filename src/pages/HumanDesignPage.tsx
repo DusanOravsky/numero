@@ -86,7 +86,7 @@ export function HumanDesignPage() {
                     className="flex items-center justify-between p-3 rounded-xl bg-green-500/10 border border-green-500/20"
                   >
                     <span className="text-sm font-medium text-green-300">{center}</span>
-                    <span className="text-xs text-slate-400">{CENTER_THEMES[Object.keys(CENTER_THEMES).find(k => center.includes(k.split('/')[0])) || ''] || ''}</span>
+                    <span className="text-xs text-slate-400">{CENTER_THEMES[center] || ''}</span>
                   </motion.div>
                 ))}
               </div>
@@ -128,7 +128,7 @@ export function HumanDesignPage() {
                       <span className="text-sm font-medium text-white">{channel.name}</span>
                       <span className="text-xs text-indigo-300">{channel.gates[0]}-{channel.gates[1]}</span>
                     </div>
-                    <span className="text-xs text-slate-400">{channel.type}</span>
+                    <span className="text-xs text-slate-400">{channel.centers[0]} → {channel.centers[1]}</span>
                   </motion.div>
                 ))}
               </div>

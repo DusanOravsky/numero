@@ -59,25 +59,35 @@ function getSunLongitude(date: Date): number {
   return ecl.elon;
 }
 
-function getMoonLongitude(date: Date): number {
+function getPlanetLongitudeAtDate(body: Astronomy.Body, date: Date): number {
   const time = Astronomy.MakeTime(date);
-  const eq = Astronomy.Equator(Astronomy.Body.Moon, time, null as unknown as Astronomy.Observer, true, true);
-  const ecl = Astronomy.Ecliptic(eq.vec);
+  const vec = Astronomy.GeoVector(body, time, true);
+  const ecl = Astronomy.Ecliptic(vec);
   return ecl.elon;
 }
 
-function getPlanetLongitude(body: Astronomy.Body, date: Date): number {
+function getMoonLongitude(date: Date): number {
   const time = Astronomy.MakeTime(date);
-  const eq = Astronomy.Equator(body, time, null as unknown as Astronomy.Observer, true, true);
-  const ecl = Astronomy.Ecliptic(eq.vec);
+  const vec = Astronomy.GeoMoon(time);
+  const ecl = Astronomy.Ecliptic(vec);
   return ecl.elon;
+}
+
+function isRetrograde(body: Astronomy.Body, date: Date): boolean {
+  if (body === Astronomy.Body.Sun || body === Astronomy.Body.Moon) return false;
+  const dayMs = 24 * 60 * 60 * 1000;
+  const lonBefore = getPlanetLongitudeAtDate(body, new Date(date.getTime() - dayMs));
+  const lonAfter = getPlanetLongitudeAtDate(body, new Date(date.getTime() + dayMs));
+  let diff = lonAfter - lonBefore;
+  if (diff > 180) diff -= 360;
+  if (diff < -180) diff += 360;
+  return diff < 0;
 }
 
 function calculateAscendant(date: Date, latitude: number, longitude: number): number {
   const time = Astronomy.MakeTime(date);
-  const observer = new Astronomy.Observer(latitude, longitude, 0);
   const lst = Astronomy.SiderealTime(time);
-  const localST = (lst + longitude / 15) % 24;
+  const localST = ((lst + longitude / 15) % 24 + 24) % 24;
   const RAMC = localST * 15;
   const obliquity = 23.4393;
   const oblRad = obliquity * Math.PI / 180;
@@ -90,8 +100,14 @@ function calculateAscendant(date: Date, latitude: number, longitude: number): nu
   ) * 180 / Math.PI;
 
   if (asc < 0) asc += 360;
-  void observer;
   return asc;
+}
+
+function getMeanNodeLongitude(date: Date): number {
+  const jd = date.getTime() / 86400000 + 2440587.5;
+  const T = (jd - 2451545.0) / 36525.0;
+  let omega = 125.04452 - 1934.136261 * T + 0.0020708 * T * T + T * T * T / 450000;
+  return ((omega % 360) + 360) % 360;
 }
 
 function getMoonPhase(date: Date): string {
@@ -112,9 +128,12 @@ function getMoonPhase(date: Date): string {
 export function calculateAstrology(
   day: number, month: number, year: number,
   hour: number = 12, minute: number = 0,
-  latitude: number = 48.15, longitude: number = 17.11
+  latitude: number = 48.15, longitude: number = 17.11,
+  timezoneOffsetHours: number = 1
 ): AstrologyResult {
-  const date = new Date(year, month - 1, day, hour, minute);
+  // Convert local time to UTC using timezone offset
+  const utcHour = hour - timezoneOffsetHours;
+  const date = new Date(Date.UTC(year, month - 1, day, utcHour, minute));
 
   const sunLong = getSunLongitude(date);
   const moonLong = getMoonLongitude(date);
@@ -144,7 +163,7 @@ export function calculateAstrology(
     } else if (p.body === Astronomy.Body.Moon) {
       long = moonLong;
     } else {
-      long = getPlanetLongitude(p.body, date);
+      long = getPlanetLongitudeAtDate(p.body, date);
     }
     const info = getSignFromLongitude(long);
     return {
@@ -153,7 +172,7 @@ export function calculateAstrology(
       longitude: long,
       sign: info.sign,
       degree: info.degree,
-      retrograde: false,
+      retrograde: isRetrograde(p.body, date),
     };
   });
 
@@ -171,12 +190,7 @@ export function calculateAstrology(
   const dominantQuality = Object.entries(qualityCounts).sort((a, b) => b[1] - a[1])[0][0];
   const dominantPlanet = Object.entries(planetRulerCounts).sort((a, b) => b[1] - a[1])[0][0];
 
-  // Approximate mean lunar node using simplified formula
-  // Mean node regresses ~19.355° per year from a reference epoch
-  const refDate = new Date(2000, 0, 1);
-  const daysSinceRef = (date.getTime() - refDate.getTime()) / (1000 * 60 * 60 * 24);
-  const meanNodeLong = (125.04 - 0.052954 * daysSinceRef) % 360;
-  const northNodeLong = ((meanNodeLong % 360) + 360) % 360;
+  const northNodeLong = getMeanNodeLongitude(date);
   const southNodeLong = (northNodeLong + 180) % 360;
   const northNodeInfo = getSignFromLongitude(northNodeLong);
   const southNodeInfo = getSignFromLongitude(southNodeLong);

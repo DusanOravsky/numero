@@ -5,6 +5,7 @@ import { calculatePartnerCompatibility, calculateParentChild } from '../engine/c
 import type { CompatibilityResult, ParentChildResult } from '../engine/compatibilityEngine';
 import { calculateAstrology } from '../engine/astrologyEngine';
 import type { AstrologyResult } from '../engine/astrologyEngine';
+import { findCity } from '../data/cities';
 import { motion } from 'framer-motion';
 
 type Mode = 'partner' | 'family' | 'astro';
@@ -54,9 +55,10 @@ interface AstroPersonInput {
   month: string;
   year: string;
   hour: string;
+  birthPlace: string;
 }
 
-const emptyAstroPerson = (): AstroPersonInput => ({ name: '', day: '', month: '', year: '', hour: '' });
+const emptyAstroPerson = (): AstroPersonInput => ({ name: '', day: '', month: '', year: '', hour: '', birthPlace: '' });
 
 function isAstroPersonValid(p: AstroPersonInput): boolean {
   return !!(p.name.trim() && parseInt(p.day) >= 1 && parseInt(p.month) >= 1 && parseInt(p.year) >= 1900);
@@ -87,11 +89,11 @@ function getPlanetByName(result: AstrologyResult, name: string) {
 }
 
 function calculateSynastry(
-  name1: string, day1: number, month1: number, year1: number, hour1: number,
-  name2: string, day2: number, month2: number, year2: number, hour2: number
+  name1: string, day1: number, month1: number, year1: number, hour1: number, lat1: number, lon1: number,
+  name2: string, day2: number, month2: number, year2: number, hour2: number, lat2: number, lon2: number
 ): SynastryResult {
-  const r1 = calculateAstrology(day1, month1, year1, hour1);
-  const r2 = calculateAstrology(day2, month2, year2, hour2);
+  const r1 = calculateAstrology(day1, month1, year1, hour1, 0, lat1, lon1);
+  const r2 = calculateAstrology(day2, month2, year2, hour2, 0, lat2, lon2);
 
   const sunCompat = getElementCompatibility(r1.sunSign.element, r2.sunSign.element);
   const moonCompat = getElementCompatibility(r1.moonSign.element, r2.moonSign.element);
@@ -155,13 +157,17 @@ export function RelationshipsPage() {
 
   const handleAstroCalc = () => {
     if (!isAstroPersonValid(astroPartner1) || !isAstroPersonValid(astroPartner2)) return;
+    const city1 = findCity(astroPartner1.birthPlace);
+    const city2 = findCity(astroPartner2.birthPlace);
     const result = calculateSynastry(
       astroPartner1.name,
       parseInt(astroPartner1.day), parseInt(astroPartner1.month), parseInt(astroPartner1.year),
       astroPartner1.hour ? parseInt(astroPartner1.hour) : 12,
+      city1?.lat || 48.15, city1?.lon || 17.11,
       astroPartner2.name,
       parseInt(astroPartner2.day), parseInt(astroPartner2.month), parseInt(astroPartner2.year),
-      astroPartner2.hour ? parseInt(astroPartner2.hour) : 12
+      astroPartner2.hour ? parseInt(astroPartner2.hour) : 12,
+      city2?.lat || 48.15, city2?.lon || 17.11
     );
     setSynastryResult(result);
   };
@@ -496,7 +502,10 @@ export function RelationshipsPage() {
                 <input type="number" placeholder="Mesiac" min={1} max={12} value={astroPartner1.month} onChange={e => setAstroPartner1({ ...astroPartner1, month: e.target.value })} className="w-24 px-3 py-3 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white text-center focus:outline-none focus:border-indigo-500/50" />
                 <input type="number" placeholder="Rok" min={1900} max={2100} value={astroPartner1.year} onChange={e => setAstroPartner1({ ...astroPartner1, year: e.target.value })} className="flex-1 px-3 py-3 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white text-center focus:outline-none focus:border-indigo-500/50" />
               </div>
-              <input type="number" placeholder="Hodina (voliteľné, 0-23)" min={0} max={23} value={astroPartner1.hour} onChange={e => setAstroPartner1({ ...astroPartner1, hour: e.target.value })} className="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white text-center focus:outline-none focus:border-indigo-500/50" />
+              <div className="flex gap-2">
+                <input type="number" placeholder="Hodina (voliteľné)" min={0} max={23} value={astroPartner1.hour} onChange={e => setAstroPartner1({ ...astroPartner1, hour: e.target.value })} className="w-1/3 px-3 py-2.5 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white text-center text-sm focus:outline-none focus:border-indigo-500/50" />
+                <input type="text" placeholder="Miesto narodenia" value={astroPartner1.birthPlace} onChange={e => setAstroPartner1({ ...astroPartner1, birthPlace: e.target.value })} className="flex-1 px-3 py-2.5 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white text-sm focus:outline-none focus:border-indigo-500/50" />
+              </div>
             </div>
             <div className="space-y-3">
               <p className="text-sm text-slate-400 font-medium">Partner 2</p>
@@ -512,7 +521,10 @@ export function RelationshipsPage() {
                 <input type="number" placeholder="Mesiac" min={1} max={12} value={astroPartner2.month} onChange={e => setAstroPartner2({ ...astroPartner2, month: e.target.value })} className="w-24 px-3 py-3 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white text-center focus:outline-none focus:border-indigo-500/50" />
                 <input type="number" placeholder="Rok" min={1900} max={2100} value={astroPartner2.year} onChange={e => setAstroPartner2({ ...astroPartner2, year: e.target.value })} className="flex-1 px-3 py-3 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white text-center focus:outline-none focus:border-indigo-500/50" />
               </div>
-              <input type="number" placeholder="Hodina (voliteľné, 0-23)" min={0} max={23} value={astroPartner2.hour} onChange={e => setAstroPartner2({ ...astroPartner2, hour: e.target.value })} className="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white text-center focus:outline-none focus:border-indigo-500/50" />
+              <div className="flex gap-2">
+                <input type="number" placeholder="Hodina (voliteľné)" min={0} max={23} value={astroPartner2.hour} onChange={e => setAstroPartner2({ ...astroPartner2, hour: e.target.value })} className="w-1/3 px-3 py-2.5 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white text-center text-sm focus:outline-none focus:border-indigo-500/50" />
+                <input type="text" placeholder="Miesto narodenia" value={astroPartner2.birthPlace} onChange={e => setAstroPartner2({ ...astroPartner2, birthPlace: e.target.value })} className="flex-1 px-3 py-2.5 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white text-sm focus:outline-none focus:border-indigo-500/50" />
+              </div>
             </div>
           </div>
           <button

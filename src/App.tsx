@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import { ErrorBoundary } from './components/ErrorBoundary';
+import { PWAPrompts } from './components/PWAPrompts';
 import { MainLayout } from './layouts/MainLayout';
 import { Dashboard } from './pages/Dashboard';
 import { NumerologyPage } from './pages/NumerologyPage';
@@ -45,6 +46,7 @@ export default function App() {
   return (
     <ErrorBoundary>
       <BrowserRouter>
+        <PWAPrompts />
         <AnimatedRoutes />
       </BrowserRouter>
     </ErrorBoundary>

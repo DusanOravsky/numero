@@ -20,8 +20,8 @@ export function MainLayout() {
   return (
     <div className="min-h-screen flex flex-col lg:flex-row">
       <aside className="hidden lg:flex lg:flex-col lg:w-64 bg-white border-r border-slate-200 fixed h-full z-40">
-        <div className="p-6 border-b border-slate-100">
-          <h1 className="font-serif text-xl font-bold bg-gradient-to-r from-indigo-600 via-violet-600 to-purple-600 bg-clip-text text-transparent">
+        <div className="p-6 border-b border-slate-100 text-center">
+          <h1 className="font-serif text-lg font-bold bg-gradient-to-r from-indigo-600 via-violet-600 to-purple-600 bg-clip-text text-transparent">
             Integrálna mapa bytia
           </h1>
         </div>

@@ -44,19 +44,21 @@ export function VibrationCard({ title, value, subtitle, icon, color, formula, de
 
       <AnimatePresence>
         {showTooltip && (
-          <motion.div
-            initial={{ opacity: 0, y: 5 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 5 }}
-            transition={{ duration: 0.15 }}
-            className="absolute left-0 right-0 top-full mt-2 z-[100] p-4 rounded-xl bg-white border border-slate-200 shadow-xl"
-            style={{ minWidth: '280px' }}
-          >
-            <div className="absolute left-1/2 -translate-x-1/2 -top-1.5 w-3 h-3 bg-white border-l border-t border-slate-200 rotate-45"></div>
-            <p className="text-xs text-indigo-600 font-medium mb-2">Výpočet:</p>
-            <p className="text-sm text-slate-800 font-mono mb-3 break-all">{formula}</p>
-            <p className="text-xs text-slate-600 leading-relaxed">{description}</p>
-          </motion.div>
+          <>
+            <div className="fixed inset-0 z-[99]" onClick={() => setShowTooltip(false)} />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.15 }}
+              className="fixed left-4 right-4 top-1/2 -translate-y-1/2 z-[100] p-5 rounded-2xl bg-white border border-slate-200 shadow-2xl max-w-sm mx-auto"
+            >
+              <p className="text-xs text-indigo-600 font-medium mb-2">Výpočet:</p>
+              <p className="text-sm text-slate-800 font-mono mb-3 break-all">{formula}</p>
+              <p className="text-xs text-slate-600 leading-relaxed">{description}</p>
+              <button onClick={() => setShowTooltip(false)} className="mt-3 text-xs text-slate-400 hover:text-slate-600">Zavrieť</button>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </motion.div>

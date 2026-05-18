@@ -1,6 +1,7 @@
 import { useStore } from '../store/useStore';
 import { GlassCard } from '../components/GlassCard';
 import { useNavigate } from 'react-router-dom';
+import { APP_VERSION } from '../components/PWAPrompts';
 
 export function SettingsPage() {
   const navigate = useNavigate();
@@ -74,7 +75,7 @@ export function SettingsPage() {
         <h3 className="font-medium text-white mb-3">O aplikácii</h3>
         <div className="space-y-2 text-sm text-slate-400">
           <p><strong className="text-slate-300">Integrálna mapa bytia</strong> – Duchovno-analytická aplikácia</p>
-          <p>Verzia: 1.0.0</p>
+          <p>Verzia: {APP_VERSION}</p>
           <p>Všetky údaje sú uložené lokálne vo vašom zariadení.</p>
           <p>Žiadne dáta nie sú odosielané na server.</p>
           <p>Aplikácia funguje kompletne offline.</p>

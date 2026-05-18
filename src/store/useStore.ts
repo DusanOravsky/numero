@@ -9,6 +9,7 @@ export interface UserProfile {
   birthYear: number;
   birthHour?: number;
   birthMinute?: number;
+  birthPlace?: string;
   birthLatitude?: number;
   birthLongitude?: number;
   createdAt: string;
@@ -22,6 +23,9 @@ export interface Client {
   birthYear: number;
   birthHour?: number;
   birthMinute?: number;
+  birthPlace?: string;
+  birthLatitude?: number;
+  birthLongitude?: number;
   notes?: string;
   createdAt: string;
 }

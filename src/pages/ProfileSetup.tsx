@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import { GlassCard } from '../components/GlassCard';
+import { searchCities, findCity } from '../data/cities';
 
 export function ProfileSetup() {
   const navigate = useNavigate();
@@ -12,6 +13,8 @@ export function ProfileSetup() {
   const [year, setYear] = useState('');
   const [hour, setHour] = useState('');
   const [minute, setMinute] = useState('');
+  const [birthPlace, setBirthPlace] = useState('');
+  const [citySuggestions, setCitySuggestions] = useState<{ name: string; lat: number; lon: number }[]>([]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,6 +23,7 @@ export function ProfileSetup() {
     const y = parseInt(year);
     if (!name.trim() || !d || !m || !y) return;
 
+    const city = findCity(birthPlace);
     const id = crypto.randomUUID();
     addProfile({
       id,
@@ -29,6 +33,9 @@ export function ProfileSetup() {
       birthYear: y,
       birthHour: hour ? parseInt(hour) : undefined,
       birthMinute: minute ? parseInt(minute) : undefined,
+      birthPlace: birthPlace.trim() || undefined,
+      birthLatitude: city?.lat,
+      birthLongitude: city?.lon,
       createdAt: new Date().toISOString(),
     });
     setActiveProfile(id);
@@ -117,6 +124,34 @@ export function ProfileSetup() {
                 />
                 <span className="text-xs text-slate-500">Pre presnejší HD a ascendent</span>
               </div>
+            </div>
+
+            <div>
+              <label className="block text-sm text-slate-400 mb-2">Miesto narodenia (pre astrológiu)</label>
+              <div className="relative">
+                <input
+                  type="text"
+                  value={birthPlace}
+                  onChange={e => { setBirthPlace(e.target.value); setCitySuggestions(searchCities(e.target.value)); }}
+                  placeholder="Napr. Bratislava, Praha..."
+                  className="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white focus:outline-none focus:border-indigo-500/50"
+                />
+                {citySuggestions.length > 0 && (
+                  <div className="absolute left-0 right-0 top-full mt-1 z-50 rounded-xl bg-[#1a1545] border border-indigo-500/20 overflow-hidden">
+                    {citySuggestions.map(city => (
+                      <button
+                        key={city.name}
+                        type="button"
+                        onClick={() => { setBirthPlace(city.name); setCitySuggestions([]); }}
+                        className="w-full text-left px-4 py-2 text-sm text-slate-300 hover:bg-indigo-500/20"
+                      >
+                        {city.name}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <p className="text-xs text-slate-500 mt-1">Dôležité pre presný ascendent a astrologické domy</p>
             </div>
 
             <button

@@ -4,6 +4,7 @@ import { useStore } from '../store/useStore';
 import { GlassCard } from '../components/GlassCard';
 import { NumerologyGrid } from '../components/NumerologyGrid';
 import { EnergyCard } from '../components/EnergyCard';
+import { VibrationCard } from '../components/VibrationCard';
 import { DateInput } from '../components/DateInput';
 import { calculateFullNumerology } from '../engine/numerologyEngine';
 import type { NumerologyResult } from '../engine/numerologyEngine';
@@ -12,6 +13,7 @@ import type { NameNumerologyResult } from '../engine/nameNumerologyEngine';
 import lifePathsData from '../data/lifePaths.json';
 import isolatedData from '../data/isolatedNumbers.json';
 import planesData from '../data/planes.json';
+import { orvDescriptions, loveLanguageDescriptions, loveLanguageScoringExplanation } from '../data/orvDescriptions';
 
 const planesInfo = planesData as { full: Record<string, { description: string; gift: string; recommendation: string }>; empty: Record<string, { description: string; lesson: string; recommendation: string }> };
 
@@ -278,17 +280,67 @@ export function NumerologyPage() {
 
           {activeTab === 'vibrations' && (
             <div className="space-y-6">
+              <GlassCard>
+                <p className="text-sm text-slate-400">
+                  <strong className="text-white">Vibrácie</strong> sú osobné energetické cykly odvodené z vášho dátumu narodenia a aktuálneho času. Ukazujú, aké témy a úlohy sú pre vás relevantné v danom roku, mesiaci a dni. Pomáhajú plánovať dôležité rozhodnutia a aktivity v súlade s vašou osobnou energiou.
+                </p>
+              </GlassCard>
+
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <EnergyCard title="ORV" value={result.orv} subtitle="Osobná ročná vibrácia" icon="✦" color="indigo" delay={0.1} />
                 <EnergyCard title="OMV" value={result.omv} subtitle="Osobná mesačná vibrácia" icon="☽" color="purple" delay={0.2} />
                 <EnergyCard title="ODV" value={result.odv} subtitle="Osobná denná vibrácia" icon="☀" color="gold" delay={0.3} />
               </div>
+
               <GlassCard>
                 <h3 className="font-medium text-white mb-3">Ako fungujú vibrácie</h3>
                 <div className="space-y-4 text-sm text-slate-300">
-                  <p><strong className="text-indigo-300">ORV</strong> = deň narodenia + mesiac narodenia + aktuálny rok (redukované na jednociferné)</p>
-                  <p><strong className="text-purple-300">OMV</strong> = aktuálny mesiac + ORV (redukované)</p>
-                  <p><strong className="text-amber-300">ODV</strong> = aktuálny deň + aktuálny mesiac + ORV (redukované)</p>
+                  <p><strong className="text-indigo-300">ORV (Osobná ročná vibrácia)</strong> = deň narodenia + mesiac narodenia + aktuálny rok (redukované na jednociferné). Určuje hlavnú tému celého roka od narodenín do narodenín.</p>
+                  <p><strong className="text-purple-300">OMV (Osobná mesačná vibrácia)</strong> = aktuálny mesiac + ORV (redukované). Špecifikuje energiu a úlohy daného mesiaca v rámci vášho osobného roka.</p>
+                  <p><strong className="text-amber-300">ODV (Osobná denná vibrácia)</strong> = aktuálny deň + aktuálny mesiac + ORV (redukované). Charakterizuje energiu konkrétneho dňa a aktivity, ktoré sú v ňom podporované.</p>
+                </div>
+              </GlassCard>
+
+              {orvDescriptions[result.orv] && (
+                <GlassCard glow>
+                  <h3 className="font-serif text-xl font-bold text-white mb-2">
+                    ORV {result.orv} – {orvDescriptions[result.orv].title}
+                  </h3>
+                  <p className="text-sm text-indigo-300 mb-3">{orvDescriptions[result.orv].theme}</p>
+                  <p className="text-sm text-slate-300 mb-4">{orvDescriptions[result.orv].description}</p>
+                  <div className="p-4 rounded-xl bg-indigo-500/10 border border-indigo-500/20 mb-3">
+                    <p className="text-xs text-indigo-400 uppercase mb-1">Odporúčanie pre tento rok</p>
+                    <p className="text-sm text-slate-300">{orvDescriptions[result.orv].advice}</p>
+                  </div>
+                  <div className="flex gap-1 flex-wrap">
+                    {orvDescriptions[result.orv].keywords.map(k => (
+                      <span key={k} className="text-xs px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300">{k}</span>
+                    ))}
+                  </div>
+                </GlassCard>
+              )}
+
+              <GlassCard>
+                <h3 className="font-medium text-white mb-3">Prehľad všetkých ORV (1-9)</h3>
+                <p className="text-xs text-slate-400 mb-4">Každý rok v deväťročnom cykle má svoju jedinečnú energiu. Vaša aktuálna ORV je zvýraznená.</p>
+                <div className="space-y-2">
+                  {[1, 2, 3, 4, 5, 6, 7, 8, 9].map(n => (
+                    <div
+                      key={n}
+                      className={`p-3 rounded-xl border ${n === result.orv ? 'bg-indigo-500/15 border-indigo-500/40' : 'bg-slate-800/30 border-slate-700/30'}`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm ${n === result.orv ? 'bg-indigo-500/30 text-indigo-200' : 'bg-slate-700/50 text-slate-400'}`}>
+                          {n}
+                        </div>
+                        <div className="flex-1">
+                          <p className={`text-sm font-medium ${n === result.orv ? 'text-white' : 'text-slate-300'}`}>{orvDescriptions[n].title}</p>
+                          <p className="text-xs text-slate-400">{orvDescriptions[n].theme}</p>
+                        </div>
+                        {n === result.orv && <span className="text-xs px-2 py-0.5 rounded-full bg-indigo-500/30 text-indigo-300">Aktuálny</span>}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </GlassCard>
             </div>
@@ -386,29 +438,59 @@ export function NumerologyPage() {
           {activeTab === 'love' && (
             <div className="space-y-4">
               <GlassCard>
-                <h3 className="font-medium text-white mb-4">5 jazykov lásky – numerologické skóre</h3>
+                <p className="text-sm text-slate-400">
+                  <strong className="text-white">5 jazykov lásky</strong> je koncept Garyho Chapmana, ktorý identifikuje 5 základných spôsobov, akými ľudia prijímajú a dávajú lásku. Numerologický výpočet odhaľuje váš prirodzený jazyk lásky na základe rozloženia čísel vo vašej mriežke.
+                </p>
+                <p className="text-xs text-slate-500 mt-2">{loveLanguageScoringExplanation}</p>
+              </GlassCard>
+
+              <GlassCard>
+                <h3 className="font-medium text-white mb-4">Vaše jazyky lásky – numerologické skóre</h3>
                 <div className="space-y-4">
-                  {result.loveLanguages.map((lang, idx) => (
-                    <motion.div
-                      key={lang.language}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: idx * 0.1 }}
-                    >
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="text-sm font-medium text-white">{lang.language}</span>
-                        <span className="text-sm text-slate-400">{lang.score}</span>
-                      </div>
-                      <div className="h-3 bg-slate-800 rounded-full overflow-hidden">
-                        <motion.div
-                          initial={{ width: 0 }}
-                          animate={{ width: `${Math.max(0, Math.min(100, (lang.score + 5) * 8))}%` }}
-                          transition={{ delay: idx * 0.1 + 0.3, duration: 0.6 }}
-                          className={`h-full rounded-full ${idx === 0 ? 'bg-gradient-to-r from-rose-500 to-pink-500' : 'bg-gradient-to-r from-indigo-500 to-violet-500'}`}
-                        />
-                      </div>
-                    </motion.div>
-                  ))}
+                  {result.loveLanguages.map((lang, idx) => {
+                    const langInfo = loveLanguageDescriptions[lang.language];
+                    return (
+                      <motion.div
+                        key={lang.language}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: idx * 0.1 }}
+                        className="space-y-2"
+                      >
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-sm font-medium text-white">{lang.language}</span>
+                          <span className="text-sm text-slate-400">{lang.score} bodov</span>
+                        </div>
+                        <div className="h-3 bg-slate-800 rounded-full overflow-hidden">
+                          <motion.div
+                            initial={{ width: 0 }}
+                            animate={{ width: `${Math.max(0, Math.min(100, (lang.score + 5) * 8))}%` }}
+                            transition={{ delay: idx * 0.1 + 0.3, duration: 0.6 }}
+                            className={`h-full rounded-full ${idx === 0 ? 'bg-gradient-to-r from-rose-500 to-pink-500' : 'bg-gradient-to-r from-indigo-500 to-violet-500'}`}
+                          />
+                        </div>
+                        {langInfo && (
+                          <div className={`p-3 rounded-xl ${idx === 0 ? 'bg-rose-500/10 border border-rose-500/20' : 'bg-slate-800/30 border border-slate-700/20'}`}>
+                            <p className="text-xs text-slate-300 mb-1">{langInfo.description}</p>
+                            <p className="text-xs text-slate-400"><strong className="text-slate-300">Príklady:</strong> {langInfo.examples}</p>
+                            {idx === 0 && (
+                              <p className="text-xs text-rose-300 mt-1"><strong>Ako prejaviť:</strong> {langInfo.howToShow}</p>
+                            )}
+                          </div>
+                        )}
+                      </motion.div>
+                    );
+                  })}
+                </div>
+              </GlassCard>
+
+              <GlassCard>
+                <h3 className="font-medium text-white mb-2">Ako pracovať s jazykmi lásky</h3>
+                <div className="space-y-2 text-sm text-slate-300">
+                  <p>1. <strong className="text-rose-300">Váš primárny jazyk</strong> (najvyššie skóre) je spôsob, akým najprirodzejšie prijímate aj dávate lásku.</p>
+                  <p>2. <strong className="text-indigo-300">Sekundárny jazyk</strong> dopĺňa primárny a ukazuje ďalší dôležitý spôsob prepojenia.</p>
+                  <p>3. <strong className="text-slate-400">Nízke skóre</strong> neznamená neschopnosť – len to, že tento jazyk vyžaduje vedomé úsilie.</p>
+                  <p>4. Vo vzťahu je dôležité poznať jazyk lásky partnera a vedome ho používať.</p>
                 </div>
               </GlassCard>
             </div>

@@ -19,34 +19,32 @@ const CHANNEL_TO_CENTERS: Record<string, [string, string]> = {
   '39-55': ['Koreň', 'SP'], '42-53': ['Sakrálne', 'Koreň'], '47-64': ['Ajna', 'Hlava'],
 };
 
-// Compact layout - centers positioned like real HD bodygraph
-const C: Record<string, { x: number; y: number }> = {
-  'Hlava':    { x: 150, y: 20 },
-  'Ajna':     { x: 150, y: 65 },
-  'Hrdlo':    { x: 150, y: 115 },
-  'G':        { x: 150, y: 175 },
-  'Ego':      { x: 210, y: 152 },
-  'Sakrálne': { x: 150, y: 235 },
-  'SP':       { x: 210, y: 218 },
-  'Slezina':  { x: 90, y: 218 },
-  'Koreň':    { x: 150, y: 290 },
-};
+interface CenterInfo {
+  label: string;
+  fullName: string;
+  color: string;
+  top: string;
+  left: string;
+}
 
-const CENTER_COLORS: Record<string, string> = {
-  'Hlava': '#f5c542', 'Ajna': '#4ade80', 'Hrdlo': '#a78bfa',
-  'G': '#facc15', 'Ego': '#f87171', 'Sakrálne': '#ef4444',
-  'SP': '#fb923c', 'Slezina': '#fbbf24', 'Koreň': '#ef4444',
+const CENTERS: Record<string, CenterInfo> = {
+  'Hlava':    { label: 'Hlava', fullName: 'Inšpirácia', color: '#f5c542', top: '0%', left: '50%' },
+  'Ajna':     { label: 'Ajna', fullName: 'Myslenie', color: '#4ade80', top: '14%', left: '50%' },
+  'Hrdlo':    { label: 'Hrdlo', fullName: 'Prejav', color: '#a78bfa', top: '28%', left: '50%' },
+  'G':        { label: 'G', fullName: 'Identita', color: '#facc15', top: '44%', left: '50%' },
+  'Ego':      { label: 'Ego', fullName: 'Vôľa', color: '#f87171', top: '37%', left: '78%' },
+  'Sakrálne': { label: 'Sakrál', fullName: 'Sila', color: '#ef4444', top: '60%', left: '50%' },
+  'SP':       { label: 'SP', fullName: 'Emócie', color: '#fb923c', top: '55%', left: '78%' },
+  'Slezina':  { label: 'Slezina', fullName: 'Intuícia', color: '#fbbf24', top: '55%', left: '22%' },
+  'Koreň':    { label: 'Koreň', fullName: 'Tlak', color: '#ef4444', top: '76%', left: '50%' },
 };
 
 export function Bodygraph({ result }: BodygraphProps) {
-  const definedSet = new Set(result.definedCenters);
-  // Map HD center names to our short keys
   const nameToKey: Record<string, string> = {
     'Hlava': 'Hlava', 'Ajna': 'Ajna', 'Hrdlo': 'Hrdlo', 'G': 'G',
     'Srdce/Ego': 'Ego', 'Sakrálne': 'Sakrálne', 'Solárny plexus': 'SP',
     'Slezina': 'Slezina', 'Koreň': 'Koreň',
   };
-
   const definedKeys = new Set(result.definedCenters.map(n => nameToKey[n] || n));
 
   const activeConnections = new Set<string>();
@@ -59,90 +57,67 @@ export function Bodygraph({ result }: BodygraphProps) {
     }
   });
 
-  // Get unique connection pairs
-  const drawnPairs = new Set<string>();
-  const connections: { c1: string; c2: string; active: boolean }[] = [];
-  Object.values(CHANNEL_TO_CENTERS).forEach(([c1, c2]) => {
-    const pk = [c1, c2].sort().join('|');
-    if (drawnPairs.has(pk)) return;
-    drawnPairs.add(pk);
-    connections.push({ c1, c2, active: activeConnections.has(`${c1}|${c2}`) });
-  });
-
-  const size = 18;
-
   return (
-    <div className="flex justify-center">
-      <svg viewBox="0 0 300 320" className="w-full max-w-xs">
-        <defs>
-          <filter id="ch-glow">
-            <feGaussianBlur stdDeviation="2" result="b" />
-            <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
-          </filter>
-        </defs>
-
-        {/* Connections */}
-        {connections.map(({ c1, c2, active }, i) => {
-          const p1 = C[c1]; const p2 = C[c2];
+    <div className="relative w-full max-w-sm mx-auto" style={{ aspectRatio: '3/4' }}>
+      {/* Channels as absolute lines using CSS */}
+      <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 300 400" preserveAspectRatio="none">
+        {Object.values(CHANNEL_TO_CENTERS).map(([c1, c2], i) => {
+          const p1 = CENTERS[c1];
+          const p2 = CENTERS[c2];
           if (!p1 || !p2) return null;
+          const x1 = parseFloat(p1.left) * 3;
+          const y1 = parseFloat(p1.top) * 4;
+          const x2 = parseFloat(p2.left) * 3;
+          const y2 = parseFloat(p2.top) * 4;
+          const active = activeConnections.has(`${c1}|${c2}`);
           return (
-            <line key={i} x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y}
+            <line key={i} x1={x1} y1={y1} x2={x2} y2={y2}
               stroke={active ? '#818cf8' : '#1e293b'}
               strokeWidth={active ? 3 : 1}
-              strokeLinecap="round"
-              opacity={active ? 1 : 0.3}
-              filter={active ? 'url(#ch-glow)' : undefined}
+              opacity={active ? 0.9 : 0.25}
             />
           );
         })}
-
-        {/* Centers */}
-        {Object.entries(C).map(([name, pos]) => {
-          const defined = definedKeys.has(name);
-          const color = CENTER_COLORS[name] || '#6366f1';
-          const fill = defined ? color : '#0f0a2e';
-          const stroke = defined ? color : '#334155';
-
-          const isTriangle = ['Hlava', 'Ajna', 'Ego', 'SP', 'Slezina'].includes(name);
-          const isDiamond = name === 'G';
-
-          return (
-            <g key={name}>
-              {isTriangle ? (
-                <polygon
-                  points={name === 'Hlava'
-                    ? `${pos.x},${pos.y + size * 0.8} ${pos.x - size},${pos.y - size * 0.5} ${pos.x + size},${pos.y - size * 0.5}`
-                    : `${pos.x},${pos.y - size * 0.8} ${pos.x - size},${pos.y + size * 0.5} ${pos.x + size},${pos.y + size * 0.5}`}
-                  fill={fill} stroke={stroke} strokeWidth={defined ? 2 : 1}
-                />
-              ) : isDiamond ? (
-                <polygon
-                  points={`${pos.x},${pos.y - size} ${pos.x + size},${pos.y} ${pos.x},${pos.y + size} ${pos.x - size},${pos.y}`}
-                  fill={fill} stroke={stroke} strokeWidth={defined ? 2 : 1}
-                />
-              ) : (
-                <rect x={pos.x - size} y={pos.y - size} width={size * 2} height={size * 2} rx={5}
-                  fill={fill} stroke={stroke} strokeWidth={defined ? 2 : 1}
-                />
-              )}
-              <text x={pos.x} y={pos.y + 4} textAnchor="middle"
-                fill={defined ? '#000' : '#64748b'} fontSize="8" fontWeight="700">
-                {name === 'Sakrálne' ? 'SAK' : name === 'Slezina' ? 'SLZ' : name}
-              </text>
-            </g>
-          );
-        })}
-
-        {/* Legend */}
-        <g transform="translate(10, 310)">
-          <circle cx={5} cy={0} r={4} fill="#f5c542" />
-          <text x={13} y={3} fill="#64748b" fontSize="7">Definované</text>
-          <circle cx={80} cy={0} r={4} fill="#0f0a2e" stroke="#334155" strokeWidth={1} />
-          <text x={88} y={3} fill="#64748b" fontSize="7">Otvorené</text>
-          <line x1={150} y1={0} x2={168} y2={0} stroke="#818cf8" strokeWidth={3} strokeLinecap="round" />
-          <text x={173} y={3} fill="#64748b" fontSize="7">Kanál</text>
-        </g>
       </svg>
+
+      {/* Centers as positioned divs */}
+      {Object.entries(CENTERS).map(([key, cfg]) => {
+        const defined = definedKeys.has(key);
+        return (
+          <div
+            key={key}
+            className="absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center"
+            style={{ top: cfg.top, left: cfg.left }}
+          >
+            <div
+              className={`w-11 h-11 rounded-lg flex items-center justify-center text-[10px] font-bold border-2 transition-all ${
+                defined ? 'text-white shadow-lg' : 'text-slate-500 bg-cosmic-900'
+              }`}
+              style={{
+                backgroundColor: defined ? cfg.color : '#0f0a2e',
+                borderColor: defined ? cfg.color : '#334155',
+                boxShadow: defined ? `0 0 12px ${cfg.color}50` : 'none',
+              }}
+            >
+              {cfg.label}
+            </div>
+            <span className="text-[8px] text-slate-500 mt-0.5">{cfg.fullName}</span>
+          </div>
+        );
+      })}
+
+      {/* Legend */}
+      <div className="absolute bottom-0 left-0 right-0 flex items-center justify-center gap-4 text-[9px] text-slate-500">
+        <span className="flex items-center gap-1">
+          <span className="w-3 h-3 rounded bg-indigo-500"></span> Definované
+        </span>
+        <span className="flex items-center gap-1">
+          <span className="w-3 h-3 rounded border border-slate-600 bg-cosmic-900"></span> Otvorené
+        </span>
+        <span className="flex items-center gap-1">
+          <span className="w-4 h-0.5 bg-indigo-400 rounded"></span> Kanál
+        </span>
+      </div>
     </div>
   );
 }

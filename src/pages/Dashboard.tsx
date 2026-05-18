@@ -112,6 +112,21 @@ export function Dashboard() {
         />
       </div>
 
+      {orvDescriptions[orv] && (
+        <GlassCard delay={0.35}>
+          <div className="flex items-start gap-4">
+            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center text-xl font-serif font-bold text-white">
+              {orv}
+            </div>
+            <div className="flex-1">
+              <h3 className="font-medium text-white mb-1">Váš rok: {orvDescriptions[orv].title}</h3>
+              <p className="text-xs text-indigo-300 mb-1">{orvDescriptions[orv].theme}</p>
+              <p className="text-sm text-slate-400">{orvDescriptions[orv].advice}</p>
+            </div>
+          </div>
+        </GlassCard>
+      )}
+
       <GlassCard glow delay={0.4}>
         <div className="flex items-start gap-4">
           <div className="w-12 h-12 rounded-full bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center text-xl">

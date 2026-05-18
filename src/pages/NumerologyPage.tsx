@@ -182,7 +182,7 @@ export function NumerologyPage() {
               )}
 
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-                <EnergyCard title="VDD" value={result.vdd} subtitle="Vek duchovného detstva" icon="⟡" color="purple" />
+                <EnergyCard title="VDD" value={result.vdd} subtitle="Vek duchovnej dospelosti" icon="⟡" color="purple" />
                 <EnergyCard title="ODD" value={`${result.oddPeriod} r.`} subtitle="Obdobie duch. detstva" icon="◇" color="cyan" />
                 <EnergyCard title="ΣT" value={result.sigmaT} subtitle={result.age === 'aquarius' ? 'Vek Vodnára' : 'Vek Rýb'} icon="☿" color="gold" />
                 <EnergyCard title="Vek" value={result.age === 'aquarius' ? 'Vodnár' : 'Ryby'} subtitle="Kozmický vek" icon="⚛" color="indigo" />

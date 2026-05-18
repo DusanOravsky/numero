@@ -1,0 +1,81 @@
+{
+  "full": {
+    "1-2-3 Myslenie": {
+      "description": "Rovnina intelektu. Máte silnú schopnosť analyticky myslieť, logicky uvažovať a spracovávať informácie.",
+      "gift": "Jasná myseľ, schopnosť analýzy a pochopenia",
+      "recommendation": "Využívajte svoju mentálnu silu, ale nezabudnite na emócie a telo"
+    },
+    "4-5-6 Vytrvalosť": {
+      "description": "Rovnina vôle. Máte prirodzenú vytrvalosť, disciplínu a schopnosť dotiahnuť veci do konca.",
+      "gift": "Neúnavná sila dokončovať, čo začnete",
+      "recommendation": "Vaša vytrvalosť je dar – ale dovoľte si aj oddych"
+    },
+    "7-8-9 Energia": {
+      "description": "Rovnina akcie a energie. Máte silnú životnú energiu, aktivitu a schopnosť konať.",
+      "gift": "Dynamická životná sila a schopnosť pôsobiť",
+      "recommendation": "Smerujte svoju energiu vedome – bez smeru sa môže rozptýliť"
+    },
+    "1-4-7 Zručnosti": {
+      "description": "Rovnina praktických schopností. Máte talent pre manuálnu zručnosť, technické riešenia a praktickú inteligenciu.",
+      "gift": "Šikovnosť rúk a praktická inteligencia",
+      "recommendation": "Vaše ruky a myseľ pracujú spolu – tvorte niečo hmatateľné"
+    },
+    "2-5-8 Vášeň": {
+      "description": "Rovnina emočnej sily. Máte hlbokú vášeň, emocionálnu intenzitu a schopnosť hlboko prežívať.",
+      "gift": "Intenzita prežívania a schopnosť motivovať seba aj iných",
+      "recommendation": "Vaša vášeň je motor – smerujte ju k tomu, čo vám dáva zmysel"
+    },
+    "3-6-9 Empatia": {
+      "description": "Rovnina citlivosti a prepojenia. Máte výnimočnú schopnosť cítiť druhých, chápať ich potreby a vytvárať hlboké vzťahy.",
+      "gift": "Dar empatie – cítite, čo iní nevyslovili",
+      "recommendation": "Chráňte svoju energiu – empatia bez hraníc vyčerpáva"
+    },
+    "1-5-9 Odhodlanie": {
+      "description": "Rovnina vnútornej sily. Máte železnú vôľu, odhodlanie a schopnosť prekonať prekážky.",
+      "gift": "Neochvejná vnútorná sila a vytrvalosť",
+      "recommendation": "Vaše odhodlanie je vzácne – uistite sa, že smeruje k správnym cieľom"
+    },
+    "3-5-7 Pochopenie": {
+      "description": "Rovnina múdrosti. Máte hlbokú schopnosť chápať podstatu vecí, vidieť za povrch a rozumieť zložitým vzorcom.",
+      "gift": "Hĺbka pochopenia a intuitívna múdrosť",
+      "recommendation": "Zdieľajte svoju múdrosť – svet ju potrebuje"
+    }
+  },
+  "empty": {
+    "1-4-7 Postreh": {
+      "description": "Bez tejto roviny vám môžu unikať praktické detaily. Vaša pozornosť sa zameriava viac na abstraktné než konkrétne.",
+      "lesson": "Učíte sa všímať si detaily a byť viac prítomní v materiálnom svete",
+      "recommendation": "Pravidelne sa zastavte a všímajte si, čo je priamo pred vami"
+    },
+    "2-5-8 Senzitivita": {
+      "description": "Bez tejto roviny môžete mať výzvy s emocionálnou citlivosťou. Pocity nie sú vždy jasné.",
+      "lesson": "Učíte sa cítiť a dôverovať emóciám",
+      "recommendation": "Denný check-in: Čo cítim práve teraz? Kde v tele to cítim?"
+    },
+    "3-6-9 Inšpirácia": {
+      "description": "Bez tejto roviny môžete hľadať inšpiráciu a kreativitu vonku namiesto vnútri.",
+      "lesson": "Učíte sa nachádzať tvorivú iskru vo vlastnom vnútri",
+      "recommendation": "Doprajte si čas na umenie, prírodu a krásu – živia vašu dušu"
+    },
+    "4-5-6 Saturn": {
+      "description": "Saturnovská rovina učí disciplíne cez obmedzenia. Bez nej sa učíte štruktúre.",
+      "lesson": "Učíte sa trpezlivosti, vytrvalosti a sebadisciplíne",
+      "recommendation": "Malé denné návyky budujú veľké výsledky. Konzistencia je kľúč."
+    },
+    "7-8-9 Oddanosť veci": {
+      "description": "Bez tejto roviny môžete mať výzvy so zameraním na dlhodobé ciele.",
+      "lesson": "Učíte sa oddanosti niečomu väčšiemu než ste vy sami",
+      "recommendation": "Nájdite jednu vec, ktorej sa oddáte celým srdcom"
+    },
+    "1-5-9 Rozvoj": {
+      "description": "Bez roviny rozvoja sa osobný rast deje menej lineárne – viac cez skoky a prebudenia.",
+      "lesson": "Učíte sa trpezlivosti na vlastnej ceste rastu",
+      "recommendation": "Nezrovnávajte sa s inými – vaša cesta je unikátna a správna"
+    },
+    "3-5-7 Vízia": {
+      "description": "Bez roviny vízie môžete mať výzvy s dlhodobým plánovaním a videním za horizont.",
+      "lesson": "Učíte sa dôverovať procesu aj bez jasnej mapy",
+      "recommendation": "Dôverujte intuícii – vaša cesta sa odhaľuje krok za krokom"
+    }
+  }
+}

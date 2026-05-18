@@ -1,0 +1,101 @@
+{
+  "1": {
+    "title": "Vodca",
+    "keywords": ["nezávislosť", "iniciatíva", "odvaha", "originalita"],
+    "description": "Životné číslo 1 symbolizuje ducha priekopníka. Ste tu, aby ste išli vlastnou cestou, viedli príkladom a nebáli sa byť prví. Vaša energia je energia začiatkov, originality a odvahy.",
+    "gift": "Schopnosť ísť vlastnou cestou a inšpirovať ostatných svojou odvahou",
+    "shadow": "Izolácia, egocentrizmus, strach z závislosti na iných",
+    "lesson": "Naučiť sa viesť s pokorou a prijať, že aj nezávislosť potrebuje prepojenie",
+    "recommendation": "Denne si pripomínajte: Moja sila je v autenticite, nie v kontrole. Dovoľte si požiadať o pomoc.",
+    "career": ["podnikanie", "vedenie", "inovácie", "nezávislé profesie"],
+    "relationships": "V partnerstvách potrebujete priestor pre svoju individualitu. Ideálny partner rešpektuje vašu nezávislosť a má vlastnú silnú identitu."
+  },
+  "2": {
+    "title": "Diplomat",
+    "keywords": ["spolupráca", "citlivosť", "harmónia", "intuícia"],
+    "description": "Životné číslo 2 prináša energiu spolupráce, diplomacie a jemnej sily. Vaším darom je schopnosť vidieť obe strany, vytvárať mosty a prinášať harmóniu tam, kde je konflikt.",
+    "gift": "Empatia, diplomacia, schopnosť vytvárať hlboké prepojenia",
+    "shadow": "Strata vlastnej identity v iných, nerozhodnosť, závislosť na schválení",
+    "lesson": "Naučiť sa, že vaše potreby sú rovnako dôležité ako potreby iných",
+    "recommendation": "Denne si vytvorte aspoň 10 minút len pre seba. Pýtajte sa: Čo chcem JA?",
+    "career": ["mediácia", "poradenstvo", "umenie", "tímová práca", "liečiteľstvo"],
+    "relationships": "V vzťahoch ste darom – vaša intuícia a empatia vytvárajú hlboké prepojenie. Chráňte si hranice."
+  },
+  "3": {
+    "title": "Tvorca",
+    "keywords": ["kreativita", "sebavyjadrenie", "radosť", "komunikácia"],
+    "description": "Životné číslo 3 je číslom tvorivého vyjadrenia. Vaša duša sa chce vyjadriť – slovom, obrazom, pohybom, hudbou. Ste tu, aby ste prinášali radosť a krásu do sveta.",
+    "gift": "Kreativita, radosť, schopnosť inšpirovať a zabávať",
+    "shadow": "Povrchnosť, rozptýlenosť, strach z hĺbky a záväzkov",
+    "lesson": "Naučiť sa, že hĺbka neznižuje radosť – práve naopak",
+    "recommendation": "Každý deň stvorte aspoň jednu vec – vetu, kresbu, melódiu. Vaša kreativita je liek.",
+    "career": ["písanie", "umenie", "komunikácia", "učenie", "zábava"],
+    "relationships": "Prinášate ľahkosť a radosť. Hľadajte partnera, ktorý oceňuje vašu hravosť a zároveň vám ponúka hĺbku."
+  },
+  "4": {
+    "title": "Staviteľ",
+    "keywords": ["stabilita", "práca", "systematickosť", "spoľahlivosť"],
+    "description": "Životné číslo 4 je číslom staviteľa. Vaša sila spočíva v schopnosti vytvárať pevné základy – pre seba, rodinu, komunitu. Ste pilierom spoľahlivosti.",
+    "gift": "Spoľahlivosť, systematickosť, schopnosť budovať trvalé hodnoty",
+    "shadow": "Rigidita, strach zo zmeny, workoholizmus, kontrola",
+    "lesson": "Naučiť sa, že flexibilita nie je slabosť a že odpočinok je tiež práca",
+    "recommendation": "Pravidelne si dovoľte neproduktívny čas. Vaša hodnota nie je v tom, čo robíte, ale v tom, kto ste.",
+    "career": ["inžinierstvo", "architektúra", "manažment", "financie", "remeslo"],
+    "relationships": "Ponúkate stabilitu a bezpečie. Potrebujete partnera, ktorý ocení vašu spoľahlivosť a pomôže vám uvoľniť sa."
+  },
+  "5": {
+    "title": "Slobodný duch",
+    "keywords": ["sloboda", "zmena", "dobrodružstvo", "adaptabilita"],
+    "description": "Životné číslo 5 je číslom slobody a zmeny. Vaša duša túži po skúsenostiach, cestovaní a raste cez rôznorodosť. Ste katalyzátorom zmeny.",
+    "gift": "Adaptabilita, sloboda, schopnosť inšpirovať zmeny a rast",
+    "shadow": "Nestálosť, útek pred zodpovednosťou, závislosť na vzrušení",
+    "lesson": "Naučiť sa, že pravá sloboda zahŕňa aj záväzok – voči sebe a svojim hodnotám",
+    "recommendation": "Nájdite slobodu aj v rutine. Nie každá zmena musí byť dramatická – mikro-dobrodružstvá počítajú.",
+    "career": ["cestovanie", "žurnalistika", "predaj", "marketing", "podnikanie"],
+    "relationships": "Potrebujete partnera, ktorý sa nebojí zmeny a dáva vám priestor. Záväzok nie je klietka – je to voľba."
+  },
+  "6": {
+    "title": "Opatrovník",
+    "keywords": ["láska", "zodpovednosť", "krása", "harmónia"],
+    "description": "Životné číslo 6 je číslom srdca a domova. Vaším poslaním je prinášať lásku, krásu a harmóniu. Ste prirodzený opatrovník s hlbokým zmyslom pre zodpovednosť.",
+    "gift": "Bezpodmienečná láska, zmysel pre krásu, schopnosť vytvárať domov",
+    "shadow": "Kontrola cez starostlivosť, perfekcionizmus, obetovanie sa",
+    "lesson": "Naučiť sa, že starostlivosť o seba nie je sebeckosť – je to základ",
+    "recommendation": "Každý deň urobte niečo LEN pre seba, bez pocitu viny. Ste hodní rovnakej lásky, akú dávate.",
+    "career": ["liečiteľstvo", "vzdelávanie", "umenie", "dizajn", "sociálna práca"],
+    "relationships": "Ste darom pre partnerov – ale chráňte sa pred obetovaním. Zdravý vzťah je výmena, nie jednosmerka."
+  },
+  "7": {
+    "title": "Mystik",
+    "keywords": ["múdrosť", "introspekcia", "duchovno", "analýza"],
+    "description": "Životné číslo 7 je číslom hľadača pravdy. Vaša duša túži po pochopení – hlbokom, pravdivom, neobmedzenom. Ste mystik, filozof, vedec duše.",
+    "gift": "Múdrosť, intuícia, hlboké pochopenie podstaty vecí",
+    "shadow": "Izolácia, cynizmus, nedôvera, intelektualizácia emócií",
+    "lesson": "Naučiť sa, že pravá múdrosť zahŕňa srdce aj myseľ – a prepojenie s inými",
+    "recommendation": "Rovnováha medzi samotou a prepojením. Vaša múdrosť rastie aj cez zdieľanie, nie len cez stiahnutie.",
+    "career": ["výskum", "psychológia", "duchovno", "filozofia", "technológie"],
+    "relationships": "Potrebujete partnera, ktorý rešpektuje vaše ticho a zároveň vás jemne volá von z ulity."
+  },
+  "8": {
+    "title": "Mocnár",
+    "keywords": ["sila", "hojnosť", "autorita", "manifestácia"],
+    "description": "Životné číslo 8 je číslom moci a hojnosti. Vaša energia je energia manifestácie – schopnosti premieňať víziu na realitu. Ste tu, aby ste ukázali, že sila a súcit môžu koexistovať.",
+    "gift": "Sila, hojnosť, schopnosť manifestovať a viesť",
+    "shadow": "Manipulácia, posadnutosť mocou, materializmus, strach zo straty",
+    "lesson": "Naučiť sa, že pravá moc je v službe – a že hojnosť zahŕňa aj dávanie",
+    "recommendation": "Pravidelne si pripomínajte: Pre koho používam svoju silu? Moc v službe lásky je najväčšia moc.",
+    "career": ["podnikanie", "financie", "vedenie", "právo", "nehnuteľnosti"],
+    "relationships": "Ste silný partner – ale učte sa zraniteľnosti. Pravá intimita vyžaduje odloženie brnenia."
+  },
+  "9": {
+    "title": "Mudrc",
+    "keywords": ["múdrosť", "súcit", "dovŕšenie", "služba"],
+    "description": "Životné číslo 9 je číslom dovŕšenia a univerzálnej lásky. Vaša duša je stará a múdra – prišli ste dokončiť, uzavrieť a zdieľať nazbieranú múdrosť s ostatnými.",
+    "gift": "Hlboký súcit, múdrosť, schopnosť vidieť celok a inšpirovať",
+    "shadow": "Nadradennosť, únik z reality, neschopnosť pustiť, martýrstvo",
+    "lesson": "Naučiť sa púšťať s vďačnosťou a dôverou, že koniec je vždy aj začiatkom",
+    "recommendation": "Učte sa umeniu dokončovania. Nie každý koniec je strata – niektoré sú darčeky.",
+    "career": ["humanitárna práca", "umenie", "učenie", "liečiteľstvo", "duchovná práca"],
+    "relationships": "Ste hlboký a múdry partner. Učte sa byť prítomní tu a teraz, nie len v ideáloch."
+  }
+}

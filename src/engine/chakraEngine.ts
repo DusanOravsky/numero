@@ -1,0 +1,194 @@
+export interface Chakra {
+  number: number;
+  name: string;
+  sanskrit: string;
+  color: string;
+  colorHex: string;
+  element: string;
+  location: string;
+  themes: string[];
+  balanced: string;
+  blocked: string;
+  hyperactive: string;
+  numerologyNumbers: number[];
+  planets: string[];
+  sefira: string;
+}
+
+export interface ChakraState {
+  chakra: Chakra;
+  status: 'balanced' | 'blocked' | 'hyperactive';
+  score: number;
+  recommendations: string[];
+}
+
+export const CHAKRAS: Chakra[] = [
+  {
+    number: 1,
+    name: 'Koreňová čakra',
+    sanskrit: 'Muladhara',
+    color: 'Červená',
+    colorHex: '#ef4444',
+    element: 'Zem',
+    location: 'Báza chrbtice',
+    themes: ['Bezpečie', 'Prežitie', 'Stabilita', 'Zakorenenie'],
+    balanced: 'Pocit bezpečia, stability, dôvery v život',
+    blocked: 'Strach, úzkosť, nestabilita, finančné problémy',
+    hyperactive: 'Materializmus, chamtivosť, rigidita',
+    numerologyNumbers: [1, 4],
+    planets: ['Saturn', 'Mars'],
+    sefira: 'Malchut',
+  },
+  {
+    number: 2,
+    name: 'Sakrálna čakra',
+    sanskrit: 'Svadhisthana',
+    color: 'Oranžová',
+    colorHex: '#f97316',
+    element: 'Voda',
+    location: 'Pod pupkom',
+    themes: ['Kreativita', 'Emócie', 'Sexualita', 'Radosť'],
+    balanced: 'Kreativita, zdravé vzťahy, radosť zo života',
+    blocked: 'Vina, strata kreativity, emocionálna necitlivosť',
+    hyperactive: 'Emocionálna závislosť, manipulácia',
+    numerologyNumbers: [2, 6],
+    planets: ['Mesiac', 'Venuša'],
+    sefira: 'Jesod',
+  },
+  {
+    number: 3,
+    name: 'Čakra solárneho plexu',
+    sanskrit: 'Manipura',
+    color: 'Žltá',
+    colorHex: '#eab308',
+    element: 'Oheň',
+    location: 'Solárny plexus',
+    themes: ['Sila vôle', 'Sebavedomie', 'Osobná moc', 'Hranice'],
+    balanced: 'Sebadôvera, motivácia, zdravé hranice',
+    blocked: 'Nízke sebavedomie, nerozhodnosť, obeť',
+    hyperactive: 'Kontrola, agresia, perfekcionizmus',
+    numerologyNumbers: [3, 5],
+    planets: ['Slnko', 'Mars'],
+    sefira: 'Hod + Necach',
+  },
+  {
+    number: 4,
+    name: 'Srdcová čakra',
+    sanskrit: 'Anahata',
+    color: 'Zelená',
+    colorHex: '#22c55e',
+    element: 'Vzduch',
+    location: 'Stred hrudníka',
+    themes: ['Láska', 'Súcit', 'Odpustenie', 'Prijatie'],
+    balanced: 'Bezpodmienečná láska, súcit, odpustenie',
+    blocked: 'Uzavretosť, strach z intimity, žiarlivosť',
+    hyperactive: 'Obetovanie sa, závislosť od lásky',
+    numerologyNumbers: [6, 9],
+    planets: ['Venuša', 'Neptún'],
+    sefira: 'Tiferet',
+  },
+  {
+    number: 5,
+    name: 'Krčná čakra',
+    sanskrit: 'Vishuddha',
+    color: 'Modrá',
+    colorHex: '#3b82f6',
+    element: 'Éter',
+    location: 'Hrdlo',
+    themes: ['Komunikácia', 'Pravda', 'Sebavyjadrenie', 'Autenticita'],
+    balanced: 'Jasná komunikácia, autentické vyjadrenie',
+    blocked: 'Strach z vyjadrenia, klamstvo, tichosť',
+    hyperactive: 'Klebety, dominancia v konverzácii',
+    numerologyNumbers: [5, 3],
+    planets: ['Merkúr', 'Jupiter'],
+    sefira: 'Geburah + Chesed',
+  },
+  {
+    number: 6,
+    name: 'Čakra tretieho oka',
+    sanskrit: 'Ajna',
+    color: 'Indigo',
+    colorHex: '#6366f1',
+    element: 'Svetlo',
+    location: 'Stred čela',
+    themes: ['Intuícia', 'Vízia', 'Múdrosť', 'Vnútorné vedenie'],
+    balanced: 'Jasná intuícia, vnútorné vedenie, múdrosť',
+    blocked: 'Zmätenosť, nedôvera intuícii, ilúzie',
+    hyperactive: 'Odpojenie od reality, halucinácie',
+    numerologyNumbers: [7, 11],
+    planets: ['Jupiter', 'Neptún'],
+    sefira: 'Binah + Chokmah',
+  },
+  {
+    number: 7,
+    name: 'Korunná čakra',
+    sanskrit: 'Sahasrara',
+    color: 'Fialová',
+    colorHex: '#a855f7',
+    element: 'Myšlienka',
+    location: 'Temeno hlavy',
+    themes: ['Duchovnosť', 'Prepojenie', 'Jednota', 'Osvietenie'],
+    balanced: 'Duchovné prepojenie, vnútorný mier, jednota',
+    blocked: 'Oddelenie od duchovna, cynizmus, prázdnota',
+    hyperactive: 'Duchovná posadnutosť, odpojenie od tela',
+    numerologyNumbers: [9, 7],
+    planets: ['Urán', 'Neptún'],
+    sefira: 'Keter',
+  },
+];
+
+export function evaluateChakras(
+  lifePathNumber: number,
+  gridCounts: Map<number, number>,
+  isolatedNumbers: number[],
+  definedHDCenters: string[],
+  dominantElement: string
+): ChakraState[] {
+  return CHAKRAS.map(chakra => {
+    let score = 50;
+
+    chakra.numerologyNumbers.forEach(n => {
+      const count = gridCounts.get(n) || 0;
+      if (count === 0) score -= 15;
+      else if (count === 1) score += 5;
+      else if (count === 2) score += 10;
+      else if (count >= 3) score += 20;
+
+      if (isolatedNumbers.includes(n)) score -= 10;
+    });
+
+    if (chakra.number === 1 && definedHDCenters.includes('Koreň')) score += 10;
+    if (chakra.number === 2 && definedHDCenters.includes('Sakrálne')) score += 10;
+    if (chakra.number === 3 && definedHDCenters.includes('Solárny plexus')) score += 10;
+    if (chakra.number === 4 && definedHDCenters.includes('Srdce/Ego')) score += 10;
+    if (chakra.number === 5 && definedHDCenters.includes('Hrdlo')) score += 10;
+    if (chakra.number === 6 && definedHDCenters.includes('Ajna')) score += 10;
+    if (chakra.number === 7 && definedHDCenters.includes('Hlava')) score += 10;
+
+    if (chakra.element === 'Oheň' && dominantElement === 'Oheň') score += 10;
+    if (chakra.element === 'Voda' && dominantElement === 'Voda') score += 10;
+    if (chakra.element === 'Zem' && dominantElement === 'Zem') score += 10;
+    if (chakra.element === 'Vzduch' && dominantElement === 'Vzduch') score += 10;
+
+    if (lifePathNumber === chakra.number) score += 15;
+
+    score = Math.max(0, Math.min(100, score));
+
+    let status: 'balanced' | 'blocked' | 'hyperactive';
+    if (score >= 70) status = 'hyperactive';
+    else if (score >= 35) status = 'balanced';
+    else status = 'blocked';
+
+    const recommendations: string[] = [];
+    if (status === 'blocked') {
+      recommendations.push(`Venujte pozornosť oblasti: ${chakra.themes.join(', ')}`);
+      recommendations.push(`Meditácia na farbu: ${chakra.color}`);
+      recommendations.push(`Afirmácia: "Otváram sa energii ${chakra.name.toLowerCase()}."`);
+    } else if (status === 'hyperactive') {
+      recommendations.push(`Uzemňovacia prax pre ${chakra.name.toLowerCase()}`);
+      recommendations.push('Rovnováha medzi dávaním a prijímaním');
+    }
+
+    return { chakra, status, score, recommendations };
+  });
+}

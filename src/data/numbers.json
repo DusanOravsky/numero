@@ -1,0 +1,65 @@
+{
+  "1": {
+    "positive": ["začiatok", "aktivita", "dynamika", "cieľavedomosť", "samostatnosť", "ja", "ego", "verbálny prejav"],
+    "negative": ["pýcha", "panovačnosť", "sebectvo", "nespolupráca", "precitlivenosť", "agresivita", "útočnosť"],
+    "level": "fyzická",
+    "energy": "mužská",
+    "element": "oheň"
+  },
+  "2": {
+    "positive": ["intuícia", "trpezlivosť", "citlivosť", "tolerancia", "dualita", "partnerstvo", "spolupráca", "bio energia"],
+    "negative": ["nerozhodnosť", "náladovosť", "závislosť", "strachy", "nestálosť", "vnucovanie sa"],
+    "level": "emočná",
+    "energy": "ženská",
+    "element": "voda"
+  },
+  "3": {
+    "positive": ["kreativita", "mentálny postreh", "tvorivosť", "rozmach", "rast", "expanzia", "výkonnosť"],
+    "negative": ["vypočítavosť", "klamstvo", "nezodpovednosť", "povrchnosť", "arogancia", "špekulácie"],
+    "level": "duchovná",
+    "energy": "mužská",
+    "element": "oheň"
+  },
+  "4": {
+    "positive": ["manuálna zručnosť", "stabilita", "pracovitosť", "potreba vlastniť", "odvaha", "organizačné schopnosti"],
+    "negative": ["nedôverčivosť", "lakomosť", "lenivosť", "agresivita", "hystéria", "neistota", "stereotyp"],
+    "level": "fyzická",
+    "energy": "ženská",
+    "element": "zem"
+  },
+  "5": {
+    "positive": ["rýchlosť", "pohyb", "vodcovstvo", "riadenie", "zmeny", "zvraty", "sloboda", "dobrodružstvo"],
+    "negative": ["napätie", "nervozita", "panovačnosť", "nepokoj", "prísnosť", "márnotratnosť"],
+    "level": "emočná",
+    "energy": "mužská",
+    "element": "vzduch"
+  },
+  "6": {
+    "positive": ["láska", "rodina", "vzťahy", "domov", "matka", "žena", "estetické cítenie", "istota", "vyrovnanosť", "veľkorysosť"],
+    "negative": ["naivita", "nepriebojnosť", "požívačnosť", "intrigánstvo", "povrchnosť", "nenávisť"],
+    "level": "duchovná",
+    "energy": "ženská",
+    "element": "voda"
+  },
+  "7": {
+    "positive": ["liečiteľské schopnosti", "ochota", "ústretovosť", "pochopenie", "láskavosť", "poznanie", "pokora"],
+    "negative": ["sklony k nehodám", "lakomosť", "rebélia", "snobizmus", "násilie", "sarkazmus", "krivdy", "dotieravosť"],
+    "level": "fyzická",
+    "energy": "ženská",
+    "element": "zem"
+  },
+  "8": {
+    "positive": ["hojnosť", "peniaze", "obchod", "moc", "otec", "muž", "spravodlivosť", "logika", "prosperita", "nezávislosť"],
+    "negative": ["pomstychtivosť", "chamtivosť", "nadradenosť", "deštruktívnosť", "fanatizmus"],
+    "level": "emočná",
+    "energy": "mužská",
+    "element": "oheň"
+  },
+  "9": {
+    "positive": ["múdrosť", "pochopenie", "systém", "zavŕšenie diela", "analytické schopnosti", "sila", "bojovnosť"],
+    "negative": ["diktátorstvo", "veliteľstvo", "nadradenosť", "hašterivosť", "pokrytectvo", "chaos", "žiarlivosť"],
+    "level": "duchovná",
+    "energy": "mužská",
+    "element": "oheň"
+  }
+}

@@ -4,6 +4,7 @@ import { useStore } from '../store/useStore';
 import { GlassCard } from '../components/GlassCard';
 import { VibrationCard } from '../components/VibrationCard';
 import { calculateORV, calculateOMV, calculateODV, reduceToSingle } from '../engine/numerologyEngine';
+import { orvDescriptions } from '../data/orvDescriptions';
 
 export function Dashboard() {
   const navigate = useNavigate();

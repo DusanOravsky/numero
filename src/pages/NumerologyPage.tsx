@@ -216,8 +216,8 @@ export function NumerologyPage() {
                   description="Suma tarotu (ΣT) je súčet celého dátumu narodenia bez redukcie. Určuje, či osoba patrí do Veku Rýb (< 2000, duchovná introspekcia) alebo Veku Vodnára (>= 2000, nové paradigmy a technológie)."
                 />
                 <VibrationCard
-                  title="Vek"
-                  value={result.age === 'aquarius' ? 0 : 0}
+                  title="Kozmický vek"
+                  value={result.sigmaT >= 2000 ? 2 : 1}
                   subtitle={result.age === 'aquarius' ? 'Vodnár' : 'Ryby'}
                   icon="⚛"
                   color="indigo"

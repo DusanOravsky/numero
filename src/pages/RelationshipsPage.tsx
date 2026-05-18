@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { GlassCard } from '../components/GlassCard';
-import { calculateFullNumerology } from '../engine/numerologyEngine';
+import { calculateFullNumerology, reduceToSingle } from '../engine/numerologyEngine';
 import { calculatePartnerCompatibility, calculateParentChild } from '../engine/compatibilityEngine';
 import type { CompatibilityResult, ParentChildResult } from '../engine/compatibilityEngine';
 import { motion } from 'framer-motion';
@@ -106,6 +106,13 @@ export function RelationshipsPage() {
       {/* PARTNERSKÝ MÓD */}
       {mode === 'partner' && !compatibility && (
         <GlassCard>
+          <p className="text-sm text-slate-400 mb-4">
+            <strong className="text-white">Partnerský výklad</strong> porovnáva numerologické profily dvoch osôb -- životné čísla, roviny, jazyky lásky a ročné vibrácie. Výsledkom je celková kompatibilita, silné stránky a výzvy vzťahu, plus <strong className="text-rose-300">Cieľ vzťahu</strong> (súčet životných čísel = vyšší zmysel partnerstva).
+          </p>
+        </GlassCard>
+      )}
+      {mode === 'partner' && !compatibility && (
+        <GlassCard>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <PersonForm person={partner1} onChange={setPartner1} label="Partner 1" />
             <PersonForm person={partner2} onChange={setPartner2} label="Partner 2" />
@@ -145,6 +152,46 @@ export function RelationshipsPage() {
               <p className="text-sm text-slate-400">Celková kompatibilita</p>
             </div>
           </GlassCard>
+
+          {/* Cieľ vzťahu */}
+          {(() => {
+            const p1Num = calculateFullNumerology(parseInt(partner1.day), parseInt(partner1.month), parseInt(partner1.year));
+            const p2Num = calculateFullNumerology(parseInt(partner2.day), parseInt(partner2.month), parseInt(partner2.year));
+            const relationshipGoal = reduceToSingle(p1Num.lifePathNumber + p2Num.lifePathNumber);
+            const goalDescriptions: Record<number, string> = {
+              1: 'Cieľom tohto vzťahu je vzájomná nezávislosť a podpora individuality. Spolu sa učíte byť silnými jednotlivcami, ktorí sa navzájom inšpirujú k vedeniu a odvaze.',
+              2: 'Cieľom tohto vzťahu je harmonická spolupráca a vzájomná podpora. Učíte sa diplomacii, trpezlivosti a jemnému prepojeniu duší.',
+              3: 'Cieľom tohto vzťahu je spoločná kreativita a radosť. Spolu tvoríte, komunikujete a zdieľate svoju radosť so svetom.',
+              4: 'Cieľom tohto vzťahu je budovanie stabilných základov. Spolu vytvárate bezpečie, štruktúru a trvalé hodnoty pre seba aj okolie.',
+              5: 'Cieľom tohto vzťahu je spoločný rast cez zmeny a nové skúsenosti. Učíte sa slobode v rámci vzťahu a adaptabilite.',
+              6: 'Cieľom tohto vzťahu je bezpodmienečná láska a služba. Spolu vytvárate harmonický domov a staráte sa o seba aj komunitu.',
+              7: 'Cieľom tohto vzťahu je duchovný rast a hlboké pochopenie. Spolu hľadáte pravdu, múdrosť a vnútorný pokoj.',
+              8: 'Cieľom tohto vzťahu je spoločná manifestácia a budovanie hojnosti. Spolu dosahujete veľké veci v materiálnom aj duchovnom svete.',
+              9: 'Cieľom tohto vzťahu je univerzálna láska a služba ľudstvu. Spolu sa učíte odpúšťať, púšťať a slúžiť vyššiemu dobru.',
+            };
+            return (
+              <GlassCard>
+                <h3 className="font-medium text-white mb-2">Cieľ vzťahu</h3>
+                <p className="text-xs text-slate-400 mb-3">Cieľ vzťahu = súčet životných čísel oboch partnerov, redukovaný na jednociferné číslo. Ukazuje vyšší zmysel a spoločnú lekciu vášho vzťahu.</p>
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-slate-400">ŽČ({partner1.name}):</span>
+                    <span className="text-lg font-bold text-indigo-300">{p1Num.lifePathNumber}</span>
+                  </div>
+                  <span className="text-slate-500">+</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-slate-400">ŽČ({partner2.name}):</span>
+                    <span className="text-lg font-bold text-indigo-300">{p2Num.lifePathNumber}</span>
+                  </div>
+                  <span className="text-slate-500">=</span>
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-rose-500 to-pink-500 flex items-center justify-center">
+                    <span className="text-lg font-serif font-bold text-white">{relationshipGoal}</span>
+                  </div>
+                </div>
+                <p className="text-sm text-slate-300">{goalDescriptions[relationshipGoal]}</p>
+              </GlassCard>
+            );
+          })()}
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <GlassCard>

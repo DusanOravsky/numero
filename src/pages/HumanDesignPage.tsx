@@ -5,6 +5,7 @@ import { EnergyCard } from '../components/EnergyCard';
 import { DateInput } from '../components/DateInput';
 import { calculateHumanDesign, CENTER_THEMES } from '../engine/humanDesignEngine';
 import type { HumanDesignResult } from '../engine/humanDesignEngine';
+import { Bodygraph } from '../components/Bodygraph';
 import { motion } from 'framer-motion';
 
 const TYPE_DESCRIPTIONS: Record<string, string> = {
@@ -110,6 +111,11 @@ export function HumanDesignPage() {
             </GlassCard>
           </div>
 
+          <GlassCard>
+            <h3 className="font-medium text-white mb-4 text-center">Bodygraph</h3>
+            <Bodygraph result={result} />
+          </GlassCard>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <EnergyCard title="Profil" value={`${result.profile.line1}/${result.profile.line2}`} subtitle={result.profile.name} color="indigo" delay={0.1} />
             <EnergyCard title="Inkarnačný kríž" value="✝" subtitle={result.incarnationCross} color="gold" delay={0.2} />
@@ -119,7 +125,8 @@ export function HumanDesignPage() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <GlassCard>
-              <h3 className="font-medium text-white mb-4">Definované centrá</h3>
+              <h3 className="font-medium text-white mb-2">Definované centrá</h3>
+              <p className="text-xs text-slate-400 mb-3">Definované centrá sú vaše konzistentné a spoľahlivé energie. Tu máte stabilnú energiu, na ktorú sa môžete spoľahnúť.</p>
               <div className="space-y-2">
                 {result.definedCenters.map((center, idx) => (
                   <motion.div
@@ -137,8 +144,8 @@ export function HumanDesignPage() {
             </GlassCard>
 
             <GlassCard>
-              <h3 className="font-medium text-white mb-4">Otvorené centrá</h3>
-              <p className="text-xs text-slate-400 mb-3">Oblasti učenia a múdrosti – nie slabosti</p>
+              <h3 className="font-medium text-white mb-2">Otvorené centrá</h3>
+              <p className="text-xs text-slate-400 mb-3">Otvorené centrá nie sú slabosti -- sú to oblasti, kde absorbujete a zosilňujete energiu okolia. Práve tu sa učíte a získavate múdrosť, ak sa nenechávate kondicionovať.</p>
               <div className="space-y-2">
                 {result.openCenters.map((center, idx) => (
                   <motion.div
@@ -146,10 +153,13 @@ export function HumanDesignPage() {
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: idx * 0.05 }}
-                    className="flex items-center justify-between p-3 rounded-xl bg-amber-500/10 border border-amber-500/20"
+                    className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20"
                   >
-                    <span className="text-sm font-medium text-amber-300">{center}</span>
-                    <span className="text-xs text-slate-400">Oblasť múdrosti</span>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-amber-300">{center}</span>
+                      <span className="text-xs text-slate-400">{CENTER_THEMES[center] || ''}</span>
+                    </div>
+                    <p className="text-xs text-slate-500 mt-1">Zosilňujete túto energiu od ostatných. Otázka: "Je to moja energia alebo cudzia?"</p>
                   </motion.div>
                 ))}
               </div>

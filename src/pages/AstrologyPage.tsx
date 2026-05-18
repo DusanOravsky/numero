@@ -165,8 +165,8 @@ export function AstrologyPage() {
   const profile = profiles.find(p => p.id === activeProfileId);
   const [result, setResult] = useState<AstrologyResult | null>(null);
 
-  const handleCalculate = (day: number, month: number, year: number, hour?: number, minute?: number) => {
-    setResult(calculateAstrology(day, month, year, hour || 12, minute || 0));
+  const handleCalculate = (day: number, month: number, year: number, hour?: number, minute?: number, lat?: number, lon?: number) => {
+    setResult(calculateAstrology(day, month, year, hour || 12, minute || 0, lat || 48.15, lon || 17.11));
   };
 
   useEffect(() => {
@@ -184,7 +184,7 @@ export function AstrologyPage() {
 
       {!result && (
         <GlassCard>
-          <DateInput onSubmit={handleCalculate} showTime label="Dátum a čas narodenia" />
+          <DateInput onSubmit={handleCalculate} showTime showPlace label="Dátum a čas narodenia" />
         </GlassCard>
       )}
 

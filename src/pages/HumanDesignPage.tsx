@@ -108,8 +108,8 @@ export function HumanDesignPage() {
   const profile = profiles.find(p => p.id === activeProfileId);
   const [result, setResult] = useState<HumanDesignResult | null>(null);
 
-  const handleCalculate = (day: number, month: number, year: number, hour?: number, minute?: number) => {
-    setResult(calculateHumanDesign(day, month, year, hour || 12, minute || 0));
+  const handleCalculate = (day: number, month: number, year: number, hour?: number, minute?: number, lat?: number, lon?: number) => {
+    setResult(calculateHumanDesign(day, month, year, hour || 12, minute || 0)); void lat; void lon;
   };
 
   useEffect(() => {
@@ -135,7 +135,7 @@ export function HumanDesignPage() {
 
       {!result && (
         <GlassCard>
-          <DateInput onSubmit={handleCalculate} showTime label="Dátum a čas narodenia (pre presný HD)" />
+          <DateInput onSubmit={handleCalculate} showTime showPlace label="Dátum a čas narodenia (pre presný HD)" />
         </GlassCard>
       )}
 

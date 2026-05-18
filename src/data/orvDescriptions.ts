@@ -96,3 +96,19 @@ export const loveLanguageDescriptions: Record<string, { description: string; exa
 
 // Popis skórovania jazykov lásky
 export const loveLanguageScoringExplanation = `Skóre jazykov lásky sa vypočítava z numerologickej mriežky. Každý jazyk lásky zodpovedá určitým číselným rovným v mriežke. Čím viac čísel v danej rovine máte, tým silnejšie je vaše prirodzené vyjadrenie tohto jazyka. Záporné skóre neznamená neschopnosť – len to, že tento jazyk nie je váš primárny a vyžaduje vedomé úsilie.`;
+
+// Popis Vek Vodnára vs Vek Rýb
+export const cosmicAgeDescriptions: Record<string, { title: string; description: string; traits: string; relationship: string }> = {
+  aquarius: {
+    title: 'Vek Vodnára',
+    description: 'Osoba narodená vo Veku Vodnára (ΣT ≥ 2000) prináša na svet novú energiu. Prirodzene myslí inovatívne, je otvorená technológiám, komunite a kolektívnemu vedomiu. Menej sa viaže na tradície a autority – hľadá vlastnú pravdu.',
+    traits: 'Nezávislosť v myslení, orientácia na budúcnosť, humanitárne hodnoty, technologická gramotnosť, odpor voči hierarchiám, potreba autenticity a slobody.',
+    relationship: 'Vo vzťahoch hľadá rovnocennosť a mentálne prepojenie. Partner musí byť najprv priateľ. Tradičné roly im nesedia – preferujú partnerstvo založené na vzájomnom rešpekte a slobode.',
+  },
+  pisces: {
+    title: 'Vek Rýb',
+    description: 'Osoba narodená vo Veku Rýb (ΣT < 2000) nesie energiu staršieho kozmického cyklu. Je hlbšie prepojená s tradíciami, duchovno, emóciami a kolektívnym nevedomím. Cíti silnejšie prepojenie s minulosťou a koreňmi.',
+    traits: 'Emočná hĺbka, silná intuícia, prepojenie s duchovno a tradíciami, empatia, obetavosť, schopnosť cítiť "neviditeľné", tendencia k idealizmu.',
+    relationship: 'Vo vzťahoch hľadá hlboké emocionálne prepojenie a duchovnú blízkosť. Má tendenciu obetovať sa pre partnera. Potrebuje partnera, ktorý ocení ich citlivosť a nebude ju zneužívať.',
+  },
+};

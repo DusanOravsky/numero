@@ -13,7 +13,7 @@ import type { NameNumerologyResult } from '../engine/nameNumerologyEngine';
 import lifePathsData from '../data/lifePaths.json';
 import isolatedData from '../data/isolatedNumbers.json';
 import planesData from '../data/planes.json';
-import { orvDescriptions, loveLanguageDescriptions, loveLanguageScoringExplanation } from '../data/orvDescriptions';
+import { orvDescriptions, loveLanguageDescriptions, loveLanguageScoringExplanation, cosmicAgeDescriptions } from '../data/orvDescriptions';
 import { cycleVibrationDescriptions } from '../data/planetSignDescriptions';
 
 const planesInfo = planesData as { full: Record<string, { description: string; gift: string; recommendation: string }>; empty: Record<string, { description: string; lesson: string; recommendation: string }> };
@@ -460,8 +460,8 @@ export function NumerologyPage() {
 
               <GlassCard>
                 <h4 className="text-sm text-cyan-300 font-medium mb-2">ΣT – Suma tarotu (Tarotové brány)</h4>
-                <p className="text-xs text-slate-400 mb-3">Suma tarotu = súčet celého dátumu narodenia. Vyjadruje spoločné vibrácie a schopnosť komunikovať. Hodnota pod 2000 = Vek Rýb (duchovná cesta), nad 2000 = Vek Vodnára (nový prístup).</p>
-                <div className="flex items-center gap-4">
+                <p className="text-xs text-slate-400 mb-3">Suma tarotu = súčet celého dátumu narodenia (deň + mesiac + rok bez redukcie). Určuje kozmický vek – aká kolektívna energia vás sprevádzala pri narodení.</p>
+                <div className="flex items-center gap-4 mb-4">
                   <div>
                     <p className="text-xs text-slate-400">ΣT = D + M + R</p>
                     <p className="text-2xl font-bold text-white">{result.sigmaT}</p>
@@ -470,6 +470,25 @@ export function NumerologyPage() {
                     {result.age === 'aquarius' ? 'Vek Vodnára (≥ 2000)' : 'Vek Rýb (< 2000)'}
                   </div>
                 </div>
+                {(() => {
+                  const ageInfo = cosmicAgeDescriptions[result.age];
+                  return ageInfo ? (
+                    <div className="space-y-2 p-3 rounded-xl bg-slate-50 border border-slate-200">
+                      <p className="text-sm font-medium text-slate-800">{ageInfo.title}</p>
+                      <p className="text-xs text-slate-600">{ageInfo.description}</p>
+                      <div className="grid grid-cols-2 gap-2 mt-2">
+                        <div className="p-2 rounded-lg bg-white">
+                          <p className="text-[10px] text-indigo-600 uppercase">Vlastnosti</p>
+                          <p className="text-xs text-slate-600">{ageInfo.traits}</p>
+                        </div>
+                        <div className="p-2 rounded-lg bg-white">
+                          <p className="text-[10px] text-rose-600 uppercase">Vzťahy</p>
+                          <p className="text-xs text-slate-600">{ageInfo.relationship}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ) : null;
+                })()}
               </GlassCard>
             </div>
           )}

@@ -419,9 +419,81 @@ export function ClientDashboard() {
 
       {/* KOMPLETNY PROFIL EXPORT */}
       <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8 }}>
-        <h2 className="font-serif text-xl font-bold text-slate-300 mb-3">Kompletny profil</h2>
+        <h2 className="font-serif text-xl font-bold text-slate-300 mb-3">Kompletný profil</h2>
         <GlassCard>
-          <p className="text-sm text-slate-400 mb-4">Exportujte kompletny textovy profil klienta so vsetkymi vysledkami do textoveho suboru.</p>
+          <p className="text-sm text-slate-400 mb-4">Exportujte kompletný profil klienta so všetkými výsledkami.</p>
+          <div className="flex gap-3 flex-wrap">
+          <button
+            onClick={() => {
+              import('jspdf').then(({ jsPDF }) => {
+                const doc = new jsPDF();
+                const lpKey = String(numerology.lifePathNumber > 9 ? reduceToSingle(numerology.lifePathNumber) : numerology.lifePathNumber);
+                const lpTitle = lifePaths[lpKey]?.title || '';
+                const lpDesc = lifePaths[lpKey]?.description || '';
+                let y = 20;
+
+                const addTitle = (text: string) => { doc.setFontSize(16); doc.setFont('helvetica', 'bold'); doc.text(text, 105, y, { align: 'center' }); y += 10; };
+                const addSection = (text: string) => { if (y > 260) { doc.addPage(); y = 20; } doc.setFontSize(12); doc.setFont('helvetica', 'bold'); doc.text(text, 14, y); y += 8; };
+                const addLine = (text: string) => { if (y > 270) { doc.addPage(); y = 20; } doc.setFontSize(10); doc.setFont('helvetica', 'normal'); const lines = doc.splitTextToSize(text, 180); doc.text(lines, 14, y); y += lines.length * 5 + 2; };
+                const addSpace = () => { y += 5; };
+
+                addTitle('INTEGRALNY PROFIL');
+                doc.setFontSize(11); doc.setFont('helvetica', 'normal');
+                doc.text(`${client.name} | ${client.birthDay}.${client.birthMonth}.${client.birthYear}`, 105, y, { align: 'center' }); y += 15;
+
+                addSection('NUMEROLOGIA');
+                addLine(`Zivotne cislo: ${numerology.lifePathNumber} z ${numerology.lifePathFrom} - ${lpTitle}`);
+                addLine(lpDesc);
+                addLine(`ORV: ${numerology.orv} | OMV: ${numerology.omv} | ODV: ${numerology.odv}`);
+                addLine(`VDD: ${numerology.vdd} rokov | Plne roviny: ${numerology.fullPlanes.join(', ') || 'ziadne'}`);
+                addLine(`Prazdne roviny: ${numerology.emptyPlanes.join(', ') || 'ziadne'}`);
+                if (numerology.isolatedNumbers.length > 0) addLine(`Izolovane cisla: ${numerology.isolatedNumbers.join(', ')}`);
+                addSpace();
+
+                addSection('KARMICKE CYKLY');
+                numerology.karmicTriangles.forEach(t => {
+                  addLine(`${t.label}: ${t.fromAge}-${t.toAge || '∞'} r. | Vibracia ${t.vibration} - ${cycleVibrationDescriptions[t.vibration] || ''}`);
+                });
+                addSpace();
+
+                addSection('ASTROLOGIA');
+                addLine(`Slnko: ${astrology.sunSign.name} (${astrology.sunSign.element}) - ${planetInSignDescriptions['Slnko']?.[astrology.sunSign.name] || ''}`);
+                addLine(`Mesiac: ${astrology.moonSign.name} (${astrology.moonSign.element}) - ${planetInSignDescriptions['Mesiac']?.[astrology.moonSign.name] || ''}`);
+                addLine(`Ascendent: ${astrology.ascendant.name} (${astrology.ascendant.element})`);
+                addLine(`Dominantny zivel: ${astrology.dominantElement} | Kvalita: ${astrology.dominantQuality}`);
+                addSpace();
+
+                addSection('HUMAN DESIGN');
+                addLine(`Typ: ${humanDesign.type} | Autorita: ${humanDesign.authority}`);
+                addLine(`Strategia: ${humanDesign.strategy}`);
+                addLine(`Profil: ${humanDesign.profile.line1}/${humanDesign.profile.line2} - ${humanDesign.profile.name}: ${humanDesign.profile.description}`);
+                addLine(`Inkarnacny kriz: ${humanDesign.incarnationCross}`);
+                addLine(`Definovane centra: ${humanDesign.definedCenters.join(', ')}`);
+                addLine(`Otvorene centra: ${humanDesign.openCenters.join(', ')}`);
+                addSpace();
+
+                addSection('JAZYKY LASKY');
+                numerology.loveLanguages.forEach((l, i) => addLine(`${i + 1}. ${l.language}: ${l.score} bodov`));
+                addSpace();
+
+                addSection('THETA HEALING - Limitujuce presvedcenia');
+                theta.primaryBeliefs.forEach(b => addLine(`"${b.belief}" (${b.level}, ${b.emotion})`));
+                addSpace();
+
+                addSection('KABALA');
+                addLine(`Primarna sefira: ${kabalah.primarySefira.name} (${kabalah.primarySefira.meaning})`);
+                addLine(`Cin v Malchut: ${kabalah.malchutAction}`);
+
+                doc.setFontSize(8); doc.setFont('helvetica', 'italic');
+                doc.text(`Vygenerovane: ${new Date().toLocaleDateString('sk-SK')} | Integralna mapa bytia`, 105, 285, { align: 'center' });
+
+                doc.save(`profil-${client.name.replace(/\s+/g, '-').toLowerCase()}.pdf`);
+              });
+            }}
+            className="px-6 py-3 rounded-xl bg-indigo-600 text-white font-medium hover:bg-indigo-500 transition-colors"
+          >
+            Exportovať PDF
+          </button>
           <button
             onClick={() => {
               const gridNumbers: string[] = [];
@@ -547,8 +619,63 @@ export function ClientDashboard() {
             }}
             className="px-6 py-3 rounded-xl bg-indigo-600 text-white font-medium hover:bg-indigo-500 transition-colors"
           >
-            Exportovat textovy profil
+            Exportovať TXT
           </button>
+          </div>
+        </GlassCard>
+
+        {/* HOLISTICKY SUMAR */}
+        <GlassCard>
+          <h3 className="font-serif text-lg font-bold text-slate-800 mb-3">Integrálny súhrn osobnosti</h3>
+          <div className="space-y-4 text-sm text-slate-600 leading-relaxed">
+            <p>
+              <strong className="text-slate-800">{client.name}</strong> je osobnosť s životným číslom <strong>{numerology.lifePathNumber}</strong> ({lpInfo?.title || ''}).
+              {lpInfo?.description ? ` ${lpInfo.description.split('.').slice(0, 2).join('.')}.` : ''}
+            </p>
+
+            <p>
+              Z pohľadu astrológie je Slnko v <strong>{astrology.sunSign.name}</strong> ({astrology.sunSign.element}),
+              čo prináša {planetInSignDescriptions['Slnko']?.[astrology.sunSign.name]?.split('.')[0] || 'unikátnu energiu'}.
+              Mesiac v <strong>{astrology.moonSign.name}</strong> ukazuje, že emocionálne {planetInSignDescriptions['Mesiac']?.[astrology.moonSign.name]?.split('.')[0]?.toLowerCase() || 'má hlboký vnútorný svet'}.
+              Ascendent v <strong>{astrology.ascendant.name}</strong> určuje prvý dojem, ktorý na ostatných robí.
+            </p>
+
+            <p>
+              V systéme Human Design je <strong>{humanDesign.type}</strong> s <strong>{humanDesign.authority}</strong> autoritou.
+              Stratégia "{humanDesign.strategy}" naznačuje, ako by mal správne vstupovať do rozhodnutí.
+              Profil {humanDesign.profile.line1}/{humanDesign.profile.line2} ({humanDesign.profile.name}) – {humanDesign.profile.description}
+            </p>
+
+            <p>
+              {numerology.fullPlanes.length > 0 && `Silné stránky (plné roviny): ${numerology.fullPlanes.join(', ')}. `}
+              {numerology.emptyPlanes.length > 0 && `Oblasti rastu (prázdne roviny): ${numerology.emptyPlanes.join(', ')}. `}
+              {numerology.isolatedNumbers.length > 0 && `Izolované energie (${numerology.isolatedNumbers.join(', ')}) naznačujú oblasti vyžadujúce vedomú integráciu. `}
+            </p>
+
+            <p>
+              Primárny jazyk lásky je <strong>{numerology.loveLanguages[0]?.language || '-'}</strong> –
+              {numerology.loveLanguages[0]?.language === 'Fyzický dotyk' ? ' potrebuje fyzickú blízkosť a dotyky na vyjadrenie a prijímanie lásky.' :
+               numerology.loveLanguages[0]?.language === 'Slová uistenia' ? ' potrebuje počuť slová uznania, ocenenia a lásky.' :
+               numerology.loveLanguages[0]?.language === 'Kvalitný čas' ? ' potrebuje plnú pozornosť a spoločne strávený čas.' :
+               numerology.loveLanguages[0]?.language === 'Obdarovávanie' ? ' oceňuje premyslené dary a zdieľanie materiálnych hodnôt.' :
+               ' oceňuje praktické skutky služby a pomoci.'}
+            </p>
+
+            <p>
+              Aktuálne sa nachádza v osobnom roku <strong>{numerology.orv}</strong> ({orvDescriptions[numerology.orv]?.title || ''}) –
+              {orvDescriptions[numerology.orv]?.theme || ''}. VDD nastáva v {numerology.vdd} rokoch.
+            </p>
+
+            <p>
+              Hlavná kabalastická energia: <strong>{kabalah.primarySefira.name}</strong> ({kabalah.primarySefira.meaning}) –
+              dar: {kabalah.primarySefira.gift?.split('.')[0]}. Tieň: {kabalah.primarySefira.shadow?.split('.')[0]}.
+            </p>
+
+            <p>
+              Na hlbšej úrovni (Theta Healing) môže niesť presvedčenie: <em>"{theta.primaryBeliefs[0]?.belief}"</em>
+              ({theta.primaryBeliefs[0]?.level}). Transformácia cez uvedomenie a nahradenie novým presvedčením.
+            </p>
+          </div>
         </GlassCard>
       </motion.section>
     </div>

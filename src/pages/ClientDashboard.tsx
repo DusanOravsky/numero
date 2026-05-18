@@ -22,7 +22,7 @@ import { calculatePartnerCompatibility, calculateParentChild } from '../engine/c
 import { reduceToSingle } from '../engine/numerologyEngine';
 import lifePathsData from '../data/lifePaths.json';
 import { planetInSignDescriptions, cycleVibrationDescriptions } from '../data/planetSignDescriptions';
-import { orvDescriptions, loveLanguageDescriptions } from '../data/orvDescriptions';
+import { orvDescriptions } from '../data/orvDescriptions';
 
 const lifePaths = lifePathsData as Record<string, { title: string; keywords: string[]; description: string; gift: string; shadow: string }>;
 
@@ -443,7 +443,7 @@ export function ClientDashboard() {
 
               const sunDesc = planetInSignDescriptions['Slnko']?.[astrology.sunSign.name] || '';
               const moonDesc = planetInSignDescriptions['Mesiac']?.[astrology.moonSign.name] || '';
-              const ascDesc = planetInSignDescriptions['Merkur']?.[astrology.ascendant.name] || '';
+              const ascDesc = `Vystupujuci znak na horizonte pri narodeni - urcuje vonkajsi prejav a prvy dojem`;
 
               const primaryLoveLang = numerology.loveLanguages[0];
 

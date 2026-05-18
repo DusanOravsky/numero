@@ -17,6 +17,7 @@ export interface NumerologyResult {
   sigmaT: number;
   age: 'pisces' | 'aquarius';
   loveLanguages: { language: string; score: number }[];
+  karmicTriangles: KarmicTriangle[];
   dayReduction: number;
   monthReduction: number;
   yearReduction: number;
@@ -197,7 +198,44 @@ export function calculateVDD(lifePathNumber: number): { vdd: number; oddPeriod: 
 
 export function calculateSigmaT(day: number, month: number, year: number): { value: number; age: 'pisces' | 'aquarius' } {
   const value = day + month + year;
-  return { value, age: year >= 2000 ? 'aquarius' : 'pisces' };
+  return { value, age: value >= 2000 ? 'aquarius' : 'pisces' };
+}
+
+export interface KarmicTriangle {
+  cycle: number;
+  label: string;
+  fromAge: number;
+  toAge: number | null;
+  vibration: number;
+  influence: string;
+  description: string;
+}
+
+export function calculateKarmicTriangles(day: number, month: number, year: number, lifePathNumber: number): KarmicTriangle[] {
+  const dayRed = reduceToSingle(day);
+  const monthRed = reduceToSingle(month);
+  const yearRed = reduceToSingle(String(year).split('').reduce((s, d) => s + parseInt(d, 10), 0));
+
+  const lpBase = lifePathNumber > 9 ? reduceToSingle(lifePathNumber) : lifePathNumber;
+  const vdd = 36 - lpBase;
+  const odd = Math.round(vdd / 3);
+
+  const k1Vibration = reduceToSingle(monthRed + dayRed, true);
+  const k2Vibration = reduceToSingle(dayRed + yearRed, true);
+  const k3Vibration = reduceToSingle(k1Vibration + k2Vibration, true);
+  const k4Vibration = reduceToSingle(monthRed + yearRed, true);
+
+  const triangles: KarmicTriangle[] = [
+    { cycle: 1, label: '1. cyklus – Matka', fromAge: 0, toAge: odd, vibration: monthRed, influence: 'M (mesiac)', description: 'Vplyv vibrácie mesiaca. Obdobie pod vplyvom matky a jej očakávaní.' },
+    { cycle: 2, label: '2. cyklus – Otec', fromAge: odd, toAge: odd * 2, vibration: dayRed, influence: 'D (deň)', description: 'Vplyv vibrácie dňa. Obdobie pod vplyvom otca a formovanie identity.' },
+    { cycle: 3, label: '3. cyklus – Spoločnosť', fromAge: odd * 2, toAge: vdd, vibration: yearRed, influence: 'R (rok)', description: 'Vplyv vibrácie roka. Obdobie socializácie a vplyvu spoločnosti.' },
+    { cycle: 4, label: 'K1 – Psychická stabilita', fromAge: vdd, toAge: vdd + 9, vibration: k1Vibration, influence: 'M + D', description: 'Tvorba psychickej stability človeka. Vplyv mesiaca a dňa.' },
+    { cycle: 5, label: 'K2 – Materiálna stabilita', fromAge: vdd + 9, toAge: vdd + 18, vibration: k2Vibration, influence: 'D + R', description: 'Vytváranie materiálnej stability. Vplyv dňa a roka.' },
+    { cycle: 6, label: 'K3 – Životné poslanie', fromAge: vdd + 18, toAge: vdd + 27, vibration: k3Vibration, influence: 'K1 + K2', description: 'Plnenie životného poslania. Súčet predchádzajúcich karmických cyklov.' },
+    { cycle: 7, label: 'K4 – Detské sny', fromAge: vdd + 27, toAge: null, vibration: k4Vibration, influence: 'M + R', description: 'Plníme si svoje detské sny. Vplyv mesiaca a roka až do konca života.' },
+  ];
+
+  return triangles;
 }
 
 const LOVE_LANGUAGE_PLANES: { language: string; planes: number[][] }[] = [
@@ -268,6 +306,7 @@ export function calculateFullNumerology(day: number, month: number, year: number
   const { vdd, oddPeriod } = calculateVDD(lifePath.number);
   const sigmaT = calculateSigmaT(day, month, year);
   const loveLanguages = calculateLoveLanguages(grid, day, month, lifePath.number, isolated);
+  const karmicTriangles = calculateKarmicTriangles(day, month, year, lifePath.number);
 
   return {
     lifePathNumber: lifePath.number,
@@ -288,6 +327,7 @@ export function calculateFullNumerology(day: number, month: number, year: number
     sigmaT: sigmaT.value,
     age: sigmaT.age,
     loveLanguages,
+    karmicTriangles,
     dayReduction: reduceToSingle(day),
     monthReduction: reduceToSingle(month),
     yearReduction: reduceToSingle(year),

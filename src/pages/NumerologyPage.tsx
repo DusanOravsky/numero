@@ -21,7 +21,7 @@ export function NumerologyPage() {
   const [result, setResult] = useState<NumerologyResult | null>(null);
   const [nameResult, setNameResult] = useState<NameNumerologyResult | null>(null);
   const [nameInput, setNameInput] = useState('');
-  const [activeTab, setActiveTab] = useState<'overview' | 'planes' | 'vibrations' | 'love' | 'name'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'planes' | 'vibrations' | 'karmic' | 'love' | 'name'>('overview');
 
   const handleCalculate = (day: number, month: number, year: number) => {
     setResult(calculateFullNumerology(day, month, year));
@@ -39,6 +39,7 @@ export function NumerologyPage() {
     { id: 'overview' as const, label: 'Prehľad' },
     { id: 'planes' as const, label: 'Roviny' },
     { id: 'vibrations' as const, label: 'Vibrácie' },
+    { id: 'karmic' as const, label: 'Karmické cykly' },
     { id: 'love' as const, label: 'Jazyky lásky' },
     { id: 'name' as const, label: 'Meno' },
   ];
@@ -244,6 +245,95 @@ export function NumerologyPage() {
                   <p><strong className="text-indigo-300">ORV</strong> = deň narodenia + mesiac narodenia + aktuálny rok (redukované na jednociferné)</p>
                   <p><strong className="text-purple-300">OMV</strong> = aktuálny mesiac + ORV (redukované)</p>
                   <p><strong className="text-amber-300">ODV</strong> = aktuálny deň + aktuálny mesiac + ORV (redukované)</p>
+                </div>
+              </GlassCard>
+            </div>
+          )}
+
+          {activeTab === 'karmic' && (
+            <div className="space-y-4">
+              <GlassCard>
+                <h3 className="font-medium text-white mb-2">Karmické trojuholníky</h3>
+                <p className="text-sm text-slate-400 mb-4">
+                  Karmické trojuholníky udávajú životné smerovanie na obdobie 9 rokov. Čísla vo vrcholoch vyjadrujú vplyv, smerovanie a charakter obdobia daného cyklu. Život sa delí na Duchovné detstvo (príprava) a Duchovnú dospelosť (realizácia).
+                </p>
+                <div className="grid grid-cols-2 gap-3 mb-4">
+                  <div className="p-3 rounded-xl bg-indigo-500/10 border border-indigo-500/20">
+                    <p className="text-xs text-indigo-300">VDD = 36 − ŽČ</p>
+                    <p className="text-lg font-bold text-white">{result.vdd} rokov</p>
+                    <p className="text-xs text-slate-400">Vek duchovnej dospelosti</p>
+                  </div>
+                  <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20">
+                    <p className="text-xs text-purple-300">ODD = VDD ÷ 3</p>
+                    <p className="text-lg font-bold text-white">{result.oddPeriod} rokov</p>
+                    <p className="text-xs text-slate-400">Obdobie duch. detstva (1 cyklus)</p>
+                  </div>
+                </div>
+              </GlassCard>
+
+              <GlassCard>
+                <h4 className="text-sm text-amber-300 font-medium mb-3">Duchovné detstvo</h4>
+                <p className="text-xs text-slate-400 mb-3">Obdobie, ktoré pripravuje človeka na plnenie životných úloh. Doplnkové čísla (D, M, R) určujú, pod akou vibráciou sa človek vyvíja.</p>
+                <div className="space-y-2">
+                  {result.karmicTriangles.slice(0, 3).map((t, idx) => (
+                    <motion.div
+                      key={idx}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: idx * 0.1 }}
+                      className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20"
+                    >
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-sm font-medium text-white">{t.label}</span>
+                        <span className="text-xs text-amber-300">{t.fromAge}–{t.toAge} r.</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-lg font-bold text-amber-300">{t.vibration}</span>
+                        <span className="text-xs text-slate-400">({t.influence})</span>
+                      </div>
+                      <p className="text-xs text-slate-300 mt-1">{t.description}</p>
+                    </motion.div>
+                  ))}
+                </div>
+              </GlassCard>
+
+              <GlassCard>
+                <h4 className="text-sm text-green-300 font-medium mb-3">Duchovná dospelosť (K1–K4)</h4>
+                <p className="text-xs text-slate-400 mb-3">Deväťročné cykly od veku duchovnej dospelosti. Prinášajú zmeny v energii, vzťahoch, zdraví a profesii.</p>
+                <div className="space-y-2">
+                  {result.karmicTriangles.slice(3).map((t, idx) => (
+                    <motion.div
+                      key={idx}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: idx * 0.1 }}
+                      className="p-3 rounded-xl bg-green-500/10 border border-green-500/20"
+                    >
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-sm font-medium text-white">{t.label}</span>
+                        <span className="text-xs text-green-300">{t.fromAge}–{t.toAge ? t.toAge + ' r.' : '∞'}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-lg font-bold text-green-300">{t.vibration}</span>
+                        <span className="text-xs text-slate-400">({t.influence})</span>
+                      </div>
+                      <p className="text-xs text-slate-300 mt-1">{t.description}</p>
+                    </motion.div>
+                  ))}
+                </div>
+              </GlassCard>
+
+              <GlassCard>
+                <h4 className="text-sm text-cyan-300 font-medium mb-2">ΣT – Suma tarotu (Tarotové brány)</h4>
+                <p className="text-xs text-slate-400 mb-3">Suma tarotu = súčet celého dátumu narodenia. Vyjadruje spoločné vibrácie a schopnosť komunikovať. Hodnota pod 2000 = Vek Rýb (duchovná cesta), nad 2000 = Vek Vodnára (nový prístup).</p>
+                <div className="flex items-center gap-4">
+                  <div>
+                    <p className="text-xs text-slate-400">ΣT = D + M + R</p>
+                    <p className="text-2xl font-bold text-white">{result.sigmaT}</p>
+                  </div>
+                  <div className={`px-3 py-1.5 rounded-full text-sm font-medium ${result.age === 'aquarius' ? 'bg-cyan-500/20 text-cyan-300' : 'bg-purple-500/20 text-purple-300'}`}>
+                    {result.age === 'aquarius' ? 'Vek Vodnára (≥ 2000)' : 'Vek Rýb (< 2000)'}
+                  </div>
                 </div>
               </GlassCard>
             </div>

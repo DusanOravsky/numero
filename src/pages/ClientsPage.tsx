@@ -170,7 +170,7 @@ export function ClientsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="font-serif text-3xl font-bold text-white">Klienti</h1>
-          <p className="text-slate-400 mt-1">Správa klientov a história výkladov</p>
+          <p className="text-slate-400 mt-1">Pridajte klienta (meno + dátum) → kliknite naň pre kompletný výklad. Čas a miesto sa dajú doplniť cez "Upraviť".</p>
         </div>
         <button
           onClick={() => setShowForm(!showForm)}
@@ -262,7 +262,7 @@ export function ClientsPage() {
                 </div>
                 <div className="text-right flex flex-col items-end gap-1">
                   <span className="text-xs text-indigo-300">{clientReports(client.id).length} výkladov</span>
-                  <button onClick={(e) => { e.stopPropagation(); startEdit(client); }} className="text-[10px] text-slate-400 hover:text-indigo-500">Upraviť</button>
+                  <button onClick={(e) => { e.stopPropagation(); startEdit(client); }} className="text-xs px-2 py-1 rounded-lg border border-amber-300 text-amber-600 hover:bg-amber-50">Upraviť</button>
                 </div>
               </div>
             </GlassCard>

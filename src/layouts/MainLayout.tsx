@@ -24,7 +24,7 @@ export function MainLayout() {
           <h1 className="font-serif text-2xl font-bold bg-gradient-to-r from-indigo-400 via-violet-400 to-purple-400 bg-clip-text text-transparent">
             Número
           </h1>
-          <p className="text-xs text-slate-400 mt-1">Duchovno-analytická aplikácia</p>
+          <p className="text-xs text-slate-400 mt-1">Integrálna mapa bytia</p>
         </div>
         <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
           {NAV_ITEMS.map(item => (

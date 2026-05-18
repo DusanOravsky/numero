@@ -49,7 +49,7 @@ export function Dashboard() {
             Número
           </h1>
           <p className="text-slate-400 text-lg mb-8 max-w-md mx-auto">
-            Váš osobný duchovno-analytický sprievodca. Offline. Súkromný. Profesionálny.
+            Integrálna mapa bytia. Offline. Súkromná. Profesionálna.
           </p>
           <button
             onClick={() => navigate('/profile')}

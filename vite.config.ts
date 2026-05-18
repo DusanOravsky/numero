@@ -11,9 +11,9 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'icons/*.png'],
       manifest: {
-        name: 'Número - Duchovno-analytická aplikácia',
+        name: 'Número - Integrálna mapa bytia',
         short_name: 'Número',
-        description: 'Profesionálna offline numerologická, astrologická a sebarozvojová aplikácia',
+        description: 'Integrálna mapa bytia - numerológia, astrológia, Human Design a sebarozvoj',
         theme_color: '#1e1b4b',
         background_color: '#0f0a2e',
         display: 'standalone',

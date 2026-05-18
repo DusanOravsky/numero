@@ -199,6 +199,12 @@ export function HumanDesignPage() {
               <h3 className="font-medium text-white mb-2">Inkarnačný kríž</h3>
               <p className="text-xs text-slate-400 mb-2">Inkarnačný kríž predstavuje vašu životnú tému a účel -- to, prečo ste tu. Je to kombinácia brán vášho vedomého a nevedomého Slnka a Zeme.</p>
               <p className="text-sm text-slate-300 font-medium">{result.incarnationCross}</p>
+              {result.personalityGates[0] && GATE_DESCRIPTIONS[result.personalityGates[0].gate] && (
+                <div className="mt-3 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
+                  <p className="text-xs text-amber-400 uppercase mb-1">Brána {result.personalityGates[0].gate} (Slnko)</p>
+                  <p className="text-xs text-slate-300">{GATE_DESCRIPTIONS[result.personalityGates[0].gate]}</p>
+                </div>
+              )}
             </GlassCard>
           </div>
 

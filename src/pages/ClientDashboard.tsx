@@ -21,6 +21,8 @@ import type { ThetaHealingResult } from '../engine/thetaHealingEngine';
 import { calculatePartnerCompatibility, calculateParentChild } from '../engine/compatibilityEngine';
 import { reduceToSingle } from '../engine/numerologyEngine';
 import lifePathsData from '../data/lifePaths.json';
+import { planetInSignDescriptions, cycleVibrationDescriptions } from '../data/planetSignDescriptions';
+import { orvDescriptions, loveLanguageDescriptions } from '../data/orvDescriptions';
 
 const lifePaths = lifePathsData as Record<string, { title: string; keywords: string[]; description: string; gift: string; shadow: string }>;
 
@@ -413,6 +415,141 @@ export function ClientDashboard() {
             );
           })}
         </div>
+      </motion.section>
+
+      {/* KOMPLETNY PROFIL EXPORT */}
+      <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8 }}>
+        <h2 className="font-serif text-xl font-bold text-slate-300 mb-3">Kompletny profil</h2>
+        <GlassCard>
+          <p className="text-sm text-slate-400 mb-4">Exportujte kompletny textovy profil klienta so vsetkymi vysledkami do textoveho suboru.</p>
+          <button
+            onClick={() => {
+              const gridNumbers: string[] = [];
+              for (let row = 0; row < 3; row++) {
+                for (let col = 0; col < 3; col++) {
+                  const cell = numerology.grid[row][col];
+                  if (cell.value > 0) {
+                    const count = numerology.gridNumbers.filter(g => g.value === cell.value).length;
+                    gridNumbers.push(`${cell.value} (${count}x)`);
+                  }
+                }
+              }
+
+              const lpKey = String(numerology.lifePathNumber > 9 ? reduceToSingle(numerology.lifePathNumber) : numerology.lifePathNumber);
+              const lpDescription = lifePaths[lpKey]?.description || '';
+              const lpTitle = lifePaths[lpKey]?.title || '';
+
+              const orvInfo = orvDescriptions[numerology.orv];
+
+              const sunDesc = planetInSignDescriptions['Slnko']?.[astrology.sunSign.name] || '';
+              const moonDesc = planetInSignDescriptions['Mesiac']?.[astrology.moonSign.name] || '';
+              const ascDesc = planetInSignDescriptions['Merkur']?.[astrology.ascendant.name] || '';
+
+              const primaryLoveLang = numerology.loveLanguages[0];
+
+              const primaryBelief = theta.primaryBeliefs[0];
+
+              const text = [
+                '═══════════════════════════════════════════',
+                '         KOMPLETNY PROFIL',
+                '═══════════════════════════════════════════',
+                '',
+                `Meno: ${client.name}`,
+                `Datum narodenia: ${client.birthDay}.${client.birthMonth}.${client.birthYear}${client.birthHour !== undefined ? ` ${client.birthHour}:${String(client.birthMinute || 0).padStart(2, '0')}` : ''}`,
+                '',
+                '───────────────────────────────────────────',
+                '  NUMEROLOGIA',
+                '───────────────────────────────────────────',
+                '',
+                `Zivotne cislo: ${numerology.lifePathNumber} (z ${numerology.lifePathFrom})`,
+                `Nazov: ${lpTitle}`,
+                `Popis: ${lpDescription}`,
+                '',
+                `Mriezka 3x3 - pritomne cisla: ${gridNumbers.join(', ')}`,
+                '',
+                `Plne roviny: ${numerology.fullPlanes.length > 0 ? numerology.fullPlanes.join(', ') : 'ziadne'}`,
+                `Prazdne roviny: ${numerology.emptyPlanes.length > 0 ? numerology.emptyPlanes.join(', ') : 'ziadne'}`,
+                `Izolovane cisla: ${numerology.isolatedNumbers.length > 0 ? numerology.isolatedNumbers.join(', ') : 'ziadne'}`,
+                '',
+                `ORV (Osobna rocna vibracia): ${numerology.orv}${orvInfo ? ` - ${orvInfo.title}: ${orvInfo.theme}` : ''}`,
+                `OMV (Osobna mesacna vibracia): ${numerology.omv}`,
+                `ODV (Osobna denna vibracia): ${numerology.odv}`,
+                '',
+                `VDD (Vek duchovnej dospelosti): ${numerology.vdd} rokov`,
+                '',
+                'Karmicke cykly:',
+                ...numerology.karmicTriangles.map(t =>
+                  `  ${t.label}: ${t.fromAge}-${t.toAge || '∞'} r. | Vibracia ${t.vibration} | ${t.description}${cycleVibrationDescriptions[t.vibration] ? ' | ' + cycleVibrationDescriptions[t.vibration] : ''}`
+                ),
+                '',
+                '───────────────────────────────────────────',
+                '  ASTROLOGIA',
+                '───────────────────────────────────────────',
+                '',
+                `Slnko: ${astrology.sunSign.name} (${astrology.sunSign.element})`,
+                `  ${sunDesc}`,
+                '',
+                `Mesiac: ${astrology.moonSign.name} (${astrology.moonSign.element})`,
+                `  ${moonDesc}`,
+                '',
+                `Ascendent: ${astrology.ascendant.name} (${astrology.ascendant.element})`,
+                `  ${ascDesc}`,
+                '',
+                `Dominantny zivel: ${astrology.dominantElement}`,
+                `Dominantna kvalita: ${astrology.dominantQuality}`,
+                `Dominantna planeta: ${astrology.dominantPlanet}`,
+                `Mesacna faza: ${astrology.moonPhase}`,
+                '',
+                '───────────────────────────────────────────',
+                '  HUMAN DESIGN',
+                '───────────────────────────────────────────',
+                '',
+                `Typ: ${humanDesign.type}`,
+                `Autorita: ${humanDesign.authority}`,
+                `Strategia: ${humanDesign.strategy}`,
+                `Profil: ${humanDesign.profile.line1}/${humanDesign.profile.line2} - ${humanDesign.profile.name}`,
+                `Inkarnacny kriz: ${humanDesign.incarnationCross}`,
+                `Definovane centra: ${humanDesign.definedCenters.join(', ')}`,
+                `Otvorene centra: ${humanDesign.openCenters.join(', ')}`,
+                '',
+                '───────────────────────────────────────────',
+                '  JAZYKY LASKY',
+                '───────────────────────────────────────────',
+                '',
+                `Primarny jazyk lasky: ${primaryLoveLang?.language || '-'} (skore: ${primaryLoveLang?.score || 0})`,
+                ...numerology.loveLanguages.map((l, i) => `  ${i + 1}. ${l.language}: ${l.score} bodov`),
+                '',
+                '───────────────────────────────────────────',
+                '  THETA HEALING',
+                '───────────────────────────────────────────',
+                '',
+                `Primarne limitujuce presvedcenie: "${primaryBelief?.belief || '-'}"`,
+                `  Uroven: ${primaryBelief?.level || '-'}`,
+                `  Emocionalny naboj: ${primaryBelief?.emotion || '-'}`,
+                '',
+                'Dalsie presvedcenia:',
+                ...theta.primaryBeliefs.slice(1).map(b => `  - "${b.belief}" (${b.level}, ${b.emotion})`),
+                '',
+                '═══════════════════════════════════════════',
+                `Vygenerovane: ${new Date().toLocaleDateString('sk-SK')} ${new Date().toLocaleTimeString('sk-SK')}`,
+                '═══════════════════════════════════════════',
+              ].join('\n');
+
+              const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = `profil-${client.name.replace(/\s+/g, '-').toLowerCase()}.txt`;
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+              URL.revokeObjectURL(url);
+            }}
+            className="px-6 py-3 rounded-xl bg-indigo-600 text-white font-medium hover:bg-indigo-500 transition-colors"
+          >
+            Exportovat textovy profil
+          </button>
+        </GlassCard>
       </motion.section>
     </div>
   );

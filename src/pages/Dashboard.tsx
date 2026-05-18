@@ -182,42 +182,18 @@ export function Dashboard() {
       </div>
 
       <GlassCard delay={0.7}>
-        <h3 className="font-medium text-white mb-3">Energetický prehľad</h3>
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-slate-400">Energia dňa</span>
-            <div className="flex gap-1">
-              {Array.from({ length: odv }, (_, i) => (
-                <div key={i} className="w-3 h-3 rounded-full bg-gradient-to-r from-indigo-400 to-violet-400" />
-              ))}
-              {Array.from({ length: 9 - odv }, (_, i) => (
-                <div key={i} className="w-3 h-3 rounded-full bg-slate-700/50" />
+        <h3 className="font-medium text-white mb-2">Čo robiť dnes</h3>
+        <p className="text-xs text-slate-400 mb-3">Na základe vašej dennej vibrácie (ODV {odv})</p>
+        {orvDescriptions[odv] && (
+          <div className="space-y-2">
+            <p className="text-sm text-slate-300">{orvDescriptions[odv].advice}</p>
+            <div className="flex flex-wrap gap-1 mt-2">
+              {orvDescriptions[odv].keywords.map(k => (
+                <span key={k} className="text-xs px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-300">{k}</span>
               ))}
             </div>
           </div>
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-slate-400">Energia mesiaca</span>
-            <div className="flex gap-1">
-              {Array.from({ length: omv }, (_, i) => (
-                <div key={i} className="w-3 h-3 rounded-full bg-gradient-to-r from-purple-400 to-fuchsia-400" />
-              ))}
-              {Array.from({ length: 9 - omv }, (_, i) => (
-                <div key={i} className="w-3 h-3 rounded-full bg-slate-700/50" />
-              ))}
-            </div>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-slate-400">Energia roka</span>
-            <div className="flex gap-1">
-              {Array.from({ length: orv }, (_, i) => (
-                <div key={i} className="w-3 h-3 rounded-full bg-gradient-to-r from-amber-400 to-yellow-400" />
-              ))}
-              {Array.from({ length: 9 - orv }, (_, i) => (
-                <div key={i} className="w-3 h-3 rounded-full bg-slate-700/50" />
-              ))}
-            </div>
-          </div>
-        </div>
+        )}
       </GlassCard>
     </div>
   );

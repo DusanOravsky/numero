@@ -43,6 +43,9 @@ export function MainLayout() {
             </NavLink>
           ))}
         </nav>
+        <div className="p-4 border-t border-slate-100 text-center">
+          <p className="text-[10px] text-slate-400">v1.3.0</p>
+        </div>
       </aside>
 
       <main className="flex-1 lg:ml-64 pb-20 lg:pb-0">

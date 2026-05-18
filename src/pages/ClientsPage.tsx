@@ -3,37 +3,67 @@ import { useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import { GlassCard } from '../components/GlassCard';
 import { motion } from 'framer-motion';
+import { searchCities, findCity } from '../data/cities';
 import type { Client } from '../store/useStore';
 
 export function ClientsPage() {
   const navigate = useNavigate();
-  const { clients, addClient, deleteClient, reports } = useStore();
+  const { clients, addClient, updateClient, deleteClient, reports } = useStore();
   const [showForm, setShowForm] = useState(false);
+  const [editingClient, setEditingClient] = useState<Client | null>(null);
   const [name, setName] = useState('');
   const [day, setDay] = useState('');
   const [month, setMonth] = useState('');
   const [year, setYear] = useState('');
   const [hour, setHour] = useState('');
   const [minute, setMinute] = useState('');
+  const [birthPlace, setBirthPlace] = useState('');
+  const [citySuggestions, setCitySuggestions] = useState<{ name: string }[]>([]);
   const [notes, setNotes] = useState('');
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
 
-  const handleAddClient = (e: React.FormEvent) => {
+  const resetForm = () => {
+    setName(''); setDay(''); setMonth(''); setYear(''); setHour(''); setMinute(''); setBirthPlace(''); setNotes('');
+    setEditingClient(null); setCitySuggestions([]);
+  };
+
+  const startEdit = (client: Client) => {
+    setEditingClient(client);
+    setName(client.name);
+    setDay(String(client.birthDay));
+    setMonth(String(client.birthMonth));
+    setYear(String(client.birthYear));
+    setHour(client.birthHour !== undefined ? String(client.birthHour) : '');
+    setMinute(client.birthMinute !== undefined ? String(client.birthMinute) : '');
+    setBirthPlace(client.birthPlace || '');
+    setNotes(client.notes || '');
+    setShowForm(true);
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim() || !day || !month || !year) return;
-    addClient({
-      id: crypto.randomUUID(),
+    const city = findCity(birthPlace);
+    const data = {
       name: name.trim(),
       birthDay: parseInt(day),
       birthMonth: parseInt(month),
       birthYear: parseInt(year),
       birthHour: hour ? parseInt(hour) : undefined,
       birthMinute: minute ? parseInt(minute) : undefined,
+      birthPlace: birthPlace.trim() || undefined,
+      birthLatitude: city?.lat,
+      birthLongitude: city?.lon,
       notes: notes.trim() || undefined,
-      createdAt: new Date().toISOString(),
-    });
+    };
+
+    if (editingClient) {
+      updateClient(editingClient.id, data);
+    } else {
+      addClient({ id: crypto.randomUUID(), ...data, createdAt: new Date().toISOString() });
+    }
     setShowForm(false);
-    setName(''); setDay(''); setMonth(''); setYear(''); setHour(''); setMinute(''); setNotes('');
+    resetForm();
   };
 
   const clientReports = (clientId: string) => reports.filter(r => r.clientId === clientId);
@@ -152,16 +182,10 @@ export function ClientsPage() {
 
       {showForm && (
         <GlassCard>
-          <form onSubmit={handleAddClient} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-sm text-slate-400 mb-1">Meno klienta</label>
-              <input
-                type="text"
-                value={name}
-                onChange={e => setName(e.target.value)}
-                placeholder="Meno a priezvisko"
-                className="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white focus:outline-none focus:border-indigo-500/50"
-              />
+              <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Meno a priezvisko" className="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white focus:outline-none focus:border-indigo-500/50" />
             </div>
             <div>
               <label className="block text-sm text-slate-400 mb-1">Dátum narodenia</label>
@@ -180,18 +204,28 @@ export function ClientsPage() {
               </div>
             </div>
             <div>
+              <label className="block text-sm text-slate-400 mb-1">Miesto narodenia (voliteľné – pre astrológiu)</label>
+              <div className="relative">
+                <input type="text" value={birthPlace} onChange={e => { setBirthPlace(e.target.value); setCitySuggestions(searchCities(e.target.value)); }} placeholder="Napr. Bratislava, Praha..." className="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white focus:outline-none focus:border-indigo-500/50" />
+                {citySuggestions.length > 0 && (
+                  <div className="absolute left-0 right-0 top-full mt-1 z-50 rounded-xl bg-white border border-slate-200 overflow-hidden shadow-lg">
+                    {citySuggestions.map(city => (
+                      <button key={city.name} type="button" onClick={() => { setBirthPlace(city.name); setCitySuggestions([]); }} className="w-full text-left px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50">
+                        {city.name}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+            <div>
               <label className="block text-sm text-slate-400 mb-1">Poznámky</label>
-              <textarea
-                value={notes}
-                onChange={e => setNotes(e.target.value)}
-                placeholder="Voliteľné poznámky o klientovi..."
-                rows={3}
-                className="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white focus:outline-none focus:border-indigo-500/50 resize-none"
-              />
+              <textarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="Voliteľné poznámky o klientovi..." rows={3} className="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white focus:outline-none focus:border-indigo-500/50 resize-none" />
             </div>
             <button type="submit" className="w-full py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-medium hover:from-indigo-500 hover:to-violet-500 glow">
-              Pridať klienta
+              {editingClient ? 'Uložiť zmeny' : 'Pridať klienta'}
             </button>
+            {editingClient && <button type="button" onClick={() => { setShowForm(false); resetForm(); }} className="w-full py-2 text-sm text-slate-400">Zrušiť úpravy</button>}
           </form>
         </GlassCard>
       )}
@@ -219,11 +253,16 @@ export function ClientsPage() {
               <div className="flex items-start justify-between">
                 <div>
                   <h3 className="font-medium text-white">{client.name}</h3>
-                  <p className="text-sm text-slate-400">{client.birthDay}.{client.birthMonth}.{client.birthYear}</p>
+                  <p className="text-sm text-slate-400">
+                    {client.birthDay}.{client.birthMonth}.{client.birthYear}
+                    {client.birthHour !== undefined && ` ${client.birthHour}:${String(client.birthMinute || 0).padStart(2, '0')}`}
+                    {client.birthPlace && ` | ${client.birthPlace}`}
+                  </p>
                   {client.notes && <p className="text-xs text-slate-500 mt-1 line-clamp-1">{client.notes}</p>}
                 </div>
-                <div className="text-right">
+                <div className="text-right flex flex-col items-end gap-1">
                   <span className="text-xs text-indigo-300">{clientReports(client.id).length} výkladov</span>
+                  <button onClick={(e) => { e.stopPropagation(); startEdit(client); }} className="text-[10px] text-slate-400 hover:text-indigo-500">Upraviť</button>
                 </div>
               </div>
             </GlassCard>

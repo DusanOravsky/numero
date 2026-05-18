@@ -205,7 +205,7 @@ export function NumerologyPage() {
                   icon="◇"
                   color="purple"
                   formula={`VDD(${result.vdd}) ÷ 3 = ${result.oddPeriod}`}
-                  description="Obdobie duchovného detstva (ODD) je dĺžka jedného cyklu v rámci duchovného detstva. Sú tri takéto cykly (matka, otec, spoločnosť) – každý trvá ODD rokov."
+                  description={`Obdobie duchovného detstva (ODD) = ${result.oddPeriod} rokov. Duchovné detstvo trvá od narodenia do ${result.vdd} rokov a delí sa na 3 cykly po ${result.oddPeriod} rokov: 1. cyklus (0–${result.oddPeriod} r.) = vplyv matky, 2. cyklus (${result.oddPeriod}–${result.oddPeriod * 2} r.) = vplyv otca, 3. cyklus (${result.oddPeriod * 2}–${result.vdd} r.) = vplyv spoločnosti.`}
                 />
                 <VibrationCard
                   title="ΣT"

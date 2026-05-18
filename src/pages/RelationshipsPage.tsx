@@ -5,6 +5,8 @@ import { calculatePartnerCompatibility, calculateParentChild } from '../engine/c
 import type { CompatibilityResult, ParentChildResult } from '../engine/compatibilityEngine';
 import { calculateAstrology } from '../engine/astrologyEngine';
 import type { AstrologyResult } from '../engine/astrologyEngine';
+import { calculateHumanDesign } from '../engine/humanDesignEngine';
+import { PartnerBodygraph } from '../components/PartnerBodygraph';
 import { findCity } from '../data/cities';
 import { motion } from 'framer-motion';
 
@@ -16,10 +18,11 @@ interface PersonInput {
   month: string;
   year: string;
   hour: string;
+  minute: string;
   birthPlace: string;
 }
 
-const emptyPerson = (): PersonInput => ({ name: '', day: '', month: '', year: '', hour: '', birthPlace: '' });
+const emptyPerson = (): PersonInput => ({ name: '', day: '', month: '', year: '', hour: '', minute: '', birthPlace: '' });
 
 function PersonForm({ person, onChange, label }: { person: PersonInput; onChange: (p: PersonInput) => void; label: string }) {
   return (
@@ -38,7 +41,7 @@ function PersonForm({ person, onChange, label }: { person: PersonInput; onChange
         <input type="number" placeholder="Rok" min={1900} max={2100} value={person.year} onChange={e => onChange({ ...person, year: e.target.value })} className="flex-1 px-3 py-3 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white text-center focus:outline-none focus:border-indigo-500/50" />
       </div>
       <div className="flex gap-2">
-        <input type="number" placeholder="Hodina (voliteľné)" min={0} max={23} value={person.hour} onChange={e => onChange({ ...person, hour: e.target.value })} className="w-1/2 px-3 py-2.5 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white text-center text-sm focus:outline-none focus:border-indigo-500/50" />
+        <input type="number" placeholder="Hod" min={0} max={23} value={person.hour} onChange={e => onChange({ ...person, hour: e.target.value })} className="w-16 px-2 py-2.5 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white text-center text-sm focus:outline-none focus:border-indigo-500/50" /><span className="text-slate-400">:</span><input type="number" placeholder="Min" min={0} max={59} value={person.minute} onChange={e => onChange({ ...person, minute: e.target.value })} className="w-16 px-2 py-2.5 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white text-center text-sm focus:outline-none focus:border-indigo-500/50" />
         <input type="text" placeholder="Miesto narodenia" value={person.birthPlace} onChange={e => onChange({ ...person, birthPlace: e.target.value })} className="flex-1 px-3 py-2.5 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white text-sm focus:outline-none focus:border-indigo-500/50" />
       </div>
     </div>
@@ -55,10 +58,12 @@ interface AstroPersonInput {
   month: string;
   year: string;
   hour: string;
+  minute: string;
+  minute: string;
   birthPlace: string;
 }
 
-const emptyAstroPerson = (): AstroPersonInput => ({ name: '', day: '', month: '', year: '', hour: '', birthPlace: '' });
+const emptyAstroPerson = (): AstroPersonInput => ({ name: '', day: '', month: '', year: '', hour: '', minute: '', birthPlace: '' });
 
 function isAstroPersonValid(p: AstroPersonInput): boolean {
   return !!(p.name.trim() && parseInt(p.day) >= 1 && parseInt(p.month) >= 1 && parseInt(p.year) >= 1900);
@@ -365,6 +370,18 @@ export function RelationshipsPage() {
             ))}
           </GlassCard>
 
+          {/* Human Design composite comparison */}
+          {(() => {
+            const hd1 = calculateHumanDesign(parseInt(partner1.day), parseInt(partner1.month), parseInt(partner1.year), partner1.hour ? parseInt(partner1.hour) : 12, 0);
+            const hd2 = calculateHumanDesign(parseInt(partner2.day), parseInt(partner2.month), parseInt(partner2.year), partner2.hour ? parseInt(partner2.hour) : 12, 0);
+            return (
+              <GlassCard>
+                <h3 className="font-medium text-purple-300 mb-3">Human Design kompatibilita</h3>
+                <PartnerBodygraph result1={hd1} result2={hd2} name1={partner1.name} name2={partner2.name} />
+              </GlassCard>
+            );
+          })()}
+
           <button onClick={reset} className="px-4 py-2 rounded-xl text-sm glass text-slate-400 hover:text-white">Nový výpočet</button>
         </div>
       )}
@@ -503,7 +520,7 @@ export function RelationshipsPage() {
                 <input type="number" placeholder="Rok" min={1900} max={2100} value={astroPartner1.year} onChange={e => setAstroPartner1({ ...astroPartner1, year: e.target.value })} className="flex-1 px-3 py-3 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white text-center focus:outline-none focus:border-indigo-500/50" />
               </div>
               <div className="flex gap-2">
-                <input type="number" placeholder="Hodina (voliteľné)" min={0} max={23} value={astroPartner1.hour} onChange={e => setAstroPartner1({ ...astroPartner1, hour: e.target.value })} className="w-1/3 px-3 py-2.5 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white text-center text-sm focus:outline-none focus:border-indigo-500/50" />
+                <input type="number" placeholder="Hod" min={0} max={23} value={astroPartner1.hour} onChange={e => setAstroPartner1({ ...astroPartner1, hour: e.target.value })} className="w-14 px-2 py-2.5 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white text-center text-sm focus:outline-none focus:border-indigo-500/50" /><span className="text-slate-400">:</span><input type="number" placeholder="Min" min={0} max={59} value={astroPartner1.minute} onChange={e => setAstroPartner1({ ...astroPartner1, minute: e.target.value })} className="w-14 px-2 py-2.5 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white text-center text-sm focus:outline-none focus:border-indigo-500/50" />
                 <input type="text" placeholder="Miesto narodenia" value={astroPartner1.birthPlace} onChange={e => setAstroPartner1({ ...astroPartner1, birthPlace: e.target.value })} className="flex-1 px-3 py-2.5 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white text-sm focus:outline-none focus:border-indigo-500/50" />
               </div>
             </div>
@@ -522,7 +539,7 @@ export function RelationshipsPage() {
                 <input type="number" placeholder="Rok" min={1900} max={2100} value={astroPartner2.year} onChange={e => setAstroPartner2({ ...astroPartner2, year: e.target.value })} className="flex-1 px-3 py-3 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white text-center focus:outline-none focus:border-indigo-500/50" />
               </div>
               <div className="flex gap-2">
-                <input type="number" placeholder="Hodina (voliteľné)" min={0} max={23} value={astroPartner2.hour} onChange={e => setAstroPartner2({ ...astroPartner2, hour: e.target.value })} className="w-1/3 px-3 py-2.5 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white text-center text-sm focus:outline-none focus:border-indigo-500/50" />
+                <input type="number" placeholder="Hod" min={0} max={23} value={astroPartner2.hour} onChange={e => setAstroPartner2({ ...astroPartner2, hour: e.target.value })} className="w-14 px-2 py-2.5 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white text-center text-sm focus:outline-none focus:border-indigo-500/50" /><span className="text-slate-400">:</span><input type="number" placeholder="Min" min={0} max={59} value={astroPartner2.minute} onChange={e => setAstroPartner2({ ...astroPartner2, minute: e.target.value })} className="w-14 px-2 py-2.5 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white text-center text-sm focus:outline-none focus:border-indigo-500/50" />
                 <input type="text" placeholder="Miesto narodenia" value={astroPartner2.birthPlace} onChange={e => setAstroPartner2({ ...astroPartner2, birthPlace: e.target.value })} className="flex-1 px-3 py-2.5 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white text-sm focus:outline-none focus:border-indigo-500/50" />
               </div>
             </div>

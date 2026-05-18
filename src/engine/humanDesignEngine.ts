@@ -394,4 +394,4 @@ export function calculateHumanDesign(
   };
 }
 
-export { CENTER_THEMES, GATES_BY_CENTER };
+export { CENTER_THEMES, GATES_BY_CENTER, CHANNEL_DEFINITIONS };

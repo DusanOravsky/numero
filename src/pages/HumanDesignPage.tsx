@@ -7,6 +7,8 @@ import { calculateHumanDesign, CENTER_THEMES } from '../engine/humanDesignEngine
 import type { HumanDesignResult } from '../engine/humanDesignEngine';
 import { Bodygraph } from '../components/Bodygraph';
 import { motion } from 'framer-motion';
+import { getGeneKeysForGates } from '../data/geneKeys';
+import type { GeneKey } from '../data/geneKeys';
 
 const TYPE_DESCRIPTIONS: Record<string, string> = {
   'Manifestor': 'Manifestori sú tu na to, aby začínali a iniciovali. Majú uzavretú a odpudzujúcu auru – nie sú tu na to, aby čakali. Ich úlohou je informovať ostatných pred konaním, čím redukujú odpor okolia. Tvoria asi 9% populácie.',
@@ -296,6 +298,63 @@ export function HumanDesignPage() {
               </div>
             </GlassCard>
           )}
+
+          {/* GENOVE KLUCE */}
+          {(() => {
+            const allGates = [...new Set([
+              ...result.personalityGates.map(g => g.gate),
+              ...result.designGates.map(g => g.gate),
+            ])];
+            const geneKeysList: GeneKey[] = getGeneKeysForGates(allGates);
+            if (geneKeysList.length === 0) return null;
+            return (
+              <GlassCard>
+                <h3 className="font-medium text-white mb-4">Génové kľúče</h3>
+                <p className="text-xs text-slate-400 mb-4">
+                  Génové kľúče (Gene Keys) od Richarda Rudda ukazujú cestu transformácie od tieňa (nízka frekvencia) cez dar (stredná frekvencia) k siddhi (najvyššia frekvencia) pre každú bránu vo vašom dizajne. NLP techniky pomáhajú aktivovať tento transformačný proces.
+                </p>
+                <div className="space-y-4">
+                  {geneKeysList.slice(0, 12).map((gk, idx) => (
+                    <motion.div
+                      key={gk.gate}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: idx * 0.03 }}
+                      className="p-4 rounded-xl glass-light"
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-bold text-indigo-300">Brána {gk.gate} – Génový kľúč</span>
+                      </div>
+                      <div className="grid grid-cols-3 gap-2 mb-3">
+                        <div className="text-center p-2 rounded-lg bg-red-500/10 border border-red-500/20">
+                          <p className="text-[10px] text-red-400 uppercase">Tieň</p>
+                          <p className="text-xs font-medium text-red-300">{gk.shadow}</p>
+                        </div>
+                        <div className="text-center p-2 rounded-lg bg-amber-500/10 border border-amber-500/20">
+                          <p className="text-[10px] text-amber-400 uppercase">Dar</p>
+                          <p className="text-xs font-medium text-amber-300">{gk.gift}</p>
+                        </div>
+                        <div className="text-center p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+                          <p className="text-[10px] text-emerald-400 uppercase">Siddhi</p>
+                          <p className="text-xs font-medium text-emerald-300">{gk.siddhi}</p>
+                        </div>
+                      </div>
+                      <div className="space-y-1 mb-2">
+                        <p className="text-xs text-slate-400"><span className="text-red-400">Tieň:</span> {gk.shadowDescription}</p>
+                        <p className="text-xs text-slate-400"><span className="text-amber-400">Dar:</span> {gk.giftDescription}</p>
+                        <p className="text-xs text-slate-400"><span className="text-emerald-400">Siddhi:</span> {gk.siddhiDescription}</p>
+                      </div>
+                      <div className="mt-2 p-2 rounded-lg bg-indigo-500/10 border border-indigo-500/20">
+                        <p className="text-[10px] text-indigo-400 uppercase mb-1">NLP technika na transformáciu</p>
+                        <p className="text-xs font-medium text-indigo-300">{gk.nlpTechnique}</p>
+                        <p className="text-xs text-slate-400 mt-1">{gk.nlpDescription}</p>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </GlassCard>
+            );
+          })()}
 
           <button
             onClick={() => setResult(null)}

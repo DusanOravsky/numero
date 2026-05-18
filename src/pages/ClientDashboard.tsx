@@ -19,10 +19,12 @@ import type { KabalahResult } from '../engine/kabalahEngine';
 import { calculateThetaHealing } from '../engine/thetaHealingEngine';
 import type { ThetaHealingResult } from '../engine/thetaHealingEngine';
 import { calculatePartnerCompatibility, calculateParentChild } from '../engine/compatibilityEngine';
+import { PartnerBodygraph } from '../components/PartnerBodygraph';
 import { reduceToSingle } from '../engine/numerologyEngine';
 import lifePathsData from '../data/lifePaths.json';
 import { planetInSignDescriptions, cycleVibrationDescriptions } from '../data/planetSignDescriptions';
 import { orvDescriptions } from '../data/orvDescriptions';
+import { getGeneKeyByGate } from '../data/geneKeys';
 
 const lifePaths = lifePathsData as Record<string, { title: string; keywords: string[]; description: string; gift: string; shadow: string }>;
 
@@ -142,6 +144,25 @@ export function ClientDashboard() {
               {' '}Definované: {humanDesign.definedCenters.join(', ')}.
               Otvorené (oblasti múdrosti): {humanDesign.openCenters.join(', ')}.
             </p>
+
+            {(() => {
+              const sunGate = humanDesign.personalityGates.find(g => g.planet === 'Slnko')?.gate;
+              const earthGate = humanDesign.personalityGates.find(g => g.planet === 'Zem')?.gate;
+              const topGeneKeys = [sunGate, earthGate].filter((g): g is number => g !== undefined).map(g => getGeneKeyByGate(g)).filter(Boolean);
+              if (topGeneKeys.length === 0) return null;
+              return (
+                <p>
+                  <strong>Génové kľúče</strong> (cesta transformácie):{' '}
+                  {topGeneKeys.map((gk, i) => (
+                    <span key={gk!.gate}>
+                      {i > 0 && ' '}
+                      Brána {gk!.gate}: {gk!.shadow} (tieň) → {gk!.gift} (dar) → {gk!.siddhi} (siddhi).
+                      NLP technika: <em>{gk!.nlpTechnique}</em>.
+                    </span>
+                  ))}
+                </p>
+              );
+            })()}
 
             <p>
               {numerology.fullPlanes.length > 0 && <><strong>Silné stránky</strong> (plné roviny): {numerology.fullPlanes.join(', ')}. Tieto schopnosti dostal do vienka a môže sa na ne spoliehať. </>}
@@ -399,6 +420,7 @@ export function ClientDashboard() {
             if (!partner) return null;
             const partnerNum = calculateFullNumerology(partner.birthDay, partner.birthMonth, partner.birthYear);
             const compat = calculatePartnerCompatibility(numerology, partnerNum, client.name, partner.name);
+            const partnerHD = calculateHumanDesign(partner.birthDay, partner.birthMonth, partner.birthYear, partner.birthHour || 12, partner.birthMinute || 0);
             return (
               <div className="space-y-3">
                 <GlassCard glow>
@@ -429,6 +451,10 @@ export function ClientDashboard() {
                     {compat.challenges.map((c, i) => <p key={i} className="text-xs text-slate-300 mb-1">! {c}</p>)}
                   </GlassCard>
                 )}
+                <GlassCard>
+                  <h3 className="text-sm font-medium text-purple-300 mb-3">Human Design kompatibilita</h3>
+                  <PartnerBodygraph result1={humanDesign} result2={partnerHD} name1={client.name} name2={partner.name} />
+                </GlassCard>
                 <GlassCard>
                   <p className="text-xs text-indigo-400 uppercase mb-2">Odporúčania</p>
                   {compat.recommendations.map((r, i) => <p key={i} className="text-xs text-slate-300 mb-1">→ {r}</p>)}

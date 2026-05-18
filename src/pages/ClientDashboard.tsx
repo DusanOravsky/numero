@@ -261,105 +261,148 @@ export function ClientDashboard() {
 
       {/* PARTNER A DETI */}
       <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7 }}>
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="font-serif text-xl font-bold text-rose-300">Vzťahy</h2>
-          <button onClick={() => navigate('/relationships')} className="text-xs text-slate-400 hover:text-white">Plný výklad →</button>
-        </div>
+        <h2 className="font-serif text-xl font-bold text-rose-300 mb-3">Vzťahy a rodina</h2>
 
         {/* Partner */}
-        <GlassCard className="mb-4">
-          <div className="flex items-center justify-between mb-3">
-            <h4 className="text-sm font-medium text-white">Partner</h4>
-            {!client.partnerId && (
-              <button onClick={() => setShowPartnerSelect(true)} className="text-xs px-3 py-1 rounded-lg bg-rose-600 text-white hover:bg-rose-500">
-                + Priradiť partnera
-              </button>
+        <div className="space-y-4 mb-6">
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-medium text-white">Partner</h3>
+            {!client.partnerId ? (
+              <button onClick={() => setShowPartnerSelect(true)} className="text-xs px-3 py-1.5 rounded-lg bg-rose-600 text-white hover:bg-rose-500">+ Priradiť partnera</button>
+            ) : (
+              <button onClick={() => updateClient(client.id, { partnerId: undefined })} className="text-xs text-red-400 hover:text-red-300">Odstrániť</button>
             )}
           </div>
+
+          {showPartnerSelect && (
+            <GlassCard>
+              <p className="text-xs text-slate-400 mb-2">Vyberte klienta ako partnera:</p>
+              <div className="space-y-1">
+                {clients.filter(c => c.id !== client.id).map(c => (
+                  <button key={c.id} onClick={() => { updateClient(client.id, { partnerId: c.id }); setShowPartnerSelect(false); }}
+                    className="w-full text-left p-2 rounded-lg glass-light text-sm text-white hover:bg-indigo-500/20">
+                    {c.name} ({c.birthDay}.{c.birthMonth}.{c.birthYear})
+                  </button>
+                ))}
+              </div>
+              <button onClick={() => setShowPartnerSelect(false)} className="text-xs text-slate-400 mt-2">Zrušiť</button>
+            </GlassCard>
+          )}
+
           {client.partnerId && (() => {
             const partner = clients.find(c => c.id === client.partnerId);
-            if (!partner) return <p className="text-xs text-slate-500">Partner nebol nájdený</p>;
+            if (!partner) return null;
             const partnerNum = calculateFullNumerology(partner.birthDay, partner.birthMonth, partner.birthYear);
             const compat = calculatePartnerCompatibility(numerology, partnerNum, client.name, partner.name);
             return (
-              <div>
-                <div className="flex items-center justify-between p-3 rounded-xl glass-light">
-                  <div>
-                    <p className="text-sm font-medium text-white">{partner.name}</p>
-                    <p className="text-xs text-slate-400">{partner.birthDay}.{partner.birthMonth}.{partner.birthYear}</p>
+              <div className="space-y-3">
+                <GlassCard glow>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-lg font-medium text-white">{client.name} & {partner.name}</p>
+                      <p className="text-xs text-slate-400">ŽČ {numerology.lifePathNumber} + ŽČ {partnerNum.lifePathNumber} | Cieľ vzťahu: {reduceToSingle(numerology.lifePathNumber + partnerNum.lifePathNumber)}</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-3xl font-serif font-bold text-rose-300">{compat.overallScore}%</p>
+                      <p className="text-xs text-slate-400">kompatibilita</p>
+                    </div>
                   </div>
-                  <div className="text-right">
-                    <p className="text-lg font-bold text-rose-300">{compat.overallScore}%</p>
-                    <p className="text-xs text-slate-400">kompatibilita</p>
-                  </div>
+                </GlassCard>
+                <div className="grid grid-cols-2 gap-3">
+                  <GlassCard><p className="text-xs text-slate-400">Životné čísla</p><p className="text-sm text-white font-medium">{compat.lifePathCompatibility.score}%</p><p className="text-xs text-slate-300 mt-1">{compat.lifePathCompatibility.description}</p></GlassCard>
+                  <GlassCard><p className="text-xs text-slate-400">Jazyky lásky</p><p className="text-sm text-white font-medium">{compat.loveLanguageMatch.score}%</p>{compat.loveLanguageMatch.matched.length > 0 && <p className="text-xs text-green-300 mt-1">{compat.loveLanguageMatch.matched.join(', ')}</p>}</GlassCard>
                 </div>
-                <button onClick={() => updateClient(client.id, { partnerId: undefined })} className="text-xs text-red-400 mt-2 hover:text-red-300">
-                  Odstrániť partnera
-                </button>
+                {compat.strengths.length > 0 && (
+                  <GlassCard>
+                    <p className="text-xs text-green-400 uppercase mb-2">Silné stránky</p>
+                    {compat.strengths.map((s, i) => <p key={i} className="text-xs text-slate-300 mb-1">+ {s}</p>)}
+                  </GlassCard>
+                )}
+                {compat.challenges.length > 0 && (
+                  <GlassCard>
+                    <p className="text-xs text-amber-400 uppercase mb-2">Výzvy</p>
+                    {compat.challenges.map((c, i) => <p key={i} className="text-xs text-slate-300 mb-1">! {c}</p>)}
+                  </GlassCard>
+                )}
+                <GlassCard>
+                  <p className="text-xs text-indigo-400 uppercase mb-2">Odporúčania</p>
+                  {compat.recommendations.map((r, i) => <p key={i} className="text-xs text-slate-300 mb-1">→ {r}</p>)}
+                </GlassCard>
+                <GlassCard>
+                  <p className="text-xs text-rose-400 uppercase mb-2">Rituály pre pár</p>
+                  {compat.rituals.map((r, i) => <p key={i} className="text-xs text-slate-300 mb-1">♡ {r}</p>)}
+                </GlassCard>
               </div>
             );
           })()}
-          {showPartnerSelect && (
-            <div className="mt-3 space-y-2">
-              <p className="text-xs text-slate-400">Vyberte klienta ako partnera:</p>
-              {clients.filter(c => c.id !== client.id && c.id !== client.partnerId).map(c => (
-                <button key={c.id} onClick={() => { updateClient(client.id, { partnerId: c.id }); setShowPartnerSelect(false); }}
-                  className="w-full text-left p-2 rounded-lg glass-light text-sm text-white hover:bg-indigo-500/20">
-                  {c.name} ({c.birthDay}.{c.birthMonth}.{c.birthYear})
-                </button>
-              ))}
-              <button onClick={() => setShowPartnerSelect(false)} className="text-xs text-slate-400">Zrušiť</button>
-            </div>
-          )}
-        </GlassCard>
+        </div>
 
         {/* Deti */}
-        <GlassCard>
-          <div className="flex items-center justify-between mb-3">
-            <h4 className="text-sm font-medium text-white">Deti</h4>
-            <button onClick={() => setShowChildSelect(true)} className="text-xs px-3 py-1 rounded-lg bg-green-600 text-white hover:bg-green-500">
-              + Pridať dieťa
-            </button>
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-medium text-white">Deti</h3>
+            <button onClick={() => setShowChildSelect(true)} className="text-xs px-3 py-1.5 rounded-lg bg-green-600 text-white hover:bg-green-500">+ Pridať dieťa</button>
           </div>
-          {(client.childrenIds || []).length > 0 && (
-            <div className="space-y-2">
-              {(client.childrenIds || []).map(childId => {
-                const child = clients.find(c => c.id === childId);
-                if (!child) return null;
-                const childNum = calculateFullNumerology(child.birthDay, child.birthMonth, child.birthYear);
-                const pcResult = calculateParentChild(numerology, childNum);
-                return (
-                  <div key={childId} className="flex items-center justify-between p-3 rounded-xl glass-light">
+
+          {showChildSelect && (
+            <GlassCard>
+              <p className="text-xs text-slate-400 mb-2">Vyberte klienta ako dieťa:</p>
+              <div className="space-y-1">
+                {clients.filter(c => c.id !== client.id && !(client.childrenIds || []).includes(c.id)).map(c => (
+                  <button key={c.id} onClick={() => { updateClient(client.id, { childrenIds: [...(client.childrenIds || []), c.id] }); setShowChildSelect(false); }}
+                    className="w-full text-left p-2 rounded-lg glass-light text-sm text-white hover:bg-indigo-500/20">
+                    {c.name} ({c.birthDay}.{c.birthMonth}.{c.birthYear})
+                  </button>
+                ))}
+              </div>
+              <button onClick={() => setShowChildSelect(false)} className="text-xs text-slate-400 mt-2">Zrušiť</button>
+            </GlassCard>
+          )}
+
+          {(client.childrenIds || []).map(childId => {
+            const child = clients.find(c => c.id === childId);
+            if (!child) return null;
+            const childNum = calculateFullNumerology(child.birthDay, child.birthMonth, child.birthYear);
+            const pcResult = calculateParentChild(numerology, childNum);
+            return (
+              <div key={childId} className="space-y-3">
+                <GlassCard glow>
+                  <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-white">{child.name}</p>
-                      <p className="text-xs text-slate-400">{child.birthDay}.{child.birthMonth}.{child.birthYear}</p>
+                      <p className="text-lg font-medium text-white">{child.name}</p>
+                      <p className="text-xs text-slate-400">ŽČ {childNum.lifePathNumber} | {pcResult.parentRole}</p>
                     </div>
-                    <div className="text-right flex items-center gap-3">
-                      <div>
-                        <p className="text-lg font-bold text-green-300">{pcResult.compatibility}%</p>
+                    <div className="flex items-center gap-3">
+                      <div className="text-center">
+                        <p className="text-2xl font-serif font-bold text-green-300">{pcResult.compatibility}%</p>
                         <p className="text-xs text-slate-400">kompatibilita</p>
                       </div>
                       <button onClick={() => updateClient(client.id, { childrenIds: (client.childrenIds || []).filter(i => i !== childId) })}
-                        className="text-red-400 hover:text-red-300 text-xs">✕</button>
+                        className="text-red-400 hover:text-red-300 text-lg">✕</button>
                     </div>
                   </div>
-                );
-              })}
-            </div>
-          )}
-          {showChildSelect && (
-            <div className="mt-3 space-y-2">
-              <p className="text-xs text-slate-400">Vyberte klienta ako dieťa:</p>
-              {clients.filter(c => c.id !== client.id && !(client.childrenIds || []).includes(c.id)).map(c => (
-                <button key={c.id} onClick={() => { updateClient(client.id, { childrenIds: [...(client.childrenIds || []), c.id] }); setShowChildSelect(false); }}
-                  className="w-full text-left p-2 rounded-lg glass-light text-sm text-white hover:bg-indigo-500/20">
-                  {c.name} ({c.birthDay}.{c.birthMonth}.{c.birthYear})
-                </button>
-              ))}
-              <button onClick={() => setShowChildSelect(false)} className="text-xs text-slate-400">Zrušiť</button>
-            </div>
-          )}
-        </GlassCard>
+                </GlassCard>
+                <GlassCard>
+                  <p className="text-xs text-cyan-400 uppercase mb-2">Komunikácia</p>
+                  <p className="text-sm text-slate-300">{pcResult.communicationStyle}</p>
+                </GlassCard>
+                <GlassCard>
+                  <p className="text-xs text-purple-400 uppercase mb-2">Emocionálne potreby dieťaťa</p>
+                  {pcResult.emotionalNeeds.map((n, i) => <p key={i} className="text-xs text-slate-300 mb-1">• {n}</p>)}
+                </GlassCard>
+                <GlassCard>
+                  <p className="text-xs text-amber-400 uppercase mb-2">Hranice a potreby</p>
+                  {pcResult.childNeeds.map((n, i) => <p key={i} className="text-xs text-slate-300 mb-1">★ {n}</p>)}
+                  {pcResult.boundaries.map((b, i) => <p key={i} className="text-xs text-slate-300 mb-1">⊡ {b}</p>)}
+                </GlassCard>
+                <GlassCard>
+                  <p className="text-xs text-indigo-400 uppercase mb-2">Odporúčania</p>
+                  {pcResult.recommendations.map((r, i) => <p key={i} className="text-xs text-slate-300 mb-1">→ {r}</p>)}
+                </GlassCard>
+              </div>
+            );
+          })}
+        </div>
       </motion.section>
     </div>
   );

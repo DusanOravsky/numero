@@ -14,14 +14,16 @@ interface PersonInput {
   day: string;
   month: string;
   year: string;
+  hour: string;
+  birthPlace: string;
 }
 
-const emptyPerson = (): PersonInput => ({ name: '', day: '', month: '', year: '' });
+const emptyPerson = (): PersonInput => ({ name: '', day: '', month: '', year: '', hour: '', birthPlace: '' });
 
 function PersonForm({ person, onChange, label }: { person: PersonInput; onChange: (p: PersonInput) => void; label: string }) {
   return (
     <div className="space-y-3">
-      <p className="text-sm text-slate-400 font-medium">{label}</p>
+      {label && <p className="text-sm text-slate-400 font-medium">{label}</p>}
       <input
         type="text"
         placeholder="Meno"
@@ -33,6 +35,10 @@ function PersonForm({ person, onChange, label }: { person: PersonInput; onChange
         <input type="number" placeholder="Deň" min={1} max={31} value={person.day} onChange={e => onChange({ ...person, day: e.target.value })} className="w-20 px-3 py-3 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white text-center focus:outline-none focus:border-indigo-500/50" />
         <input type="number" placeholder="Mesiac" min={1} max={12} value={person.month} onChange={e => onChange({ ...person, month: e.target.value })} className="w-24 px-3 py-3 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white text-center focus:outline-none focus:border-indigo-500/50" />
         <input type="number" placeholder="Rok" min={1900} max={2100} value={person.year} onChange={e => onChange({ ...person, year: e.target.value })} className="flex-1 px-3 py-3 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white text-center focus:outline-none focus:border-indigo-500/50" />
+      </div>
+      <div className="flex gap-2">
+        <input type="number" placeholder="Hodina (voliteľné)" min={0} max={23} value={person.hour} onChange={e => onChange({ ...person, hour: e.target.value })} className="w-1/2 px-3 py-2.5 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white text-center text-sm focus:outline-none focus:border-indigo-500/50" />
+        <input type="text" placeholder="Miesto narodenia" value={person.birthPlace} onChange={e => onChange({ ...person, birthPlace: e.target.value })} className="flex-1 px-3 py-2.5 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white text-sm focus:outline-none focus:border-indigo-500/50" />
       </div>
     </div>
   );

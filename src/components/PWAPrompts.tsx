@@ -69,7 +69,7 @@ export function PWAPrompts() {
 
   const handleUpdate = () => {
     setShowUpdate(false);
-    window.location.href = window.location.origin + window.location.pathname.split('/').slice(0, 2).join('/') + '/';
+    window.location.href = window.location.origin + (import.meta.env.BASE_URL || '/');
   };
 
   return (

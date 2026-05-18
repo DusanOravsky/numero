@@ -125,14 +125,31 @@ function getMoonPhase(date: Date): string {
   return 'Nov';
 }
 
+function getTimezoneOffset(day: number, month: number, year: number, baseOffset: number): number {
+  // CET/CEST: letný čas od poslednej nedele marca do poslednej nedele októbra
+  if (baseOffset === 1 || baseOffset === 2) {
+    const marchLast = new Date(year, 2, 31);
+    const marchSunday = 31 - marchLast.getDay();
+    const octLast = new Date(year, 9, 31);
+    const octSunday = 31 - octLast.getDay();
+    const dayOfYear = Math.floor((new Date(year, month - 1, day).getTime() - new Date(year, 0, 1).getTime()) / 86400000) + 1;
+    const marchSundayDOY = Math.floor((new Date(year, 2, marchSunday).getTime() - new Date(year, 0, 1).getTime()) / 86400000) + 1;
+    const octSundayDOY = Math.floor((new Date(year, 9, octSunday).getTime() - new Date(year, 0, 1).getTime()) / 86400000) + 1;
+    if (dayOfYear >= marchSundayDOY && dayOfYear < octSundayDOY) return 2; // CEST
+    return 1; // CET
+  }
+  return baseOffset;
+}
+
 export function calculateAstrology(
   day: number, month: number, year: number,
   hour: number = 12, minute: number = 0,
   latitude: number = 48.15, longitude: number = 17.11,
   timezoneOffsetHours: number = 1
 ): AstrologyResult {
-  // Convert local time to UTC using timezone offset
-  const utcHour = hour - timezoneOffsetHours;
+  // Auto-detect summer/winter time for CET/CEST
+  const tz = getTimezoneOffset(day, month, year, timezoneOffsetHours);
+  const utcHour = hour - tz;
   const date = new Date(Date.UTC(year, month - 1, day, utcHour, minute));
 
   const sunLong = getSunLongitude(date);

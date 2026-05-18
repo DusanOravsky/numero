@@ -62,10 +62,10 @@ export function ClientDashboard() {
 
     setResults({ numerology, astrology, humanDesign, chakras, kabalah, theta });
 
-    // Only add report once per day per client (avoid duplicates)
+    // Add report max once per day per client
     const today = new Date().toISOString().split('T')[0];
-    const existing = useStore.getState().reports.find(r => r.clientId === client.id && r.createdAt.startsWith(today));
-    if (!existing) {
+    const reports = useStore.getState().reports;
+    if (!reports.some(r => r.clientId === client.id && r.createdAt.startsWith(today))) {
       addReport({
         id: crypto.randomUUID(),
         profileId: '',

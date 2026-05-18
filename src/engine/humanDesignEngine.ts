@@ -203,14 +203,17 @@ function findDesignDate(birthDate: Date): Date {
   const natalSunLon = getSunLongitude(birthDate);
   const targetLon = ((natalSunLon - 88) % 360 + 360) % 360;
 
-  const searchStart = Astronomy.MakeTime(new Date(birthDate.getTime() - 100 * 24 * 60 * 60 * 1000));
-  const result = Astronomy.SearchSunLongitude(targetLon, searchStart, 30);
+  // Search in wider window to ensure we find the design date
+  const searchStart = Astronomy.MakeTime(new Date(birthDate.getTime() - 120 * 24 * 60 * 60 * 1000));
+  const result = Astronomy.SearchSunLongitude(targetLon, searchStart, 60);
 
   if (result) {
     return result.date;
   }
 
-  return new Date(birthDate.getTime() - 88 * 24 * 60 * 60 * 1000);
+  // Fallback: approximate (less accurate but won't crash)
+  const approxDaysPerDegree = 365.25 / 360;
+  return new Date(birthDate.getTime() - Math.round(88 * approxDaysPerDegree) * 24 * 60 * 60 * 1000);
 }
 
 function getActivations(date: Date, type: 'personality' | 'design'): GateActivation[] {

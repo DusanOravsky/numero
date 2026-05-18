@@ -151,16 +151,23 @@ export function ClientDashboard() {
               const topGeneKeys = [sunGate, earthGate].filter((g): g is number => g !== undefined).map(g => getGeneKeyByGate(g)).filter(Boolean);
               if (topGeneKeys.length === 0) return null;
               return (
-                <p>
-                  <strong>Génové kľúče</strong> (cesta transformácie):{' '}
-                  {topGeneKeys.map((gk, i) => (
-                    <span key={gk!.gate}>
-                      {i > 0 && ' '}
-                      Brána {gk!.gate}: {gk!.shadow} (tieň) → {gk!.gift} (dar) → {gk!.siddhi} (siddhi).
-                      NLP technika: <em>{gk!.nlpTechnique}</em>.
-                    </span>
+                <div className="border-l-2 border-purple-200 pl-3 space-y-3">
+                  <p><strong>Génové kľúče – cesta transformácie:</strong></p>
+                  {topGeneKeys.map((gk) => (
+                    <div key={gk!.gate} className="space-y-1">
+                      <p className="text-sm">
+                        <strong>Brána {gk!.gate}</strong>: <span className="text-red-600">{gk!.shadow}</span> (tieň) →
+                        <span className="text-amber-600"> {gk!.gift}</span> (dar) →
+                        <span className="text-green-600"> {gk!.siddhi}</span> (siddhi)
+                      </p>
+                      <p className="text-xs text-slate-500">{gk!.shadowDescription}</p>
+                      <p className="text-xs text-slate-500">Dar: {gk!.giftDescription}</p>
+                      <p className="text-xs text-slate-600">
+                        <strong>NLP: {gk!.nlpTechnique}</strong> – {gk!.nlpDescription}
+                      </p>
+                    </div>
                   ))}
-                </p>
+                </div>
               );
             })()}
 

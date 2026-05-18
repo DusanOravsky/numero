@@ -6,7 +6,7 @@ import { NumerologyGrid } from '../components/NumerologyGrid';
 import { EnergyCard } from '../components/EnergyCard';
 import { VibrationCard } from '../components/VibrationCard';
 import { DateInput } from '../components/DateInput';
-import { calculateFullNumerology } from '../engine/numerologyEngine';
+import { calculateFullNumerology, calculateORV } from '../engine/numerologyEngine';
 import type { NumerologyResult } from '../engine/numerologyEngine';
 import { calculateNameNumerology } from '../engine/nameNumerologyEngine';
 import type { NameNumerologyResult } from '../engine/nameNumerologyEngine';
@@ -376,6 +376,42 @@ export function NumerologyPage() {
                   ))}
                 </div>
               </GlassCard>
+
+              {profile && (
+                <GlassCard>
+                  <h3 className="font-medium text-white mb-3">ORV Timeline</h3>
+                  <p className="text-xs text-slate-400 mb-4">Vizualizácia vášho 9-ročného cyklu. Aktuálny rok je zvýraznený.</p>
+                  <div className="overflow-x-auto">
+                    <div className="flex gap-2 min-w-max pb-2">
+                      {(() => {
+                        const now = new Date();
+                        const currentYear = now.getFullYear();
+                        const years = [];
+                        for (let y = currentYear - 4; y <= currentYear + 4; y++) {
+                          const yearOrv = calculateORV(profile.birthDay, profile.birthMonth, y);
+                          years.push({ year: y, orv: yearOrv });
+                        }
+                        return years.map(({ year, orv: yearOrv }) => (
+                          <div
+                            key={year}
+                            className={`flex flex-col items-center p-3 rounded-xl border min-w-[80px] ${year === currentYear ? 'bg-indigo-500/20 border-indigo-500/50 ring-1 ring-indigo-400/50' : 'bg-slate-800/30 border-slate-700/30'}`}
+                          >
+                            <span className={`text-xs ${year === currentYear ? 'text-indigo-300 font-bold' : 'text-slate-500'}`}>{year}</span>
+                            <span className={`text-xl font-serif font-bold mt-1 ${year === currentYear ? 'text-white' : 'text-slate-300'}`}>{yearOrv}</span>
+                            <span className={`text-[10px] mt-1 text-center leading-tight ${year === currentYear ? 'text-indigo-200' : 'text-slate-500'}`}>
+                              {orvDescriptions[yearOrv]?.title.split(' ').slice(1).join(' ') || ''}
+                            </span>
+                          </div>
+                        ));
+                      })()}
+                    </div>
+                  </div>
+                  <div className="mt-3 flex items-center gap-2 text-xs text-slate-500">
+                    <div className="w-3 h-3 rounded bg-indigo-500/30 border border-indigo-500/50"></div>
+                    <span>Aktuálny rok</span>
+                  </div>
+                </GlassCard>
+              )}
             </div>
           )}
 

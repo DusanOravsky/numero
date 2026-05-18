@@ -45,6 +45,7 @@ export function ClientDashboard() {
   const [results, setResults] = useState<AllResults | null>(null);
   const [showPartnerSelect, setShowPartnerSelect] = useState(false);
   const [showChildSelect, setShowChildSelect] = useState(false);
+  const [shareMsg, setShareMsg] = useState('');
 
   useEffect(() => {
     if (!client) return;

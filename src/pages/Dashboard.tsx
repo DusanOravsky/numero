@@ -243,6 +243,31 @@ export function Dashboard() {
           </div>
         )}
       </GlassCard>
+
+      {dailyRituals[odv] && (
+        <GlassCard delay={0.8}>
+          <h3 className="font-medium text-white mb-2">Denný rituál</h3>
+          <p className="text-xs text-slate-400 mb-4">Na základe ODV ({odv}) a aktuálnej energie</p>
+          <div className="space-y-3">
+            <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
+              <p className="text-xs text-amber-400 uppercase mb-1">Ranná prax</p>
+              <p className="text-sm text-slate-300">{dailyRituals[odv].morning}</p>
+            </div>
+            <div className="p-3 rounded-xl bg-indigo-500/10 border border-indigo-500/20">
+              <p className="text-xs text-indigo-400 uppercase mb-1">Denná afirmácia</p>
+              <p className="text-sm text-slate-300 font-serif italic">"{affirmations[odv] || affirmations[1]}"</p>
+            </div>
+            <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20">
+              <p className="text-xs text-purple-400 uppercase mb-1">Večerná reflexia</p>
+              <p className="text-sm text-slate-300">{dailyRituals[odv].evening}</p>
+            </div>
+            <div className="p-3 rounded-xl bg-green-500/10 border border-green-500/20">
+              <p className="text-xs text-green-400 uppercase mb-1">Odporúčanie pre telo</p>
+              <p className="text-sm text-slate-300">{dailyRituals[odv].body}</p>
+            </div>
+          </div>
+        </GlassCard>
+      )}
     </div>
   );
 }

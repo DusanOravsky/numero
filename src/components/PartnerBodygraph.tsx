@@ -234,12 +234,15 @@ export function PartnerBodygraph({ result1, result2, name1, name2 }: PartnerBody
         {/* Electromagnetic channels */}
         {channelAnalysis.electromagnetic.length > 0 && (
           <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20">
-            <h4 className="text-sm font-medium text-amber-300 mb-2">Elektromagneticke kanaly</h4>
-            <p className="text-xs text-slate-400 mb-2">Silna vzajomna pritazlivost - jeden ma jednu branu, druhy druhu. Spolu vytvorate energiu, ktoru sam nema nikto z vas.</p>
+            <h4 className="text-sm font-medium text-amber-300 mb-2">Elektromagnetické kanály – vzájomná príťažlivosť</h4>
+            <p className="text-xs text-slate-500 mb-3">Každý z vás má jednu bránu kanála a druhý má tú druhú. Keď ste spolu, vytvárate energiu, ktorú sám nemá nikto z vás. Preto sa k sebe priťahujete – dopĺňate sa na energetickej úrovni. Tieto kanály sú najsilnejším magnetom vo vzťahu.</p>
             {channelAnalysis.electromagnetic.map((ch, i) => (
-              <p key={i} className="text-xs text-slate-300 mb-1">
-                {ch.gates[0]}-{ch.gates[1]} ({ch.name})
-              </p>
+              <div key={i} className="p-2 rounded-lg bg-amber-50 border border-amber-200 mb-2">
+                <p className="text-sm font-medium text-slate-800">{ch.name} (brány {ch.gates[0]}-{ch.gates[1]})</p>
+                <p className="text-xs text-slate-500 mt-1">
+                  {name1} prináša bránu {ch.gates[0]}, {name2} prináša bránu {ch.gates[1]}. Spolu aktivujete energiu {ch.name} – oblasť, kde ste najsilnejší AKO PÁR.
+                </p>
+              </div>
             ))}
           </div>
         )}
@@ -247,12 +250,13 @@ export function PartnerBodygraph({ result1, result2, name1, name2 }: PartnerBody
         {/* Compromise channels */}
         {channelAnalysis.compromise.length > 0 && (
           <div className="p-4 rounded-xl bg-purple-500/10 border border-purple-500/20">
-            <h4 className="text-sm font-medium text-purple-300 mb-2">Kompromisne kanaly</h4>
-            <p className="text-xs text-slate-400 mb-2">Obaja mate rovnaky kompletny kanal. Zdielate konzistentnu energiu v tejto oblasti - moze ist o silu aj o boj o dominanciu.</p>
+            <h4 className="text-sm font-medium text-purple-300 mb-2">Kompromisné kanály – spoločná energia</h4>
+            <p className="text-xs text-slate-500 mb-3">Obaja máte rovnaký kompletný kanál. To znamená, že v tejto oblasti máte obe konzistentnú energiu. Môže to byť veľká sila (rozumiete si bez slov), ale aj trecie plocha (obaja chcete dominovať rovnakým spôsobom). Kľúčom je vzájomný rešpekt.</p>
             {channelAnalysis.compromise.map((ch, i) => (
-              <p key={i} className="text-xs text-slate-300 mb-1">
-                {ch.gates[0]}-{ch.gates[1]} ({ch.name})
-              </p>
+              <div key={i} className="p-2 rounded-lg bg-purple-50 border border-purple-200 mb-2">
+                <p className="text-sm font-medium text-slate-800">{ch.name} (brány {ch.gates[0]}-{ch.gates[1]})</p>
+                <p className="text-xs text-slate-500 mt-1">Obaja máte energiu "{ch.name}" – zdieľate rovnakú silu, čo môže vytvárať harmóniu AJ súťaž.</p>
+              </div>
             ))}
           </div>
         )}
@@ -260,35 +264,39 @@ export function PartnerBodygraph({ result1, result2, name1, name2 }: PartnerBody
         {/* Dominant channels */}
         {(channelAnalysis.dominant1.length > 0 || channelAnalysis.dominant2.length > 0) && (
           <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/20">
-            <h4 className="text-sm font-medium text-rose-300 mb-2">Dominantne kanaly</h4>
-            <p className="text-xs text-slate-400 mb-2">Len jeden z vas ma kompletny kanal - ta osoba dominuje v danej oblasti.</p>
+            <h4 className="text-sm font-medium text-rose-300 mb-2">Dominantné kanály – kto vedie v akej oblasti</h4>
+            <p className="text-xs text-slate-500 mb-3">Len jeden z vás má kompletný kanál – tá osoba má v tejto oblasti konzistentnú energiu a prirodzene v nej dominuje. Partner ju v tejto oblasti nasleduje alebo sa od nej učí. Nie je to nerovnováha – je to prirodzené rozdelenie "zodpovedností" vo vzťahu.</p>
             {channelAnalysis.dominant1.map((ch, i) => (
-              <p key={i} className="text-xs text-slate-300 mb-1">
-                {ch.gates[0]}-{ch.gates[1]} ({ch.name}) - dominuje <span className="text-rose-300">{name1}</span>
-              </p>
+              <div key={i} className="p-2 rounded-lg bg-rose-50 border border-rose-200 mb-2">
+                <p className="text-sm text-slate-800"><strong className="text-rose-600">{name1}</strong> dominuje: {ch.name} ({ch.gates[0]}-{ch.gates[1]})</p>
+                <p className="text-xs text-slate-500">{name1} má konzistentnú energiu v oblasti "{ch.name}" a prirodzene túto oblasť vo vzťahu riadi.</p>
+              </div>
             ))}
             {channelAnalysis.dominant2.map((ch, i) => (
-              <p key={i} className="text-xs text-slate-300 mb-1">
-                {ch.gates[0]}-{ch.gates[1]} ({ch.name}) - dominuje <span className="text-indigo-300">{name2}</span>
-              </p>
+              <div key={i} className="p-2 rounded-lg bg-indigo-50 border border-indigo-200 mb-2">
+                <p className="text-sm text-slate-800"><strong className="text-indigo-600">{name2}</strong> dominuje: {ch.name} ({ch.gates[0]}-{ch.gates[1]})</p>
+                <p className="text-xs text-slate-500">{name2} má konzistentnú energiu v oblasti "{ch.name}" a prirodzene túto oblasť vo vzťahu riadi.</p>
+              </div>
             ))}
           </div>
         )}
 
         {/* Conditioning */}
         <div className="p-4 rounded-xl bg-slate-500/10 border border-slate-500/20">
-          <h4 className="text-sm font-medium text-slate-300 mb-2">Podmienovanie (conditioning)</h4>
-          <p className="text-xs text-slate-400 mb-3">Definovane centra jedneho partnera podmienuji otvorene centra druheho.</p>
+          <h4 className="text-sm font-medium text-slate-300 mb-2">Podmieňovanie – vzájomný vplyv</h4>
+          <p className="text-xs text-slate-500 mb-3">Keď je vaše centrum definované a partnerove je otvorené, váš partner "absorbuje" vašu energiu v tejto oblasti. Vy ho v nej podmieňujete – ovplyvňujete, ako sa cíti, myslí alebo koná. Nie je to zlé – ale je dôležité to rozpoznať, aby partner mohol rozlíšiť čo je JEHO a čo je VAŠE.</p>
           {conditioning.p1ConditionsP2.length > 0 && (
-            <div className="mb-2">
-              <p className="text-xs text-rose-300 font-medium">{name1} podmienue {name2} v:</p>
-              <p className="text-xs text-slate-300">{conditioning.p1ConditionsP2.join(', ')}</p>
+            <div className="mb-3 p-2 rounded-lg bg-rose-50 border border-rose-200">
+              <p className="text-xs text-rose-600 font-medium mb-1">{name1} podmieňuje {name2} v oblastiach:</p>
+              <p className="text-xs text-slate-600">{conditioning.p1ConditionsP2.join(', ')}</p>
+              <p className="text-[10px] text-slate-400 mt-1">{name2} v týchto oblastiach absorbuje energiu od {name1}. Musí rozlišovať čo je skutočne jeho/jej a čo preberá od partnera.</p>
             </div>
           )}
           {conditioning.p2ConditionsP1.length > 0 && (
-            <div>
-              <p className="text-xs text-indigo-300 font-medium">{name2} podmienue {name1} v:</p>
-              <p className="text-xs text-slate-300">{conditioning.p2ConditionsP1.join(', ')}</p>
+            <div className="p-2 rounded-lg bg-indigo-50 border border-indigo-200">
+              <p className="text-xs text-indigo-600 font-medium mb-1">{name2} podmieňuje {name1} v oblastiach:</p>
+              <p className="text-xs text-slate-600">{conditioning.p2ConditionsP1.join(', ')}</p>
+              <p className="text-[10px] text-slate-400 mt-1">{name1} v týchto oblastiach absorbuje energiu od {name2}. Musí rozlišovať čo je skutočne jeho/jej a čo preberá od partnera.</p>
             </div>
           )}
           {conditioning.p1ConditionsP2.length === 0 && conditioning.p2ConditionsP1.length === 0 && (

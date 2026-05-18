@@ -15,6 +15,7 @@ import { SettingsPage } from './pages/SettingsPage';
 import { ProfileSetup } from './pages/ProfileSetup';
 import { ClientsPage } from './pages/ClientsPage';
 import { ClientDashboard } from './pages/ClientDashboard';
+import { SharedView } from './pages/SharedView';
 
 function AnimatedRoutes() {
   const location = useLocation();
@@ -35,6 +36,7 @@ function AnimatedRoutes() {
           <Route path="clients/:id" element={<ClientDashboard />} />
           <Route path="settings" element={<SettingsPage />} />
           <Route path="profile" element={<ProfileSetup />} />
+          <Route path="shared" element={<SharedView />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
       </Routes>
@@ -43,6 +45,16 @@ function AnimatedRoutes() {
 }
 
 export default function App() {
+  // Handle hash-based shared links: #/shared?data=...
+  const hash = window.location.hash;
+  if (hash.startsWith('#/shared')) {
+    return (
+      <ErrorBoundary>
+        <SharedView />
+      </ErrorBoundary>
+    );
+  }
+
   return (
     <ErrorBoundary>
       <BrowserRouter>

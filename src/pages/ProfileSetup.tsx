@@ -47,7 +47,7 @@ export function ProfileSetup() {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="font-serif text-3xl font-bold bg-gradient-to-r from-indigo-400 via-violet-400 to-purple-400 bg-clip-text text-transparent">
-            {profiles.length === 0 ? 'Vitajte v Número' : 'Nový profil'}
+            {profiles.length === 0 ? 'Vitajte' : 'Nový profil'}
           </h1>
           <p className="text-slate-400 mt-2">
             Zadajte údaje pre vytvorenie osobného profilu

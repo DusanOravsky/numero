@@ -11,8 +11,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'icons/*.png'],
       manifest: {
-        name: 'Número - Integrálna mapa bytia',
-        short_name: 'Número',
+        name: 'Integrálna mapa bytia - Integrálna mapa bytia',
+        short_name: 'Integrálna mapa bytia',
         description: 'Integrálna mapa bytia - numerológia, astrológia, Human Design a sebarozvoj',
         theme_color: '#1e1b4b',
         background_color: '#0f0a2e',

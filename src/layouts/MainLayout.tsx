@@ -22,7 +22,7 @@ export function MainLayout() {
       <aside className="hidden lg:flex lg:flex-col lg:w-64 glass border-r border-indigo-500/10 fixed h-full z-40">
         <div className="p-6 border-b border-indigo-500/10">
           <h1 className="font-serif text-2xl font-bold bg-gradient-to-r from-indigo-400 via-violet-400 to-purple-400 bg-clip-text text-transparent">
-            Número
+            Integrálna mapa bytia
           </h1>
           <p className="text-xs text-slate-400 mt-1">Integrálna mapa bytia</p>
         </div>

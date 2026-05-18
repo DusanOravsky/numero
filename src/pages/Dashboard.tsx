@@ -46,10 +46,10 @@ export function Dashboard() {
           className="text-center"
         >
           <h1 className="font-serif text-4xl lg:text-5xl font-bold bg-gradient-to-r from-indigo-400 via-violet-400 to-purple-400 bg-clip-text text-transparent mb-4">
-            Número
+            Integrálna mapa bytia
           </h1>
           <p className="text-slate-400 text-lg mb-8 max-w-md mx-auto">
-            Integrálna mapa bytia. Offline. Súkromná. Profesionálna.
+            Váš osobný sprievodca sebapoznaním. Offline. Súkromne. Profesionálne.
           </p>
           <button
             onClick={() => navigate('/profile')}

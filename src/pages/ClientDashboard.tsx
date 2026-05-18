@@ -62,15 +62,20 @@ export function ClientDashboard() {
 
     setResults({ numerology, astrology, humanDesign, chakras, kabalah, theta });
 
-    addReport({
-      id: crypto.randomUUID(),
-      profileId: '',
-      clientId: client.id,
-      type: 'Kompletný výklad',
-      title: `Výklad pre ${client.name}`,
-      data: { lifePathNumber: numerology.lifePathNumber, hdType: humanDesign.type },
-      createdAt: new Date().toISOString(),
-    });
+    // Only add report once per day per client (avoid duplicates)
+    const today = new Date().toISOString().split('T')[0];
+    const existing = useStore.getState().reports.find(r => r.clientId === client.id && r.createdAt.startsWith(today));
+    if (!existing) {
+      addReport({
+        id: crypto.randomUUID(),
+        profileId: '',
+        clientId: client.id,
+        type: 'Kompletný výklad',
+        title: `Výklad pre ${client.name}`,
+        data: { lifePathNumber: numerology.lifePathNumber, hdType: humanDesign.type },
+        createdAt: new Date().toISOString(),
+      });
+    }
   }, [client]);
 
   if (!client) {

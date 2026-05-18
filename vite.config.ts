@@ -33,5 +33,23 @@ export default defineConfig({
   base: process.env.GITHUB_ACTIONS ? '/numero/' : '/',
   resolve: {
     alias: { '@': '/src' }
+  },
+  build: {
+    chunkSizeWarningLimit: 600,
+    rollupOptions: {
+      output: {
+        manualChunks(id: string) {
+          if (id.includes('node_modules/astronomy-engine')) {
+            return 'astronomy';
+          }
+          if (id.includes('node_modules/jspdf')) {
+            return 'pdf';
+          }
+          if (id.includes('node_modules/react/') || id.includes('node_modules/react-dom/') || id.includes('node_modules/react-router-dom/') || id.includes('node_modules/framer-motion/') || id.includes('node_modules/zustand/')) {
+            return 'vendor';
+          }
+        }
+      }
+    }
   }
 })

@@ -50,7 +50,7 @@ export function ProfileSetup() {
             {profiles.length === 0 ? 'Vitajte' : 'Nový profil'}
           </h1>
           <p className="text-slate-400 mt-2">
-            Zadajte údaje pre vytvorenie osobného profilu
+            Stačí zadať meno a dátum narodenia – všetky sekcie (numerológia, astrológia, Human Design, čakry, kabala, theta healing) sa automaticky vypočítajú a vyplnia.
           </p>
         </div>
 

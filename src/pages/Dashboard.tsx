@@ -1,9 +1,16 @@
+import { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import { GlassCard } from '../components/GlassCard';
 import { VibrationCard } from '../components/VibrationCard';
-import { calculateORV, calculateOMV, calculateODV, reduceToSingle } from '../engine/numerologyEngine';
+import { ClientSummary } from '../components/ClientSummary';
+import { calculateFullNumerology, calculateORV, calculateOMV, calculateODV, reduceToSingle, getGridCount } from '../engine/numerologyEngine';
+import { calculateAstrology } from '../engine/astrologyEngine';
+import { calculateHumanDesign } from '../engine/humanDesignEngine';
+import { evaluateChakras } from '../engine/chakraEngine';
+import { calculateKabalah } from '../engine/kabalahEngine';
+import { calculateThetaHealing } from '../engine/thetaHealingEngine';
 import { orvDescriptions } from '../data/orvDescriptions';
 
 export function Dashboard() {
@@ -203,6 +210,31 @@ export function Dashboard() {
           </div>
         </div>
       </GlassCard>
+
+      {/* Integrálny súhrn profilu */}
+      {profile && (() => {
+        const fullResults = useMemo(() => {
+          const numerology = calculateFullNumerology(profile.birthDay, profile.birthMonth, profile.birthYear);
+          const astrology = calculateAstrology(profile.birthDay, profile.birthMonth, profile.birthYear, profile.birthHour || 12, profile.birthMinute || 0);
+          const humanDesign = calculateHumanDesign(profile.birthDay, profile.birthMonth, profile.birthYear, profile.birthHour || 12, profile.birthMinute || 0);
+          const gridCounts = getGridCount(numerology.grid);
+          const lp = numerology.lifePathNumber > 9 ? reduceToSingle(numerology.lifePathNumber) : numerology.lifePathNumber;
+          const kabalah = calculateKabalah(lp, reduceToSingle(profile.birthDay));
+          const theta = calculateThetaHealing(lp);
+          return { numerology, astrology, humanDesign, kabalah, theta };
+        }, [profile]);
+
+        return (
+          <ClientSummary
+            clientName={profile.name}
+            numerology={fullResults.numerology}
+            astrology={fullResults.astrology}
+            humanDesign={fullResults.humanDesign}
+            kabalah={fullResults.kabalah}
+            theta={fullResults.theta}
+          />
+        );
+      })()}
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {[

@@ -107,16 +107,16 @@ export function ClientDashboard() {
               {lpInfo && <p className="text-sm text-slate-300 mt-2">{lpInfo.title}</p>}
             </div>
             <div className="grid grid-cols-3 gap-2 mt-4">
-              <div className="text-center p-2 rounded-lg bg-indigo-500/10">
-                <p className="text-xs text-slate-400">ORV</p>
+              <div className="text-center p-2 rounded-lg bg-indigo-500/10" title="Osobná ročná vibrácia – energia celého roka od narodenín do narodenín">
+                <p className="text-[10px] text-slate-500">ORV (rok)</p>
                 <p className="text-lg font-bold text-white">{numerology.orv}</p>
               </div>
-              <div className="text-center p-2 rounded-lg bg-purple-500/10">
-                <p className="text-xs text-slate-400">OMV</p>
+              <div className="text-center p-2 rounded-lg bg-purple-500/10" title="Osobná mesačná vibrácia – energia tohto mesiaca">
+                <p className="text-[10px] text-slate-500">OMV (mesiac)</p>
                 <p className="text-lg font-bold text-white">{numerology.omv}</p>
               </div>
               <div className="text-center p-2 rounded-lg bg-amber-500/10">
-                <p className="text-xs text-slate-400">ODV</p>
+                <p className="text-[10px] text-slate-500">ODV (deň)</p>
                 <p className="text-lg font-bold text-white">{numerology.odv}</p>
               </div>
             </div>
@@ -265,6 +265,11 @@ export function ClientDashboard() {
 
         {/* Partner */}
         <div className="space-y-4 mb-6">
+          <GlassCard>
+            <p className="text-xs text-slate-400">
+              <strong className="text-rose-300">Partnerská kompatibilita</strong> hodnotí harmonickú zhodu – spoločné hodnoty, rovnaké jazyky lásky a energetickú rezonanciu. Porovnáva životné čísla, spoločné roviny v mriežke, jazyky lásky a ORV prepojenie.
+            </p>
+          </GlassCard>
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-medium text-white">Partner</h3>
             {!client.partnerId ? (
@@ -339,6 +344,11 @@ export function ClientDashboard() {
 
         {/* Deti */}
         <div className="space-y-4">
+          <GlassCard>
+            <p className="text-xs text-slate-400">
+              <strong className="text-green-300">Rodič-dieťa kompatibilita</strong> hodnotí doplnkovosť – ako rodič dopĺňa dieťa. Vyšší % znamená že rodič má energie, ktoré dieťa potrebuje rozvíjať. Porovnáva mriežky, VDD, ΣT, cieľ vzťahu a spoločné roviny.
+            </p>
+          </GlassCard>
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-medium text-white">Deti</h3>
             <button onClick={() => setShowChildSelect(true)} className="text-xs px-3 py-1.5 rounded-lg bg-green-600 text-white hover:bg-green-500">+ Pridať dieťa</button>

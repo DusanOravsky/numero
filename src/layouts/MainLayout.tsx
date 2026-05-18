@@ -21,10 +21,9 @@ export function MainLayout() {
     <div className="min-h-screen flex flex-col lg:flex-row">
       <aside className="hidden lg:flex lg:flex-col lg:w-64 glass border-r border-indigo-500/10 fixed h-full z-40">
         <div className="p-6 border-b border-indigo-500/10">
-          <h1 className="font-serif text-2xl font-bold bg-gradient-to-r from-indigo-400 via-violet-400 to-purple-400 bg-clip-text text-transparent">
+          <h1 className="font-serif text-xl font-bold bg-gradient-to-r from-indigo-400 via-violet-400 to-purple-400 bg-clip-text text-transparent">
             Integrálna mapa bytia
           </h1>
-          <p className="text-xs text-slate-400 mt-1">Integrálna mapa bytia</p>
         </div>
         <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
           {NAV_ITEMS.map(item => (

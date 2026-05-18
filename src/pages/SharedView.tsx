@@ -51,7 +51,7 @@ export function SharedView() {
         setError('Chyba: chybajuce data v odkaze');
         return;
       }
-      const decoded = JSON.parse(atob(match[1]));
+      const decoded = JSON.parse(decodeURIComponent(escape(atob(match[1]))));
       if (!decoded.name || !decoded.birthDay || !decoded.birthMonth || !decoded.birthYear) {
         setError('Chyba: nekompletne data');
         return;

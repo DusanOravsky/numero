@@ -781,17 +781,24 @@ export function ClientDashboard() {
                 birthHour: client.birthHour,
                 birthMinute: client.birthMinute,
               };
-              const encoded = btoa(JSON.stringify(shareData));
+              const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(shareData))));
               const baseUrl = window.location.origin + window.location.pathname;
               const shareUrl = `${baseUrl}#/shared?data=${encoded}`;
-              navigator.clipboard.writeText(shareUrl).then(() => {
-                setShareMsg('Skopirované!');
-                setTimeout(() => setShareMsg(''), 2000);
-              });
+
+              if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(shareUrl).then(() => {
+                  setShareMsg('Skopírované!');
+                  setTimeout(() => setShareMsg(''), 3000);
+                }).catch(() => {
+                  prompt('Skopírujte tento link:', shareUrl);
+                });
+              } else {
+                prompt('Skopírujte tento link:', shareUrl);
+              }
             }}
             className="px-6 py-3 rounded-xl bg-purple-600 text-white font-medium hover:bg-purple-500 transition-colors"
           >
-            {shareMsg || 'Zdielat vyklad'}
+            {shareMsg || 'Zdieľať výklad'}
           </button>
           <button
             onClick={() => {

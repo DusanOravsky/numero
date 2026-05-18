@@ -119,7 +119,7 @@ export const useStore = create<AppState>()(
         if (version < 2) {
           state.clients = state.clients || [];
         }
-        return state as AppState;
+        return state as unknown as AppState;
       },
     }
   )

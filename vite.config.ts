@@ -30,7 +30,7 @@ export default defineConfig({
       }
     })
   ],
-  base: '/numero/',
+  base: process.env.GITHUB_ACTIONS ? '/numero/' : '/',
   resolve: {
     alias: { '@': '/src' }
   }

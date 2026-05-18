@@ -59,7 +59,6 @@ interface AstroPersonInput {
   year: string;
   hour: string;
   minute: string;
-  minute: string;
   birthPlace: string;
 }
 

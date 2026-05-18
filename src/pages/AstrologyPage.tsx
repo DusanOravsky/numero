@@ -6,6 +6,7 @@ import { DateInput } from '../components/DateInput';
 import { calculateAstrology } from '../engine/astrologyEngine';
 import type { AstrologyResult } from '../engine/astrologyEngine';
 import { motion } from 'framer-motion';
+import { planetInSignDescriptions } from '../data/planetSignDescriptions';
 
 function getSunSignDescription(sign: string): string {
   const descriptions: Record<string, string> = {
@@ -248,19 +249,24 @@ export function AstrologyPage() {
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: idx * 0.05 }}
-                    className="flex items-center justify-between p-3 rounded-xl glass-light"
+                    className="p-3 rounded-xl glass-light"
                   >
-                    <div className="flex items-center gap-3">
-                      <span className="text-xl">{planet.symbol}</span>
-                      <div>
-                        <span className="text-sm font-medium text-white">{planet.name}</span>
-                        <p className="text-[10px] text-slate-500">{getPlanetMeaning(planet.name)}</p>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <span className="text-xl">{planet.symbol}</span>
+                        <div>
+                          <span className="text-sm font-medium text-white">{planet.name}</span>
+                          <p className="text-[10px] text-slate-500">{getPlanetMeaning(planet.name)}</p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-sm text-indigo-300">{planet.sign.symbol} {planet.sign.name}</span>
+                        <span className="text-xs text-slate-500 ml-2">{planet.degree.toFixed(1)}°</span>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <span className="text-sm text-indigo-300">{planet.sign.symbol} {planet.sign.name}</span>
-                      <span className="text-xs text-slate-500 ml-2">{planet.degree.toFixed(1)}°</span>
-                    </div>
+                    {planetInSignDescriptions[planet.name]?.[planet.sign.name] && (
+                      <p className="text-xs text-slate-400 mt-2">{planetInSignDescriptions[planet.name][planet.sign.name]}</p>
+                    )}
                   </motion.div>
                 ))}
               </div>

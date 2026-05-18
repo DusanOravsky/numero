@@ -119,13 +119,28 @@ export function Dashboard() {
               {orv}
             </div>
             <div className="flex-1">
-              <h3 className="font-medium text-white mb-1">Váš rok: {orvDescriptions[orv].title}</h3>
+              <h3 className="font-medium text-white mb-1">Váš rok (ORV {orv}): {orvDescriptions[orv].title}</h3>
               <p className="text-xs text-indigo-300 mb-1">{orvDescriptions[orv].theme}</p>
               <p className="text-sm text-slate-400">{orvDescriptions[orv].advice}</p>
             </div>
           </div>
         </GlassCard>
       )}
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {orvDescriptions[omv] && (
+          <GlassCard delay={0.37}>
+            <p className="text-xs text-purple-300 font-medium mb-1">Tento mesiac (OMV {omv}): {orvDescriptions[omv].title}</p>
+            <p className="text-xs text-slate-400">{orvDescriptions[omv].theme}</p>
+          </GlassCard>
+        )}
+        {orvDescriptions[odv] && (
+          <GlassCard delay={0.39}>
+            <p className="text-xs text-amber-300 font-medium mb-1">Dnešný deň (ODV {odv}): {orvDescriptions[odv].title}</p>
+            <p className="text-xs text-slate-400">{orvDescriptions[odv].theme}</p>
+          </GlassCard>
+        )}
+      </div>
 
       <GlassCard glow delay={0.4}>
         <div className="flex items-start gap-4">

@@ -14,6 +14,7 @@ import lifePathsData from '../data/lifePaths.json';
 import isolatedData from '../data/isolatedNumbers.json';
 import planesData from '../data/planes.json';
 import { orvDescriptions, loveLanguageDescriptions, loveLanguageScoringExplanation } from '../data/orvDescriptions';
+import { cycleVibrationDescriptions } from '../data/planetSignDescriptions';
 
 const planesInfo = planesData as { full: Record<string, { description: string; gift: string; recommendation: string }>; empty: Record<string, { description: string; lesson: string; recommendation: string }> };
 
@@ -420,6 +421,9 @@ export function NumerologyPage() {
                         <span className="text-xs text-slate-400">({t.influence})</span>
                       </div>
                       <p className="text-xs text-slate-300 mt-1">{t.description}</p>
+                      {cycleVibrationDescriptions[t.vibration] && (
+                        <p className="text-xs text-amber-200/70 mt-1 italic">{cycleVibrationDescriptions[t.vibration]}</p>
+                      )}
                     </motion.div>
                   ))}
                 </div>
@@ -446,6 +450,9 @@ export function NumerologyPage() {
                         <span className="text-xs text-slate-400">({t.influence})</span>
                       </div>
                       <p className="text-xs text-slate-300 mt-1">{t.description}</p>
+                      {cycleVibrationDescriptions[t.vibration] && (
+                        <p className="text-xs text-green-200/70 mt-1 italic">{cycleVibrationDescriptions[t.vibration]}</p>
+                      )}
                     </motion.div>
                   ))}
                 </div>

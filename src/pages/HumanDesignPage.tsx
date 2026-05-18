@@ -123,6 +123,41 @@ export function HumanDesignPage() {
             <EnergyCard title="Kanály" value={result.channels.length} subtitle="aktívne kanály" color="purple" delay={0.4} />
           </div>
 
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <GlassCard>
+              <h3 className="font-medium text-white mb-2">Profil {result.profile.line1}/{result.profile.line2} – {result.profile.name}</h3>
+              <p className="text-sm text-slate-300">{result.profile.description}</p>
+            </GlassCard>
+            <GlassCard>
+              <h3 className="font-medium text-white mb-2">Inkarnačný kríž</h3>
+              <p className="text-xs text-slate-400 mb-2">Inkarnačný kríž predstavuje vašu životnú tému a účel -- to, prečo ste tu. Je to kombinácia brán vášho vedomého a nevedomého Slnka a Zeme.</p>
+              <p className="text-sm text-slate-300 font-medium">{result.incarnationCross}</p>
+            </GlassCard>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <GlassCard>
+              <p className="text-xs text-slate-400 mb-1">Definované centrá: {result.definedCenters.length} z 9</p>
+              <p className="text-sm text-slate-300">
+                {result.definedCenters.length >= 7
+                  ? 'Väčšina vašej energie je definovaná a konzistentná. Máte stabilný a spoľahlivý energetický systém s menšou otvorenosťou voči vonkajším vplyvom.'
+                  : result.definedCenters.length >= 4
+                  ? 'Máte vyváženú kombináciu definovanej a otvorenej energie. Niektoré oblasti sú spoľahlivé, v iných sa učíte a absorbujete od okolia.'
+                  : 'Väčšina vašej energie je otvorená a premenlivá. Ste veľmi citliví na prostredie a absorbujete energiu ostatných -- to je vaša múdrosť, nie slabosť.'}
+              </p>
+            </GlassCard>
+            <GlassCard>
+              <p className="text-xs text-slate-400 mb-1">Kanály: {result.channels.length}</p>
+              <p className="text-sm text-slate-300">
+                {result.channels.length === 0
+                  ? 'Nemáte žiadne plné kanály. Vaša energia prúdi voľnejšie a ste otvorenejší vonkajším vplyvom.'
+                  : result.channels.length <= 2
+                  ? 'Máte niekoľko aktívnych kanálov, ktoré vytvárajú konzistentný tok energie medzi centrami a definujú vaše silné stránky.'
+                  : 'Máte viacero aktívnych kanálov, čo znamená silný a komplexný energetický systém s jasnými životnými témami a darmi.'}
+              </p>
+            </GlassCard>
+          </div>
+
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <GlassCard>
               <h3 className="font-medium text-white mb-2">Definované centrá</h3>
@@ -188,11 +223,6 @@ export function HumanDesignPage() {
               </div>
             </GlassCard>
           )}
-
-          <GlassCard>
-            <h3 className="font-medium text-white mb-3">Profil: {result.profile.line1}/{result.profile.line2} – {result.profile.name}</h3>
-            <p className="text-sm text-slate-300">{result.profile.description}</p>
-          </GlassCard>
 
           <button
             onClick={() => setResult(null)}

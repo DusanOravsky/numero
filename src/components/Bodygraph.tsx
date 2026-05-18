@@ -6,172 +6,141 @@ interface BodygraphProps {
 
 const CHANNEL_TO_CENTERS: Record<string, [string, string]> = {
   '1-8': ['G', 'Hrdlo'], '2-14': ['G', 'Sakrálne'], '3-60': ['Sakrálne', 'Koreň'],
-  '4-63': ['Ajna', 'Hlava'], '5-15': ['Sakrálne', 'G'], '6-59': ['Sakrálne', 'Solárny plexus'],
+  '4-63': ['Ajna', 'Hlava'], '5-15': ['Sakrálne', 'G'], '6-59': ['Sakrálne', 'SP'],
   '7-31': ['G', 'Hrdlo'], '9-52': ['Sakrálne', 'Koreň'], '10-20': ['G', 'Hrdlo'],
   '10-34': ['G', 'Sakrálne'], '10-57': ['G', 'Slezina'], '11-56': ['Ajna', 'Hrdlo'],
-  '12-22': ['Hrdlo', 'Solárny plexus'], '13-33': ['G', 'Hrdlo'], '16-48': ['Hrdlo', 'Slezina'],
-  '17-62': ['Ajna', 'Hrdlo'], '18-58': ['Slezina', 'Koreň'], '19-49': ['Koreň', 'Solárny plexus'],
-  '20-34': ['Hrdlo', 'Sakrálne'], '20-57': ['Hrdlo', 'Slezina'], '21-45': ['Srdce/Ego', 'Hrdlo'],
-  '23-43': ['Ajna', 'Hrdlo'], '24-61': ['Ajna', 'Hlava'], '25-51': ['G', 'Srdce/Ego'],
-  '26-44': ['Srdce/Ego', 'Slezina'], '27-50': ['Sakrálne', 'Slezina'], '28-38': ['Slezina', 'Koreň'],
-  '29-46': ['Sakrálne', 'G'], '30-41': ['Solárny plexus', 'Koreň'], '32-54': ['Slezina', 'Koreň'],
-  '34-57': ['Sakrálne', 'Slezina'], '35-36': ['Hrdlo', 'Solárny plexus'], '37-40': ['Solárny plexus', 'Srdce/Ego'],
-  '39-55': ['Koreň', 'Solárny plexus'], '42-53': ['Sakrálne', 'Koreň'], '47-64': ['Ajna', 'Hlava'],
+  '12-22': ['Hrdlo', 'SP'], '13-33': ['G', 'Hrdlo'], '16-48': ['Hrdlo', 'Slezina'],
+  '17-62': ['Ajna', 'Hrdlo'], '18-58': ['Slezina', 'Koreň'], '19-49': ['Koreň', 'SP'],
+  '20-34': ['Hrdlo', 'Sakrálne'], '20-57': ['Hrdlo', 'Slezina'], '21-45': ['Ego', 'Hrdlo'],
+  '23-43': ['Ajna', 'Hrdlo'], '24-61': ['Ajna', 'Hlava'], '25-51': ['G', 'Ego'],
+  '26-44': ['Ego', 'Slezina'], '27-50': ['Sakrálne', 'Slezina'], '28-38': ['Slezina', 'Koreň'],
+  '29-46': ['Sakrálne', 'G'], '30-41': ['SP', 'Koreň'], '32-54': ['Slezina', 'Koreň'],
+  '34-57': ['Sakrálne', 'Slezina'], '35-36': ['Hrdlo', 'SP'], '37-40': ['SP', 'Ego'],
+  '39-55': ['Koreň', 'SP'], '42-53': ['Sakrálne', 'Koreň'], '47-64': ['Ajna', 'Hlava'],
 };
 
-interface CenterDef {
-  x: number;
-  y: number;
-  definedColor: string;
-  undefinedFill: string;
-  label: string;
-  sublabel: string;
-}
-
-const CENTERS: Record<string, CenterDef> = {
-  'Hlava':          { x: 250, y: 52,  definedColor: '#f5c542', undefinedFill: '#1c1835', label: 'Hlava', sublabel: 'Inšpirácia' },
-  'Ajna':           { x: 250, y: 142, definedColor: '#4ade80', undefinedFill: '#1c1835', label: 'Ajna', sublabel: 'Myslenie' },
-  'Hrdlo':          { x: 250, y: 238, definedColor: '#a78bfa', undefinedFill: '#1c1835', label: 'Hrdlo', sublabel: 'Prejav' },
-  'G':              { x: 250, y: 345, definedColor: '#f5c542', undefinedFill: '#1c1835', label: 'G', sublabel: 'Identita' },
-  'Srdce/Ego':      { x: 345, y: 305, definedColor: '#f87171', undefinedFill: '#1c1835', label: 'Ego', sublabel: 'Vôľa' },
-  'Sakrálne':       { x: 250, y: 445, definedColor: '#f87171', undefinedFill: '#1c1835', label: 'Sakrál', sublabel: 'Životná sila' },
-  'Solárny plexus': { x: 345, y: 420, definedColor: '#fb923c', undefinedFill: '#1c1835', label: 'SP', sublabel: 'Emócie' },
-  'Slezina':        { x: 155, y: 420, definedColor: '#fb923c', undefinedFill: '#1c1835', label: 'Slezina', sublabel: 'Intuícia' },
-  'Koreň':          { x: 250, y: 545, definedColor: '#f87171', undefinedFill: '#1c1835', label: 'Koreň', sublabel: 'Tlak' },
+// Compact layout - centers positioned like real HD bodygraph
+const C: Record<string, { x: number; y: number }> = {
+  'Hlava':    { x: 150, y: 20 },
+  'Ajna':     { x: 150, y: 65 },
+  'Hrdlo':    { x: 150, y: 115 },
+  'G':        { x: 150, y: 175 },
+  'Ego':      { x: 210, y: 152 },
+  'Sakrálne': { x: 150, y: 235 },
+  'SP':       { x: 210, y: 218 },
+  'Slezina':  { x: 90, y: 218 },
+  'Koreň':    { x: 150, y: 290 },
 };
 
-function drawCenter(name: string, cfg: CenterDef, defined: boolean) {
-  const size = 34;
-  const fill = defined ? cfg.definedColor : cfg.undefinedFill;
-  const strokeColor = defined ? cfg.definedColor : '#334155';
-  const strokeWidth = defined ? 2.5 : 1.2;
-  const textColor = defined ? '#1a1a2e' : '#64748b';
-  const opacity = defined ? 1 : 0.7;
-
-  const triangleCenters = ['Hlava', 'Ajna', 'Srdce/Ego', 'Solárny plexus', 'Slezina'];
-  const isTriangle = triangleCenters.includes(name);
-  const isDiamond = name === 'G';
-
-  let shape;
-  if (isTriangle) {
-    const flip = name === 'Hlava' ? 1 : -1;
-    if (name === 'Hlava') {
-      shape = <polygon points={`${cfg.x},${cfg.y + size} ${cfg.x - size},${cfg.y - size * 0.5} ${cfg.x + size},${cfg.y - size * 0.5}`} fill={fill} stroke={strokeColor} strokeWidth={strokeWidth} opacity={opacity} />;
-    } else {
-      shape = <polygon points={`${cfg.x},${cfg.y - size} ${cfg.x - size},${cfg.y + size * 0.5} ${cfg.x + size},${cfg.y + size * 0.5}`} fill={fill} stroke={strokeColor} strokeWidth={strokeWidth} opacity={opacity} />;
-    }
-  } else if (isDiamond) {
-    shape = <polygon points={`${cfg.x},${cfg.y - size} ${cfg.x + size},${cfg.y} ${cfg.x},${cfg.y + size} ${cfg.x - size},${cfg.y}`} fill={fill} stroke={strokeColor} strokeWidth={strokeWidth} opacity={opacity} />;
-  } else {
-    shape = <rect x={cfg.x - size} y={cfg.y - size} width={size * 2} height={size * 2} rx={10} fill={fill} stroke={strokeColor} strokeWidth={strokeWidth} opacity={opacity} />;
-  }
-
-  return (
-    <g key={name}>
-      {defined && (
-        <circle cx={cfg.x} cy={cfg.y} r={size + 8} fill="none" stroke={cfg.definedColor} strokeWidth="0.5" opacity="0.3" />
-      )}
-      {shape}
-      <text x={cfg.x} y={cfg.y - 2} textAnchor="middle" fill={textColor} fontSize="11" fontWeight="700" fontFamily="system-ui, sans-serif">
-        {cfg.label}
-      </text>
-      <text x={cfg.x} y={cfg.y + 12} textAnchor="middle" fill={defined ? cfg.definedColor + '99' : '#475569'} fontSize="8" fontFamily="system-ui, sans-serif">
-        {cfg.sublabel}
-      </text>
-    </g>
-  );
-}
+const CENTER_COLORS: Record<string, string> = {
+  'Hlava': '#f5c542', 'Ajna': '#4ade80', 'Hrdlo': '#a78bfa',
+  'G': '#facc15', 'Ego': '#f87171', 'Sakrálne': '#ef4444',
+  'SP': '#fb923c', 'Slezina': '#fbbf24', 'Koreň': '#ef4444',
+};
 
 export function Bodygraph({ result }: BodygraphProps) {
   const definedSet = new Set(result.definedCenters);
+  // Map HD center names to our short keys
+  const nameToKey: Record<string, string> = {
+    'Hlava': 'Hlava', 'Ajna': 'Ajna', 'Hrdlo': 'Hrdlo', 'G': 'G',
+    'Srdce/Ego': 'Ego', 'Sakrálne': 'Sakrálne', 'Solárny plexus': 'SP',
+    'Slezina': 'Slezina', 'Koreň': 'Koreň',
+  };
+
+  const definedKeys = new Set(result.definedCenters.map(n => nameToKey[n] || n));
 
   const activeConnections = new Set<string>();
   result.channels.forEach(ch => {
     const key = `${Math.min(ch.gates[0], ch.gates[1])}-${Math.max(ch.gates[0], ch.gates[1])}`;
     const centers = CHANNEL_TO_CENTERS[key];
     if (centers) {
-      activeConnections.add(`${centers[0]}→${centers[1]}`);
-      activeConnections.add(`${centers[1]}→${centers[0]}`);
+      activeConnections.add(`${centers[0]}|${centers[1]}`);
+      activeConnections.add(`${centers[1]}|${centers[0]}`);
     }
   });
 
-  const allConnections: [string, string, boolean][] = [];
+  // Get unique connection pairs
   const drawnPairs = new Set<string>();
-
+  const connections: { c1: string; c2: string; active: boolean }[] = [];
   Object.values(CHANNEL_TO_CENTERS).forEach(([c1, c2]) => {
-    const pairKey = [c1, c2].sort().join('|');
-    if (drawnPairs.has(pairKey)) return;
-    drawnPairs.add(pairKey);
-    const active = activeConnections.has(`${c1}→${c2}`);
-    allConnections.push([c1, c2, active]);
+    const pk = [c1, c2].sort().join('|');
+    if (drawnPairs.has(pk)) return;
+    drawnPairs.add(pk);
+    connections.push({ c1, c2, active: activeConnections.has(`${c1}|${c2}`) });
   });
 
+  const size = 18;
+
   return (
-    <div className="flex justify-center py-4">
-      <svg viewBox="0 0 500 610" className="w-full max-w-sm" style={{ aspectRatio: '500/610' }}>
+    <div className="flex justify-center">
+      <svg viewBox="0 0 300 320" className="w-full max-w-xs">
         <defs>
-          <filter id="bodygraph-glow" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur" />
-            <feMerge>
-              <feMergeNode in="blur" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
+          <filter id="ch-glow">
+            <feGaussianBlur stdDeviation="2" result="b" />
+            <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
           </filter>
-          <linearGradient id="active-channel" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#818cf8" />
-            <stop offset="50%" stopColor="#c084fc" />
-            <stop offset="100%" stopColor="#818cf8" />
-          </linearGradient>
-          <radialGradient id="bg-gradient" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="rgba(99,102,241,0.03)" />
-            <stop offset="100%" stopColor="rgba(0,0,0,0)" />
-          </radialGradient>
         </defs>
 
-        {/* Background */}
-        <rect width="500" height="610" fill="url(#bg-gradient)" />
-
-        {/* Connection lines */}
-        {allConnections.map(([c1, c2, active], idx) => {
-          const p1 = CENTERS[c1];
-          const p2 = CENTERS[c2];
+        {/* Connections */}
+        {connections.map(({ c1, c2, active }, i) => {
+          const p1 = C[c1]; const p2 = C[c2];
           if (!p1 || !p2) return null;
-
-          if (active) {
-            return (
-              <g key={idx}>
-                <line x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y}
-                  stroke="url(#active-channel)" strokeWidth="4.5" strokeLinecap="round"
-                  filter="url(#bodygraph-glow)" />
-                <line x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y}
-                  stroke="white" strokeWidth="1" strokeLinecap="round" opacity="0.3" />
-              </g>
-            );
-          }
           return (
-            <line key={idx} x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y}
-              stroke="#1e293b" strokeWidth="1.5" strokeLinecap="round" strokeDasharray="4 4" opacity="0.4" />
+            <line key={i} x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y}
+              stroke={active ? '#818cf8' : '#1e293b'}
+              strokeWidth={active ? 3 : 1}
+              strokeLinecap="round"
+              opacity={active ? 1 : 0.3}
+              filter={active ? 'url(#ch-glow)' : undefined}
+            />
           );
         })}
 
-        {/* Centers - draw undefined first, then defined on top */}
-        {Object.entries(CENTERS)
-          .filter(([name]) => !definedSet.has(name))
-          .map(([name, cfg]) => drawCenter(name, cfg, false))}
-        {Object.entries(CENTERS)
-          .filter(([name]) => definedSet.has(name))
-          .map(([name, cfg]) => drawCenter(name, cfg, true))}
+        {/* Centers */}
+        {Object.entries(C).map(([name, pos]) => {
+          const defined = definedKeys.has(name);
+          const color = CENTER_COLORS[name] || '#6366f1';
+          const fill = defined ? color : '#0f0a2e';
+          const stroke = defined ? color : '#334155';
 
-        {/* Info */}
-        <g transform="translate(30, 590)">
-          <circle cx={6} cy={0} r={5} fill="#f5c542" />
-          <text x={16} y={4} fill="#94a3b8" fontSize="9">Definované</text>
-          <rect x={100} y={-5} width={10} height={10} rx={3} fill="#1c1835" stroke="#334155" strokeWidth={1} />
-          <text x={116} y={4} fill="#94a3b8" fontSize="9">Otvorené</text>
-          <line x1={200} y1={0} x2={230} y2={0} stroke="url(#active-channel)" strokeWidth={3.5} strokeLinecap="round" />
-          <text x={236} y={4} fill="#94a3b8" fontSize="9">Aktívny kanál</text>
-          <line x1={340} y1={0} x2={370} y2={0} stroke="#1e293b" strokeWidth={1.5} strokeDasharray="4 4" opacity={0.6} />
-          <text x={376} y={4} fill="#94a3b8" fontSize="9">Neaktívny</text>
+          const isTriangle = ['Hlava', 'Ajna', 'Ego', 'SP', 'Slezina'].includes(name);
+          const isDiamond = name === 'G';
+
+          return (
+            <g key={name}>
+              {isTriangle ? (
+                <polygon
+                  points={name === 'Hlava'
+                    ? `${pos.x},${pos.y + size * 0.8} ${pos.x - size},${pos.y - size * 0.5} ${pos.x + size},${pos.y - size * 0.5}`
+                    : `${pos.x},${pos.y - size * 0.8} ${pos.x - size},${pos.y + size * 0.5} ${pos.x + size},${pos.y + size * 0.5}`}
+                  fill={fill} stroke={stroke} strokeWidth={defined ? 2 : 1}
+                />
+              ) : isDiamond ? (
+                <polygon
+                  points={`${pos.x},${pos.y - size} ${pos.x + size},${pos.y} ${pos.x},${pos.y + size} ${pos.x - size},${pos.y}`}
+                  fill={fill} stroke={stroke} strokeWidth={defined ? 2 : 1}
+                />
+              ) : (
+                <rect x={pos.x - size} y={pos.y - size} width={size * 2} height={size * 2} rx={5}
+                  fill={fill} stroke={stroke} strokeWidth={defined ? 2 : 1}
+                />
+              )}
+              <text x={pos.x} y={pos.y + 4} textAnchor="middle"
+                fill={defined ? '#000' : '#64748b'} fontSize="8" fontWeight="700">
+                {name === 'Sakrálne' ? 'SAK' : name === 'Slezina' ? 'SLZ' : name}
+              </text>
+            </g>
+          );
+        })}
+
+        {/* Legend */}
+        <g transform="translate(10, 310)">
+          <circle cx={5} cy={0} r={4} fill="#f5c542" />
+          <text x={13} y={3} fill="#64748b" fontSize="7">Definované</text>
+          <circle cx={80} cy={0} r={4} fill="#0f0a2e" stroke="#334155" strokeWidth={1} />
+          <text x={88} y={3} fill="#64748b" fontSize="7">Otvorené</text>
+          <line x1={150} y1={0} x2={168} y2={0} stroke="#818cf8" strokeWidth={3} strokeLinecap="round" />
+          <text x={173} y={3} fill="#64748b" fontSize="7">Kanál</text>
         </g>
       </svg>
     </div>

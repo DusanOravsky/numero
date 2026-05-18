@@ -3,9 +3,11 @@ import { GlassCard } from '../components/GlassCard';
 import { calculateFullNumerology, reduceToSingle } from '../engine/numerologyEngine';
 import { calculatePartnerCompatibility, calculateParentChild } from '../engine/compatibilityEngine';
 import type { CompatibilityResult, ParentChildResult } from '../engine/compatibilityEngine';
+import { calculateAstrology } from '../engine/astrologyEngine';
+import type { AstrologyResult } from '../engine/astrologyEngine';
 import { motion } from 'framer-motion';
 
-type Mode = 'partner' | 'family';
+type Mode = 'partner' | 'family' | 'astro';
 
 interface PersonInput {
   name: string;
@@ -40,6 +42,92 @@ function isPersonValid(p: PersonInput): boolean {
   return !!(p.name.trim() && parseInt(p.day) >= 1 && parseInt(p.month) >= 1 && parseInt(p.year) >= 1900);
 }
 
+interface AstroPersonInput {
+  name: string;
+  day: string;
+  month: string;
+  year: string;
+  hour: string;
+}
+
+const emptyAstroPerson = (): AstroPersonInput => ({ name: '', day: '', month: '', year: '', hour: '' });
+
+function isAstroPersonValid(p: AstroPersonInput): boolean {
+  return !!(p.name.trim() && parseInt(p.day) >= 1 && parseInt(p.month) >= 1 && parseInt(p.year) >= 1900);
+}
+
+interface SynastryResult {
+  person1: { name: string; result: AstrologyResult };
+  person2: { name: string; result: AstrologyResult };
+  sunCompatibility: { score: number; description: string };
+  moonCompatibility: { score: number; description: string };
+  venusCompatibility: { score: number; description: string };
+  marsCompatibility: { score: number; description: string };
+  elementBalance: { person1: string; person2: string; compatible: boolean };
+  overallScore: number;
+}
+
+function getElementCompatibility(el1: string, el2: string): { score: number; description: string } {
+  if (el1 === el2) return { score: 95, description: 'Rovnaký živel -- prirodzená harmónia a vzájomné pochopenie.' };
+  const compatible: Record<string, string> = { 'Oheň': 'Vzduch', 'Vzduch': 'Oheň', 'Zem': 'Voda', 'Voda': 'Zem' };
+  if (compatible[el1] === el2) return { score: 80, description: 'Komplementárne živly -- vzájomne sa posilňujete a inšpirujete.' };
+  const neutral: Record<string, string[]> = { 'Oheň': ['Zem'], 'Zem': ['Vzduch'], 'Vzduch': ['Voda'], 'Voda': ['Oheň'] };
+  if (neutral[el1]?.includes(el2)) return { score: 55, description: 'Neutrálna kombinácia -- vyžaduje vedomú prácu na pochopení odlišností.' };
+  return { score: 45, description: 'Protichodné živly -- silná príťažlivosť, ale aj napätie a výzvy.' };
+}
+
+function getPlanetByName(result: AstrologyResult, name: string) {
+  return result.planets.find(p => p.name === name);
+}
+
+function calculateSynastry(
+  name1: string, day1: number, month1: number, year1: number, hour1: number,
+  name2: string, day2: number, month2: number, year2: number, hour2: number
+): SynastryResult {
+  const r1 = calculateAstrology(day1, month1, year1, hour1);
+  const r2 = calculateAstrology(day2, month2, year2, hour2);
+
+  const sunCompat = getElementCompatibility(r1.sunSign.element, r2.sunSign.element);
+  const moonCompat = getElementCompatibility(r1.moonSign.element, r2.moonSign.element);
+
+  const venus1 = getPlanetByName(r1, 'Venuša');
+  const venus2 = getPlanetByName(r2, 'Venuša');
+  const venusCompat = venus1 && venus2
+    ? getElementCompatibility(venus1.sign.element, venus2.sign.element)
+    : { score: 70, description: 'Nedá sa presne určiť.' };
+
+  const mars1 = getPlanetByName(r1, 'Mars');
+  const mars2 = getPlanetByName(r2, 'Mars');
+  const marsCompat = mars1 && mars2
+    ? getElementCompatibility(mars1.sign.element, mars2.sign.element)
+    : { score: 70, description: 'Nedá sa presne určiť.' };
+
+  const elBalance = {
+    person1: r1.dominantElement,
+    person2: r2.dominantElement,
+    compatible: r1.dominantElement === r2.dominantElement ||
+      (r1.dominantElement === 'Oheň' && r2.dominantElement === 'Vzduch') ||
+      (r1.dominantElement === 'Vzduch' && r2.dominantElement === 'Oheň') ||
+      (r1.dominantElement === 'Zem' && r2.dominantElement === 'Voda') ||
+      (r1.dominantElement === 'Voda' && r2.dominantElement === 'Zem'),
+  };
+
+  const overallScore = Math.round(
+    sunCompat.score * 0.3 + moonCompat.score * 0.3 + venusCompat.score * 0.2 + marsCompat.score * 0.2
+  );
+
+  return {
+    person1: { name: name1, result: r1 },
+    person2: { name: name2, result: r2 },
+    sunCompatibility: sunCompat,
+    moonCompatibility: moonCompat,
+    venusCompatibility: venusCompat,
+    marsCompatibility: marsCompat,
+    elementBalance: elBalance,
+    overallScore,
+  };
+}
+
 export function RelationshipsPage() {
   const [mode, setMode] = useState<Mode>('partner');
   const [partner1, setPartner1] = useState<PersonInput>(emptyPerson());
@@ -48,12 +136,28 @@ export function RelationshipsPage() {
   const [children, setChildren] = useState<PersonInput[]>([emptyPerson()]);
   const [compatibility, setCompatibility] = useState<CompatibilityResult | null>(null);
   const [familyResults, setFamilyResults] = useState<{ child: PersonInput; result: ParentChildResult }[] | null>(null);
+  const [astroPartner1, setAstroPartner1] = useState<AstroPersonInput>(emptyAstroPerson());
+  const [astroPartner2, setAstroPartner2] = useState<AstroPersonInput>(emptyAstroPerson());
+  const [synastryResult, setSynastryResult] = useState<SynastryResult | null>(null);
 
   const handlePartnerCalc = () => {
     if (!isPersonValid(partner1) || !isPersonValid(partner2)) return;
     const p1 = calculateFullNumerology(parseInt(partner1.day), parseInt(partner1.month), parseInt(partner1.year));
     const p2 = calculateFullNumerology(parseInt(partner2.day), parseInt(partner2.month), parseInt(partner2.year));
     setCompatibility(calculatePartnerCompatibility(p1, p2, partner1.name, partner2.name));
+  };
+
+  const handleAstroCalc = () => {
+    if (!isAstroPersonValid(astroPartner1) || !isAstroPersonValid(astroPartner2)) return;
+    const result = calculateSynastry(
+      astroPartner1.name,
+      parseInt(astroPartner1.day), parseInt(astroPartner1.month), parseInt(astroPartner1.year),
+      astroPartner1.hour ? parseInt(astroPartner1.hour) : 12,
+      astroPartner2.name,
+      parseInt(astroPartner2.day), parseInt(astroPartner2.month), parseInt(astroPartner2.year),
+      astroPartner2.hour ? parseInt(astroPartner2.hour) : 12
+    );
+    setSynastryResult(result);
   };
 
   const handleFamilyCalc = () => {
@@ -79,6 +183,9 @@ export function RelationshipsPage() {
     setChildren([emptyPerson()]);
     setCompatibility(null);
     setFamilyResults(null);
+    setAstroPartner1(emptyAstroPerson());
+    setAstroPartner2(emptyAstroPerson());
+    setSynastryResult(null);
   };
 
   return (
@@ -88,7 +195,7 @@ export function RelationshipsPage() {
         <p className="text-slate-400 mt-1">Partnerská a rodinná kompatibilita</p>
       </div>
 
-      <div className="flex gap-2">
+      <div className="flex gap-2 flex-wrap">
         <button
           onClick={() => { setMode('partner'); reset(); }}
           className={`px-4 py-2 rounded-xl text-sm font-medium ${mode === 'partner' ? 'bg-indigo-600 text-white glow' : 'glass text-slate-400'}`}
@@ -100,6 +207,12 @@ export function RelationshipsPage() {
           className={`px-4 py-2 rounded-xl text-sm font-medium ${mode === 'family' ? 'bg-indigo-600 text-white glow' : 'glass text-slate-400'}`}
         >
           Rodič a deti
+        </button>
+        <button
+          onClick={() => { setMode('astro'); reset(); }}
+          className={`px-4 py-2 rounded-xl text-sm font-medium ${mode === 'astro' ? 'bg-indigo-600 text-white glow' : 'glass text-slate-400'}`}
+        >
+          Astro kompatibilita
         </button>
       </div>
 

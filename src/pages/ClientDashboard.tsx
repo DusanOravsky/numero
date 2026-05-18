@@ -563,31 +563,131 @@ export function ClientDashboard() {
                 const lpTitle = lifePaths[lpKey]?.title || '';
                 const lpDesc = lifePaths[lpKey]?.description || '';
                 let y = 20;
+                let pageNum = 1;
 
-                const addTitle = (text: string) => { doc.setFontSize(16); doc.setFont('helvetica', 'bold'); doc.text(text, 105, y, { align: 'center' }); y += 10; };
-                const addSection = (text: string) => { if (y > 260) { doc.addPage(); y = 20; } doc.setFontSize(12); doc.setFont('helvetica', 'bold'); doc.text(text, 14, y); y += 8; };
-                const addLine = (text: string) => { if (y > 270) { doc.addPage(); y = 20; } doc.setFontSize(10); doc.setFont('helvetica', 'normal'); const lines = doc.splitTextToSize(text, 180); doc.text(lines, 14, y); y += lines.length * 5 + 2; };
-                const addSpace = () => { y += 5; };
+                const addPageNumber = () => {
+                  doc.setFontSize(8);
+                  doc.setFont('helvetica', 'normal');
+                  doc.setTextColor(150, 150, 150);
+                  doc.text(`${pageNum}`, 105, 290, { align: 'center' });
+                  doc.setTextColor(0, 0, 0);
+                };
 
-                addTitle('INTEGRALNY PROFIL');
-                doc.setFontSize(11); doc.setFont('helvetica', 'normal');
-                doc.text(`${client.name} | ${client.birthDay}.${client.birthMonth}.${client.birthYear}`, 105, y, { align: 'center' }); y += 15;
+                const checkPage = (needed: number = 20) => {
+                  if (y > 270 - needed) {
+                    addPageNumber();
+                    doc.addPage();
+                    pageNum++;
+                    y = 20;
+                  }
+                };
 
+                const addSection = (text: string) => {
+                  checkPage(15);
+                  y += 4;
+                  doc.setDrawColor(79, 70, 229);
+                  doc.setLineWidth(0.5);
+                  doc.line(14, y, 196, y);
+                  y += 7;
+                  doc.setFontSize(14);
+                  doc.setFont('helvetica', 'bold');
+                  doc.setTextColor(79, 70, 229);
+                  doc.text(text, 14, y);
+                  doc.setTextColor(0, 0, 0);
+                  y += 8;
+                };
+
+                const addLine = (text: string) => {
+                  checkPage();
+                  doc.setFontSize(10);
+                  doc.setFont('helvetica', 'normal');
+                  const lines = doc.splitTextToSize(text, 180);
+                  doc.text(lines, 14, y);
+                  y += lines.length * 5 + 2;
+                };
+
+                const addBoldLine = (text: string) => {
+                  checkPage();
+                  doc.setFontSize(10);
+                  doc.setFont('helvetica', 'bold');
+                  const lines = doc.splitTextToSize(text, 180);
+                  doc.text(lines, 14, y);
+                  doc.setFont('helvetica', 'normal');
+                  y += lines.length * 5 + 2;
+                };
+
+                const addSpace = () => { y += 4; };
+
+                // === TITLE PAGE ===
+                doc.setFontSize(10);
+                doc.setFont('helvetica', 'normal');
+                doc.setTextColor(150, 150, 150);
+                doc.text('Integralna mapa bytia', 105, 60, { align: 'center' });
+                doc.setTextColor(0, 0, 0);
+
+                doc.setFontSize(26);
+                doc.setFont('helvetica', 'bold');
+                doc.text('INTEGRALNY PROFIL', 105, 85, { align: 'center' });
+
+                doc.setDrawColor(79, 70, 229);
+                doc.setLineWidth(1);
+                doc.line(60, 92, 150, 92);
+
+                doc.setFontSize(18);
+                doc.setFont('helvetica', 'normal');
+                doc.text(client.name, 105, 110, { align: 'center' });
+
+                doc.setFontSize(12);
+                doc.setTextColor(100, 100, 100);
+                doc.text(`${client.birthDay}.${client.birthMonth}.${client.birthYear}${client.birthHour !== undefined ? ` ${client.birthHour}:${String(client.birthMinute || 0).padStart(2, '0')}` : ''}`, 105, 122, { align: 'center' });
+                doc.setTextColor(0, 0, 0);
+
+                doc.setFontSize(10);
+                doc.setTextColor(150, 150, 150);
+                doc.text(new Date().toLocaleDateString('sk-SK'), 105, 140, { align: 'center' });
+                doc.setTextColor(0, 0, 0);
+
+                addPageNumber();
+                doc.addPage();
+                pageNum++;
+                y = 20;
+
+                // === NUMEROLOGIA ===
                 addSection('NUMEROLOGIA');
-                addLine(`Zivotne cislo: ${numerology.lifePathNumber} z ${numerology.lifePathFrom} - ${lpTitle}`);
+                addBoldLine(`Zivotne cislo: ${numerology.lifePathNumber} z ${numerology.lifePathFrom} - ${lpTitle}`);
                 addLine(lpDesc);
+                addSpace();
                 addLine(`ORV: ${numerology.orv} | OMV: ${numerology.omv} | ODV: ${numerology.odv}`);
-                addLine(`VDD: ${numerology.vdd} rokov | Plne roviny: ${numerology.fullPlanes.join(', ') || 'ziadne'}`);
+                addLine(`VDD: ${numerology.vdd} rokov`);
+                addLine(`Plne roviny: ${numerology.fullPlanes.join(', ') || 'ziadne'}`);
                 addLine(`Prazdne roviny: ${numerology.emptyPlanes.join(', ') || 'ziadne'}`);
                 if (numerology.isolatedNumbers.length > 0) addLine(`Izolovane cisla: ${numerology.isolatedNumbers.join(', ')}`);
                 addSpace();
 
-                addSection('KARMICKE CYKLY');
+                addBoldLine('Karmicke cykly:');
                 numerology.karmicTriangles.forEach(t => {
-                  addLine(`${t.label}: ${t.fromAge}-${t.toAge || '∞'} r. | Vibracia ${t.vibration} - ${cycleVibrationDescriptions[t.vibration] || ''}`);
+                  addLine(`  ${t.label}: ${t.fromAge}-${t.toAge || '...'} r. | Vibracia ${t.vibration} - ${cycleVibrationDescriptions[t.vibration] || ''}`);
                 });
                 addSpace();
 
+                // === GENE KEYS ===
+                const sunGate = humanDesign.personalityGates.find(g => g.planet === 'Slnko')?.gate;
+                const earthGate = humanDesign.personalityGates.find(g => g.planet === 'Zem')?.gate;
+                const topGeneKeys = [sunGate, earthGate].filter((g): g is number => g !== undefined).map(g => getGeneKeyByGate(g)).filter(Boolean);
+                if (topGeneKeys.length > 0) {
+                  addSection('GENOVE KLUCE');
+                  topGeneKeys.forEach(gk => {
+                    if (!gk) return;
+                    addBoldLine(`Brana ${gk.gate}:`);
+                    addLine(`  Tien: ${gk.shadow} - ${gk.shadowDescription}`);
+                    addLine(`  Dar: ${gk.gift} - ${gk.giftDescription}`);
+                    addLine(`  Siddhi: ${gk.siddhi}`);
+                    addLine(`  NLP technika: ${gk.nlpTechnique} - ${gk.nlpDescription}`);
+                    addSpace();
+                  });
+                }
+
+                // === ASTROLOGIA ===
                 addSection('ASTROLOGIA');
                 addLine(`Slnko: ${astrology.sunSign.name} (${astrology.sunSign.element}) - ${planetInSignDescriptions['Slnko']?.[astrology.sunSign.name] || ''}`);
                 addLine(`Mesiac: ${astrology.moonSign.name} (${astrology.moonSign.element}) - ${planetInSignDescriptions['Mesiac']?.[astrology.moonSign.name] || ''}`);
@@ -595,8 +695,9 @@ export function ClientDashboard() {
                 addLine(`Dominantny zivel: ${astrology.dominantElement} | Kvalita: ${astrology.dominantQuality}`);
                 addSpace();
 
+                // === HUMAN DESIGN ===
                 addSection('HUMAN DESIGN');
-                addLine(`Typ: ${humanDesign.type} | Autorita: ${humanDesign.authority}`);
+                addBoldLine(`Typ: ${humanDesign.type} | Autorita: ${humanDesign.authority}`);
                 addLine(`Strategia: ${humanDesign.strategy}`);
                 addLine(`Profil: ${humanDesign.profile.line1}/${humanDesign.profile.line2} - ${humanDesign.profile.name}: ${humanDesign.profile.description}`);
                 addLine(`Inkarnacny kriz: ${humanDesign.incarnationCross}`);
@@ -604,20 +705,64 @@ export function ClientDashboard() {
                 addLine(`Otvorene centra: ${humanDesign.openCenters.join(', ')}`);
                 addSpace();
 
+                // === JAZYKY LASKY ===
                 addSection('JAZYKY LASKY');
                 numerology.loveLanguages.forEach((l, i) => addLine(`${i + 1}. ${l.language}: ${l.score} bodov`));
                 addSpace();
 
-                addSection('THETA HEALING - Limitujuce presvedcenia');
-                theta.primaryBeliefs.forEach(b => addLine(`"${b.belief}" (${b.level}, ${b.emotion})`));
+                // === THETA HEALING ===
+                addSection('THETA HEALING');
+                addBoldLine('Limitujuce presvedcenia:');
+                theta.primaryBeliefs.forEach(b => addLine(`  "${b.belief}" (${b.level}, ${b.emotion})`));
                 addSpace();
 
+                // === KABALA ===
                 addSection('KABALA');
                 addLine(`Primarna sefira: ${kabalah.primarySefira.name} (${kabalah.primarySefira.meaning})`);
+                addLine(`Dar: ${kabalah.primarySefira.gift}`);
+                addLine(`Tien: ${kabalah.primarySefira.shadow}`);
                 addLine(`Cin v Malchut: ${kabalah.malchutAction}`);
+                addSpace();
 
-                doc.setFontSize(8); doc.setFont('helvetica', 'italic');
-                doc.text(`Vygenerovane: ${new Date().toLocaleDateString('sk-SK')} | Integralna mapa bytia`, 105, 285, { align: 'center' });
+                // === PARTNER COMPATIBILITY ===
+                if (client.partnerId) {
+                  const partner = clients.find(c => c.id === client.partnerId);
+                  if (partner) {
+                    const partnerNum = calculateFullNumerology(partner.birthDay, partner.birthMonth, partner.birthYear);
+                    const compat = calculatePartnerCompatibility(numerology, partnerNum, client.name, partner.name);
+                    addSection('PARTNERSKA KOMPATIBILITA');
+                    addBoldLine(`${client.name} & ${partner.name} - Celkove skore: ${compat.overallScore}%`);
+                    addLine(`Zivotne cisla: ${numerology.lifePathNumber} + ${partnerNum.lifePathNumber} | Zhoda: ${compat.lifePathCompatibility.score}%`);
+                    addLine(`Jazyky lasky: ${compat.loveLanguageMatch.score}%`);
+                    if (compat.strengths.length > 0) {
+                      addSpace();
+                      addBoldLine('Silne stranky:');
+                      compat.strengths.forEach(s => addLine(`  + ${s}`));
+                    }
+                    if (compat.challenges.length > 0) {
+                      addSpace();
+                      addBoldLine('Vyzvy:');
+                      compat.challenges.forEach(c => addLine(`  ! ${c}`));
+                    }
+                    addSpace();
+                  }
+                }
+
+                // === FOOTER ===
+                checkPage(20);
+                y += 10;
+                doc.setDrawColor(79, 70, 229);
+                doc.setLineWidth(0.3);
+                doc.line(14, y, 196, y);
+                y += 8;
+                doc.setFontSize(8);
+                doc.setFont('helvetica', 'italic');
+                doc.setTextColor(120, 120, 120);
+                doc.text(`Vygenerovane: ${new Date().toLocaleDateString('sk-SK')} ${new Date().toLocaleTimeString('sk-SK')}`, 14, y);
+                doc.text('Integralna mapa bytia v1.3.0', 196, y, { align: 'right' });
+                doc.setTextColor(0, 0, 0);
+
+                addPageNumber();
 
                 doc.save(`profil-${client.name.replace(/\s+/g, '-').toLowerCase()}.pdf`);
               });
@@ -625,6 +770,28 @@ export function ClientDashboard() {
             className="px-6 py-3 rounded-xl bg-indigo-600 text-white font-medium hover:bg-indigo-500 transition-colors"
           >
             Exportovať PDF
+          </button>
+          <button
+            onClick={() => {
+              const shareData = {
+                name: client.name,
+                birthDay: client.birthDay,
+                birthMonth: client.birthMonth,
+                birthYear: client.birthYear,
+                birthHour: client.birthHour,
+                birthMinute: client.birthMinute,
+              };
+              const encoded = btoa(JSON.stringify(shareData));
+              const baseUrl = window.location.origin + window.location.pathname;
+              const shareUrl = `${baseUrl}#/shared?data=${encoded}`;
+              navigator.clipboard.writeText(shareUrl).then(() => {
+                setShareMsg('Skopirované!');
+                setTimeout(() => setShareMsg(''), 2000);
+              });
+            }}
+            className="px-6 py-3 rounded-xl bg-purple-600 text-white font-medium hover:bg-purple-500 transition-colors"
+          >
+            {shareMsg || 'Zdielat vyklad'}
           </button>
           <button
             onClick={() => {

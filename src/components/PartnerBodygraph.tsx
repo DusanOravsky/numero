@@ -1,5 +1,6 @@
 import type { HumanDesignResult } from '../engine/humanDesignEngine';
 import { CHANNEL_DEFINITIONS } from '../engine/humanDesignEngine';
+import { getGeneKeyByGate } from '../data/geneKeys';
 
 interface PartnerBodygraphProps {
   result1: HumanDesignResult;
@@ -300,9 +301,47 @@ export function PartnerBodygraph({ result1, result2, name1, name2 }: PartnerBody
             </div>
           )}
           {conditioning.p1ConditionsP2.length === 0 && conditioning.p2ConditionsP1.length === 0 && (
-            <p className="text-xs text-slate-400">Ziadne vzajomne podmienovanie - oba partneri maju rovnake definovane centra.</p>
+            <p className="text-xs text-slate-400">Žiadne vzájomné podmieňovanie - oba partneri majú rovnaké definované centrá.</p>
           )}
         </div>
+
+        {/* Spoločné Génové kľúče */}
+        {channelAnalysis.electromagnetic.length > 0 && (
+          <div className="p-4 rounded-xl bg-green-500/10 border border-green-500/20">
+            <h4 className="text-sm font-medium text-green-600 mb-2">Spoločné Génové kľúče – transformačná cesta páru</h4>
+            <p className="text-xs text-slate-500 mb-3">Elektromagnetické kanály ukazujú, kde sa vaše energie spájajú. Génové kľúče pre tieto brány odhaľujú spoločnú cestu transformácie – tieň, ktorý spolu prekonávate, a dar, ku ktorému spoločne rastete.</p>
+            {channelAnalysis.electromagnetic.map((ch, i) => {
+              const gk1 = getGeneKeyByGate(ch.gates[0]);
+              const gk2 = getGeneKeyByGate(ch.gates[1]);
+              return (
+                <div key={i} className="p-3 rounded-lg bg-white border border-green-200 mb-2 space-y-2">
+                  <p className="text-sm font-medium text-slate-800">Kanál {ch.name} ({ch.gates[0]}-{ch.gates[1]})</p>
+                  {gk1 && (
+                    <div className="pl-2 border-l-2 border-rose-200">
+                      <p className="text-xs text-slate-600">
+                        <strong>Brána {gk1.gate} ({name1})</strong>: <span className="text-red-600">{gk1.shadow}</span> → <span className="text-amber-600">{gk1.gift}</span> → <span className="text-green-600">{gk1.siddhi}</span>
+                      </p>
+                      <p className="text-[10px] text-slate-400">{gk1.shadowDescription} NLP: {gk1.nlpTechnique}</p>
+                    </div>
+                  )}
+                  {gk2 && (
+                    <div className="pl-2 border-l-2 border-indigo-200">
+                      <p className="text-xs text-slate-600">
+                        <strong>Brána {gk2.gate} ({name2})</strong>: <span className="text-red-600">{gk2.shadow}</span> → <span className="text-amber-600">{gk2.gift}</span> → <span className="text-green-600">{gk2.siddhi}</span>
+                      </p>
+                      <p className="text-[10px] text-slate-400">{gk2.shadowDescription} NLP: {gk2.nlpTechnique}</p>
+                    </div>
+                  )}
+                  {gk1 && gk2 && (
+                    <p className="text-xs text-green-700 bg-green-50 p-2 rounded">
+                      Spoločná lekcia: {name1} transformuje "{gk1.shadow}" na "{gk1.gift}" zatiaľ čo {name2} transformuje "{gk2.shadow}" na "{gk2.gift}". Keď sa obaja posunú do daru, kanál {ch.name} sa stane zdrojom spoločnej sily.
+                    </p>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );

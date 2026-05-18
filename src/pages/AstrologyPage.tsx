@@ -7,6 +7,158 @@ import { calculateAstrology } from '../engine/astrologyEngine';
 import type { AstrologyResult } from '../engine/astrologyEngine';
 import { motion } from 'framer-motion';
 
+function getSunSignDescription(sign: string): string {
+  const descriptions: Record<string, string> = {
+    'Baran': 'Vaše vedomé ja je odvážne, priame a iniciatívne. Ste prirodzený líder, ktorý rád začína nové veci a ide vlastnou cestou.',
+    'Býk': 'Vaše vedomé ja je stabilné, zmyslové a trpezlivé. Ceníte si krásu, pohodlie a bezpečie. Ste spoľahliví a vytrvalí.',
+    'Blíženci': 'Vaše vedomé ja je zvedavé, komunikatívne a adaptabilné. Potrebujete intelektuálnu stimuláciu a rozmanitosť.',
+    'Rak': 'Vaše vedomé ja je citlivé, starostlivé a ochranárske. Domov a rodina sú pre vás kľúčové. Máte silnú intuíciu.',
+    'Lev': 'Vaše vedomé ja je kreatívne, veľkorysé a dramatické. Potrebujete uznanie a sebavyjadrenie. Ste prirodzene charizmatickí.',
+    'Panna': 'Vaše vedomé ja je analytické, praktické a orientované na detaily. Služba iným a zdokonaľovanie sú vaše silné stránky.',
+    'Váhy': 'Vaše vedomé ja je harmonické, diplomatické a estetické. Hľadáte rovnováhu a partnerstvo. Máte zmysel pre spravodlivosť.',
+    'Škorpión': 'Vaše vedomé ja je intenzívne, hlboké a transformačné. Vidíte pod povrch vecí a nebojíte sa tieňov.',
+    'Strelec': 'Vaše vedomé ja je optimistické, filozofické a dobrodružné. Hľadáte zmysel, pravdu a nové horizonty.',
+    'Kozorožec': 'Vaše vedomé ja je ambiciózne, disciplinované a zodpovedné. Budujete trvalé štruktúry a máte dlhodobú víziu.',
+    'Vodnár': 'Vaše vedomé ja je inovatívne, nezávislé a humanitárne. Myslíte na budúcnosť a kolektív. Ste originálni.',
+    'Ryby': 'Vaše vedomé ja je intuitívne, empatické a duchovné. Máte hlboké spojenie s neviditeľným svetom a silnú imagináciu.',
+  };
+  return descriptions[sign] || 'Jedinečná slnečná energia formuje vaše vedomé ja.';
+}
+
+function getMoonSignDescription(sign: string): string {
+  const descriptions: Record<string, string> = {
+    'Baran': 'Emocionálne reagujete rýchlo a impulzívne. Potrebujete akciu a vzrušenie na emocionálnej úrovni.',
+    'Býk': 'Emocionálne potrebujete stabilitu a zmyslové potešenie. Vaše pocity sú hlboké a vytrvalé.',
+    'Blíženci': 'Emocionálne potrebujete komunikáciu a intelektuálnu výmenu. Spracúvate pocity cez rozhovor.',
+    'Rak': 'Emocionálne ste veľmi citliví a starostliví. Potrebujete bezpečie domova a blízkych vzťahov.',
+    'Lev': 'Emocionálne potrebujete uznanie a teplé vyjadrenia lásky. Vaše pocity sú veľkolepé a dramatické.',
+    'Panna': 'Emocionálne spracúvate pocity cez analýzu a praktické riešenia. Potrebujete poriadok pre vnútorný pokoj.',
+    'Váhy': 'Emocionálne potrebujete harmóniu a partnerstvo. Konflikty vás hlboko rozrušujú.',
+    'Škorpión': 'Emocionálne prežívate intenzívne a hlboko. Potrebujete dôveru a intimitu. Ťažko odpúšťate.',
+    'Strelec': 'Emocionálne potrebujete slobodu a optimizmus. Vieru v lepší zajtrajšok a zmysel.',
+    'Kozorožec': 'Emocionálne ste zdržanliví, ale loajálni. Potrebujete pocit kontroly a úspechu.',
+    'Vodnár': 'Emocionálne si držíte odstup a potrebujete slobodu. Pocity spracúvate intelektuálne.',
+    'Ryby': 'Emocionálne ste veľmi vnímaví a absorbujete emócie okolia. Potrebujete duchovné zakotvenie.',
+  };
+  return descriptions[sign] || 'Vaša mesačná energia formuje vnútorný emocionálny svet.';
+}
+
+function getAscendantDescription(sign: string): string {
+  const descriptions: Record<string, string> = {
+    'Baran': 'Pôsobíte energicky, priamo a odvážne. Prvý dojem, ktorý robíte, je dynamický a sebavedomý.',
+    'Býk': 'Pôsobíte pokojne, spoľahlivo a príjemne. Vyžarujete stabilitu a zmysel pre krásu.',
+    'Blíženci': 'Pôsobíte živý, zvedavo a komunikatívne. Ľudia vás vnímajú ako spoločenského a vtipného.',
+    'Rak': 'Pôsobíte mäkko, starostlivo a prístupne. Ľudia sa pri vás cítia v bezpečí.',
+    'Lev': 'Pôsobíte charizmaticky, hrdro a kreatívne. Priťahujete pozornosť prirodzene.',
+    'Panna': 'Pôsobíte upraveně, skromne a inteligentne. Ľudia vás vnímajú ako spoľahlivého a detailného.',
+    'Váhy': 'Pôsobíte elegantne, prívetivo a harmonicky. Máte prirodzený šarm a diplomatické vystupovanie.',
+    'Škorpión': 'Pôsobíte magneticky, intenzívne a tajomne. Váš pohľad je prenikavý a charizmatický.',
+    'Strelec': 'Pôsobíte optimisticky, otvorene a dobrodružne. Ste spoločenskí a inšpirujúci.',
+    'Kozorožec': 'Pôsobíte seriózne, zodpovedne a profesionálne. Vyžarujete autoritu a kompetenciu.',
+    'Vodnár': 'Pôsobíte originálne, nezávisle a progresívne. Ste vnímaní ako unikátni a niekedy excentrickí.',
+    'Ryby': 'Pôsobíte snovito, jemne a mysticky. Máte éterickú kvalitu a ľudia vás vnímajú ako duchovného.',
+  };
+  return descriptions[sign] || 'Váš ascendent formuje prvý dojem a vonkajšiu prezentáciu.';
+}
+
+function getPlanetMeaning(planet: string): string {
+  const meanings: Record<string, string> = {
+    'Slnko': 'Vedomé ja, identita',
+    'Mesiac': 'Emócie, podvedomie',
+    'Merkúr': 'Myslenie, komunikácia',
+    'Venuša': 'Láska, krása, hodnoty',
+    'Mars': 'Energia, vôľa, akcia',
+    'Jupiter': 'Expanzia, šťastie',
+    'Saturn': 'Disciplína, lekcie',
+    'Urán': 'Zmena, originalita',
+    'Neptún': 'Intuícia, duchovnosť',
+    'Pluto': 'Transformácia, moc',
+  };
+  return meanings[planet] || '';
+}
+
+function getElementDescription(element: string): string {
+  const descriptions: Record<string, string> = {
+    'Oheň': 'Dominancia ohňa prináša vášeň, energiu, iniciatívu a optimizmus. Ste dynamickí a akčne orientovaní.',
+    'Zem': 'Dominancia zeme prináša praktickosť, stabilitu, zmysel pre realitu a spoľahlivosť.',
+    'Vzduch': 'Dominancia vzduchu prináša intelekt, komunikáciu, spoločenskosť a racionálne myslenie.',
+    'Voda': 'Dominancia vody prináša emocionalitu, intuíciu, empatiu a hlboké vnímanie.',
+  };
+  return descriptions[element] || '';
+}
+
+function getQualityDescription(quality: string): string {
+  const descriptions: Record<string, string> = {
+    'Kardinálny': 'Kardinálna kvalita znamená iniciatívu – radi začínate nové veci a vediete ostatných.',
+    'Fixný': 'Fixná kvalita znamená vytrvalosť – ste stabilní, spoľahliví a dokážete dotiahnuť veci do konca.',
+    'Mutabilný': 'Mutabilná kvalita znamená adaptabilitu – ste flexibilní, prispôsobiví a otvorení zmenám.',
+  };
+  return descriptions[quality] || '';
+}
+
+function getDominantPlanetDescription(planet: string): string {
+  const descriptions: Record<string, string> = {
+    'Mars': 'Mars ako dominantná planéta prináša odhodlanie, akčnosť a bojovného ducha.',
+    'Venuša': 'Venuša ako dominantná planéta prináša zmysel pre krásu, harmóniu a vzťahy.',
+    'Merkúr': 'Merkúr ako dominantná planéta prináša bystrú myseľ, komunikačné schopnosti a analytiku.',
+    'Mesiac': 'Mesiac ako dominantná planéta prináša emocionalitu, intuíciu a starostlivosť.',
+    'Slnko': 'Slnko ako dominantná planéta prináša charizmu, sebavedomie a kreatívne vyjadrenie.',
+    'Jupiter': 'Jupiter ako dominantná planéta prináša optimizmus, múdrosť a expanzívnu energiu.',
+    'Saturn': 'Saturn ako dominantná planéta prináša disciplínu, zodpovednosť a životné lekcie.',
+    'Urán': 'Urán ako dominantná planéta prináša originalitu, inovácie a túžbu po slobode.',
+    'Neptún': 'Neptún ako dominantná planéta prináša duchovnosť, kreativitu a silnú intuíciu.',
+    'Pluto': 'Pluto ako dominantná planéta prináša transformačnú silu, intenzitu a schopnosť regenerácie.',
+  };
+  return descriptions[planet] || 'Táto planéta formuje váš celkový energetický výraz.';
+}
+
+function getMoonPhaseDescription(phase: string): string {
+  const descriptions: Record<string, string> = {
+    'Nov': 'Narodení počas novu sú priekopníci – začínajú nové cykly, sú introspektívni a majú silný vnútorný impulz k obnove.',
+    'Dorastajúci kosáčik': 'Narodení v tejto fáze sú bojovníci proti starým vzorcom. Majú silu presadiť sa napriek odporu.',
+    'Prvá štvrť': 'Narodení v prvej štvrti sú akčne orientovaní, rozhodní a schopní prekonávať krízy.',
+    'Dorastajúci mesiac': 'Narodení v tejto fáze sú budovatelia a rozvíjači. Zdokonaľujú to, čo bolo začaté.',
+    'Spln': 'Narodení počas splnu sú orientovaní na vzťahy, majú silné vedomie a schopnosť objektivne vidieť situácie.',
+    'Ubúdajúci mesiac': 'Narodení v tejto fáze sú učitelia a zdieľači múdrosti. Predávajú svoje skúsenosti ďalej.',
+    'Posledná štvrť': 'Narodení v poslednej štvrti sú ideovými vodcami, ktorí búrajú staré systémy pre nové.',
+    'Ubúdajúci kosáčik': 'Narodení v tejto fáze sú vizionári a proroci – dokončujú karmické cykly a pripravujú budúcnosť.',
+  };
+  return descriptions[phase] || 'Mesačná fáza pri narodení ovplyvňuje váš životný štýl a prístup k cyklom zmien.';
+}
+
+function getNodeDescription(sign: string, type: 'north' | 'south'): string {
+  const northDescriptions: Record<string, string> = {
+    'Baran': 'Učíte sa nezávislosti, odvaze a presadzovaniu sa.',
+    'Býk': 'Učíte sa stability, trpezlivosti a budovaniu hodnôt.',
+    'Blíženci': 'Učíte sa komunikácii, flexibilite a zvedavosti.',
+    'Rak': 'Učíte sa zraniteľnosti, domovu a emocionálnej inteligencii.',
+    'Lev': 'Učíte sa sebavyjadreniu, kreativite a osobnej radosti.',
+    'Panna': 'Učíte sa službe, detailom a praktickému zdokonaľovaniu.',
+    'Váhy': 'Učíte sa partnerstvu, diplomacii a spolupráci.',
+    'Škorpión': 'Učíte sa transformácii, intímnosti a odvaze ísť do hĺbky.',
+    'Strelec': 'Učíte sa rozširovaniu obzorov, viery a hľadaniu zmyslu.',
+    'Kozorožec': 'Učíte sa disciplíne, zodpovednosti a budovaniu trvalých štruktúr.',
+    'Vodnár': 'Učíte sa originalite, kolektívnemu mysleniu a slobode.',
+    'Ryby': 'Učíte sa odovzdanosti, intuícii a bezpodmienečnému súcitu.',
+  };
+  const southDescriptions: Record<string, string> = {
+    'Baran': 'Vrodená nezávislosť a impulzivita z minulých životov.',
+    'Býk': 'Vrodená stabilita a priľnutie k materiálnemu z minulých životov.',
+    'Blíženci': 'Vrodené komunikačné schopnosti a povrchnosť z minulých životov.',
+    'Rak': 'Vrodená starostlivosť a emocionálna závislosť z minulých životov.',
+    'Lev': 'Vrodená kreativita a egocentrizmus z minulých životov.',
+    'Panna': 'Vrodená analytičnosť a perfekcionizmus z minulých životov.',
+    'Váhy': 'Vrodená diplomacia a závislosť na partneroch z minulých životov.',
+    'Škorpión': 'Vrodená intenzita a kontrola z minulých životov.',
+    'Strelec': 'Vrodený optimizmus a neukotvenosť z minulých životov.',
+    'Kozorožec': 'Vrodená disciplína a rigidita z minulých životov.',
+    'Vodnár': 'Vrodená originalita a odtrhnutie od emócií z minulých životov.',
+    'Ryby': 'Vrodená intuícia a tendencia k úniku z minulých životov.',
+  };
+  if (type === 'north') return northDescriptions[sign] || 'Smer vašej životnej evolúcie.';
+  return southDescriptions[sign] || 'Vaša komfortná zóna z minulých životov.';
+}
+
 export function AstrologyPage() {
   const { profiles, activeProfileId } = useStore();
   const profile = profiles.find(p => p.id === activeProfileId);
@@ -37,6 +189,12 @@ export function AstrologyPage() {
 
       {result && (
         <div className="space-y-6">
+          <GlassCard>
+            <p className="text-sm text-slate-400">
+              <strong className="text-white">Astrologický profil</strong> ukazuje rozloženie planét v okamihu vášho narodenia. Tri kľúčové body -- Slnko, Mesiac a Ascendent -- tvoria základ vašej osobnosti. Slnko je vaše vedomé ja, Mesiac vnútorný emocionálny svet a Ascendent maska, ktorú ukazujete svetu.
+            </p>
+          </GlassCard>
+
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <EnergyCard
               title="Slnečné znamenie"
@@ -61,9 +219,28 @@ export function AstrologyPage() {
             />
           </div>
 
+          <GlassCard>
+            <h3 className="font-medium text-white mb-3">Čo znamenajú vaše tri hlavné body</h3>
+            <div className="space-y-3">
+              <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
+                <p className="text-xs text-amber-400 uppercase mb-1">Slnko v {result.sunSign.name} ({result.sunSign.element})</p>
+                <p className="text-sm text-slate-300">{getSunSignDescription(result.sunSign.name)}</p>
+              </div>
+              <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20">
+                <p className="text-xs text-purple-400 uppercase mb-1">Mesiac v {result.moonSign.name} ({result.moonSign.element})</p>
+                <p className="text-sm text-slate-300">{getMoonSignDescription(result.moonSign.name)}</p>
+              </div>
+              <div className="p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/20">
+                <p className="text-xs text-cyan-400 uppercase mb-1">Ascendent v {result.ascendant.name} ({result.ascendant.element})</p>
+                <p className="text-sm text-slate-300">{getAscendantDescription(result.ascendant.name)}</p>
+              </div>
+            </div>
+          </GlassCard>
+
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <GlassCard>
-              <h3 className="font-medium text-white mb-4">Planéty v znameniach</h3>
+              <h3 className="font-medium text-white mb-2">Planéty v znameniach</h3>
+              <p className="text-xs text-slate-400 mb-4">Každá planéta ovplyvňuje inú oblasť vášho života. Znamenie, v ktorom sa nachádza, určuje spôsob, akým sa táto energia prejavuje.</p>
               <div className="space-y-3">
                 {result.planets.map((planet, idx) => (
                   <motion.div
@@ -75,7 +252,10 @@ export function AstrologyPage() {
                   >
                     <div className="flex items-center gap-3">
                       <span className="text-xl">{planet.symbol}</span>
-                      <span className="text-sm font-medium text-white">{planet.name}</span>
+                      <div>
+                        <span className="text-sm font-medium text-white">{planet.name}</span>
+                        <p className="text-[10px] text-slate-500">{getPlanetMeaning(planet.name)}</p>
+                      </div>
                     </div>
                     <div className="text-right">
                       <span className="text-sm text-indigo-300">{planet.sign.symbol} {planet.sign.name}</span>
@@ -88,38 +268,56 @@ export function AstrologyPage() {
 
             <div className="space-y-4">
               <GlassCard>
-                <h3 className="font-medium text-white mb-3">Dominantné energie</h3>
+                <h3 className="font-medium text-white mb-2">Dominantné energie</h3>
+                <p className="text-xs text-slate-400 mb-3">Dominanty ukazujú, aké energie vo vašom horoskope prevládajú a formujú váš celkový prístup k životu.</p>
                 <div className="space-y-3">
-                  <div className="flex items-center justify-between p-3 rounded-xl bg-red-500/10 border border-red-500/20">
-                    <span className="text-sm text-slate-300">Dominantný živel</span>
-                    <span className="font-medium text-white">{result.dominantElement}</span>
+                  <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-sm text-slate-300">Dominantný živel</span>
+                      <span className="font-medium text-white">{result.dominantElement}</span>
+                    </div>
+                    <p className="text-xs text-slate-400">{getElementDescription(result.dominantElement)}</p>
                   </div>
-                  <div className="flex items-center justify-between p-3 rounded-xl bg-blue-500/10 border border-blue-500/20">
-                    <span className="text-sm text-slate-300">Dominantná kvalita</span>
-                    <span className="font-medium text-white">{result.dominantQuality}</span>
+                  <div className="p-3 rounded-xl bg-blue-500/10 border border-blue-500/20">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-sm text-slate-300">Dominantná kvalita</span>
+                      <span className="font-medium text-white">{result.dominantQuality}</span>
+                    </div>
+                    <p className="text-xs text-slate-400">{getQualityDescription(result.dominantQuality)}</p>
                   </div>
-                  <div className="flex items-center justify-between p-3 rounded-xl bg-purple-500/10 border border-purple-500/20">
-                    <span className="text-sm text-slate-300">Dominantná planéta</span>
-                    <span className="font-medium text-white">{result.dominantPlanet}</span>
+                  <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-sm text-slate-300">Dominantná planéta</span>
+                      <span className="font-medium text-white">{result.dominantPlanet}</span>
+                    </div>
+                    <p className="text-xs text-slate-400">{getDominantPlanetDescription(result.dominantPlanet)}</p>
                   </div>
                 </div>
               </GlassCard>
 
               <GlassCard>
-                <h3 className="font-medium text-white mb-3">Mesačná fáza pri narodení</h3>
+                <h3 className="font-medium text-white mb-2">Mesačná fáza pri narodení</h3>
                 <p className="text-lg text-indigo-300 font-serif">{result.moonPhase}</p>
+                <p className="text-xs text-slate-400 mt-2">{getMoonPhaseDescription(result.moonPhase)}</p>
               </GlassCard>
 
               <GlassCard>
-                <h3 className="font-medium text-white mb-3">Karmické uzly</h3>
+                <h3 className="font-medium text-white mb-2">Karmické uzly</h3>
+                <p className="text-xs text-slate-400 mb-3">Severný uzol ukazuje smer vašej evolúcie – kam sa máte posúvať. Južný uzol je vaša komfortná zóna z minulých životov.</p>
                 <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-slate-400">Severný uzol (budúcnosť)</span>
-                    <span className="text-sm text-indigo-300">{result.northNode.symbol} {result.northNode.name}</span>
+                  <div className="p-2 rounded-lg bg-indigo-500/10">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-slate-300">Severný uzol (budúcnosť)</span>
+                      <span className="text-sm text-indigo-300">{result.northNode.symbol} {result.northNode.name}</span>
+                    </div>
+                    <p className="text-xs text-slate-400 mt-1">Smer rastu: {getNodeDescription(result.northNode.name, 'north')}</p>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-slate-400">Južný uzol (minulosť)</span>
-                    <span className="text-sm text-purple-300">{result.southNode.symbol} {result.southNode.name}</span>
+                  <div className="p-2 rounded-lg bg-purple-500/10">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-slate-300">Južný uzol (minulosť)</span>
+                      <span className="text-sm text-purple-300">{result.southNode.symbol} {result.southNode.name}</span>
+                    </div>
+                    <p className="text-xs text-slate-400 mt-1">Vrodený talent: {getNodeDescription(result.southNode.name, 'south')}</p>
                   </div>
                 </div>
               </GlassCard>

@@ -40,8 +40,19 @@ export function ThetaHealingPage() {
 
       {result && (
         <div className="space-y-6">
+          <GlassCard>
+            <p className="text-sm text-slate-400">
+              <strong className="text-white">Theta Healing</strong> je technika energetického liečenia, ktorá pracuje s mozgovými vlnami v théta stave (4-7 Hz). Na základe životného čísla analyzovanej osoby identifikujeme podvedomé limitujúce presvedčenia, ktoré jej bránia žiť naplno. Táto analýza je o <strong className="text-indigo-300">vás</strong> -- ukazuje vaše koreňové presvedčenia, ich pôvod a cestu k transformácii.
+            </p>
+            <div className="mt-3 p-3 rounded-xl bg-indigo-500/10 border border-indigo-500/20">
+              <p className="text-xs text-indigo-300 font-medium mb-1">Ako to funguje:</p>
+              <p className="text-xs text-slate-300">Každé životné číslo nesie špecifické vzorce a lekcie. Na základe toho identifikujeme limitujúce presvedčenia uložené na 4 úrovniach: Jadro (vedomá myseľ), Genetická (zdedené po predkoch), Historická (minulé životy), Duševná (hlboká duša). Kliknutím na presvedčenie zobrazíte digging (kopanie) a healing proces.</p>
+            </div>
+          </GlassCard>
+
           <GlassCard glow>
-            <h3 className="font-medium text-white mb-4">Limitujúce presvedčenia</h3>
+            <h3 className="font-medium text-white mb-2">Limitujúce presvedčenia</h3>
+            <p className="text-xs text-slate-400 mb-4">Toto sú podvedomé presvedčenia, ktoré sú typické pre vaše životné číslo. Kliknite na presvedčenie pre zobrazenie healing procesu.</p>
             <div className="space-y-4">
               {result.primaryBeliefs.map((belief, idx) => (
                 <motion.div

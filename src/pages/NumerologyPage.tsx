@@ -188,10 +188,42 @@ export function NumerologyPage() {
               )}
 
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-                <EnergyCard title="VDD" value={result.vdd} subtitle="Vek duchovnej dospelosti" icon="⟡" color="purple" />
-                <EnergyCard title="ODD" value={`${result.oddPeriod} r.`} subtitle="Obdobie duch. detstva" icon="◇" color="cyan" />
-                <EnergyCard title="ΣT" value={result.sigmaT} subtitle={result.age === 'aquarius' ? 'Vek Vodnára' : 'Vek Rýb'} icon="☿" color="gold" />
-                <EnergyCard title="Vek" value={result.age === 'aquarius' ? 'Vodnár' : 'Ryby'} subtitle="Kozmický vek" icon="⚛" color="indigo" />
+                <VibrationCard
+                  title="VDD"
+                  value={result.vdd}
+                  subtitle="Vek duchovnej dospelosti"
+                  icon="⟡"
+                  color="purple"
+                  formula={`36 - ŽČ(${result.lifePathNumber}) = ${result.vdd}`}
+                  description="Vek duchovnej dospelosti (VDD) je okamih, kedy človek začína plniť svoje životné poslanie. Do tohto veku sa pripravuje – učí sa, zbiera skúsenosti. Po VDD nastupujú karmické cykly K1-K4."
+                />
+                <VibrationCard
+                  title="ODD"
+                  value={result.oddPeriod}
+                  subtitle="Obdobie duch. detstva"
+                  icon="◇"
+                  color="purple"
+                  formula={`VDD(${result.vdd}) ÷ 3 = ${result.oddPeriod}`}
+                  description="Obdobie duchovného detstva (ODD) je dĺžka jedného cyklu v rámci duchovného detstva. Sú tri takéto cykly (matka, otec, spoločnosť) – každý trvá ODD rokov."
+                />
+                <VibrationCard
+                  title="ΣT"
+                  value={result.sigmaT}
+                  subtitle={result.age === 'aquarius' ? 'Vek Vodnára' : 'Vek Rýb'}
+                  icon="☿"
+                  color="gold"
+                  formula={`D + M + R = ${result.sigmaT}`}
+                  description="Suma tarotu (ΣT) je súčet celého dátumu narodenia bez redukcie. Určuje, či osoba patrí do Veku Rýb (< 2000, duchovná introspekcia) alebo Veku Vodnára (>= 2000, nové paradigmy a technológie)."
+                />
+                <VibrationCard
+                  title="Vek"
+                  value={result.age === 'aquarius' ? 0 : 0}
+                  subtitle={result.age === 'aquarius' ? 'Vodnár' : 'Ryby'}
+                  icon="⚛"
+                  color="indigo"
+                  formula={`ΣT = ${result.sigmaT} → ${result.age === 'aquarius' ? '≥ 2000 = Vodnár' : '< 2000 = Ryby'}`}
+                  description={result.age === 'aquarius' ? 'Vek Vodnára – nové technológie, kolektívne vedomie, inovácie. Človek je otvorený novým prístupom a má schopnosť prepájať duchovné s moderným.' : 'Vek Rýb – hlboká duchovnosť, introspekcia, tradičná múdrosť. Človek inklinuje k duchovným cestám a vnútornému hľadaniu pravdy.'}
+                />
               </div>
             </div>
           )}

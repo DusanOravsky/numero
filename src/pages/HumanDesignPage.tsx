@@ -7,6 +7,32 @@ import { calculateHumanDesign, CENTER_THEMES } from '../engine/humanDesignEngine
 import type { HumanDesignResult } from '../engine/humanDesignEngine';
 import { motion } from 'framer-motion';
 
+const TYPE_DESCRIPTIONS: Record<string, string> = {
+  'Manifestor': 'Manifestori sú tu na to, aby začínali a iniciovali. Majú uzavretú a odpudzujúcu auru – nie sú tu na to, aby čakali. Ich úlohou je informovať ostatných pred konaním, čím redukujú odpor okolia. Tvoria asi 9% populácie.',
+  'Generátor': 'Generátori sú životná sila planéty – majú nekonečnú energiu sakrálneho centra. Sú tu na to, aby reagovali na to, čo im život prináša. Keď robia prácu, ktorú milujú, sú neúnavní. Tvoria asi 37% populácie.',
+  'Manifestujúci Generátor': 'Manifestujúci Generátori kombinujú energiu Generátora s iniciatívou Manifestora. Sú multi-talentovaní a rýchli. Musia reagovať AJ informovať. Tvoria asi 33% populácie.',
+  'Projektor': 'Projektori sú tu na to, aby viedli a riadili energiu ostatných. Nemajú konzistentnú vlastnú energiu, ale vidia systémy a ľudí hlboko. Musia čakať na pozvanie do veľkých životných rozhodnutí. Tvoria asi 20% populácie.',
+  'Reflektor': 'Reflektori sú najvzácnejší typ – nemajú žiadne definované centrá a odrážajú prostredie okolo seba. Sú barometrom zdravia komunity. Musia čakať 28 dní (lunárny cyklus) pred veľkými rozhodnutiami. Tvoria asi 1% populácie.',
+};
+
+const AUTHORITY_DESCRIPTIONS: Record<string, string> = {
+  'Emocionálna': 'Vaša pravda sa odhaľuje v čase. Nikdy nerozhodujte v emočnom výkyve – čakajte na emocionálnu jasnosť. Vaša vlna má výkyvy a pravda prichádza v neutrálnom bode.',
+  'Sakrálna': 'Váš sakrálny hlas (uh-huh/unh-unh) je vašou pravdou. Reagujte zvukom z brucha na áno/nie otázky. Telo vie skôr ako myseľ.',
+  'Slezinová': 'Vaša intuícia je momentálna – hovorí v prítomnom okamihu. Ak ignorujete prvý impulz, stratíte ho. Dôverujte spontánnym pocitom a "viem len tak".',
+  'Ego': 'Vaša autorita je sila vôle. Pýtajte sa: "Je to niečo, čomu chcem zaviazať svoju vôľu?" Dodržiavajte sľuby, ale sľubujte len to, čo naozaj chcete.',
+  'Sebaprojektovaná': 'Hovorte o veciach nahlas – vaša pravda sa vám odhalí cez váš vlastný hlas. Počúvajte, čo hovoríte, nie čo si myslíte.',
+  'Mentálna/Environmentálna': 'Vaša autorita je vonkajšia – potrebujete správne prostredie a dôveryhodných zvukových partnerov na to, aby ste sa počuli a rozhodli.',
+  'Lunárna': 'Čakajte 28 dní (celý lunárny cyklus) pred veľkými rozhodnutiami. Diskutujte so ľuďmi, ktorým dôverujete, počas celého cyklu.',
+};
+
+const STRATEGY_DESCRIPTIONS: Record<string, string> = {
+  'Informovať': 'Pred konaním informujte ľudí, ktorých sa to týka. Nemusíte žiadať o povolenie, ale informovanie redukuje odpor.',
+  'Reagovať': 'Čakajte na niečo, na čo môžete reagovať – situáciu, otázku, ponuku. Neinicinujte z hlavy. Vaše sakrálne centrum vám povie áno alebo nie.',
+  'Reagovať a informovať': 'Reagujte na podnety zo života a pred konaním informujte tých, na ktorých má dopad. Kombinácia oboch prístupov.',
+  'Čakať na pozvanie': 'Čakajte na formálne pozvanie do veľkých životných oblastí (kariéra, vzťahy, bývanie). V medzičase kultivujte svoju múdrosť a systémy.',
+  'Čakať 28 dní': 'Pred veľkými rozhodnutiami prečkajte celý lunárny cyklus. Diskutujte s dôveryhodnými ľuďmi. Až po 28 dňoch sa rozhodnite.',
+};
+
 export function HumanDesignPage() {
   const { profiles, activeProfileId } = useStore();
   const profile = profiles.find(p => p.id === activeProfileId);
@@ -45,10 +71,17 @@ export function HumanDesignPage() {
 
       {result && (
         <div className="space-y-6">
+          <GlassCard>
+            <p className="text-sm text-slate-400">
+              <strong className="text-white">Human Design</strong> je systém sebapoznania, ktorý kombinuje astrológiu, I-Ching, Kabalu, hinduistický systém čakier a kvantovú fyziku. Ukazuje, ako ste energeticky navrhnutí -- ako správne rozhodovať, kde máte konzistentnú energiu a kde ste otvorení vonkajším vplyvom.
+            </p>
+          </GlassCard>
+
           <GlassCard glow>
             <div className={`p-6 rounded-xl bg-gradient-to-br ${typeColors[result.type] || typeColors['Generátor']}`}>
               <p className="text-xs text-slate-400 uppercase tracking-wider">Váš typ</p>
               <h2 className="font-serif text-3xl font-bold text-white mt-1">{result.type}</h2>
+              <p className="text-sm text-slate-300 mt-2">{TYPE_DESCRIPTIONS[result.type]}</p>
               <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
                   <p className="text-xs text-slate-400">Stratégia</p>
@@ -65,6 +98,17 @@ export function HumanDesignPage() {
               </div>
             </div>
           </GlassCard>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <GlassCard>
+              <h3 className="font-medium text-white mb-2">Stratégia: {result.strategy}</h3>
+              <p className="text-sm text-slate-300">{STRATEGY_DESCRIPTIONS[result.strategy]}</p>
+            </GlassCard>
+            <GlassCard>
+              <h3 className="font-medium text-white mb-2">Autorita: {result.authority}</h3>
+              <p className="text-sm text-slate-300">{AUTHORITY_DESCRIPTIONS[result.authority]}</p>
+            </GlassCard>
+          </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <EnergyCard title="Profil" value={`${result.profile.line1}/${result.profile.line2}`} subtitle={result.profile.name} color="indigo" delay={0.1} />

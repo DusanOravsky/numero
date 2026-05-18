@@ -28,15 +28,15 @@ interface CenterInfo {
 }
 
 const CENTERS: Record<string, CenterInfo> = {
-  'Hlava':    { label: 'Hlava', fullName: 'Inšpirácia', color: '#f5c542', top: '0%', left: '50%' },
-  'Ajna':     { label: 'Ajna', fullName: 'Myslenie', color: '#4ade80', top: '14%', left: '50%' },
+  'Hlava':    { label: 'Hlava', fullName: 'Inšpirácia', color: '#f5c542', top: '2%', left: '50%' },
+  'Ajna':     { label: 'Ajna', fullName: 'Myslenie', color: '#4ade80', top: '15%', left: '50%' },
   'Hrdlo':    { label: 'Hrdlo', fullName: 'Prejav', color: '#a78bfa', top: '28%', left: '50%' },
-  'G':        { label: 'G', fullName: 'Identita', color: '#facc15', top: '44%', left: '50%' },
-  'Ego':      { label: 'Ego', fullName: 'Vôľa', color: '#f87171', top: '37%', left: '78%' },
-  'Sakrálne': { label: 'Sakrál', fullName: 'Sila', color: '#ef4444', top: '60%', left: '50%' },
-  'SP':       { label: 'SP', fullName: 'Emócie', color: '#fb923c', top: '55%', left: '78%' },
-  'Slezina':  { label: 'Slezina', fullName: 'Intuícia', color: '#fbbf24', top: '55%', left: '22%' },
-  'Koreň':    { label: 'Koreň', fullName: 'Tlak', color: '#ef4444', top: '76%', left: '50%' },
+  'G':        { label: 'G', fullName: 'Identita', color: '#facc15', top: '42%', left: '50%' },
+  'Ego':      { label: 'Ego', fullName: 'Vôľa', color: '#f87171', top: '36%', left: '80%' },
+  'Sakrálne': { label: 'Sakrál', fullName: 'Sila', color: '#ef4444', top: '58%', left: '50%' },
+  'SP':       { label: 'SP', fullName: 'Emócie', color: '#fb923c', top: '53%', left: '80%' },
+  'Slezina':  { label: 'Slezina', fullName: 'Intuícia', color: '#fbbf24', top: '53%', left: '20%' },
+  'Koreň':    { label: 'Koreň', fullName: 'Tlak', color: '#ef4444', top: '72%', left: '50%' },
 };
 
 export function Bodygraph({ result }: BodygraphProps) {
@@ -90,7 +90,7 @@ export function Bodygraph({ result }: BodygraphProps) {
             style={{ top: cfg.top, left: cfg.left }}
           >
             <div
-              className={`w-11 h-11 rounded-lg flex items-center justify-center text-[10px] font-bold border-2 transition-all ${
+              className={`w-9 h-9 rounded-md flex items-center justify-center text-[9px] font-bold border-2 transition-all ${
                 defined ? 'text-white shadow-md' : 'text-slate-400'
               }`}
               style={{
@@ -98,10 +98,10 @@ export function Bodygraph({ result }: BodygraphProps) {
                 borderColor: defined ? cfg.color : '#e2e8f0',
                 boxShadow: defined ? `0 2px 8px ${cfg.color}30` : 'none',
               }}
+              title={`${cfg.label} – ${cfg.fullName}`}
             >
-              {cfg.label}
+              {cfg.label.length > 4 ? cfg.label.slice(0, 3) : cfg.label}
             </div>
-            <span className="text-[8px] text-slate-500 mt-0.5">{cfg.fullName}</span>
           </div>
         );
       })}

@@ -83,6 +83,24 @@ export function SettingsPage() {
       </GlassCard>
 
       <GlassCard>
+        <h3 className="font-medium text-white mb-3">Inštalácia</h3>
+        <p className="text-sm text-slate-400 mb-3">Nainštalujte aplikáciu na plochu pre rýchly prístup a offline použitie.</p>
+        <button
+          onClick={() => {
+            const w = window as any;
+            if (w._deferredInstallPrompt) {
+              w._deferredInstallPrompt.prompt();
+            } else {
+              alert('Inštalácia nie je momentálne dostupná. Skúste otvoriť cez Chrome a použiť menu → "Pridať na plochu".');
+            }
+          }}
+          className="px-4 py-2 rounded-xl text-sm font-medium bg-indigo-600 text-white hover:bg-indigo-500"
+        >
+          Nainštalovať na plochu
+        </button>
+      </GlassCard>
+
+      <GlassCard>
         <h3 className="font-medium text-white mb-3">Súkromie</h3>
         <div className="space-y-2 text-sm text-slate-400">
           <div className="flex items-center gap-2">

@@ -14,6 +14,7 @@ export function PWAPrompts() {
     const handler = (e: Event) => {
       e.preventDefault();
       setInstallPrompt(e);
+      (window as any)._deferredInstallPrompt = e;
       const dismissed = localStorage.getItem('pwa-install-dismissed');
       if (!dismissed) setShowInstall(true);
     };

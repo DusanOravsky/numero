@@ -72,9 +72,9 @@ export function Bodygraph({ result }: BodygraphProps) {
           const active = activeConnections.has(`${c1}|${c2}`);
           return (
             <line key={i} x1={x1} y1={y1} x2={x2} y2={y2}
-              stroke={active ? '#818cf8' : '#1e293b'}
-              strokeWidth={active ? 3 : 1}
-              opacity={active ? 0.9 : 0.25}
+              stroke={active ? '#6366f1' : '#e2e8f0'}
+              strokeWidth={active ? 3 : 1.5}
+              opacity={active ? 1 : 0.8}
             />
           );
         })}
@@ -91,12 +91,12 @@ export function Bodygraph({ result }: BodygraphProps) {
           >
             <div
               className={`w-11 h-11 rounded-lg flex items-center justify-center text-[10px] font-bold border-2 transition-all ${
-                defined ? 'text-white shadow-lg' : 'text-slate-500 bg-cosmic-900'
+                defined ? 'text-white shadow-md' : 'text-slate-400'
               }`}
               style={{
-                backgroundColor: defined ? cfg.color : '#0f0a2e',
-                borderColor: defined ? cfg.color : '#334155',
-                boxShadow: defined ? `0 0 12px ${cfg.color}50` : 'none',
+                backgroundColor: defined ? cfg.color : '#ffffff',
+                borderColor: defined ? cfg.color : '#e2e8f0',
+                boxShadow: defined ? `0 2px 8px ${cfg.color}30` : 'none',
               }}
             >
               {cfg.label}

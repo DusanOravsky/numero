@@ -93,23 +93,23 @@ export function NumerologyGrid({ grid, highlightPlane }: NumerologyGridProps) {
                 animate={{ scale: 1 }}
                 transition={{ delay: (rowIdx * 3 + colIdx) * 0.05, type: 'spring' }}
                 onClick={() => setSelectedNum(isSelected ? null : num)}
-                className={`aspect-square flex flex-col items-center justify-center rounded-xl border transition-all cursor-pointer ${
+                className={`aspect-square flex flex-col items-center justify-center rounded-xl border-2 transition-all cursor-pointer ${
                   isSelected
-                    ? 'border-indigo-400 bg-indigo-500/20 ring-2 ring-indigo-400/50'
+                    ? 'border-indigo-500 bg-indigo-50 ring-2 ring-indigo-200'
                     : isHighlighted
-                    ? 'border-gold bg-gold/10 glow-gold'
+                    ? 'border-amber-400 bg-amber-50'
                     : items.length > 0
-                    ? 'border-indigo-500/30 bg-indigo-500/10 hover:border-indigo-400/50'
-                    : 'border-slate-700/30 bg-slate-800/30 hover:border-slate-600/50'
+                    ? 'border-indigo-200 bg-indigo-50/50 hover:border-indigo-300'
+                    : 'border-slate-200 bg-slate-50 hover:border-slate-300'
                 }`}
               >
-                <span className="text-[10px] text-slate-500 mb-1">{num}</span>
+                <span className="text-[10px] text-slate-400 mb-1">{num}</span>
                 <div className="flex flex-wrap justify-center gap-0.5">
                   {items.map((item, i) => (
                     <span
                       key={i}
                       className={`text-lg font-bold ${
-                        item.isBase ? 'text-blue-400' : 'text-rose-400'
+                        item.isBase ? 'text-indigo-600' : 'text-rose-600'
                       }`}
                     >
                       {item.value}
@@ -117,7 +117,7 @@ export function NumerologyGrid({ grid, highlightPlane }: NumerologyGridProps) {
                   ))}
                 </div>
                 {items.length === 0 && (
-                  <span className="text-slate-600 text-xs">—</span>
+                  <span className="text-slate-300 text-xs">—</span>
                 )}
               </motion.div>
             );
@@ -131,28 +131,28 @@ export function NumerologyGrid({ grid, highlightPlane }: NumerologyGridProps) {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="mt-4 p-4 rounded-xl bg-[#1a1545] border border-indigo-500/20 overflow-hidden"
+            className="mt-4 p-4 rounded-xl bg-white border border-slate-200 shadow-sm overflow-hidden"
           >
             <div className="flex items-center justify-between mb-2">
-              <h4 className="font-medium text-white">Číslo {selectedNum} – {selectedInfo.theme}</h4>
-              <span className="text-xs px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300">
+              <h4 className="font-medium text-slate-800">Číslo {selectedNum} – {selectedInfo.theme}</h4>
+              <span className="text-xs px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700">
                 {selectedCount}× v mriežke
               </span>
             </div>
-            <p className="text-xs text-slate-400 mb-2">
+            <p className="text-xs text-slate-500 mb-2">
               {selectedCount === 0 ? 'Absencia – oblasť na vedomý rozvoj' :
                selectedCount === 1 ? 'Prítomné, ale slabšia energia' :
                selectedCount === 2 ? 'Vyvážená, silná energia' :
                'Veľmi silné – dominantná energia, pozor na tieň'}
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
-              <div className="p-2 rounded-lg bg-green-500/10">
-                <p className="text-[10px] text-green-400 uppercase mb-0.5">Pozitívne</p>
-                <p className="text-xs text-slate-300">{selectedInfo.positive}</p>
+              <div className="p-2 rounded-lg bg-green-50 border border-green-200">
+                <p className="text-[10px] text-green-700 uppercase mb-0.5">Pozitívne</p>
+                <p className="text-xs text-slate-700">{selectedInfo.positive}</p>
               </div>
-              <div className="p-2 rounded-lg bg-red-500/10">
-                <p className="text-[10px] text-red-400 uppercase mb-0.5">Negatívne (stres)</p>
-                <p className="text-xs text-slate-300">{selectedInfo.negative}</p>
+              <div className="p-2 rounded-lg bg-red-50 border border-red-200">
+                <p className="text-[10px] text-red-700 uppercase mb-0.5">Negatívne (stres)</p>
+                <p className="text-xs text-slate-700">{selectedInfo.negative}</p>
               </div>
             </div>
           </motion.div>

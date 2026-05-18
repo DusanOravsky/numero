@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import { GlassCard } from '../components/GlassCard';
-import { EnergyCard } from '../components/EnergyCard';
+import { VibrationCard } from '../components/VibrationCard';
 import { calculateORV, calculateOMV, calculateODV, reduceToSingle } from '../engine/numerologyEngine';
 
 export function Dashboard() {
@@ -79,9 +79,36 @@ export function Dashboard() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <EnergyCard title="ORV – Ročná vibrácia" value={orv} subtitle="Osobná ročná vibrácia" icon="✦" color="indigo" delay={0.1} />
-        <EnergyCard title="OMV – Mesačná vibrácia" value={omv} subtitle="Osobná mesačná vibrácia" icon="☽" color="purple" delay={0.2} />
-        <EnergyCard title="ODV – Denná vibrácia" value={odv} subtitle="Osobná denná vibrácia" icon="☀" color="gold" delay={0.3} />
+        <VibrationCard
+          title="ORV – Ročná vibrácia"
+          value={orv}
+          subtitle="Osobná ročná vibrácia"
+          icon="✦"
+          color="indigo"
+          delay={0.1}
+          formula={profile ? `D(${profile.birthDay}) + M(${profile.birthMonth}) + R(${currentMonth < profile.birthMonth || (currentMonth === profile.birthMonth && currentDay < profile.birthDay) ? currentYear - 1 : currentYear}) → ${orv}` : ''}
+          description="ORV ukazuje energiu celého roka od narodenín do narodenín. Určuje hlavné témy a úlohy, na ktoré sa v danom roku zameriavate. Počíta sa z dňa a mesiaca narodenia + aktuálny rok (od posledných narodenín)."
+        />
+        <VibrationCard
+          title="OMV – Mesačná vibrácia"
+          value={omv}
+          subtitle="Osobná mesačná vibrácia"
+          icon="☽"
+          color="purple"
+          delay={0.2}
+          formula={`M(${currentMonth}) + ORV(${orv}) = ${currentMonth + orv} → ${omv}`}
+          description="OMV špecifikuje energiu aktuálneho mesiaca vo vašom osobnom roku. Ukazuje, aké úlohy a témy sú pre vás dôležité práve tento mesiac."
+        />
+        <VibrationCard
+          title="ODV – Denná vibrácia"
+          value={odv}
+          subtitle="Osobná denná vibrácia"
+          icon="☀"
+          color="gold"
+          delay={0.3}
+          formula={`D(${currentDay}) + M(${currentMonth}) + ORV(${orv}) = ${currentDay + currentMonth + orv} → ${odv}`}
+          description="ODV je charakteristická energia dnešného dňa. Určuje úlohu a tému konkrétneho dňa – čomu by ste mali venovať pozornosť a aké aktivity sú podporované."
+        />
       </div>
 
       <GlassCard glow delay={0.4}>

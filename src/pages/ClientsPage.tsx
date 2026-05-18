@@ -215,7 +215,7 @@ export function ClientsPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: idx * 0.05 }}
           >
-            <GlassCard className="cursor-pointer hover:scale-[1.02] transition-transform" onClick={() => setSelectedClient(client)}>
+            <GlassCard className="cursor-pointer hover:scale-[1.02] transition-transform" onClick={() => navigate(`/clients/${client.id}`)}>
               <div className="flex items-start justify-between">
                 <div>
                   <h3 className="font-medium text-white">{client.name}</h3>

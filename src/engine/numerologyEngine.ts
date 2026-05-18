@@ -171,9 +171,16 @@ export function findIsolatedNumbers(grid: { value: number; isBase: boolean }[][]
   return isolated;
 }
 
-export function calculateORV(day: number, month: number, currentYear: number): number {
-  const sum = reduceToSingle(day) + reduceToSingle(month) +
-    reduceToSingle(String(currentYear).split('').reduce((s, d) => s + parseInt(d, 10), 0));
+export function calculateORV(birthDay: number, birthMonth: number, currentYear: number, currentMonth?: number, currentDay?: number): number {
+  // ORV sa počíta od narodenín do narodenín
+  // Ak dnešný dátum je pred narodeninami v aktuálnom roku, použijeme predchádzajúci rok
+  let year = currentYear;
+  if (currentMonth !== undefined && currentDay !== undefined) {
+    const beforeBirthday = currentMonth < birthMonth || (currentMonth === birthMonth && currentDay < birthDay);
+    if (beforeBirthday) year = currentYear - 1;
+  }
+  const sum = reduceToSingle(birthDay) + reduceToSingle(birthMonth) +
+    reduceToSingle(String(year).split('').reduce((s, d) => s + parseInt(d, 10), 0));
   return reduceToSingle(sum);
 }
 
@@ -259,7 +266,7 @@ export function calculateFullNumerology(day: number, month: number, year: number
   const currentMonth = now.getMonth() + 1;
   const currentDay = now.getDate();
 
-  const orv = calculateORV(day, month, currentYear);
+  const orv = calculateORV(day, month, currentYear, currentMonth, currentDay);
   const omv = calculateOMV(orv, currentMonth);
   const odv = calculateODV(orv, currentDay, currentMonth);
   const { vdd, oddPeriod } = calculateVDD(lifePath.number);

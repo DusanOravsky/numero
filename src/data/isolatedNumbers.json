@@ -1,0 +1,83 @@
+{
+  "1": {
+    "type": "nepárne",
+    "effect": "napätie, agresivita",
+    "description": "Izolovaná jednotka vytvára vnútorné napätie v oblasti identity a nezávislosti. Človek môže pociťovať tlak byť silný sám za seba, ale bez podpory okolia.",
+    "theme": "Osamelý vodca",
+    "shadow": "Agresívna nezávislosť, neschopnosť požiadať o pomoc, vnútorný hnev",
+    "recommendation": "Vedome budujte prepojenie s blízkymi. Vaša sila nie je v izolácii, ale v autentickej komunikácii. Krok: Požiadajte dnes niekoho o pomoc – aj malú.",
+    "body": "Hlava, čelo – napäťové bolesti hlavy"
+  },
+  "2": {
+    "type": "párne",
+    "effect": "pasivita, utiahnutosť",
+    "description": "Izolovaná dvojka vytvára hlbokú vnútornú citlivosť bez ventilu. Emócie sa hromadia, ale nemajú kam ísť. Človek sa sťahuje do seba.",
+    "theme": "Tichý citlivec",
+    "shadow": "Emocionálna izolácia, neschopnosť vyjadriť pocity, depresia",
+    "recommendation": "Hľadajte bezpečné priestory pre vyjadrenie emócií. Písanie, umenie, dôverný rozhovor. Krok: Napíšte si dnes 3 vety o tom, čo cítite.",
+    "body": "Obličky, dolná časť chrbta – zadržiavanie emócií"
+  },
+  "3": {
+    "type": "nepárne",
+    "effect": "napätie, agresivita",
+    "description": "Izolovaná trojka vytvára blokáciu kreatívneho vyjadrenia. Vnútorná tvorivosť nemá cez čo vyjsť von, čo spôsobuje frustráciu a mentálne napätie.",
+    "theme": "Potlačený tvorca",
+    "shadow": "Mentálna prepracovanosť, cynizmus, klamanie seba aj iných",
+    "recommendation": "Nájdite si kreatívny outlet – čokoľvek, kde tvoríte bez posudzovania. Krok: 10 minút voľného písania alebo kreslenia bez cieľa.",
+    "body": "Solárny plexus, dýchanie – povrchné dýchanie, úzkosť"
+  },
+  "4": {
+    "type": "párne",
+    "effect": "pasivita, utiahnutosť",
+    "description": "Izolovaná štvorka vytvára pocit nestability a neistoty. Chýba vnútorný základ, človek sa cíti bez opory a bezpečia.",
+    "theme": "Bez koreňov",
+    "shadow": "Nedôvera, strach z budúcnosti, materiálna úzkosť, rigidita ako obrana",
+    "recommendation": "Budujte rituály stability – pravidelný režim, malé ciele. Krok: Vytvorte si jeden pevný denný rituál (ranné cvičenie, večerné čítanie).",
+    "body": "Kĺby, kolená – rigidita, strach z pohybu vpred"
+  },
+  "5": {
+    "type": "nepárne",
+    "effect": "napätie, agresivita",
+    "description": "Izolovaná päťka vytvára vnútornú nervozitu a neschopnosť nájsť smer. Energia zmeny nemá kam tiecť, čo vedie k nepokoju a impulzívnosti.",
+    "theme": "Nekľudný duch",
+    "shadow": "Nervozita, neschopnosť zaviazať sa, prehnaná prísnosť alebo chaos",
+    "recommendation": "Nájdite zdravú zmenu v rámci štruktúry. Krok: Urobte dnes jednu vec inak – ale vedome, nie impulzívne.",
+    "body": "Nervový systém, ruky – vnútorný nepokoj, nespavosť"
+  },
+  "6": {
+    "type": "párne",
+    "effect": "pasivita, utiahnutosť",
+    "description": "Izolovaná šestka vytvára odtrhnutie od lásky a rodiny. Človek túži po harmónii, ale cíti sa od nej vzdialený.",
+    "theme": "Osamelé srdce",
+    "shadow": "Naivita v láske alebo naopak uzavretosť, perfekcionizmus vo vzťahoch",
+    "recommendation": "Začnite u seba – sebaláska nie je sebeckosť. Krok: Urobte dnes jednu vec čisto len pre seba, bez pocitu viny.",
+    "body": "Srdce, hrudník – pocit ťažoby, túžby po blízkosti"
+  },
+  "7": {
+    "type": "nepárne",
+    "effect": "napätie, agresivita",
+    "description": "Izolovaná sedmička vytvára hlbokú vnútornú samotu a nedôveru. Človek sa sťahuje do intelektu a odrezáva od emócií aj od iných.",
+    "theme": "Osamelý mudrc",
+    "shadow": "Cynizmus, paranoja, sklony k nehodám, vnútorné krivdy",
+    "recommendation": "Zdieľajte svoju múdrosť – izolácia nie je ochrana, je väzenie. Krok: Povedzte dnes niekomu niečo osobné.",
+    "body": "Končatiny, nehody – signál odpojenia od tela"
+  },
+  "8": {
+    "type": "párne",
+    "effect": "pasivita, utiahnutosť",
+    "description": "Izolovaná osmička vytvára odpojenie od vlastnej sily a hojnosti. Človek sa bojí moci alebo sa jej zrieka.",
+    "theme": "Odmietnutá sila",
+    "shadow": "Pomstychtivosť, chamtivosť, alebo naopak úplné odmietanie materiálna",
+    "recommendation": "Prijmite svoju silu ako dar pre službu. Krok: Rozhodnite sa dnes o jednej veci, ktorú ste odkladali.",
+    "body": "Tráviaci systém, pečeň – blokácia toku energie"
+  },
+  "9": {
+    "type": "nepárne",
+    "effect": "napätie, agresivita",
+    "description": "Izolovaná deviatka vytvára pocit nadradennosti alebo odpojenia od sveta. Múdrosť bez prepojenia sa mení na aroganciu alebo rezignáciu.",
+    "theme": "Odpojený mudrc",
+    "shadow": "Diktátorstvo, nadradenosť, chaos, neschopnosť pustiť kontrolu",
+    "recommendation": "Slúžte bez podmienok. Krok: Urobte dnes jeden skutok pre niekoho bez toho, aby ste čakali vďačnosť.",
+    "body": "Imunitný systém, chronická únava – vyčerpanie z držania všetkého"
+  }
+}

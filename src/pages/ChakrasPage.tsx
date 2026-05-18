@@ -51,6 +51,29 @@ export function ChakrasPage() {
 
       {chakras && (
         <div className="space-y-6">
+          <GlassCard>
+            <h3 className="font-medium text-white mb-2">Ako sa vyhodnocujú čakry</h3>
+            <p className="text-sm text-slate-400 mb-3">Stav čakier je odvodený kombináciou viacerých systémov:</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+              <div className="p-2 rounded-lg bg-indigo-500/10">
+                <span className="text-indigo-300 font-medium">Numerológia:</span>
+                <span className="text-slate-400 ml-1">Prítomnosť/absencia čísel priradených čakre v mriežke</span>
+              </div>
+              <div className="p-2 rounded-lg bg-purple-500/10">
+                <span className="text-purple-300 font-medium">Human Design:</span>
+                <span className="text-slate-400 ml-1">Definované/otvorené centrá zodpovedajúce čakrám</span>
+              </div>
+              <div className="p-2 rounded-lg bg-cyan-500/10">
+                <span className="text-cyan-300 font-medium">Astrológia:</span>
+                <span className="text-slate-400 ml-1">Dominantný živel a jeho rezonancia s čakrou</span>
+              </div>
+              <div className="p-2 rounded-lg bg-rose-500/10">
+                <span className="text-rose-300 font-medium">Izolované čísla:</span>
+                <span className="text-slate-400 ml-1">Znižujú skóre súvisiacej čakry</span>
+              </div>
+            </div>
+          </GlassCard>
+
           <GlassCard glow>
             <ChakraWheel chakras={chakras} />
           </GlassCard>

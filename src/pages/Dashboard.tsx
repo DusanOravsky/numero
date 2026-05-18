@@ -17,7 +17,7 @@ export function Dashboard() {
 
   let orv = 0, omv = 0, odv = 0;
   if (profile) {
-    orv = calculateORV(profile.birthDay, profile.birthMonth, currentYear);
+    orv = calculateORV(profile.birthDay, profile.birthMonth, currentYear, currentMonth, currentDay);
     omv = calculateOMV(orv, currentMonth);
     odv = calculateODV(orv, currentDay, currentMonth);
   }

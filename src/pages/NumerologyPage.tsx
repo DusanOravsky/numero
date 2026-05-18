@@ -7,15 +7,21 @@ import { EnergyCard } from '../components/EnergyCard';
 import { DateInput } from '../components/DateInput';
 import { calculateFullNumerology } from '../engine/numerologyEngine';
 import type { NumerologyResult } from '../engine/numerologyEngine';
+import { calculateNameNumerology } from '../engine/nameNumerologyEngine';
+import type { NameNumerologyResult } from '../engine/nameNumerologyEngine';
 import lifePathsData from '../data/lifePaths.json';
+import isolatedData from '../data/isolatedNumbers.json';
 
 const lifePaths = lifePathsData as Record<string, { title: string; keywords: string[]; description: string; gift: string; shadow: string; lesson: string; recommendation: string; career: string[]; relationships: string }>;
+const isolatedInfo = isolatedData as Record<string, { type: string; effect: string; description: string; theme: string; shadow: string; recommendation: string; body: string }>;
 
 export function NumerologyPage() {
   const { profiles, activeProfileId } = useStore();
   const profile = profiles.find(p => p.id === activeProfileId);
   const [result, setResult] = useState<NumerologyResult | null>(null);
-  const [activeTab, setActiveTab] = useState<'overview' | 'planes' | 'vibrations' | 'love'>('overview');
+  const [nameResult, setNameResult] = useState<NameNumerologyResult | null>(null);
+  const [nameInput, setNameInput] = useState('');
+  const [activeTab, setActiveTab] = useState<'overview' | 'planes' | 'vibrations' | 'love' | 'name'>('overview');
 
   const handleCalculate = (day: number, month: number, year: number) => {
     setResult(calculateFullNumerology(day, month, year));
@@ -34,6 +40,7 @@ export function NumerologyPage() {
     { id: 'planes' as const, label: 'Roviny' },
     { id: 'vibrations' as const, label: 'Vibrácie' },
     { id: 'love' as const, label: 'Jazyky lásky' },
+    { id: 'name' as const, label: 'Meno' },
   ];
 
   return (
@@ -133,13 +140,43 @@ export function NumerologyPage() {
               {result.isolatedNumbers.length > 0 && (
                 <GlassCard delay={0.3}>
                   <h3 className="font-medium text-white mb-2">Izolované čísla</h3>
-                  <p className="text-sm text-slate-400 mb-3">Tieto čísla nemajú susedov v mriežke – predstavujú oblasti, kde je potrebná vedomá integrácia.</p>
-                  <div className="flex gap-3">
-                    {result.isolatedNumbers.map(n => (
-                      <div key={n} className="w-12 h-12 rounded-xl bg-rose-500/20 border border-rose-500/30 flex items-center justify-center text-rose-300 font-bold text-lg">
-                        {n}
-                      </div>
-                    ))}
+                  <p className="text-sm text-slate-400 mb-4">Izolované čísla sú obklopené prázdnymi políčkami v mriežke. Spôsobuje to zablokovanie energie, čo sa môže prejaviť ako frustrácia, zmeny nálad, vnútorné napätie alebo agresivita.</p>
+                  <div className="space-y-4">
+                    {result.isolatedNumbers.map(n => {
+                      const info = isolatedInfo[String(n)];
+                      return (
+                        <div key={n} className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/20">
+                          <div className="flex items-center gap-3 mb-2">
+                            <div className="w-10 h-10 rounded-xl bg-rose-500/20 border border-rose-500/30 flex items-center justify-center text-rose-300 font-bold">
+                              {n}
+                            </div>
+                            <div>
+                              <p className="font-medium text-white">{info?.theme || `Izolované číslo ${n}`}</p>
+                              <p className="text-xs text-rose-300">{info?.type === 'nepárne' ? 'Nepárne – napätie, agresivita' : 'Párne – pasivita, utiahnutosť'}</p>
+                            </div>
+                          </div>
+                          {info && (
+                            <div className="space-y-2 mt-3">
+                              <p className="text-sm text-slate-300">{info.description}</p>
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
+                                <div className="p-2 rounded-lg bg-red-500/10">
+                                  <p className="text-xs text-red-400">Tieň</p>
+                                  <p className="text-xs text-slate-300">{info.shadow}</p>
+                                </div>
+                                <div className="p-2 rounded-lg bg-amber-500/10">
+                                  <p className="text-xs text-amber-400">Telo</p>
+                                  <p className="text-xs text-slate-300">{info.body}</p>
+                                </div>
+                              </div>
+                              <div className="p-2 rounded-lg bg-indigo-500/10 mt-2">
+                                <p className="text-xs text-indigo-400">Odporúčanie</p>
+                                <p className="text-xs text-slate-300">{info.recommendation}</p>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
                 </GlassCard>
               )}
@@ -240,6 +277,70 @@ export function NumerologyPage() {
                   ))}
                 </div>
               </GlassCard>
+            </div>
+          )}
+
+          {activeTab === 'name' && (
+            <div className="space-y-4">
+              <GlassCard>
+                <h3 className="font-medium text-white mb-3">Numerológia mena</h3>
+                <p className="text-sm text-slate-400 mb-4">Zadajte celé meno (krstné + priezvisko) pre výpočet čísla výrazu, duše a osobnosti.</p>
+                <form onSubmit={(e) => { e.preventDefault(); if (nameInput.trim()) setNameResult(calculateNameNumerology(nameInput)); }} className="flex gap-3">
+                  <input
+                    type="text"
+                    value={nameInput}
+                    onChange={e => setNameInput(e.target.value)}
+                    placeholder="Meno a priezvisko"
+                    className="flex-1 px-4 py-3 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white focus:outline-none focus:border-indigo-500/50"
+                  />
+                  <button type="submit" className="px-6 py-3 rounded-xl bg-indigo-600 text-white font-medium hover:bg-indigo-500">
+                    Vypočítať
+                  </button>
+                </form>
+              </GlassCard>
+
+              {nameResult && (
+                <>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <EnergyCard title="Číslo výrazu" value={nameResult.expressionNumber} subtitle="Celé meno – životná cesta" icon="✦" color="indigo" delay={0.1} />
+                    <EnergyCard title="Číslo duše" value={nameResult.soulNumber} subtitle="Samohlásky – vnútorná túžba" icon="♡" color="rose" delay={0.2} />
+                    <EnergyCard title="Číslo osobnosti" value={nameResult.personalityNumber} subtitle="Spoluhlásky – vonkajší prejav" icon="◎" color="cyan" delay={0.3} />
+                  </div>
+
+                  <GlassCard>
+                    <h4 className="text-sm text-slate-400 mb-3">Rozklad písmen</h4>
+                    <div className="flex flex-wrap gap-1">
+                      {nameResult.letters.map((l, i) => (
+                        <div key={i} className={`w-8 h-10 rounded-lg flex flex-col items-center justify-center text-xs ${l.isVowel ? 'bg-rose-500/20 border border-rose-500/30' : 'bg-indigo-500/20 border border-indigo-500/30'}`}>
+                          <span className="text-white font-medium uppercase">{l.letter}</span>
+                          <span className={`text-[10px] ${l.isVowel ? 'text-rose-300' : 'text-indigo-300'}`}>{l.value}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="flex gap-4 mt-3 text-xs">
+                      <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-rose-500/30"></span> Samohlásky (duša)</span>
+                      <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-indigo-500/30"></span> Spoluhlásky (osobnosť)</span>
+                    </div>
+                  </GlassCard>
+
+                  <GlassCard>
+                    <div className="space-y-4">
+                      <div>
+                        <p className="text-xs text-indigo-400 uppercase mb-1">Číslo výrazu ({nameResult.expressionNumber})</p>
+                        <p className="text-sm text-slate-300">{nameResult.expressionDescription}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-rose-400 uppercase mb-1">Číslo duše ({nameResult.soulNumber})</p>
+                        <p className="text-sm text-slate-300">{nameResult.soulDescription}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-cyan-400 uppercase mb-1">Číslo osobnosti ({nameResult.personalityNumber})</p>
+                        <p className="text-sm text-slate-300">{nameResult.personalityDescription}</p>
+                      </div>
+                    </div>
+                  </GlassCard>
+                </>
+              )}
             </div>
           )}
         </>

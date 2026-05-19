@@ -200,20 +200,58 @@ export function SettingsPage() {
       </GlassCard>
 
       <GlassCard>
-        <h3 className="font-medium text-white mb-3">Inštalácia</h3>
-        <p className="text-sm text-slate-400 mb-3">Nainštalujte aplikáciu na plochu pre rýchly prístup a offline použitie.</p>
-        <button
-          onClick={() => {
-            if (window._deferredInstallPrompt) {
-              window._deferredInstallPrompt.prompt();
-            } else {
-              alert('Inštalácia nie je momentálne dostupná. Skúste otvoriť cez Chrome a použiť menu → "Pridať na plochu".');
-            }
-          }}
-          className="px-4 py-2 rounded-xl text-sm font-medium bg-indigo-600 text-white hover:bg-indigo-500"
-        >
-          Nainštalovať na plochu
-        </button>
+        <h3 className="font-medium text-white mb-3">Inštalácia na plochu</h3>
+        <p className="text-sm text-slate-400 mb-3">Aplikácia funguje aj offline. Po inštalácii ju nájdete na ploche ako bežnú appku.</p>
+
+        {(() => {
+          const ua = navigator.userAgent;
+          const isIDevice = /iPad|iPhone|iPod/.test(ua) && !(/(Windows|Android)/.test(ua));
+          const isIPadOS = /Macintosh/.test(ua) && 'ontouchend' in document;
+          const ios = isIDevice || isIPadOS;
+          const isAndroid = /Android/.test(ua);
+
+          if (ios) {
+            return (
+              <div className="space-y-2">
+                <p className="text-sm text-slate-600">
+                  <strong>iPhone / iPad (Safari):</strong>
+                </p>
+                <ol className="text-sm text-slate-500 list-decimal list-inside space-y-1">
+                  <li>Klepnite dole na ikonu <strong>Zdieľať</strong> (štvorček so šípkou hore).</li>
+                  <li>Posuňte sa nadol a zvoľte <strong>"Pridať na plochu"</strong> / "Add to Home Screen".</li>
+                  <li>Potvrďte tlačidlom <strong>Pridať</strong>.</li>
+                </ol>
+                <p className="text-xs text-slate-400 mt-2">
+                  Pozn.: iOS Safari nepodporuje automatické inštalačné okno – musí sa to spraviť ručne.
+                </p>
+              </div>
+            );
+          }
+
+          return (
+            <>
+              <button
+                onClick={() => {
+                  if (window._deferredInstallPrompt) {
+                    window._deferredInstallPrompt.prompt();
+                  } else if (isAndroid) {
+                    alert('Otvorte menu prehliadača (3 bodky vpravo hore) a zvoľte "Nainštalovať aplikáciu" alebo "Pridať na plochu".');
+                  } else {
+                    alert('V prehliadači otvorte menu (3 bodky) a zvoľte "Nainštalovať aplikáciu" / "Install app". Ak možnosť nevidíte, navštívte stránku ešte raz po pár minútach – Chrome čaká na "engagement".');
+                  }
+                }}
+                className="px-4 py-2 rounded-xl text-sm font-medium bg-indigo-600 text-white hover:bg-indigo-500"
+              >
+                Nainštalovať na plochu
+              </button>
+              {isAndroid && (
+                <p className="text-xs text-slate-500 mt-3">
+                  Pozn. pre Android: Ak sa okno nezobrazí, otvorte menu prehliadača (3 bodky) a vyberte <strong>"Pridať na plochu"</strong> alebo <strong>"Nainštalovať aplikáciu"</strong>.
+                </p>
+              )}
+            </>
+          );
+        })()}
       </GlassCard>
 
       <GlassCard>

@@ -11,18 +11,19 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'icons/*.png'],
       manifest: {
-        name: 'Integrálna mapa bytia - Integrálna mapa bytia',
-        short_name: 'Integrálna mapa bytia',
-        description: 'Integrálna mapa bytia - numerológia, astrológia, Human Design a sebarozvoj',
-        theme_color: '#1e1b4b',
-        background_color: '#0f0a2e',
+        name: 'Integrálna mapa bytia',
+        short_name: 'Integrálna mapa',
+        description: 'Numerológia, astrológia, Human Design a sebarozvoj – offline PWA',
+        theme_color: '#4f46e5',
+        background_color: '#fafaf9',
         display: 'standalone',
         orientation: 'portrait',
-        start_url: '/',
+        start_url: process.env.GITHUB_ACTIONS ? '/numero/' : '/',
+        scope: process.env.GITHUB_ACTIONS ? '/numero/' : '/',
         icons: [
-          { src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' },
-          { src: '/icons/icon-512.png', sizes: '512x512', type: 'image/png' },
-          { src: '/icons/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' }
+          { src: 'icons/icon-192.png', sizes: '192x192', type: 'image/png' },
+          { src: 'icons/icon-512.png', sizes: '512x512', type: 'image/png' },
+          { src: 'icons/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' }
         ]
       },
       workbox: {

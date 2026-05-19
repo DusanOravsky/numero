@@ -4,6 +4,11 @@ All notable changes to this project are documented in this file. Dates are
 in ISO 8601 (YYYY-MM-DD). The format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 2.2.1 — 2026-05-19
+
+Test bump pre overenie že auto-popup mechaniky z 2.2.0 fungujú end-to-end
+na nainštalovanej PWA na ploche. Žiadne funkčné zmeny.
+
 ## 2.2.0 — 2026-05-19
 
 PWA stratégia: offline-first + auto-popup s offline-safe update flow.

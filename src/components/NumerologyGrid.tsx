@@ -89,7 +89,8 @@ export function NumerologyGrid({ grid, highlightPlane }: NumerologyGridProps) {
                 animate={{ scale: 1 }}
                 transition={{ delay: (rowIdx * 3 + colIdx) * 0.05, type: 'spring' }}
                 onClick={() => setSelectedNum(isSelected ? null : num)}
-                className={`aspect-square flex flex-col items-center justify-center rounded-xl border-2 transition-all cursor-pointer ${
+                title={`${num} — ${NUMBER_MEANINGS[num]?.theme || ''}`}
+                className={`group relative aspect-square flex flex-col items-center justify-center rounded-xl border-2 transition-all cursor-pointer ${
                   isSelected
                     ? 'border-indigo-500 bg-indigo-50 ring-2 ring-indigo-200'
                     : isHighlighted
@@ -99,6 +100,10 @@ export function NumerologyGrid({ grid, highlightPlane }: NumerologyGridProps) {
                     : 'border-slate-200 bg-slate-50 hover:border-slate-300'
                 }`}
               >
+                {/* Mini-card hover tooltip (B32) */}
+                <div className="pointer-events-none absolute -top-2 left-1/2 -translate-x-1/2 -translate-y-full opacity-0 group-hover:opacity-100 transition-opacity z-20 whitespace-nowrap text-[10px] px-2 py-1 rounded bg-slate-900 text-white shadow-lg">
+                  {NUMBER_MEANINGS[num]?.theme || `Číslo ${num}`}
+                </div>
                 <span className="text-[10px] text-slate-400 mb-1">{num}</span>
                 <div className="flex flex-wrap justify-center gap-0.5">
                   {items.map((item, i) => (

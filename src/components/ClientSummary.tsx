@@ -368,16 +368,63 @@ export function ClientSummary({ clientName, birthDay, birthMonth, birthYear, num
             Cesta k transformácii vedie cez uvedomenie a nahradenie novým presvedčením.
           </p>
 
-          <div className="border-t border-slate-200 pt-3 mt-3">
-            <p className="text-xs text-slate-500">
-              <strong>Prepojenia naprieč systémami:</strong>{' '}
-              {numerology.lifePathNumber === 1 && humanDesign.type === 'Projektor' ? 'ŽČ 1 (vodcovstvo) + HD Projektor (čakať na pozvanie) = kľúčová lekcia je viesť cez múdrosť, nie silu. ' : ''}
-              {numerology.lifePathNumber === 7 && astrology.dominantElement === 'Voda' ? 'ŽČ 7 (mystik) + vodný živel = silná intuícia a potreba hĺbky vo všetkom. ' : ''}
-              {numerology.isolatedNumbers.includes(1) && humanDesign.openCenters.includes('G') ? 'Izolovaná 1 + otvorené G centrum = hľadanie identity je celoživotná téma. ' : ''}
-              {astrology.dominantElement === 'Oheň' && numerology.fullPlanes.some(p => p.includes('Energia')) ? 'Ohnivý živel + plná Rovina energie = obrovská životná sila a akčnosť. ' : ''}
-              {astrology.dominantElement === 'Zem' && numerology.fullPlanes.some(p => p.includes('Vytrvalosť')) ? 'Zemský živel + Rovina vytrvalosti = vynikajúca schopnosť dotiahnuť veci do konca. ' : ''}
-              ŽČ {numerology.lifePathNumber} + {astrology.sunSign.name} + HD {humanDesign.type} tvoria unikátnu kombináciu, ktorá definuje cestu tejto osobnosti.
-            </p>
+          {/* Ako to všetko súvisí — koherentný cross-system príbeh */}
+          <div className="border-t border-violet-200 pt-4 mt-4">
+            <p className="text-xs text-violet-700 font-semibold uppercase tracking-wide mb-3">Ako to všetko súvisí — jeden príbeh z rôznych uhlov</p>
+            <div className="space-y-3 text-sm text-slate-700 leading-relaxed">
+              <p>
+                Všetky systémy hovoria o tom istom človeku — len každý iným jazykom. Tu je to prepojené:
+              </p>
+
+              <p>
+                <strong>Tvoja hlavná téma</strong> je
+                {' '}{enneagramType ? enneagramType.motivation.toLowerCase() : lpInfo?.title?.toLowerCase() || 'rast'}.
+                Numerológia to vyjadruje cez životné číslo <strong>{numerology.lifePathNumber}</strong> ({lpInfo?.title || ''}).
+                Enneagram to vidí ako typ <strong>{enneagram.coreType}</strong> ({enneagramType?.name}) — rovnaká energia, len pomenovaná cez motiváciu a strach.
+                Kabala na to poukazuje cez sefiru <strong>{kabalah.primarySefira.name}</strong> ({kabalah.primarySefira.meaning}) — tá istá téma, ale v duchovnom jazyku.
+              </p>
+
+              <p>
+                <strong>Ako to prejavuješ vo svete:</strong>{' '}
+                Astrológia ukazuje, že tvoje vedomé ja ({astrology.sunSign.name}, element {astrology.sunSign.element.toLowerCase()})
+                {astrology.sunSign.element === 'Oheň' ? ' ti dáva akčnosť a vášeň' :
+                 astrology.sunSign.element === 'Zem' ? ' ti dáva praktickosť a vytrvalosť' :
+                 astrology.sunSign.element === 'Vzduch' ? ' ti dáva komunikačný talent a analytické myslenie' :
+                 ' ti dáva emočnú hĺbku a intuíciu'} —
+                a Human Design dopĺňa <em>ako</em> túto energiu správne používať: si <strong>{humanDesign.type}</strong>,
+                čiže tvoja stratégia je „{humanDesign.strategy.toLowerCase()}".
+                {humanDesign.type === 'Generátor' || humanDesign.type === 'Manifestujúci Generátor'
+                  ? ' Máš obrovskú energiu, ale musíš čakať na správny podnet — nie iniciovať z hlavy.'
+                  : humanDesign.type === 'Projektor'
+                  ? ' Nemáš nekonečnú energiu, ale máš dar vidieť do hĺbky — tvoja sila je múdrosť, nie výkon.'
+                  : humanDesign.type === 'Manifestor'
+                  ? ' Si tu aby si inicioval — ale vždy informuj okolie, inak narazíš na odpor.'
+                  : ' Odrážaš prostredie okolo seba — tvoja sila je v trpezlivosti a rozlišovaní.'}
+              </p>
+
+              <p>
+                <strong>Kde rastieš a kde sa bráníš:</strong>{' '}
+                Enneagram ukazuje, že keď si v pohode, preberáš vlastnosti typu {enneagram.integrationDirection} ({enneagramIntegration?.name}) — to je tvoj smer zdravia.
+                Pod stresom skĺzneš k typu {enneagram.disintegrationDirection} ({enneagramDisintegration?.name}).
+                {theta.primaryBeliefs[0] && (
+                  <> Theta Healing dopĺňa, že na podvedomej úrovni ti môže brániť presvedčenie <em>„{theta.primaryBeliefs[0].belief}"</em> — to je koreň, nie symptóm.</>
+                )}
+              </p>
+
+              <p>
+                <strong>Červená niť:</strong>{' '}
+                {astrology.dominantElement === 'Oheň' && enneagram.coreType <= 3
+                  ? 'Ohnivý element + nízky enneagram typ = silná akčná energia s túžbou po výsledkoch. Lekcia: spomaľ a počúvaj (HD autorita).'
+                  : astrology.dominantElement === 'Voda' && (enneagram.coreType === 4 || enneagram.coreType === 2)
+                  ? 'Vodný element + citovo orientovaný enneagram = hlboká empatia, ale riziko strácanin sa v emóciách iných. Lekcia: hranice.'
+                  : astrology.dominantElement === 'Vzduch' && (enneagram.coreType === 5 || enneagram.coreType === 7)
+                  ? 'Vzdušný element + mentálny enneagram = brilantný intelekt, ale riziko odpojenia od tela. Lekcia: grounding.'
+                  : astrology.dominantElement === 'Zem' && (enneagram.coreType === 6 || enneagram.coreType === 9)
+                  ? 'Zemský element + stabilizujúci enneagram = spoľahlivosť, ale riziko stagnácie. Lekcia: odvaha riskovať.'
+                  : `Element ${astrology.dominantElement.toLowerCase()} + enneagram ${enneagram.coreType} + HD ${humanDesign.type} = unikátna kombinácia. Tvoja lekcia je nájsť rovnováhu medzi tým, čo ťa poháňa (motivácia) a tým, čo ťa brzdí (strach).`}
+                {' '}Všetky systémy ukazujú tú istú cestu — len rôznymi slovami.
+              </p>
+            </div>
           </div>
 
           {/* Praktický záver — čo s tým */}

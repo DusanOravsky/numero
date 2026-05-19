@@ -95,17 +95,39 @@ export function ChakrasPage() {
                       {state.chakra.number}
                     </div>
                     <div className="flex-1">
-                      <div className="flex items-center justify-between">
+                      <div className="flex items-center justify-between gap-2">
                         <h4 className="font-medium text-white">{state.chakra.name}</h4>
-                        <span className={`text-xs px-2 py-0.5 rounded-full ${
-                          state.status === 'balanced' ? 'bg-green-500/20 text-green-400' :
-                          state.status === 'blocked' ? 'bg-red-500/20 text-red-400' :
-                          'bg-yellow-500/20 text-yellow-400'
-                        }`}>
-                          {state.status === 'balanced' ? 'Vyvážená' : state.status === 'blocked' ? 'Blokovaná' : 'Hyperaktívna'}
-                        </span>
+                        <div className="flex items-center gap-2 shrink-0">
+                          <span className="text-xs text-slate-400" title="Energetické skóre čakry (0–100)">
+                            {state.score}/100
+                          </span>
+                          <span className={`text-xs px-2 py-0.5 rounded-full ${
+                            state.status === 'balanced' ? 'bg-green-500/20 text-green-400' :
+                            state.status === 'blocked' ? 'bg-red-500/20 text-red-400' :
+                            'bg-yellow-500/20 text-yellow-400'
+                          }`}>
+                            {state.status === 'balanced' ? 'Vyvážená' : state.status === 'blocked' ? 'Blokovaná' : 'Hyperaktívna'}
+                          </span>
+                        </div>
                       </div>
                       <p className="text-xs text-slate-500 mt-0.5">{state.chakra.sanskrit} | {state.chakra.location}</p>
+
+                      {/* Vizualizácia skóre */}
+                      <div className="mt-2 h-1.5 bg-slate-200 rounded-full overflow-hidden">
+                        <div
+                          className="h-full rounded-full transition-all"
+                          style={{
+                            width: `${state.score}%`,
+                            backgroundColor: state.chakra.colorHex,
+                          }}
+                        />
+                      </div>
+                      <div className="flex justify-between text-[9px] text-slate-400 mt-0.5">
+                        <span>0 blokovaná</span>
+                        <span>35 vyvážená</span>
+                        <span>90 hyperaktívna</span>
+                      </div>
+
                       <p className="text-sm text-slate-300 mt-2">
                         {state.status === 'balanced' ? state.chakra.balanced :
                          state.status === 'blocked' ? state.chakra.blocked : state.chakra.hyperactive}
@@ -115,6 +137,34 @@ export function ChakrasPage() {
                           <span key={theme} className="text-xs px-2 py-0.5 rounded-full bg-white/5 text-slate-400">{theme}</span>
                         ))}
                       </div>
+
+                      {/* Detail výpočtu */}
+                      <details className="mt-3">
+                        <summary className="text-xs text-indigo-600 cursor-pointer hover:text-indigo-800 select-none">
+                          Ako sa skóre {state.score} vyrátalo?
+                        </summary>
+                        <div className="mt-2 p-3 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-600 space-y-1">
+                          <p>Východiskové skóre: <strong>50</strong></p>
+                          <p>Korešpondencia s číslami {state.chakra.numerologyNumbers.join(' a ')} v mriežke:</p>
+                          <ul className="list-disc list-inside ml-2 text-slate-500">
+                            <li>0× → −15 bodov (chýbajúca energia)</li>
+                            <li>1× → +5 bodov</li>
+                            <li>2× → +10 bodov</li>
+                            <li>3+× → +20 bodov</li>
+                            <li>izolované číslo → −10 bodov</li>
+                          </ul>
+                          <p>Definované HD centrum zodpovedajúce tejto čakre: <strong>+10</strong></p>
+                          <p>Dominantný element zhodný s {state.chakra.element}: <strong>+10</strong></p>
+                          <p>Životné číslo = {state.chakra.number}: <strong>+15</strong></p>
+                          <p className="pt-1 border-t border-slate-200 mt-1">Vyhodnotenie:</p>
+                          <ul className="list-disc list-inside ml-2 text-slate-500">
+                            <li>&lt; 35 → blokovaná (málo podpory)</li>
+                            <li>35–89 → vyvážená (zdravá)</li>
+                            <li>≥ 90 alebo 4+× rovnaké číslo → hyperaktívna</li>
+                          </ul>
+                        </div>
+                      </details>
+
                       {state.recommendations.length > 0 && (
                         <div className="mt-3 space-y-1">
                           {state.recommendations.map((rec, i) => (

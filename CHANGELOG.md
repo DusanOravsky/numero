@@ -4,6 +4,20 @@ All notable changes to this project are documented in this file. Dates are
 in ISO 8601 (YYYY-MM-DD). The format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 2.1.2 — 2026-05-19
+
+PWA update detection na mobile:
+- Predtým: PWA nainštalovaná na ploche nikdy nedostala "Nová verzia"
+  prompt, lebo SW sa aktivuje až po zatvorení všetkých kariet — čo sa
+  pri nainštalovanej appke nikdy nestane.
+- Workbox: `skipWaiting: true` + `clientsClaim: true` — nový SW preberá
+  kontrolu okamžite po nainštalovaní bez čakania.
+- PWAPrompts:
+  - Listener na `controllerchange` zachytí keď SW prevezme kontrolu
+  - Periodická kontrola update každých 60s (registration.update())
+  - Kontrola pri visibility change (otvorenie z pozadia → check)
+  - Manuálne SKIP_WAITING postMessage pre kompatibilitu
+
 ## 2.1.1 — 2026-05-19
 
 UI cleanup:

@@ -39,6 +39,11 @@ export default defineConfig({
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,json,webmanifest}'],
         cleanupOutdatedCaches: true,
+        // skipWaiting + clientsClaim: nový SW preberá kontrolu okamžite po
+        // inštalácii bez čakania kým sa zatvoria všetky karty. Nutné pre
+        // mobile PWA inštalovanú na ploche — appka tam nikdy "nezatvára".
+        skipWaiting: true,
+        clientsClaim: true,
         navigateFallback: process.env.GITHUB_ACTIONS ? '/numero/index.html' : '/index.html',
         navigateFallbackDenylist: [/^\/api\//, /^\/_/, /\.[a-z0-9]{2,5}$/i],
         runtimeCaching: [

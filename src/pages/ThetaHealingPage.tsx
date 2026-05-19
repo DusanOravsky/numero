@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useStore } from '../store/useStore';
 import { GlassCard } from '../components/GlassCard';
 import { DateInput } from '../components/DateInput';
+import { MeditationTimer } from '../components/MeditationTimer';
 import { calculateThetaHealing, getLevelName } from '../engine/thetaHealingEngine';
 import type { ThetaHealingResult } from '../engine/thetaHealingEngine';
 import { reduceToSingle } from '../engine/numerologyEngine';
@@ -31,6 +32,8 @@ export function ThetaHealingPage() {
         <h1 className="font-serif text-3xl font-bold text-white">Theta Healing</h1>
         <p className="text-slate-400 mt-1">Transformácia limitujúcich presvedčení</p>
       </div>
+
+      <MeditationTimer />
 
       {!result && (
         <GlassCard>

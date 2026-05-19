@@ -700,6 +700,78 @@ export function NumerologyPage() {
                 </div>
               </GlassCard>
 
+              {/* Pinnacles - 4 životné vrcholy */}
+              <GlassCard>
+                <h4 className="text-sm text-indigo-700 font-medium mb-2">Pinnacles – 4 životné vrcholy</h4>
+                <p className="text-xs text-slate-500 mb-3">
+                  Pinnacles sú 4 hlavné životné cykly Pythagorovej numerológie. Každý prináša inú tému a trvá určitý počet rokov. Ukazujú, aká kvalita energie vás obklopuje v danom období.
+                </p>
+                <div className="space-y-2">
+                  {result.pinnacles.map((p, idx) => (
+                    <motion.div
+                      key={idx}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: idx * 0.08 }}
+                      className="p-3 rounded-xl bg-indigo-50 border border-indigo-200"
+                    >
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-sm font-medium text-slate-800">
+                          {idx + 1}. vrchol – {p.theme}
+                        </span>
+                        <span className="text-xs text-indigo-700">
+                          {p.fromAge}–{p.toAge !== null ? p.toAge + ' r.' : '∞'}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-lg font-bold text-indigo-700">{p.number}</span>
+                        <span className="text-[11px] text-slate-500">{p.formula}</span>
+                      </div>
+                      <p className="text-xs text-slate-700">{p.description}</p>
+                    </motion.div>
+                  ))}
+                </div>
+              </GlassCard>
+
+              {/* Challenges - 4 životné výzvy */}
+              <GlassCard>
+                <h4 className="text-sm text-rose-700 font-medium mb-2">Challenges – 4 životné výzvy</h4>
+                <p className="text-xs text-slate-500 mb-3">
+                  Challenges sú 4 hlavné výzvy, ktoré človek prekonáva. Tretia (hlavná) výzva je celoživotná a najdôležitejšia — je to vaša centrálna lekcia. Ostatné tri prichádzajú v súbehu s pinnacle obdobiami.
+                </p>
+                <div className="space-y-2">
+                  {result.challenges.map((c, idx) => {
+                    const isMain = idx === 2;
+                    return (
+                      <motion.div
+                        key={idx}
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: idx * 0.08 }}
+                        className={`p-3 rounded-xl border ${isMain ? 'bg-rose-100 border-rose-300' : 'bg-rose-50 border-rose-200'}`}
+                      >
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-sm font-medium text-slate-800">
+                            {isMain ? 'Hlavná (celoživotná) výzva' : `${idx + 1}. výzva`} – {c.theme}
+                          </span>
+                          <span className="text-xs text-rose-700">
+                            {c.fromAge}–{c.toAge !== null ? c.toAge + ' r.' : '∞'}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="text-lg font-bold text-rose-700">{c.number}</span>
+                          <span className="text-[11px] text-slate-500">{c.formula}</span>
+                        </div>
+                        <p className="text-xs text-slate-700">{c.description}</p>
+                      </motion.div>
+                    );
+                  })}
+                </div>
+                <p className="text-[11px] text-slate-500 italic mt-3">
+                  Výzva 0 znamená univerzálnu slobodu — žiadna jediná oblasť nedominuje, máte plnú zodpovednosť za vlastné voľby.
+                </p>
+              </GlassCard>
+
               <GlassCard>
                 <h4 className="text-sm text-cyan-300 font-medium mb-2">ΣT – Suma tarotu (Tarotové brány)</h4>
                 <p className="text-xs text-slate-400 mb-3">Suma tarotu = súčet celého dátumu narodenia (deň + mesiac + rok bez redukcie). Určuje kozmický vek – aká kolektívna energia vás sprevádzala pri narodení.</p>

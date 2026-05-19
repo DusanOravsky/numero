@@ -132,10 +132,10 @@ egoPolarity:
 
 Astronomy-engine ich nemá natívne. Používame:
 
-- **Mean Black Moon Lilith** — `getMeanLilithLongitude()` cez Meeus 47 (perigeum + 180°). Presnosť ~0.5°.
-- **Chiron** — `getChironLongitude()` lineárna aproximácia od J2000 epoch s mean motion 360°/(50.4*365.25). Presnosť ±3°. Vhodné pre znamenie, nie pre presné aspekty.
+- **Mean Black Moon Lilith** — `getMeanLilithLongitude()` cez Meeus 47 (perigeum + 180°). Mean Lilith vs True Lilith sa líši až o ±30° v závislosti od fázy; presnosť **±5° priemerne**, použiteľné iba pre znamenie.
+- **Chiron** — `getChironLongitude()` lineárna aproximácia od J2000 epoch s mean motion 360°/(50.4*365.25). Pre dáta blízko J2000 (±10 rokov) ±3°, ale pre dátumy 1950 alebo 2010 deviácia môže byť **±10-15°** voči ephemeris (NASA Horizons). Použiteľné iba pre orientáciu znamenia.
 
-Oba body sa pridávajú do `result.planets` AŽ ZA výpočet `dominantElement` aby neovplyvňovali tradičnú dominantnú analýzu.
+Oba body sa pridávajú do `result.planets` AŽ ZA výpočet `dominantElement` aby neovplyvňovali tradičnú dominantnú analýzu. **Vylúčené z `calculateNatalAspects`** aby aproximovaná pozícia neprodukovala šum v aspekt math.
 
 ### Progresie (B10)
 

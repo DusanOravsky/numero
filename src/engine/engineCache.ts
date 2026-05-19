@@ -4,7 +4,10 @@
 // HD je drahé (SearchSunLongitude → ~50–100ms), astrology trochu menej. Pri prepínaní stránok
 // to citeľne pomáha.
 
-const MAX_ENTRIES = 30;
+// Per-cache limit. Pri multi-client comparison + synastry workflow používateľ
+// ľahko prejde 30 entries a začne strácať vlastný profil. 100 entries × ~5KB
+// = ~500KB v každej cache, total <1MB.
+const MAX_ENTRIES_PER_CACHE = 100;
 
 class LRUCache<V> {
   private map = new Map<string, V>();
@@ -22,7 +25,7 @@ class LRUCache<V> {
   set(key: string, value: V) {
     if (this.map.has(key)) this.map.delete(key);
     this.map.set(key, value);
-    if (this.map.size > MAX_ENTRIES) {
+    if (this.map.size > MAX_ENTRIES_PER_CACHE) {
       const oldest = this.map.keys().next().value;
       if (oldest !== undefined) this.map.delete(oldest);
     }

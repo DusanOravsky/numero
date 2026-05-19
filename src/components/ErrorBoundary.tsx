@@ -117,7 +117,7 @@ export class ErrorBoundary extends Component<Props, State> {
             </details>
             <div className="flex flex-wrap gap-2">
               <button
-                onClick={() => { this.setState({ hasError: false, error: null, errorInfo: null }); window.location.href = '/'; }}
+                onClick={() => { this.setState({ hasError: false, error: null, errorInfo: null }); window.location.href = window.location.origin + (import.meta.env.BASE_URL || '/'); }}
                 className="px-6 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-medium"
               >
                 Obnoviť aplikáciu

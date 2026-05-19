@@ -4,7 +4,7 @@ import type { NumerologyMethod, ThemeMode, Language } from '../store/useStore';
 import { useTranslation } from '../i18n/useTranslation';
 import { GlassCard } from '../components/GlassCard';
 import { useNavigate } from 'react-router-dom';
-import { APP_VERSION, forceUpdate } from '../components/PWAPrompts';
+import { APP_VERSION, forceUpdate, clearAIData } from '../components/PWAPrompts';
 import { getErrorLog, clearErrorLog } from '../components/ErrorBoundary';
 import { getPerfLog, clearPerfLog } from '../hooks/usePerformanceMetrics';
 import { searchCities, findCity } from '../data/cities';
@@ -413,17 +413,31 @@ export function SettingsPage() {
           </div>
 
           {aiKey && (
-            <button
-              onClick={() => {
-                if (!confirm('Naozaj odstrániť API kľúč?')) return;
-                setApiKey('');
-                setAiKey('');
-                setAiTestResult({ ok: true, message: 'Kľúč odstránený.' });
-              }}
-              className="text-xs text-rose-400 hover:text-rose-300 underline"
-            >
-              Odstrániť kľúč
-            </button>
+            <div className="flex flex-col gap-2 pt-2 border-t border-slate-700/30">
+              <button
+                onClick={() => {
+                  if (!confirm('Naozaj odstrániť API kľúč?')) return;
+                  setApiKey('');
+                  setAiKey('');
+                  setAiTestResult({ ok: true, message: 'Kľúč odstránený.' });
+                }}
+                className="text-xs text-rose-400 hover:text-rose-300 underline text-left"
+              >
+                Odstrániť kľúč
+              </button>
+              <button
+                onClick={() => {
+                  if (!confirm('Vymazať VŠETKY AI dáta?\n\n• Anthropic API kľúč\n• Vybraný model\n• Všetky uložené chat histórie\n\nProfily a klienti zostanú zachovaní. Toto použi keď zdieľaš zariadenie alebo dávaš aplikáciu niekomu inému.')) return;
+                  clearAIData();
+                  setAiKey('');
+                  setAiTestResult({ ok: true, message: 'Všetky AI dáta vymazané. Reload pre čistý stav.' });
+                  setTimeout(() => window.location.reload(), 1500);
+                }}
+                className="text-xs text-amber-400 hover:text-amber-300 underline text-left"
+              >
+                ⚠ Vymazať VŠETKY AI dáta (kľúč + chat history)
+              </button>
+            </div>
           )}
         </div>
       </GlassCard>

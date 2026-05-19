@@ -345,14 +345,51 @@ export function ClientsPage() {
                     alert('Neplatný súbor – chýbajú údaje klienta.');
                     return;
                   }
-                  // Vytvor nové ID, aby nedošlo ku konfliktu s existujúcim klientom
-                  const newId = crypto.randomUUID();
+                  // Validácia + sanitizácia. Bránime zlým dátam aj prompt-injection
+                  // útokom cez maliciózne pripravený JSON súbor.
+                  const c = data.client;
+                  const safeName = String(c.name || '').replace(/[\x00-\x1F\x7F\r\n]/g, '').trim().slice(0, 80);
+                  if (!safeName || !/^[\p{L}\p{M}\d\s\-'.]+$/u.test(safeName)) {
+                    alert('Neplatné meno klienta.');
+                    return;
+                  }
+                  const day = parseInt(String(c.birthDay), 10);
+                  const month = parseInt(String(c.birthMonth), 10);
+                  const year = parseInt(String(c.birthYear), 10);
+                  if (!isValidDate(day, month, year)) {
+                    alert('Neplatný dátum narodenia.');
+                    return;
+                  }
+                  const hour = c.birthHour !== undefined ? parseInt(String(c.birthHour), 10) : undefined;
+                  const minute = c.birthMinute !== undefined ? parseInt(String(c.birthMinute), 10) : undefined;
+                  if (hour !== undefined && (hour < 0 || hour > 23 || isNaN(hour))) {
+                    alert('Neplatná hodina narodenia.');
+                    return;
+                  }
+                  if (minute !== undefined && (minute < 0 || minute > 59 || isNaN(minute))) {
+                    alert('Neplatná minúta narodenia.');
+                    return;
+                  }
+                  const safePlace = c.birthPlace ? String(c.birthPlace).replace(/[\x00-\x1F\x7F\r\n]/g, '').slice(0, 100) : undefined;
+                  const safeNotes = c.notes ? String(c.notes).replace(/[\x00-\x1F\x7F]/g, '').slice(0, 2000) : undefined;
+                  const safeTags = Array.isArray(c.tags)
+                    ? c.tags.map((t: unknown) => String(t).replace(/[\x00-\x1F\x7F]/g, '').slice(0, 30)).filter(Boolean).slice(0, 20)
+                    : undefined;
                   const importedClient: Client = {
-                    ...data.client,
-                    id: newId,
+                    id: crypto.randomUUID(),
+                    name: safeName,
+                    gender: c.gender === 'male' || c.gender === 'female' ? c.gender : undefined,
+                    birthDay: day,
+                    birthMonth: month,
+                    birthYear: year,
+                    birthHour: hour,
+                    birthMinute: minute,
+                    birthPlace: safePlace,
+                    birthLatitude: typeof c.birthLatitude === 'number' ? c.birthLatitude : undefined,
+                    birthLongitude: typeof c.birthLongitude === 'number' ? c.birthLongitude : undefined,
+                    notes: safeNotes,
+                    tags: safeTags,
                     createdAt: new Date().toISOString(),
-                    partnerId: undefined,   // referencie nemajú zmysel po importe
-                    childrenIds: undefined,
                   };
                   addClient(importedClient);
                   alert(`Klient "${importedClient.name}" bol importovaný.`);

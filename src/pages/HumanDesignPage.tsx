@@ -112,13 +112,20 @@ export function HumanDesignPage() {
 
   const profileResult = useMemo<HumanDesignResult | null>(() => {
     if (!subject) return null;
-    return calculateHumanDesign(subject.birthDay, subject.birthMonth, subject.birthYear, subject.birthHour ?? 12, subject.birthMinute ?? 0);
+    return calculateHumanDesign(
+      subject.birthDay, subject.birthMonth, subject.birthYear,
+      subject.birthHour ?? 12, subject.birthMinute ?? 0,
+      subject.timezoneOffset
+    );
   }, [subject]);
 
   const result = manualResult ?? profileResult;
 
   const handleCalculate = (day: number, month: number, year: number, hour?: number, minute?: number, lat?: number, lon?: number) => {
-    setManualResult(calculateHumanDesign(day, month, year, hour ?? 12, minute ?? 0)); void lat; void lon;
+    // Pri manuálnom výpočte odhadneme tz z lon ak je dostupný, inak default CET.
+    const tz = lon !== undefined ? Math.round(lon / 15) : 1;
+    setManualResult(calculateHumanDesign(day, month, year, hour ?? 12, minute ?? 0, tz));
+    void lat;
   };
 
   const typeColors: Record<string, string> = {

@@ -148,12 +148,14 @@ const PROFILES: Record<string, { name: string; description: string }> = {
 // Juxtaposition (fixovaný osud): 3/5
 // Left Angle (transpersonálny): 4/1, 5/1, 5/2, 6/2, 6/3
 function getCrossAngle(line1: number, line2: number): 'Right Angle' | 'Juxtaposition' | 'Left Angle' {
-  // Štandardná HD klasifikácia: Right Angle = osobný (1/3, 1/4, 2/4, 2/5, 3/5, 3/6, 4/6),
-  // Juxtaposition = fixovaný (3/5 v niektorých systémoch, alebo profil = 3/5),
-  // Left Angle = transpersonálny (4/1, 5/1, 5/2, 6/2, 6/3).
-  // Tu používame jednoduchú implementáciu na základe rozsahu osobnostnej línie.
-  if (line2 < line1) return 'Left Angle';
-  if (line1 === 3 && line2 === 5) return 'Juxtaposition';
+  // Kanonická HD klasifikácia podľa Jovian Archive.
+  // Right Angle = osobný kríž — 1/3, 1/4, 2/4, 2/5, 3/5, 3/6, 4/6
+  // Juxtaposition = fixovaný kríž — 3/5 (jediné Juxta profile)
+  // Left Angle = transpersonálny kríž — 4/1, 5/1, 5/2, 6/2, 6/3
+  const profile = `${line1}/${line2}`;
+  const LEFT_ANGLE = new Set(['4/1', '5/1', '5/2', '6/2', '6/3']);
+  if (LEFT_ANGLE.has(profile)) return 'Left Angle';
+  if (profile === '3/5') return 'Juxtaposition';
   return 'Right Angle';
 }
 

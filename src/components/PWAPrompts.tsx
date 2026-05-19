@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const APP_VERSION = '2.0.4';
+const APP_VERSION = '2.1.0';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -238,6 +238,9 @@ export { APP_VERSION };
  * Force-refresh: unregister všetkých service workerov, vyčistí všetky cache
  * storage, a presunie na home (čo si stiahne novú verziu). Pomáha keď PWA
  * drží starú verziu napriek deploy-u.
+ *
+ * Profilové dáta (numero-store) sa nemažú — zostávajú v localStorage.
+ * AI kľúč a chat history sa NEZMAŽÚ tu — na to je clearAIData().
  */
 export async function forceUpdate(): Promise<void> {
   try {
@@ -254,4 +257,27 @@ export async function forceUpdate(): Promise<void> {
   }
   // Hard reload na home (vynúti čerstvý fetch index.html + bundle)
   window.location.href = window.location.origin + (import.meta.env.BASE_URL || '/') + '?fresh=' + Date.now();
+}
+
+/**
+ * Vymazanie všetkých AI dát z localStorage:
+ * - anthropic-api-key (citlivý!)
+ * - anthropic-model
+ * - ai-chat-* (všetky chat histories)
+ *
+ * Použitie pri zdieľanom zariadení alebo keď dáva užívateľ aplikáciu inému.
+ */
+export function clearAIData(): void {
+  try {
+    localStorage.removeItem('anthropic-api-key');
+    localStorage.removeItem('anthropic-model');
+    const keysToRemove: string[] = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k && k.startsWith('ai-chat-')) keysToRemove.push(k);
+    }
+    keysToRemove.forEach(k => localStorage.removeItem(k));
+  } catch {
+    // ignore
+  }
 }

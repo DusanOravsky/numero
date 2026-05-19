@@ -8,6 +8,7 @@ import { ClientSummary } from '../components/ClientSummary';
 import { calculateFullNumerology, calculateORV, calculateOMV, calculateODV, reduceToSingle } from '../engine/numerologyEngine';
 import { calculateAstrology } from '../engine/astrologyEngine';
 import { calculateHumanDesign } from '../engine/humanDesignEngine';
+import { calculateDevelopmentalNumerology } from '../engine/developmentalNumerologyEngine';
 import { calculateKabalah } from '../engine/kabalahEngine';
 import { calculateThetaHealing } from '../engine/thetaHealingEngine';
 import { orvDescriptions } from '../data/orvDescriptions';
@@ -37,12 +38,13 @@ export function Dashboard() {
   const fullResults = useMemo(() => {
     if (!profile) return null;
     const numerology = calculateFullNumerology(profile.birthDay, profile.birthMonth, profile.birthYear);
+    const developmental = calculateDevelopmentalNumerology(profile.birthDay, profile.birthMonth, profile.birthYear);
     const astrology = calculateAstrology(profile.birthDay, profile.birthMonth, profile.birthYear, profile.birthHour ?? 12, profile.birthMinute ?? 0);
     const humanDesign = calculateHumanDesign(profile.birthDay, profile.birthMonth, profile.birthYear, profile.birthHour ?? 12, profile.birthMinute ?? 0);
     const lp = numerology.lifePathNumber > 9 ? reduceToSingle(numerology.lifePathNumber) : numerology.lifePathNumber;
     const kabalah = calculateKabalah(lp, reduceToSingle(profile.birthDay));
     const theta = calculateThetaHealing(lp);
-    return { numerology, astrology, humanDesign, kabalah, theta };
+    return { numerology, developmental, astrology, humanDesign, kabalah, theta };
   }, [profile]);
 
   const affirmations: Record<number, string> = {
@@ -281,6 +283,9 @@ export function Dashboard() {
       {profile && fullResults && (
         <ClientSummary
           clientName={profile.name}
+          birthDay={profile.birthDay}
+          birthMonth={profile.birthMonth}
+          birthYear={profile.birthYear}
           numerology={fullResults.numerology}
           astrology={fullResults.astrology}
           humanDesign={fullResults.humanDesign}
@@ -305,6 +310,7 @@ export function Dashboard() {
               place: profile.birthPlace,
             },
             numerology: fullResults.numerology,
+            developmental: fullResults.developmental,
             astrology: fullResults.astrology,
             humanDesign: fullResults.humanDesign,
             kabalah: fullResults.kabalah,

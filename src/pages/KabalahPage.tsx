@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
-import { useStore } from '../store/useStore';
+import { useNavigate } from 'react-router-dom';
+import { useSubject } from '../hooks/useSubject';
 import { GlassCard } from '../components/GlassCard';
 import { DateInput } from '../components/DateInput';
 import { calculateKabalah, SEFIROT } from '../engine/kabalahEngine';
@@ -9,8 +10,8 @@ import { motion } from 'framer-motion';
 import { TreeOfLife } from '../components/TreeOfLife';
 
 export function KabalahPage() {
-  const { profiles, activeProfileId } = useStore();
-  const profile = profiles.find(p => p.id === activeProfileId);
+  const navigate = useNavigate();
+  const profile = useSubject();
   const [manualResult, setManualResult] = useState<KabalahResult | null>(null);
 
   const profileResult = useMemo<KabalahResult | null>(() => {
@@ -31,8 +32,25 @@ export function KabalahPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-serif text-3xl font-bold text-white">Kabala</h1>
-        <p className="text-slate-400 mt-1">Strom života a sefírotický systém</p>
+        {profile?.isClient && (
+          <button
+            onClick={() => navigate(`/clients/${profile.id}`)}
+            className="text-sm text-indigo-600 hover:text-indigo-800 mb-2 inline-flex items-center gap-1"
+          >
+            ← Späť na klienta {profile.name}
+          </button>
+        )}
+        <div className="flex items-center gap-3 flex-wrap">
+          <h1 className="font-serif text-3xl font-bold text-white">Kabala</h1>
+          {profile?.isClient && (
+            <span className="text-xs px-3 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-700">
+              Klient: <strong>{profile.name}</strong>
+            </span>
+          )}
+        </div>
+        <p className="text-slate-400 mt-1">
+          {profile?.isClient ? `Kabalistický rozbor klienta ${profile.name}` : 'Strom života a sefírotický systém'}
+        </p>
       </div>
 
       {!result && (

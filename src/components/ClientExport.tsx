@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { GlassCard } from './GlassCard';
+import { APP_VERSION } from './PWAPrompts';
 import { calculateFullNumerology, reduceToSingle } from '../engine/numerologyEngine';
 import { calculateDevelopmentalNumerology } from '../engine/developmentalNumerologyEngine';
 import type { NumerologyResult } from '../engine/numerologyEngine';
@@ -384,7 +385,7 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
               doc.setFont('helvetica', 'italic');
               doc.setTextColor(120, 120, 120);
               doc.text(`Vygenerovane: ${new Date().toLocaleDateString('sk-SK')} ${new Date().toLocaleTimeString('sk-SK')}`, 14, y);
-              doc.text('Integralna mapa bytia v1.5.0', 196, y, { align: 'right' });
+              doc.text(`Integralna mapa bytia v${APP_VERSION}`, 196, y, { align: 'right' });
               doc.setTextColor(0, 0, 0);
 
               addPageNumber();
@@ -406,7 +407,11 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
               birthHour: client.birthHour,
               birthMinute: client.birthMinute,
             };
-            const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(shareData))));
+            // Modern UTF-8 → base64 (escape() je deprecated)
+            const json = JSON.stringify(shareData);
+            const bytes = new TextEncoder().encode(json);
+            const binary = String.fromCharCode(...bytes);
+            const encoded = btoa(binary);
             const baseUrl = window.location.origin + window.location.pathname;
             const shareUrl = `${baseUrl}#/shared?data=${encoded}`;
 

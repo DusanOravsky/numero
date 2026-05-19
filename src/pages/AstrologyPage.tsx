@@ -182,7 +182,8 @@ export function AstrologyPage() {
       profile.birthHour ?? 12,
       profile.birthMinute ?? 0,
       profile.birthLatitude ?? 48.15,
-      profile.birthLongitude ?? 17.11
+      profile.birthLongitude ?? 17.11,
+      profile.timezoneOffset
     );
   }, [profile]);
 
@@ -224,6 +225,16 @@ export function AstrologyPage() {
 
       {result && (
         <div className="space-y-6">
+          {/* Warning ak chýba miesto narodenia — Asc sa ráta z default Bratislavy */}
+          {profile && profile.birthLatitude === undefined && (
+            <GlassCard>
+              <div className="p-3 rounded-lg bg-amber-500/15 border border-amber-500/40">
+                <p className="text-sm text-amber-700">
+                  <strong>⚠ Pozor:</strong> Pre {profile.name} chýba miesto narodenia. Ascendent a domy sú vypočítané z default súradníc Bratislavy (48.15°N, 17.11°E) a môžu byť nepresné. Doplň miesto v {profile.isClient ? 'detail klienta' : 'Settings → Profil'} pre presný horoskop.
+                </p>
+              </div>
+            </GlassCard>
+          )}
           <GlassCard>
             <p className="text-sm text-slate-400">
               <strong className="text-white">Astrologický profil</strong> ukazuje rozloženie planét v okamihu vášho narodenia. Tri kľúčové body -- Slnko, Mesiac a Ascendent -- tvoria základ vašej osobnosti. Slnko je vaše vedomé ja, Mesiac vnútorný emocionálny svet a Ascendent maska, ktorú ukazujete svetu.

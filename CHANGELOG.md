@@ -4,6 +4,50 @@ All notable changes to this project are documented in this file. Dates are
 in ISO 8601 (YYYY-MM-DD). The format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 2.1.0 — 2026-05-19
+
+Hĺbkový code review fixy (5 CRITICAL + 10 HIGH + 6 MEDIUM/LOW):
+
+### Critical
+- **AI privacy:** clearAIData() helper + "Vymazať VŠETKY AI dáta" tlačidlo
+  v Settings (kľúč + všetky chat histórie)
+- **ClientSummary regex → explicit birthDay/Month/Year props** (Dashboard
+  + ClientDashboard pridali args)
+- **KabalahPage + ThetaHealingPage useSubject()** — predtým ignorovali
+  ?client=ID, teraz majú "Späť na klienta" link + amber badge
+- **Solar Return DST fix:** parametrizoval timezoneOffsetHours, žiadny
+  hardcoded CET fallback
+- **KarmicDebt source 'challenge'** odstránený z type union (dead branch)
+
+### High
+- AI history sa neperistuje pri zlyhaní streamu (orphan user-only správy)
+- SSE parser handles \\r\\n a Anthropic 'error' event frames
+- Prompt injection: sanitizeForPrompt() v summarizeProfile + strict JSON
+  validácia pri import klienta
+- SharedView: 4KB cap base64, modern UTF-8 decode (TextDecoder), strict
+  type validácia všetkých polí
+- HD/Astro timezone z lat/lon (cez getTimezoneFromCoords) — non-EU
+  narodenia teraz dostávajú správny offset
+- HD wheel-start: 3 nové lock testy s rôznymi referenciami
+- Lilith/Chiron VYLÚČENÉ z calculateNatalAspects (aproximovaná pozícia)
+- LRU cache MAX_ENTRIES_PER_CACHE 30 → 100
+- ErrorBoundary "Obnoviť aplikáciu" používa BASE_URL (predtým 404 na
+  GitHub Pages po crashe)
+- useSubject() vracia useMemo-cached objekt
+- OnboardingTour gating na localStorage flag (žiadny mount-flicker)
+
+### Medium / Low
+- PDF export: APP_VERSION namiesto hardcoded "v1.5.0"
+- Challenge 8 description (Materiálna rovnováha) doplnená
+- getCrossAngle() kanonická HD klasifikácia (LEFT_ANGLE set-based, nie
+  zjednodušené `line2 < line1`)
+- AstrologyPage warning banner keď chýba miesto narodenia
+- Dashboard AI context obsahuje aj developmental data
+- PartnerBodygraph header overlap fix (top 2% → 8%, sync s Bodygraph)
+- escape()/unescape() nahradené modern TextEncoder/TextDecoder API
+
+81 unit testov passing, build clean.
+
 ## 2.0.4 — 2026-05-19
 
 UX:

@@ -463,11 +463,14 @@ export function calculateSolarReturn(
   const returnD = returnDate.getUTCDate();
   const returnHr = returnDate.getUTCHours();
   const returnMin = returnDate.getUTCMinutes();
-  // calculateAstrology potrebuje LOCAL čas + tz offset; kompenzujeme pre default tz=1.
-  const localHr = returnHr + getTimezoneOffset(returnD, returnM, returnY, 1);
+  // calculateAstrology očakáva LOCAL čas a applikuje getTimezoneOffset()
+  // sám. Konvertujeme UTC → local cez TEN ISTÝ tz parameter ktorý použil
+  // birth chart (rieši DST drift pri narodeniach v inom časovom pásme).
+  const returnTz = getTimezoneOffset(returnD, returnM, returnY, timezoneOffsetHours);
+  const localHr = returnHr + returnTz;
   return {
     date: returnDate,
-    result: calculateAstrology(returnD, returnM, returnY, localHr, returnMin, latitude, longitude),
+    result: calculateAstrology(returnD, returnM, returnY, localHr, returnMin, latitude, longitude, timezoneOffsetHours),
     ageAtReturn: year - birthYear,
   };
 }
@@ -545,10 +548,16 @@ export function calculateSynastryAspects(r1: AstrologyResult, r2: AstrologyResul
 export function calculateNatalAspects(result: AstrologyResult): SynastryAspect[] {
   const aspects: SynastryAspect[] = [];
 
-  for (let i = 0; i < result.planets.length; i++) {
-    for (let j = i + 1; j < result.planets.length; j++) {
-      const p1 = result.planets[i];
-      const p2 = result.planets[j];
+  // Lilith a Chiron sú v engine ako aproximácie (Mean Lilith ±5°,
+  // Chiron ±15° pre dáta mimo J2000). Aspekty s nimi by mali charakter
+  // šumu — vylučujeme ich.
+  const APPROX_BODIES = new Set(['Lilith', 'Chiron']);
+  const planets = result.planets.filter(p => !APPROX_BODIES.has(p.name));
+
+  for (let i = 0; i < planets.length; i++) {
+    for (let j = i + 1; j < planets.length; j++) {
+      const p1 = planets[i];
+      const p2 = planets[j];
       const distance = angularDistance(p1.longitude, p2.longitude);
 
       (Object.entries(ASPECT_DEFINITIONS) as Array<[SynastryAspectName, typeof ASPECT_DEFINITIONS[SynastryAspectName]]>).forEach(([name, def]) => {

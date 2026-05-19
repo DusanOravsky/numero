@@ -108,15 +108,17 @@ export function AIChat({ context, title = 'AI integrálny výklad', initialUserM
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
   }, [messages, streamingText]);
 
-  // Persist messages
+  // Persist messages — len keď je posledná správa od assistant-a (nie orphan
+  // user-only správy zo zlyhaného streamu).
   useEffect(() => {
-    if (messages.length > 0) {
-      saveChat(persistKey, {
-        messages,
-        totalInputTokens: tokens.input,
-        totalOutputTokens: tokens.output,
-      });
-    }
+    if (messages.length === 0) return;
+    const last = messages[messages.length - 1];
+    if (last.role !== 'assistant') return;
+    saveChat(persistKey, {
+      messages,
+      totalInputTokens: tokens.input,
+      totalOutputTokens: tokens.output,
+    });
   }, [messages, tokens, persistKey]);
 
   const sendMessage = async (content: string) => {

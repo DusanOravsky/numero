@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
-import { useStore } from '../store/useStore';
+import { useNavigate } from 'react-router-dom';
+import { useSubject } from '../hooks/useSubject';
 import { GlassCard } from '../components/GlassCard';
 import { DateInput } from '../components/DateInput';
 import { MeditationTimer } from '../components/MeditationTimer';
@@ -9,8 +10,8 @@ import { reduceToSingle } from '../engine/numerologyEngine';
 import { motion } from 'framer-motion';
 
 export function ThetaHealingPage() {
-  const { profiles, activeProfileId } = useStore();
-  const profile = profiles.find(p => p.id === activeProfileId);
+  const navigate = useNavigate();
+  const profile = useSubject();
   // Pre manuálny výpočet (DateInput bez profilu) — držíme override.
   const [manualResult, setManualResult] = useState<ThetaHealingResult | null>(null);
   const [activeDigging, setActiveDigging] = useState<number | null>(null);
@@ -32,8 +33,25 @@ export function ThetaHealingPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-serif text-3xl font-bold text-white">Theta Healing</h1>
-        <p className="text-slate-400 mt-1">Transformácia limitujúcich presvedčení</p>
+        {profile?.isClient && (
+          <button
+            onClick={() => navigate(`/clients/${profile.id}`)}
+            className="text-sm text-indigo-600 hover:text-indigo-800 mb-2 inline-flex items-center gap-1"
+          >
+            ← Späť na klienta {profile.name}
+          </button>
+        )}
+        <div className="flex items-center gap-3 flex-wrap">
+          <h1 className="font-serif text-3xl font-bold text-white">Theta Healing</h1>
+          {profile?.isClient && (
+            <span className="text-xs px-3 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-700">
+              Klient: <strong>{profile.name}</strong>
+            </span>
+          )}
+        </div>
+        <p className="text-slate-400 mt-1">
+          {profile?.isClient ? `Theta Healing pre klienta ${profile.name}` : 'Transformácia limitujúcich presvedčení'}
+        </p>
       </div>
 
       <MeditationTimer />

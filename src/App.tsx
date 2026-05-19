@@ -41,7 +41,10 @@ function AnimatedRoutes() {
   const location = useLocation();
   useTheme();
   const profiles = useStore(s => s.profiles);
-  const showOnboarding = profiles.length > 0;
+  // Onboarding sa zobrazí len ak používateľ má profil A ešte tour nebol dokončený.
+  // Druhú podmienku kontroluje OnboardingTour samotný cez useEffect, ale gating tu
+  // šetrí mount/unmount na každú navigáciu.
+  const showOnboarding = profiles.length > 0 && !localStorage.getItem('onboarding-completed');
 
   return (
     <AnimatePresence mode="wait">

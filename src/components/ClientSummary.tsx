@@ -19,6 +19,10 @@ const lifePaths = lifePathsData as Record<string, { title: string; keywords: str
 
 interface ClientSummaryProps {
   clientName: string;
+  /** Deň narodenia — pre výpočet Vývojovej mriežky. Ak chýba, fallback na regex z formuly. */
+  birthDay?: number;
+  birthMonth?: number;
+  birthYear?: number;
   numerology: NumerologyResult;
   astrology: AstrologyResult;
   humanDesign: HumanDesignResult;
@@ -29,31 +33,20 @@ interface ClientSummaryProps {
   respectMethodPreference?: boolean;
 }
 
-export function ClientSummary({ clientName, numerology, astrology, humanDesign, kabalah, theta, respectMethodPreference = true }: ClientSummaryProps) {
+export function ClientSummary({ clientName, birthDay, birthMonth, birthYear, numerology, astrology, humanDesign, kabalah, theta, respectMethodPreference = true }: ClientSummaryProps) {
   const storedMethod = useStore(s => s.numerologyMethod);
   const showBoth = !respectMethodPreference;
   const showCharacter = showBoth || storedMethod === 'characterological';
   const showDevelopmental = showBoth || storedMethod === 'developmental';
   const lpInfo = lifePaths[String(numerology.lifePathNumber > 9 ? reduceToSingle(numerology.lifePathNumber) : numerology.lifePathNumber)];
 
-  // Vývojová mriežka (Lívia / Červenák)
-  const devNumerology = calculateDevelopmentalNumerology(
-    numerology.dayReduction === 0 ? 1 : (() => {
-      // Rekonštrukcia pôvodného dňa/mesiaca/roku z NumerologyResult – ten ich nemá uložené priamo,
-      // ale máme ich v gridNumbers (cifry dátumu). Bezpečnejšie je odvodiť ich z formuly:
-      // formula: "(D→Ds) + (M→Ms) + (R→Rs) = total"
-      const m = numerology.formula.match(/\((\d+)→\d+\)\s*\+\s*\((\d+)→\d+\)\s*\+\s*\((\d+)→\d+\)/);
-      return m ? parseInt(m[1], 10) : 1;
-    })(),
-    (() => {
-      const m = numerology.formula.match(/\((\d+)→\d+\)\s*\+\s*\((\d+)→\d+\)\s*\+\s*\((\d+)→\d+\)/);
-      return m ? parseInt(m[2], 10) : 1;
-    })(),
-    (() => {
-      const m = numerology.formula.match(/\((\d+)→\d+\)\s*\+\s*\((\d+)→\d+\)\s*\+\s*\((\d+)→\d+\)/);
-      return m ? parseInt(m[3], 10) : 1900;
-    })()
-  );
+  // Vývojová mriežka — používame explicit props ak sú dostupné,
+  // inak (legacy callers) sfallback-ujeme cez regex z formuly.
+  const m = numerology.formula.match(/\((\d+)→\d+\)\s*\+\s*\((\d+)→\d+\)\s*\+\s*\((\d+)→\d+\)/);
+  const day = birthDay ?? (m ? parseInt(m[1], 10) : 1);
+  const month = birthMonth ?? (m ? parseInt(m[2], 10) : 1);
+  const year = birthYear ?? (m ? parseInt(m[3], 10) : 1900);
+  const devNumerology = calculateDevelopmentalNumerology(day, month, year);
 
   // Z Vývojovej mriežky vyberieme top 3 najsilnejšie (najviac výskytov) a top 3 chýbajúce
   const devSorted = Object.entries(devNumerology.counts)

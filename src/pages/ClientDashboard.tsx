@@ -98,6 +98,9 @@ export function ClientDashboard() {
 
       <ClientSummary
         clientName={client.name}
+        birthDay={client.birthDay}
+        birthMonth={client.birthMonth}
+        birthYear={client.birthYear}
         numerology={numerology}
         astrology={astrology}
         humanDesign={humanDesign}

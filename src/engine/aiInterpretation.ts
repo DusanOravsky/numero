@@ -77,11 +77,11 @@ export interface ProfileContext {
  */
 export function summarizeProfile(ctx: ProfileContext): string {
   const lines: string[] = [];
-  lines.push(`Meno: ${ctx.name}`);
+  lines.push(`Meno: ${sanitizeForPrompt(ctx.name)}`);
   if (ctx.gender) lines.push(`Pohlavie: ${ctx.gender === 'male' ? 'muž' : 'žena'}`);
   lines.push(`Dátum narodenia: ${ctx.birth.day}.${ctx.birth.month}.${ctx.birth.year}` +
     (ctx.birth.hour !== undefined ? ` ${ctx.birth.hour}:${String(ctx.birth.minute || 0).padStart(2, '0')}` : ''));
-  if (ctx.birth.place) lines.push(`Miesto: ${ctx.birth.place}`);
+  if (ctx.birth.place) lines.push(`Miesto: ${sanitizeForPrompt(ctx.birth.place, 100)}`);
   lines.push('');
 
   // Numerológia
@@ -344,7 +344,8 @@ ${systemContext}`;
       if (done) break;
       buffer += decoder.decode(value, { stream: true });
 
-      const lines = buffer.split('\n');
+      // Splittujeme na riadky aj pri \r\n (niektoré CDN/proxy posielajú CRLF).
+      const lines = buffer.split(/\r?\n/);
       buffer = lines.pop() || '';
 
       for (const line of lines) {
@@ -359,9 +360,14 @@ ${systemContext}`;
             inputTokens = event.message.usage.input_tokens || 0;
           } else if (event.type === 'message_delta' && event.usage) {
             outputTokens = event.usage.output_tokens || 0;
+          } else if (event.type === 'error') {
+            // Anthropic 'error' frame (rate_limit_error, overloaded_error...)
+            const msg = event.error?.message || event.error?.type || 'Anthropic API error';
+            onChunk({ type: 'error', error: msg });
+            return;
           }
         } catch {
-          // ignore parse errors on partial chunks
+          // ignore parse errors on partial chunks (boundary-split JSON)
         }
       }
     }
@@ -373,6 +379,20 @@ ${systemContext}`;
       onChunk({ type: 'error', error: (e as Error).message });
     }
   }
+}
+
+/**
+ * Sanitize textových polí pred ich vložením do system promptu.
+ * Bráni prompt-injection cez maliciózne mená klientov / miesta narodenia.
+ */
+function sanitizeForPrompt(text: string, maxLen: number = 80): string {
+  if (!text) return '';
+  return text
+    .replace(/[\r\n\t]+/g, ' ')           // odstrániť whitespace control chars
+    .replace(/[\x00-\x1F\x7F]/g, '')      // ostatné control chars
+    .replace(/={3,}|---{3,}|#{2,}/g, '')   // sentinel patterns (===, ---, ##)
+    .slice(0, maxLen)
+    .trim();
 }
 
 /**

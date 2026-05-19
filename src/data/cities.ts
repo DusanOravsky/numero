@@ -61,3 +61,21 @@ export function searchCities(query: string): City[] {
   const lower = query.toLowerCase();
   return CITIES.filter(c => c.name.toLowerCase().includes(lower)).slice(0, 5);
 }
+
+/**
+ * Odhadnutie tz offsetu z lat/lon. Najprv sa pokúsi nájsť mesto v CITIES
+ * (presná hodnota z DB), inak fallback na coarse longitude / 15 (15° na hodinu).
+ *
+ * Pre presnejší výpočet by bolo treba IANA tz database — to je 200KB+,
+ * čo je príliš veľa pre offline-first PWA. Coarse approximation vyhovuje
+ * pre HD/astro výpočty ktorých sa dá predpokladať že birth chart je v
+ * štandardnom čase pre danú lokáciu (CET, EST, JST atď.).
+ */
+export function getTimezoneFromCoords(lat: number, lon: number): number {
+  // Najprv hľadáme exact match v CITIES (do 0.5° presnosť)
+  const close = CITIES.find(c => Math.abs(c.lat - lat) < 0.5 && Math.abs(c.lon - lon) < 0.5);
+  if (close) return close.timezone;
+  // Fallback: longitude / 15° = hours offset from UTC
+  // (nezohľadňuje DST ani neštandardné tz hranice ako India IST = +5.5)
+  return Math.round(lon / 15);
+}

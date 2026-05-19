@@ -33,7 +33,7 @@ export interface NumerologyResult {
 
 export interface KarmicDebt {
   number: 13 | 14 | 16 | 19;
-  source: 'lifePath' | 'birthDay' | 'pinnacle' | 'challenge';
+  source: 'lifePath' | 'birthDay' | 'pinnacle';
   reducesTo: number;
   theme: string;
   description: string;
@@ -270,6 +270,7 @@ const CHALLENGE_DESCRIPTIONS: Record<number, { theme: string; description: strin
   5: { theme: 'Sloboda', description: 'Výzva: nepodliehať vrtkavosti a útekom, nájsť vnútornú slobodu aj v záväzkoch.' },
   6: { theme: 'Zodpovednosť', description: 'Výzva: vyhnúť sa idealizmu a nadmernej zodpovednosti, prijať realitu blízkych.' },
   7: { theme: 'Dôvera', description: 'Výzva: prekonať skepsu a izoláciu, otvoriť sa duchovným zážitkom aj dôvere v ľudí.' },
+  8: { theme: 'Materiálna rovnováha', description: 'Výzva: nezveličovať materiálne ciele ani ich nepotláčať. Naučiť sa správne zaobchádzať s peniazmi a mocou — bez chamtivosti a bez strachu z hojnosti.' },
 };
 
 /**

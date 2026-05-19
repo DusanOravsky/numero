@@ -31,16 +31,18 @@ interface CenterInfo {
   left: string;
 }
 
+// Pozície zarovnané s Bodygraph.tsx — Hlava posunutá z 2% na 8% kvôli
+// prekrývaniu hlavičky stránky.
 const CENTERS: Record<string, CenterInfo> = {
-  'Hlava':    { label: 'Hlava', fullName: 'Inspiracia', top: '2%', left: '50%' },
-  'Ajna':     { label: 'Ajna', fullName: 'Myslenie', top: '15%', left: '50%' },
-  'Hrdlo':    { label: 'Hrdlo', fullName: 'Prejav', top: '28%', left: '50%' },
-  'G':        { label: 'G', fullName: 'Identita', top: '42%', left: '50%' },
-  'Ego':      { label: 'Ego', fullName: 'Vola', top: '36%', left: '80%' },
-  'Sakrálne': { label: 'Sakral', fullName: 'Sila', top: '58%', left: '50%' },
-  'SP':       { label: 'SP', fullName: 'Emocie', top: '53%', left: '80%' },
-  'Slezina':  { label: 'Slezina', fullName: 'Intuicia', top: '53%', left: '20%' },
-  'Koreň':    { label: 'Koren', fullName: 'Tlak', top: '72%', left: '50%' },
+  'Hlava':    { label: 'Hlava', fullName: 'Inspiracia', top: '8%', left: '50%' },
+  'Ajna':     { label: 'Ajna', fullName: 'Myslenie', top: '20%', left: '50%' },
+  'Hrdlo':    { label: 'Hrdlo', fullName: 'Prejav', top: '32%', left: '50%' },
+  'G':        { label: 'G', fullName: 'Identita', top: '46%', left: '50%' },
+  'Ego':      { label: 'Ego', fullName: 'Vola', top: '40%', left: '80%' },
+  'Sakrálne': { label: 'Sakral', fullName: 'Sila', top: '62%', left: '50%' },
+  'SP':       { label: 'SP', fullName: 'Emocie', top: '57%', left: '80%' },
+  'Slezina':  { label: 'Slezina', fullName: 'Intuicia', top: '57%', left: '20%' },
+  'Koreň':    { label: 'Koren', fullName: 'Tlak', top: '78%', left: '50%' },
 };
 
 // Map engine center names to our local keys

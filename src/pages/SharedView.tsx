@@ -53,14 +53,39 @@ export function SharedView() {
         setError('Chyba: chybajuce data v odkaze');
         return;
       }
-      const decoded = JSON.parse(decodeURIComponent(escape(atob(match[1]))));
-      if (!decoded.name || !decoded.birthDay || !decoded.birthMonth || !decoded.birthYear) {
+      // Cap base64 dĺžku na 4KB (chráni pred OOM cez maliciózny long URL)
+      if (match[1].length > 4096) {
         // eslint-disable-next-line react-hooks/set-state-in-effect
-        setError('Chyba: nekompletne data');
+        setError('Chyba: prilis dlhy odkaz');
         return;
       }
+      // Modern UTF-8 decode (escape() je deprecated)
+      const bytes = Uint8Array.from(atob(match[1]), c => c.charCodeAt(0));
+      const json = new TextDecoder('utf-8').decode(bytes);
+      const decoded = JSON.parse(json);
+      // Strict validácia — bránime crashom z neúplných alebo zlých dát
+      const name = String(decoded.name || '').slice(0, 80).trim();
+      const day = parseInt(String(decoded.birthDay), 10);
+      const month = parseInt(String(decoded.birthMonth), 10);
+      const year = parseInt(String(decoded.birthYear), 10);
+      if (!name || !day || !month || !year || day < 1 || day > 31 || month < 1 || month > 12 || year < 1900 || year > 2100) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setError('Chyba: nekompletne alebo neplatne data');
+        return;
+      }
+      const hour = decoded.birthHour !== undefined ? parseInt(String(decoded.birthHour), 10) : undefined;
+      const minute = decoded.birthMinute !== undefined ? parseInt(String(decoded.birthMinute), 10) : undefined;
+      const safe = {
+        name,
+        birthDay: day,
+        birthMonth: month,
+        birthYear: year,
+        birthHour: hour !== undefined && hour >= 0 && hour <= 23 ? hour : undefined,
+        birthMinute: minute !== undefined && minute >= 0 && minute <= 59 ? minute : undefined,
+        birthPlace: decoded.birthPlace ? String(decoded.birthPlace).slice(0, 100) : undefined,
+      };
       // eslint-disable-next-line react-hooks/set-state-in-effect
-      setClientData(decoded);
+      setClientData(safe);
     } catch {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setError('Chyba: neplatny odkaz');

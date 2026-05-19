@@ -418,6 +418,92 @@ export function NumerologyPage() {
                 </GlassCard>
               )}
 
+              {/* Mesačný kalendár ODV */}
+              {profile && (() => {
+                const firstDay = new Date(vibYear, vibMonth - 1, 1);
+                const daysInMonth = new Date(vibYear, vibMonth, 0).getDate();
+                // Posun pre prvý deň – Pondelok ako prvý deň týždňa (po Európsky)
+                const startWeekday = (firstDay.getDay() + 6) % 7;
+                const cells: Array<{ day: number; odv: number } | null> = [];
+                for (let i = 0; i < startWeekday; i++) cells.push(null);
+                for (let d = 1; d <= daysInMonth; d++) {
+                  const dayOdv = calculateODV(
+                    calculateORV(profile.birthDay, profile.birthMonth, vibYear, vibMonth, d),
+                    d,
+                    vibMonth
+                  );
+                  cells.push({ day: d, odv: dayOdv });
+                }
+                while (cells.length % 7 !== 0) cells.push(null);
+
+                // Farby podľa ODV (čakrová paleta 1-9)
+                const odvColors: Record<number, { bg: string; text: string; border: string }> = {
+                  1: { bg: 'bg-red-100', text: 'text-red-700', border: 'border-red-300' },
+                  2: { bg: 'bg-orange-100', text: 'text-orange-700', border: 'border-orange-300' },
+                  3: { bg: 'bg-yellow-100', text: 'text-yellow-700', border: 'border-yellow-300' },
+                  4: { bg: 'bg-green-100', text: 'text-green-700', border: 'border-green-300' },
+                  5: { bg: 'bg-cyan-100', text: 'text-cyan-700', border: 'border-cyan-300' },
+                  6: { bg: 'bg-blue-100', text: 'text-blue-700', border: 'border-blue-300' },
+                  7: { bg: 'bg-indigo-100', text: 'text-indigo-700', border: 'border-indigo-300' },
+                  8: { bg: 'bg-purple-100', text: 'text-purple-700', border: 'border-purple-300' },
+                  9: { bg: 'bg-rose-100', text: 'text-rose-700', border: 'border-rose-300' },
+                };
+                const monthNames = ['Január', 'Február', 'Marec', 'Apríl', 'Máj', 'Jún', 'Júl', 'August', 'September', 'Október', 'November', 'December'];
+                const today = new Date();
+                const isCurrentMonth = today.getFullYear() === vibYear && today.getMonth() + 1 === vibMonth;
+                const todayDay = isCurrentMonth ? today.getDate() : -1;
+
+                return (
+                  <GlassCard>
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="font-medium text-white">Mesačný kalendár ODV</h3>
+                      <span className="text-xs text-slate-500">{monthNames[vibMonth - 1]} {vibYear}</span>
+                    </div>
+                    <p className="text-xs text-slate-500 mb-3">
+                      Každý deň zafarbený podľa svojej osobnej dennej vibrácie. Pomáha plánovať aktivity – napr. ODV 5 = zmena/cestovanie, ODV 7 = introspekcia.
+                    </p>
+
+                    <div className="grid grid-cols-7 gap-1 text-[10px] text-slate-500 mb-1 text-center font-medium">
+                      <span>Po</span><span>Ut</span><span>St</span><span>Št</span><span>Pi</span><span>So</span><span>Ne</span>
+                    </div>
+                    <div className="grid grid-cols-7 gap-1">
+                      {cells.map((cell, idx) => {
+                        if (!cell) return <div key={idx} className="aspect-square" />;
+                        const colors = odvColors[cell.odv] || odvColors[1];
+                        const isToday = cell.day === todayDay;
+                        return (
+                          <button
+                            key={idx}
+                            type="button"
+                            onClick={() => setVibDate(`${vibYear}-${String(vibMonth).padStart(2, '0')}-${String(cell.day).padStart(2, '0')}`)}
+                            className={`aspect-square rounded-lg border-2 flex flex-col items-center justify-center transition-all hover:scale-105 ${colors.bg} ${colors.border} ${isToday ? 'ring-2 ring-indigo-500' : ''}`}
+                            title={`${cell.day}. ${monthNames[vibMonth - 1]} – ODV ${cell.odv}`}
+                          >
+                            <span className="text-[10px] text-slate-600">{cell.day}</span>
+                            <span className={`text-sm font-bold ${colors.text}`}>{cell.odv}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    {/* Legenda farieb */}
+                    <div className="grid grid-cols-9 gap-1 mt-3">
+                      {[1, 2, 3, 4, 5, 6, 7, 8, 9].map(n => {
+                        const c = odvColors[n];
+                        return (
+                          <div key={n} className={`text-center py-1 rounded ${c.bg} ${c.border} border`}>
+                            <span className={`text-[10px] font-bold ${c.text}`}>{n}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                    <p className="text-[10px] text-slate-400 mt-2 italic text-center">
+                      Klepni na deň pre detail vo vrchnom paneli ↑
+                    </p>
+                  </GlassCard>
+                );
+              })()}
+
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <EnergyCard
                   title={isToday ? 'ORV' : `ORV ${vibYear}`}

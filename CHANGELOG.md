@@ -4,6 +4,17 @@ All notable changes to this project are documented in this file. Dates are
 in ISO 8601 (YYYY-MM-DD). The format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 2.1.5 — 2026-05-19
+
+PWA update infinite-loop fix:
+- v2.1.4 zobrazoval "Nová verzia" prompt pri každom controllerchange
+  evente bez kontroly či sa naozaj zmenila verzia → po reload sa SW
+  znova aktivoval → znova prompt → nekonečný cyklus.
+- onControllerChange teraz checkuje `localStorage.app-version !== APP_VERSION`
+  pred zobrazením prompt-u (rovnako ako mount-time check).
+- forceUpdate() ukladá APP_VERSION do localStorage PRED reloadom — po
+  reload bude versions match → žiadny prompt.
+
 ## 2.1.4 — 2026-05-19
 
 PWA update detection na mobile — Dušok-style network-first pre HTML:

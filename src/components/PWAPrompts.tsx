@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const APP_VERSION = '2.1.4';
+const APP_VERSION = '2.1.5';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -98,8 +98,13 @@ export function PWAPrompts() {
     };
 
     const onControllerChange = () => {
-      // controllerchange = nový SW prevzal kontrolu (skipWaiting + clientsClaim)
-      setShowUpdate(true);
+      // controllerchange = nový SW prevzal kontrolu (skipWaiting + clientsClaim).
+      // Prompt zobrazíme IBA ak je nová verzia naozaj iná než tá ktorú už máme
+      // — bez tejto checky by sa prompt zacyklil pri každom reloade po update.
+      const lastV = localStorage.getItem('app-version');
+      if (lastV && lastV !== APP_VERSION) {
+        setShowUpdate(true);
+      }
     };
 
     const onVisibilityChange = () => {
@@ -285,6 +290,9 @@ export { APP_VERSION };
  */
 export async function forceUpdate(): Promise<void> {
   try {
+    // Označ že sme už na aktuálnej verzii — po reload sa prompt nezobrazí
+    // znova (lebo lastV === APP_VERSION).
+    localStorage.setItem('app-version', APP_VERSION);
     if ('serviceWorker' in navigator) {
       const regs = await navigator.serviceWorker.getRegistrations();
       await Promise.all(regs.map(r => r.unregister()));

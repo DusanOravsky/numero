@@ -4,7 +4,10 @@ All notable changes to this project are documented in this file. Dates are
 in ISO 8601 (YYYY-MM-DD). The format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-## Unreleased — 2026-05-19
+## 2.0.0 — 2026-05-19
+
+**MAJOR**: AI Claude integrácia, ~32 nových features (B-batch + C-batch),
+úplný refactor setState patternov, lazy load všetkých routes.
 
 ### Numerology depth (B-batch)
 

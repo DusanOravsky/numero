@@ -110,9 +110,29 @@ Anthropic Claude priamo z prehliadača (header `anthropic-dangerous-direct-brows
 ## PWA
 
 - `vite-plugin-pwa` s `autoUpdate`
-- Verzia v `src/components/PWAPrompts.tsx` (APP_VERSION konstanta)
+- Verzia v `src/components/PWAPrompts.tsx` (APP_VERSION konstanta) **a** v `package.json`
 - Install prompt + update popup + offline indicator
 - iOS status bar zladenie cez `theme-color` meta
+
+### Version bump pravidlo (SemVer)
+
+**Pri KAŽDOM user-facing release** treba bump-núť `APP_VERSION` v
+`src/components/PWAPrompts.tsx` AJ `version` v `package.json`. PWA service
+worker porovnáva uloženú verziu v localStorage s `APP_VERSION` a ukáže
+"Nová verzia" prompt — ak sa neaktualizuje, používateľ nedostane upozornenie.
+
+Stratégia podľa [SemVer](https://semver.org/):
+
+| Bump | Kedy | Príklady |
+|---|---|---|
+| **MAJOR** (X.0.0) | Veľká nová schopnosť, breaking change v store, nový subsystém | 1.5.0 → 2.0.0 (pridali AI integráciu, B-batch features, store v4) |
+| **MINOR** (1.X.0) | Nová feature kompatibilne pridaná | 1.4.0 → 1.5.0 (bottom nav More sheet, gender simplification) |
+| **PATCH** (1.5.X) | Bug fix, UI úprava, polish bez novej funkcionality | 1.5.0 → 1.5.1 (fix Bodygraph overlap) |
+
+**Workflow:**
+1. Pri commitovaní viacerých zmien → urči najvyššiu úroveň zmeny (MAJOR > MINOR > PATCH).
+2. Bump obe `APP_VERSION` aj `package.json` v jednom commite.
+3. CHANGELOG.md → pridaj sekciu pre novú verziu (alebo posuň `Unreleased` na konkrétnu verziu).
 
 ## Store (Zustand + persist)
 

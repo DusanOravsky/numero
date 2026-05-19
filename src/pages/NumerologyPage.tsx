@@ -188,21 +188,28 @@ export function NumerologyPage() {
               ) : devResult ? (
                 <GlassCard glow>
                   <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                    {/* K3 kruh */}
-                    <div className="w-20 h-20 rounded-full bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center shrink-0 mx-auto sm:mx-0">
-                      <span className="text-3xl font-serif font-bold text-white">{devResult.circled[2].value}</span>
+                    {/* ŽČ kruh — primárne (rovnaké v oboch metódach) */}
+                    <div className="w-20 h-20 rounded-full bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center shrink-0 mx-auto sm:mx-0">
+                      <span className="text-3xl font-serif font-bold text-white">{result.lifePathNumber}</span>
                     </div>
 
                     {/* Detail */}
                     <div className="flex-1 min-w-0 text-center sm:text-left">
                       <div className="flex items-baseline gap-2 flex-wrap justify-center sm:justify-start">
-                        <h2 className="text-lg font-medium text-white">Životné poslanie (K3)</h2>
-                        <span className="text-sm text-slate-500">z {devResult.circled[2].value}</span>
+                        <h2 className="text-lg font-medium text-white">Životné číslo {result.lifePathNumber}</h2>
+                        <span className="text-sm text-slate-500">z {result.lifePathFrom}</span>
                       </div>
-                      <p className="text-sm text-amber-700 font-medium mt-0.5">3. zakrúžkované – plnenie poslania duše</p>
-                      <p className="text-[11px] text-slate-500 mt-2 font-mono">
-                        K1={devResult.circled[0].value} · K2={devResult.circled[1].value} · K3={devResult.circled[2].value} · K4={devResult.circled[3].value}
-                      </p>
+                      <p className="text-sm text-indigo-700 font-medium mt-0.5">Spoločné pre obe metódy</p>
+                      <div className="mt-3 flex items-center gap-3 flex-wrap justify-center sm:justify-start">
+                        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-500/15 border border-amber-500/30">
+                          <span className="w-7 h-7 rounded-full bg-gradient-to-br from-amber-500 to-orange-500 text-white font-bold text-sm flex items-center justify-center">{devResult.circled[2].value}</span>
+                          <span className="text-xs text-amber-700 font-medium">★ K3 životné poslanie</span>
+                        </div>
+                        <span className="text-[11px] text-slate-500 font-mono">
+                          K1={devResult.circled[0].value} · K2={devResult.circled[1].value} · K3={devResult.circled[2].value} · K4={devResult.circled[3].value}
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-slate-500 mt-2 font-mono">{result.formula}</p>
                       <p className="text-[11px] text-slate-500 mt-1">
                         K1 psych. stabilita · K2 mat. stabilita · <strong>K3 životné poslanie</strong> · K4 detské sny
                       </p>

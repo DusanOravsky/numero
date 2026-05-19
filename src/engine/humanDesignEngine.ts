@@ -51,7 +51,10 @@ const GATE_ORDER: number[] = [
   38, 54, 61, 60
 ];
 
-const HD_WHEEL_START = 302.625;
+// Gate 41 starts at 2°00'00" Aquarius = 302.0° tropical Sun longitude (Jovian Archive
+// official convention). A previous "audit fix" set this to 302.625° based on an incorrect
+// online source; that broke known reference profiles (e.g. 30.8.1979 02:40 Bratislava → 1/3).
+const HD_WHEEL_START = 302.0;
 const GATE_SIZE = 5.625;
 const LINE_SIZE = 0.9375;
 

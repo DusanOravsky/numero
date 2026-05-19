@@ -16,10 +16,10 @@ export function ChakrasPage() {
   const profile = profiles.find(p => p.id === activeProfileId);
   const [chakras, setChakras] = useState<ChakraState[] | null>(null);
 
-  const handleCalculate = (day: number, month: number, year: number) => {
+  const handleCalculate = (day: number, month: number, year: number, hour: number = 12, minute: number = 0) => {
     const numerology = calculateFullNumerology(day, month, year);
-    const hd = calculateHumanDesign(day, month, year);
-    const astro = calculateAstrology(day, month, year);
+    const hd = calculateHumanDesign(day, month, year, hour, minute);
+    const astro = calculateAstrology(day, month, year, hour, minute);
     const gridCounts = getGridCount(numerology.grid);
     const result = evaluateChakras(
       numerology.lifePathNumber,
@@ -33,7 +33,13 @@ export function ChakrasPage() {
 
   useEffect(() => {
     if (profile && !chakras) {
-      handleCalculate(profile.birthDay, profile.birthMonth, profile.birthYear);
+      handleCalculate(
+        profile.birthDay,
+        profile.birthMonth,
+        profile.birthYear,
+        profile.birthHour ?? 12,
+        profile.birthMinute ?? 0
+      );
     }
   }, [profile, chakras]);
 

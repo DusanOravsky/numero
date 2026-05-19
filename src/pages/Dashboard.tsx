@@ -12,6 +12,8 @@ import { calculateDevelopmentalNumerology } from '../engine/developmentalNumerol
 import { calculateKabalah } from '../engine/kabalahEngine';
 import { calculateThetaHealing } from '../engine/thetaHealingEngine';
 import { deriveEnneagramType } from '../engine/enneagramEngine';
+import { enneagramTypes } from '../data/enneagram';
+import { ETIKOTERAPIA_BY_CHAKRA } from '../data/etikoterapia';
 import { orvDescriptions } from '../data/orvDescriptions';
 import { getDailyMantra, getDailyQuote } from '../data/mantrasAndQuotes';
 import { getDailyTarot } from '../data/tarotCards';
@@ -208,13 +210,13 @@ export function Dashboard() {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {orvDescriptions[omv] && (
           <GlassCard delay={0.37}>
-            <p className="text-xs text-purple-300 font-medium mb-1">Tento mesiac (OMV {omv}): {orvDescriptions[omv].title}</p>
+            <p className="text-xs text-purple-300 font-medium mb-1">Tento mesiac (OMV {omv}): {orvDescriptions[omv].title.replace('Rok', 'Mesiac')}</p>
             <p className="text-xs text-slate-400">{orvDescriptions[omv].theme}</p>
           </GlassCard>
         )}
         {orvDescriptions[odv] && (
           <GlassCard delay={0.39}>
-            <p className="text-xs text-amber-300 font-medium mb-1">Dnešný deň (ODV {odv}): {orvDescriptions[odv].title}</p>
+            <p className="text-xs text-amber-300 font-medium mb-1">Dnešný deň (ODV {odv}): {orvDescriptions[odv].title.replace('Rok', 'Deň')}</p>
             <p className="text-xs text-slate-400">{orvDescriptions[odv].theme}</p>
           </GlassCard>
         )}
@@ -233,6 +235,58 @@ export function Dashboard() {
           </div>
         </div>
       </GlassCard>
+
+      {/* DENNÝ DIGEST — "Dnes pre teba" */}
+      {fullResults && (
+        <GlassCard delay={0.42}>
+          <h3 className="font-medium text-white mb-3">Dnes pre teba</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {/* Denný rituál */}
+            {dailyRituals[odv] && (
+              <div className="p-3 rounded-xl bg-indigo-50 border border-indigo-200">
+                <p className="text-xs text-indigo-700 font-semibold mb-1">Ranný rituál (ODV {odv})</p>
+                <p className="text-xs text-slate-700">{dailyRituals[odv].morning}</p>
+              </div>
+            )}
+            {/* Enneagram tip */}
+            {fullResults.enneagram && enneagramTypes[fullResults.enneagram.coreType] && (
+              <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200">
+                <p className="text-xs text-emerald-700 font-semibold mb-1">Enneagram typ {fullResults.enneagram.coreType}</p>
+                <p className="text-xs text-slate-700">
+                  Rast dnes: smeruj k typu {fullResults.enneagram.integrationDirection} ({enneagramTypes[fullResults.enneagram.integrationDirection]?.name}).
+                  {' '}{enneagramTypes[fullResults.enneagram.coreType].growthPath.split('.')[0]}.
+                </p>
+              </div>
+            )}
+            {/* Etikoterapia reflexná otázka */}
+            {(() => {
+              const chakraIdx = odv <= 7 ? odv : odv - 7;
+              const etiko = ETIKOTERAPIA_BY_CHAKRA[chakraIdx];
+              if (!etiko || !etiko.reflectionQuestions.length) return null;
+              const questionIdx = (currentDay + currentMonth) % etiko.reflectionQuestions.length;
+              return (
+                <div className="p-3 rounded-xl bg-rose-50 border border-rose-200">
+                  <p className="text-xs text-rose-700 font-semibold mb-1">Reflexná otázka ({etiko.liberatingVirtue})</p>
+                  <p className="text-xs text-slate-700 italic">„{etiko.reflectionQuestions[questionIdx]}"</p>
+                </div>
+              );
+            })()}
+            {/* Kabala denný čin */}
+            {fullResults.kabalah && (
+              <div className="p-3 rounded-xl bg-violet-50 border border-violet-200">
+                <p className="text-xs text-violet-700 font-semibold mb-1">Čin v Malchut</p>
+                <p className="text-xs text-slate-700">{fullResults.kabalah.malchutAction}</p>
+              </div>
+            )}
+          </div>
+          {/* Večerná reflexia */}
+          {dailyRituals[odv] && (
+            <div className="mt-3 p-3 rounded-xl bg-slate-50 border border-slate-200">
+              <p className="text-xs text-slate-600"><strong>Večer sa opýtaj:</strong> {dailyRituals[odv].evening}</p>
+            </div>
+          )}
+        </GlassCard>
+      )}
 
       {/* Mantra + Quote + Tarot (B25, B26, B23) — rotujú každý deň podľa ODV */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">

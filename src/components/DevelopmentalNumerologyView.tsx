@@ -59,23 +59,42 @@ export function DevelopmentalNumerologyView({ result, gender }: Props) {
         </div>
       </div>
 
-      {/* Zakrúžkované */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        {result.circled.map((c, idx) => (
-          <motion.div
-            key={idx}
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: idx * 0.08 }}
-            className="p-3 rounded-xl bg-amber-50 border border-amber-200 text-center"
-          >
-            <p className="text-[10px] text-amber-700 uppercase">{c.label}</p>
-            <div className="w-12 h-12 mx-auto my-1 rounded-full border-2 border-amber-500 flex items-center justify-center">
-              <span className="text-xl font-bold text-amber-700">{c.value}</span>
-            </div>
-            <p className="text-[10px] text-slate-500">{c.formula}</p>
-          </motion.div>
-        ))}
+      {/* Zakrúžkované ako karmické cykly */}
+      <div>
+        <h4 className="font-medium text-slate-800 mb-2">Karmické cykly (zakrúžkované čísla)</h4>
+        <p className="text-xs text-slate-500 mb-3">
+          Štyri zakrúžkované čísla zodpovedajú štyrom karmickým cyklom života: psychická stabilita, materiálna stabilita, životné poslanie a detské sny. Postupne sa aktivujú v životných obdobiach.
+        </p>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          {result.circled.map((c, idx) => {
+            const cycleLabels = [
+              { name: 'Psychická stabilita', desc: 'Tvorba vnútornej psychickej stability a sebaobrazu.' },
+              { name: 'Materiálna stabilita', desc: 'Vytváranie hmotnej a finančnej stability v živote.' },
+              { name: 'Životné poslanie', desc: 'Plnenie hlavnej životnej úlohy duše.' },
+              { name: 'Detské sny', desc: 'Plnenie detských snov, návrat k pôvodnej radosti.' },
+            ];
+            const meta = cycleLabels[idx];
+            return (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: idx * 0.08 }}
+                className="p-3 rounded-xl bg-amber-50 border border-amber-200"
+              >
+                <div className="flex items-center justify-between mb-1">
+                  <p className="text-[10px] text-amber-700 uppercase font-semibold">K{idx + 1}</p>
+                  <div className="w-10 h-10 rounded-full border-2 border-amber-500 flex items-center justify-center bg-white">
+                    <span className="text-base font-bold text-amber-700">{c.value}</span>
+                  </div>
+                </div>
+                <p className="text-xs font-medium text-slate-800">{meta.name}</p>
+                <p className="text-[10px] text-slate-500 mt-1">{meta.desc}</p>
+                <p className="text-[10px] text-slate-400 mt-1 italic">{c.formula}</p>
+              </motion.div>
+            );
+          })}
+        </div>
       </div>
 
       {/* Polarita ega - zhrnutie z počtu jednotiek */}

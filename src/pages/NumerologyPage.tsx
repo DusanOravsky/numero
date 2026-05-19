@@ -8,7 +8,7 @@ import { EnergyCard } from '../components/EnergyCard';
 import { VibrationCard } from '../components/VibrationCard';
 import { DateInput } from '../components/DateInput';
 import { DevelopmentalNumerologyView } from '../components/DevelopmentalNumerologyView';
-import { calculateFullNumerology, calculateORV } from '../engine/numerologyEngine';
+import { calculateFullNumerology, calculateORV, calculateOMV, calculateODV } from '../engine/numerologyEngine';
 import type { NumerologyResult } from '../engine/numerologyEngine';
 import { calculateDevelopmentalNumerology } from '../engine/developmentalNumerologyEngine';
 import type { DevelopmentalNumerologyResult } from '../engine/developmentalNumerologyEngine';
@@ -34,6 +34,18 @@ export function NumerologyPage() {
   const [nameResult, setNameResult] = useState<NameNumerologyResult | null>(null);
   const [nameInput, setNameInput] = useState('');
   const [activeTab, setActiveTab] = useState<'overview' | 'planes' | 'vibrations' | 'karmic' | 'love' | 'name'>('overview');
+
+  // Cycle picker pre vibrácie – default = dnes
+  const todayISO = new Date().toISOString().slice(0, 10);
+  const [vibDate, setVibDate] = useState<string>(todayISO);
+  const vibDateObj = new Date(vibDate || todayISO);
+  const vibYear = vibDateObj.getFullYear();
+  const vibMonth = vibDateObj.getMonth() + 1;
+  const vibDay = vibDateObj.getDate();
+  const customOrv = profile ? calculateORV(profile.birthDay, profile.birthMonth, vibYear, vibMonth, vibDay) : 0;
+  const customOmv = profile ? calculateOMV(customOrv, vibMonth) : 0;
+  const customOdv = profile ? calculateODV(customOrv, vibDay, vibMonth) : 0;
+  const isToday = vibDate === todayISO;
 
   const handleCalculate = (day: number, month: number, year: number) => {
     setResult(calculateFullNumerology(day, month, year));
@@ -360,10 +372,62 @@ export function NumerologyPage() {
                 </p>
               </GlassCard>
 
+              {/* Cycle picker */}
+              {profile && (
+                <GlassCard>
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                      <h3 className="font-medium text-white">Dátum pre výpočet vibrácií</h3>
+                      <p className="text-xs text-slate-500 mt-0.5">
+                        Pozri si svoje ORV/OMV/ODV pre minulé alebo budúce dátumy.
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="date"
+                        value={vibDate}
+                        onChange={e => setVibDate(e.target.value || todayISO)}
+                        className="px-3 py-2 rounded-lg bg-white border border-slate-300 text-slate-800 text-sm focus:outline-none focus:border-indigo-400"
+                      />
+                      {!isToday && (
+                        <button
+                          type="button"
+                          onClick={() => setVibDate(todayISO)}
+                          className="text-xs px-2 py-1 rounded-lg border border-indigo-300 text-indigo-700 hover:bg-indigo-50"
+                        >
+                          ↺ Dnes
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </GlassCard>
+              )}
+
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <EnergyCard title="ORV" value={result.orv} subtitle="Osobná ročná vibrácia" icon="✦" color="indigo" delay={0.1} />
-                <EnergyCard title="OMV" value={result.omv} subtitle="Osobná mesačná vibrácia" icon="☽" color="purple" delay={0.2} />
-                <EnergyCard title="ODV" value={result.odv} subtitle="Osobná denná vibrácia" icon="☀" color="gold" delay={0.3} />
+                <EnergyCard
+                  title={isToday ? 'ORV' : `ORV ${vibYear}`}
+                  value={profile ? customOrv : result.orv}
+                  subtitle="Osobná ročná vibrácia"
+                  icon="✦"
+                  color="indigo"
+                  delay={0.1}
+                />
+                <EnergyCard
+                  title={isToday ? 'OMV' : `OMV ${vibMonth}/${vibYear}`}
+                  value={profile ? customOmv : result.omv}
+                  subtitle="Osobná mesačná vibrácia"
+                  icon="☽"
+                  color="purple"
+                  delay={0.2}
+                />
+                <EnergyCard
+                  title={isToday ? 'ODV' : `ODV ${vibDay}.${vibMonth}.`}
+                  value={profile ? customOdv : result.odv}
+                  subtitle="Osobná denná vibrácia"
+                  icon="☀"
+                  color="gold"
+                  delay={0.3}
+                />
               </div>
 
               <GlassCard>

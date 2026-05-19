@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const APP_VERSION = '2.1.2';
+const APP_VERSION = '2.1.3';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -80,21 +80,31 @@ export function PWAPrompts() {
     }
     localStorage.setItem('app-version', APP_VERSION);
 
-    // Service Worker update detection — funguje na desktop + mobile PWA
-    let updateInterval: number | undefined;
+    // Service Worker update detection — funguje na desktop + mobile PWA.
+    // Žiadny periodický polling — kontrolujeme iba pri eventoch (battery-friendly):
+    //  1. mount (raz)
+    //  2. visibilitychange — keď user otvorí appku z pozadia, ale max raz za 6h
+    //  3. controllerchange — keď SW prevezme kontrolu (po skipWaiting)
     let activeRegistration: ServiceWorkerRegistration | null = null;
+    let lastUpdateCheck = 0;
+    const UPDATE_THROTTLE_MS = 6 * 60 * 60 * 1000; // 6 hodín
+
+    const checkForUpdate = () => {
+      if (!activeRegistration) return;
+      const now = Date.now();
+      if (now - lastUpdateCheck < UPDATE_THROTTLE_MS) return;
+      lastUpdateCheck = now;
+      activeRegistration.update().catch(() => { /* offline OK */ });
+    };
 
     const onControllerChange = () => {
       // controllerchange = nový SW prevzal kontrolu (skipWaiting + clientsClaim)
-      // Ukážeme update prompt aby používateľ vedel že sa appka aktualizovala.
       setShowUpdate(true);
     };
 
     const onVisibilityChange = () => {
-      // Keď používateľ otvorí appku z pozadia, hneď skontrolujeme update
-      if (!document.hidden && activeRegistration) {
-        activeRegistration.update().catch(() => { /* offline OK */ });
-      }
+      // Pri návrate z pozadia skontroluj update — ale max raz za 6h
+      if (!document.hidden) checkForUpdate();
     };
 
     if ('serviceWorker' in navigator) {
@@ -106,26 +116,18 @@ export function PWAPrompts() {
           if (newWorker) {
             newWorker.addEventListener('statechange', () => {
               if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                // Nový SW je nainštalovaný a starý SW kontroluje stránku.
-                // Pri skipWaiting=true v workbox sa rovno aktivuje, ale pre
-                // istotu ho explicitne preošleme správu (kompatibilita s
-                // budúcimi zmenami workbox config).
+                // Pre kompatibilitu pošleme aj manuálny SKIP_WAITING
                 newWorker.postMessage({ type: 'SKIP_WAITING' });
-                // Update prompt zobrazíme až keď sa stane controllerchange
-                // (čo znamená že nový SW reálne prevzal kontrolu).
               }
             });
           }
         });
 
-        // Periodická kontrola každých 60s — pre PWA na ploche ktorá nikdy
-        // nezatvára, toto je jediný spôsob ako zachytiť deploy.
-        updateInterval = window.setInterval(() => {
-          registration.update().catch(() => { /* network errors OK */ });
-        }, 60_000);
+        // Initial check pri mount (raz)
+        lastUpdateCheck = Date.now();
+        registration.update().catch(() => { /* offline OK */ });
       });
 
-      // Counter-event keď SW prevezme kontrolu (po skipWaiting)
       navigator.serviceWorker.addEventListener('controllerchange', onControllerChange);
     }
 
@@ -139,7 +141,6 @@ export function PWAPrompts() {
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.removeEventListener('controllerchange', onControllerChange);
       }
-      if (updateInterval !== undefined) clearInterval(updateInterval);
     };
   }, []);
 

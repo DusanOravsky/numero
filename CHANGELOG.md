@@ -4,6 +4,17 @@ All notable changes to this project are documented in this file. Dates are
 in ISO 8601 (YYYY-MM-DD). The format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 2.1.3 — 2026-05-19
+
+PWA update detection battery-friendly:
+- Odstránený periodický polling každých 60s (žral by batériu)
+- Nová stratégia event-based:
+  - 1× pri mount (initial check)
+  - controllerchange (zero cost, eventový)
+  - visibilitychange (návrat z pozadia) — throttled max raz za 6 hodín
+- App nikdy nebude pingovať server keď je v pozadí
+- Pri návrate z pozadia max 1× za 6h check (sieťovo aj batériovo lacné)
+
 ## 2.1.2 — 2026-05-19
 
 PWA update detection na mobile:

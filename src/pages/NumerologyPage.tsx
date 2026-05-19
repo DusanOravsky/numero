@@ -21,6 +21,7 @@ import { orvDescriptions, loveLanguageDescriptions, loveLanguageScoringExplanati
 import { cycleVibrationDescriptions } from '../data/planetSignDescriptions';
 import { findMissingCharacterNumbers } from '../data/characterMissingNumbers';
 import { ORVLifeHistogram } from '../components/ORVLifeHistogram';
+import { PersonalYearTimeline } from '../components/PersonalYearTimeline';
 
 const planesInfo = planesData as { full: Record<string, { description: string; gift: string; recommendation: string }>; empty: Record<string, { description: string; lesson: string; recommendation: string }> };
 
@@ -772,6 +773,15 @@ export function NumerologyPage() {
                     <span>Aktuálny rok</span>
                   </div>
                 </GlassCard>
+              )}
+
+              {/* Personal Year Timeline (B1) */}
+              {profile && (
+                <PersonalYearTimeline
+                  birthDay={profile.birthDay}
+                  birthMonth={profile.birthMonth}
+                  birthYear={profile.birthYear}
+                />
               )}
 
               {/* Histogram ORV cez celý život */}

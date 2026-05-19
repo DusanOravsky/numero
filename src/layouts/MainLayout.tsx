@@ -3,6 +3,8 @@ import { Outlet, NavLink, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from '../i18n/useTranslation';
 import type { TranslationKey } from '../i18n/translations';
+import { useStore } from '../store/useStore';
+import { APP_VERSION } from '../components/PWAPrompts';
 
 const NAV_DEFS: { path: string; labelKey: TranslationKey; icon: string }[] = [
   { path: '/', labelKey: 'nav.dashboard', icon: '⬡' },
@@ -25,6 +27,7 @@ export function MainLayout() {
   const { t } = useTranslation();
   const logoSrc = `${import.meta.env.BASE_URL}icons/logo.svg`;
   const [showMoreSheet, setShowMoreSheet] = useState(false);
+  const { themeMode, setThemeMode, language, setLanguage } = useStore();
 
   const navItems = NAV_DEFS.map(d => ({ path: d.path, label: t(d.labelKey), icon: d.icon }));
   const mobilePrimaryItems = navItems.filter(i => MOBILE_PRIMARY.includes(i.path));
@@ -57,8 +60,48 @@ export function MainLayout() {
             </NavLink>
           ))}
         </nav>
-        <div className="p-4 border-t border-slate-100 text-center">
-          <p className="text-[10px] text-slate-400">v1.5.0</p>
+        <div className="p-4 border-t border-slate-100 space-y-3">
+          {/* Theme picker */}
+          <div className="flex items-center gap-1 justify-center">
+            {([
+              { id: 'light', icon: '☀', label: 'Svetlá' },
+              { id: 'dark', icon: '☾', label: 'Tmavá' },
+              { id: 'system', icon: '⚙', label: 'Systém' },
+            ] as const).map(opt => (
+              <button
+                key={opt.id}
+                onClick={() => setThemeMode(opt.id)}
+                title={opt.label}
+                className={`flex-1 px-2 py-1.5 rounded-lg text-sm transition-colors ${
+                  themeMode === opt.id
+                    ? 'bg-indigo-100 text-indigo-700 font-medium'
+                    : 'text-slate-500 hover:bg-slate-100'
+                }`}
+              >
+                {opt.icon}
+              </button>
+            ))}
+          </div>
+          {/* Language picker */}
+          <div className="flex items-center gap-1 justify-center">
+            {([
+              { id: 'sk', label: 'SK' },
+              { id: 'en', label: 'EN' },
+            ] as const).map(opt => (
+              <button
+                key={opt.id}
+                onClick={() => setLanguage(opt.id)}
+                className={`flex-1 px-3 py-1 rounded-lg text-xs font-medium transition-colors ${
+                  language === opt.id
+                    ? 'bg-indigo-100 text-indigo-700'
+                    : 'text-slate-500 hover:bg-slate-100'
+                }`}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+          <p className="text-[10px] text-slate-400 text-center">v{APP_VERSION}</p>
         </div>
       </aside>
 

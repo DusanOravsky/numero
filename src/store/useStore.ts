@@ -47,6 +47,7 @@ export interface SavedReport {
 }
 
 export type NumerologyMethod = 'characterological' | 'developmental';
+export type ThemeMode = 'light' | 'dark' | 'system';
 
 interface AppState {
   profiles: UserProfile[];
@@ -56,6 +57,7 @@ interface AppState {
   favorites: string[];
   language: 'sk';
   numerologyMethod: NumerologyMethod;
+  themeMode: ThemeMode;
 
   addProfile: (profile: UserProfile) => void;
   updateProfile: (id: string, data: Partial<UserProfile>) => void;
@@ -72,9 +74,10 @@ interface AppState {
   toggleFavorite: (section: string) => void;
 
   setNumerologyMethod: (m: NumerologyMethod) => void;
+  setThemeMode: (m: ThemeMode) => void;
 }
 
-const STORE_VERSION = 3;
+const STORE_VERSION = 4;
 
 export const useStore = create<AppState>()(
   persist(
@@ -86,6 +89,7 @@ export const useStore = create<AppState>()(
       favorites: [],
       language: 'sk',
       numerologyMethod: 'developmental',
+      themeMode: 'light',
 
       addProfile: (profile) => set((state) => ({ profiles: [...state.profiles, profile] })),
       updateProfile: (id, data) => set((state) => ({
@@ -116,6 +120,7 @@ export const useStore = create<AppState>()(
       })),
 
       setNumerologyMethod: (m) => set({ numerologyMethod: m }),
+      setThemeMode: (m) => set({ themeMode: m }),
     }),
     {
       name: 'numero-store',
@@ -131,6 +136,9 @@ export const useStore = create<AppState>()(
         }
         if (version < 3) {
           state.numerologyMethod = state.numerologyMethod || 'developmental';
+        }
+        if (version < 4) {
+          state.themeMode = state.themeMode || 'light';
         }
         return state as unknown as AppState;
       },

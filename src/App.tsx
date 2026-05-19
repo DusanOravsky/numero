@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-route
 import { AnimatePresence } from 'framer-motion';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { PWAPrompts } from './components/PWAPrompts';
+import { useTheme } from './hooks/useTheme';
 import { MainLayout } from './layouts/MainLayout';
 import { Dashboard } from './pages/Dashboard';
 import { NumerologyPage } from './pages/NumerologyPage';
@@ -19,6 +20,7 @@ import { SharedView } from './pages/SharedView';
 
 function AnimatedRoutes() {
   const location = useLocation();
+  useTheme();
 
   return (
     <AnimatePresence mode="wait">

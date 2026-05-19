@@ -557,8 +557,8 @@ export function NumerologyPage() {
               </GlassCard>
 
               <GlassCard>
-                <h4 className="text-sm text-amber-300 font-medium mb-3">Duchovné detstvo</h4>
-                <p className="text-xs text-slate-400 mb-3">Obdobie, ktoré pripravuje človeka na plnenie životných úloh. Doplnkové čísla (D, M, R) určujú, pod akou vibráciou sa človek vyvíja.</p>
+                <h4 className="text-sm text-amber-700 font-medium mb-3">Duchovné detstvo</h4>
+                <p className="text-xs text-slate-500 mb-3">Obdobie, ktoré pripravuje človeka na plnenie životných úloh. Doplnkové čísla (D, M, R) určujú, pod akou vibráciou sa človek vyvíja.</p>
                 <div className="space-y-2">
                   {result.karmicTriangles.slice(0, 3).map((t, idx) => (
                     <motion.div
@@ -566,19 +566,19 @@ export function NumerologyPage() {
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: idx * 0.1 }}
-                      className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20"
+                      className="p-3 rounded-xl bg-amber-50 border border-amber-200"
                     >
                       <div className="flex items-center justify-between mb-1">
-                        <span className="text-sm font-medium text-white">{t.label}</span>
-                        <span className="text-xs text-amber-300">{t.fromAge}–{t.toAge} r.</span>
+                        <span className="text-sm font-medium text-slate-800">{t.label}</span>
+                        <span className="text-xs text-amber-700">{t.fromAge}–{t.toAge} r.</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="text-lg font-bold text-amber-300">{t.vibration}</span>
-                        <span className="text-xs text-slate-400">({t.influence})</span>
+                        <span className="text-lg font-bold text-amber-700">{t.vibration}</span>
+                        <span className="text-xs text-slate-600">({t.influence})</span>
                       </div>
-                      <p className="text-xs text-slate-300 mt-1">{t.description}</p>
+                      <p className="text-xs text-slate-700 mt-1">{t.description}</p>
                       {cycleVibrationDescriptions[t.vibration] && (
-                        <p className="text-xs text-amber-200/70 mt-1 italic">{cycleVibrationDescriptions[t.vibration]}</p>
+                        <p className="text-xs text-slate-600 mt-1 italic">{cycleVibrationDescriptions[t.vibration]}</p>
                       )}
                     </motion.div>
                   ))}
@@ -586,8 +586,8 @@ export function NumerologyPage() {
               </GlassCard>
 
               <GlassCard>
-                <h4 className="text-sm text-green-300 font-medium mb-3">Duchovná dospelosť (K1–K4)</h4>
-                <p className="text-xs text-slate-400 mb-3">Deväťročné cykly od veku duchovnej dospelosti. Prinášajú zmeny v energii, vzťahoch, zdraví a profesii.</p>
+                <h4 className="text-sm text-green-700 font-medium mb-3">Duchovná dospelosť (K1–K4)</h4>
+                <p className="text-xs text-slate-500 mb-3">Deväťročné cykly od veku duchovnej dospelosti. Prinášajú zmeny v energii, vzťahoch, zdraví a profesii.</p>
                 <div className="space-y-2">
                   {result.karmicTriangles.slice(3).map((t, idx) => (
                     <motion.div
@@ -595,19 +595,19 @@ export function NumerologyPage() {
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: idx * 0.1 }}
-                      className="p-3 rounded-xl bg-green-500/10 border border-green-500/20"
+                      className="p-3 rounded-xl bg-green-50 border border-green-200"
                     >
                       <div className="flex items-center justify-between mb-1">
-                        <span className="text-sm font-medium text-white">{t.label}</span>
-                        <span className="text-xs text-green-300">{t.fromAge}–{t.toAge ? t.toAge + ' r.' : '∞'}</span>
+                        <span className="text-sm font-medium text-slate-800">{t.label}</span>
+                        <span className="text-xs text-green-700">{t.fromAge}–{t.toAge ? t.toAge + ' r.' : '∞'}</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="text-lg font-bold text-green-300">{t.vibration}</span>
-                        <span className="text-xs text-slate-400">({t.influence})</span>
+                        <span className="text-lg font-bold text-green-700">{t.vibration}</span>
+                        <span className="text-xs text-slate-600">({t.influence})</span>
                       </div>
-                      <p className="text-xs text-slate-300 mt-1">{t.description}</p>
+                      <p className="text-xs text-slate-700 mt-1">{t.description}</p>
                       {cycleVibrationDescriptions[t.vibration] && (
-                        <p className="text-xs text-green-200/70 mt-1 italic">{cycleVibrationDescriptions[t.vibration]}</p>
+                        <p className="text-xs text-slate-600 mt-1 italic">{cycleVibrationDescriptions[t.vibration]}</p>
                       )}
                     </motion.div>
                   ))}

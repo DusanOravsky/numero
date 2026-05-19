@@ -15,7 +15,7 @@ import {
 
 export function SettingsPage() {
   const navigate = useNavigate();
-  const { profiles, activeProfileId, setActiveProfile, updateProfile, deleteProfile, numerologyMethod, setNumerologyMethod } = useStore();
+  const { profiles, activeProfileId, setActiveProfile, updateProfile, deleteProfile, numerologyMethod, setNumerologyMethod, clients, reports, favorites, themeMode, language } = useStore();
   const activeProfile = profiles.find(p => p.id === activeProfileId);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editHour, setEditHour] = useState('');
@@ -582,22 +582,66 @@ export function SettingsPage() {
 
       {activeProfile && (
         <GlassCard>
-          <h3 className="font-medium text-white mb-3">Export dát</h3>
-          <button
-            onClick={() => {
-              const data = JSON.stringify({ profiles, activeProfileId }, null, 2);
-              const blob = new Blob([data], { type: 'application/json' });
-              const url = URL.createObjectURL(blob);
-              const a = document.createElement('a');
-              a.href = url;
-              a.download = 'integralna-mapa-backup.json';
-              a.click();
-              URL.revokeObjectURL(url);
-            }}
-            className="px-4 py-2 rounded-xl text-sm font-medium glass text-indigo-300 hover:text-white"
-          >
-            Exportovať zálohu (JSON)
-          </button>
+          <h3 className="font-medium text-white mb-3">Záloha dát</h3>
+          <p className="text-xs text-slate-500 mb-3">
+            Exportuje/importuje všetky profily, klientov, reporty a nastavenia. Použite na prenos medzi zariadeniami alebo ako zálohu.
+          </p>
+          <div className="flex flex-wrap gap-3">
+            <button
+              onClick={() => {
+                const data = JSON.stringify({ version: 2, exportedAt: new Date().toISOString(), profiles, activeProfileId, clients, reports, favorites, numerologyMethod, themeMode, language }, null, 2);
+                const blob = new Blob([data], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `integralna-mapa-backup-${new Date().toISOString().slice(0, 10)}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+              }}
+              className="px-4 py-2 rounded-xl text-sm font-medium glass text-indigo-300 hover:text-white"
+            >
+              ↓ Exportovať zálohu
+            </button>
+            <label className="px-4 py-2 rounded-xl text-sm font-medium glass text-emerald-300 hover:text-white cursor-pointer">
+              ↑ Importovať zálohu
+              <input
+                type="file"
+                accept=".json"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (!file) return;
+                  const reader = new FileReader();
+                  reader.onload = () => {
+                    try {
+                      const parsed = JSON.parse(reader.result as string);
+                      if (!parsed.profiles || !Array.isArray(parsed.profiles)) {
+                        alert('Neplatný súbor — chýbajú profily.');
+                        return;
+                      }
+                      const importedProfiles = parsed.profiles.length;
+                      const importedClients = parsed.clients?.length || 0;
+                      if (!confirm(`Importovať ${importedProfiles} profilov a ${importedClients} klientov? Existujúce dáta budú nahradené.`)) return;
+                      const store = useStore.getState();
+                      if (parsed.profiles) useStore.setState({ profiles: parsed.profiles });
+                      if (parsed.activeProfileId) useStore.setState({ activeProfileId: parsed.activeProfileId });
+                      if (parsed.clients) useStore.setState({ clients: parsed.clients });
+                      if (parsed.reports) useStore.setState({ reports: parsed.reports });
+                      if (parsed.favorites) useStore.setState({ favorites: parsed.favorites });
+                      if (parsed.numerologyMethod) store.setNumerologyMethod(parsed.numerologyMethod);
+                      if (parsed.themeMode) store.setThemeMode(parsed.themeMode);
+                      if (parsed.language) store.setLanguage(parsed.language);
+                      alert(`Import úspešný! ${importedProfiles} profilov, ${importedClients} klientov.`);
+                    } catch {
+                      alert('Chyba pri čítaní súboru. Skontrolujte formát.');
+                    }
+                  };
+                  reader.readAsText(file);
+                  e.target.value = '';
+                }}
+              />
+            </label>
+          </div>
         </GlassCard>
       )}
     </div>

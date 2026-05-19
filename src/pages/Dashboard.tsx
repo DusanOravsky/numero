@@ -15,6 +15,7 @@ import { orvDescriptions } from '../data/orvDescriptions';
 import { getDailyMantra, getDailyQuote } from '../data/mantrasAndQuotes';
 import { getDailyTarot } from '../data/tarotCards';
 import { AIChat } from '../components/AIChat';
+import { ClientExport } from '../components/ClientExport';
 
 export function Dashboard() {
   const navigate = useNavigate();
@@ -292,6 +293,18 @@ export function Dashboard() {
           kabalah={fullResults.kabalah}
           theta={fullResults.theta}
           respectMethodPreference={false}
+        />
+      )}
+
+      {/* Export vlastného profilu */}
+      {profile && fullResults && (
+        <ClientExport
+          client={{ id: profile.id, name: profile.name, birthDay: profile.birthDay, birthMonth: profile.birthMonth, birthYear: profile.birthYear, birthHour: profile.birthHour, birthMinute: profile.birthMinute, birthPlace: profile.birthPlace }}
+          numerology={fullResults.numerology}
+          astrology={fullResults.astrology}
+          humanDesign={fullResults.humanDesign}
+          kabalah={fullResults.kabalah}
+          theta={fullResults.theta}
         />
       )}
 

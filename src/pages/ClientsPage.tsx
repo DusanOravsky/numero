@@ -328,7 +328,31 @@ export function ClientsPage() {
           <h1 className="font-serif text-3xl font-bold text-white">Klienti</h1>
           <p className="text-slate-400 mt-1">Pridajte klienta (meno + dátum) → kliknite naň pre kompletný výklad. Čas a miesto sa dajú doplniť cez "Upraviť".</p>
         </div>
-        <div className="flex gap-2 shrink-0">
+        <div className="flex gap-2 shrink-0 flex-wrap">
+          {clients.length > 0 && (
+            <button
+              onClick={() => {
+                const exportData = {
+                  version: 2,
+                  exportedAt: new Date().toISOString(),
+                  clients: clients,
+                  reports: reports.filter(r => clients.some(c => c.id === r.clientId)),
+                };
+                const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `vsetci-klienti-${new Date().toISOString().slice(0, 10)}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+              }}
+              className="px-4 py-2 rounded-xl text-sm border border-emerald-500/40 text-emerald-700 hover:bg-emerald-50"
+            >
+              ↓ Export všetkých ({clients.length})
+            </button>
+          )}
           <label className="px-4 py-2 rounded-xl text-sm border border-indigo-500/40 text-indigo-700 hover:bg-indigo-50 cursor-pointer">
             ↑ Import
             <input

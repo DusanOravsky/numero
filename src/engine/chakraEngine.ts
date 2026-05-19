@@ -177,11 +177,16 @@ export function evaluateChakras(
     // Hyperaktívna: extrémne dominantná energia (veľa duplicít čísla v mriežke)
     // alebo veľmi vysoké skóre. Blokovaná: nízke skóre (chýbajúce/izolované čísla).
     // Vyvážená: stredný rozsah.
+    //
+    // Prahy nastavené tak, aby skutočne chýbajúce čísla boli "blokovaná",
+    // a aby silná korešpondencia (3+ čísla, definované HD centrum, dominantný
+    // element, ŽČ match) vyšla ako "hyperaktívna". Stredné pásmo "vyvážená"
+    // je zámerne užšie, aby výsledky boli odlišné a smerodatné.
     const hasOverdominance = chakra.numerologyNumbers.some(n => (gridCounts.get(n) || 0) >= 4);
 
     let status: 'balanced' | 'blocked' | 'hyperactive';
-    if (score < 35) status = 'blocked';
-    else if (score >= 90 || hasOverdominance) status = 'hyperactive';
+    if (score < 50) status = 'blocked';
+    else if (score >= 80 || hasOverdominance) status = 'hyperactive';
     else status = 'balanced';
 
     const recommendations: string[] = [];

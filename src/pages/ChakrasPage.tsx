@@ -125,8 +125,8 @@ export function ChakrasPage() {
                       </div>
                       <div className="flex justify-between text-[9px] text-slate-400 mt-0.5">
                         <span>0 blokovaná</span>
-                        <span>35 vyvážená</span>
-                        <span>90 hyperaktívna</span>
+                        <span>50 vyvážená</span>
+                        <span>80 hyperaktívna</span>
                       </div>
 
                       <p className="text-sm text-slate-300 mt-2">
@@ -159,9 +159,9 @@ export function ChakrasPage() {
                           <p>Životné číslo = {state.chakra.number}: <strong>+15</strong></p>
                           <p className="pt-1 border-t border-slate-200 mt-1">Vyhodnotenie:</p>
                           <ul className="list-disc list-inside ml-2 text-slate-500">
-                            <li>&lt; 35 → blokovaná (málo podpory)</li>
-                            <li>35–89 → vyvážená (zdravá)</li>
-                            <li>≥ 90 alebo 4+× rovnaké číslo → hyperaktívna</li>
+                            <li>&lt; 50 → blokovaná (málo podpory)</li>
+                            <li>50–79 → vyvážená (zdravá)</li>
+                            <li>≥ 80 alebo 4+× rovnaké číslo → hyperaktívna</li>
                           </ul>
                         </div>
                       </details>

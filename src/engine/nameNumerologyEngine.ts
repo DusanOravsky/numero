@@ -30,6 +30,8 @@ export interface NameNumerologyResult {
   capstone: { letter: string; value: number; description: string } | null;
   /** Prvá samohláska — okamžitá emocionálna reakcia. */
   firstVowel: { letter: string; value: number; description: string } | null;
+  /** Balance number — súčet iniciál (prvých písmen každého slova mena). */
+  balanceNumber: { value: number; initials: string; description: string };
 }
 
 function getLetterValue(letter: string): number {
@@ -63,6 +65,18 @@ const SOUL_DESCRIPTIONS: Record<number, string> = {
   7: 'Číslo duše 7: Vnútorne túžite po pochopení a pravde. Vaša duša hľadá zmysel za povrchom.',
   8: 'Číslo duše 8: Vnútorne túžite po uznaní a hojnosti. Vaša duša chce dosiahnuť veľké veci.',
   9: 'Číslo duše 9: Vnútorne túžite po zmysluplnosti a službe. Vaša duša chce pomáhať a inšpirovať.',
+};
+
+const BALANCE_DESCRIPTIONS: Record<number, string> = {
+  1: 'Balance 1: Pri strese sa stávate samostatnejším a iniciatívnejším. Nájdite rovnováhu cez jednanie a rozhodovanie.',
+  2: 'Balance 2: Pri strese hľadáte spoluprácu a podporu. Nájdite rovnováhu cez tichu trpezlivosť a partnerstvo.',
+  3: 'Balance 3: Pri strese sa potrebujete vyjadriť, tvoriť alebo zabaviť. Nájdite rovnováhu cez kreativitu a optimizmus.',
+  4: 'Balance 4: Pri strese hľadáte poriadok, rutinu a praktické riešenia. Nájdite rovnováhu cez disciplínu a prácu.',
+  5: 'Balance 5: Pri strese potrebujete pohyb, zmenu, slobodu. Nájdite rovnováhu cez nové skúsenosti a flexibilitu.',
+  6: 'Balance 6: Pri strese sa obraciate ku rodine, domovu a blízkym. Nájdite rovnováhu cez starostlivosť a harmóniu.',
+  7: 'Balance 7: Pri strese potrebujete samotu, ticho, introspekciu. Nájdite rovnováhu cez meditáciu a štúdium.',
+  8: 'Balance 8: Pri strese chcete kontrolu a manifestáciu. Nájdite rovnováhu cez praktické rozhodnutia a hojnosť.',
+  9: 'Balance 9: Pri strese sa obraciate k službe iným a väčšiemu zmyslu. Nájdite rovnováhu cez súcit a univerzálnu lásku.',
 };
 
 const HIDDEN_PASSION_DESCRIPTIONS: Record<number, string> = {
@@ -219,6 +233,22 @@ export function calculateNameNumerology(fullName: string): NameNumerologyResult 
   const lastLetter = letters[letters.length - 1]?.letter || '';
   const firstVowelEntry = letters.find(l => l.isVowel);
 
+  // Balance number — súčet iniciál (prvých písmen každého slova mena oddelených medzerou alebo pomlčkou).
+  const words = cleanName.split(/[\s-]+/).filter(Boolean);
+  const initialLetters: string[] = [];
+  let balanceSum = 0;
+  for (const word of words) {
+    // pre prvý znak skontrolujeme aj 'ch' digraf
+    let init = word[0];
+    if (init === 'c' && word[1] === 'h') init = 'ch';
+    const v = getLetterValue(init);
+    if (v > 0) {
+      initialLetters.push(init);
+      balanceSum += v;
+    }
+  }
+  const balanceReduced = balanceSum > 0 ? reduceToSingle(balanceSum) : 0;
+
   return {
     fullName,
     expressionNumber,
@@ -255,5 +285,10 @@ export function calculateNameNumerology(fullName: string): NameNumerologyResult 
           description: `Prvá samohláska "${firstVowelEntry.letter.toUpperCase()}" (hodnota ${firstVowelEntry.value}) — okamžitá emocionálna reakcia: ${SOUL_DESCRIPTIONS[firstVowelEntry.value > 9 ? reduceToSingle(firstVowelEntry.value) : firstVowelEntry.value] || ''}`,
         }
       : null,
+    balanceNumber: {
+      value: balanceReduced,
+      initials: initialLetters.map(l => l.toUpperCase()).join('. '),
+      description: balanceReduced > 0 ? BALANCE_DESCRIPTIONS[balanceReduced] || '' : '',
+    },
   };
 }

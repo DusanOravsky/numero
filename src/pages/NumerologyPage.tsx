@@ -1150,20 +1150,38 @@ export function NumerologyPage() {
                     </div>
                   </GlassCard>
 
-                  {/* Hidden Passion */}
-                  {nameResult.hiddenPassion.number > 0 && (
-                    <GlassCard>
-                      <div className="flex items-start gap-4">
-                        <div className="w-14 h-14 rounded-full bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center text-white font-bold text-2xl shrink-0">
-                          {nameResult.hiddenPassion.number}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {/* Hidden Passion */}
+                    {nameResult.hiddenPassion.number > 0 && (
+                      <GlassCard>
+                        <div className="flex items-start gap-4">
+                          <div className="w-14 h-14 rounded-full bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center text-white font-bold text-2xl shrink-0">
+                            {nameResult.hiddenPassion.number}
+                          </div>
+                          <div className="flex-1">
+                            <p className="text-xs text-amber-400 uppercase mb-1">Hidden Passion ({nameResult.hiddenPassion.count}× v mene)</p>
+                            <p className="text-sm text-slate-300">{nameResult.hiddenPassion.description}</p>
+                          </div>
                         </div>
-                        <div className="flex-1">
-                          <p className="text-xs text-amber-400 uppercase mb-1">Hidden Passion ({nameResult.hiddenPassion.count}× v mene)</p>
-                          <p className="text-sm text-slate-300">{nameResult.hiddenPassion.description}</p>
+                      </GlassCard>
+                    )}
+
+                    {/* Balance number (B4) */}
+                    {nameResult.balanceNumber.value > 0 && (
+                      <GlassCard>
+                        <div className="flex items-start gap-4">
+                          <div className="w-14 h-14 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center text-white font-bold text-2xl shrink-0">
+                            {nameResult.balanceNumber.value}
+                          </div>
+                          <div className="flex-1">
+                            <p className="text-xs text-emerald-400 uppercase mb-1">Balance number ({nameResult.balanceNumber.initials})</p>
+                            <p className="text-sm text-slate-300">{nameResult.balanceNumber.description}</p>
+                            <p className="text-[11px] text-slate-500 mt-1">Vyrátané z iniciál mena. Aktivuje sa v období emocionálnej krízy ako stratégia obnovy rovnováhy.</p>
+                          </div>
                         </div>
-                      </div>
-                    </GlassCard>
-                  )}
+                      </GlassCard>
+                    )}
+                  </div>
 
                   {/* Karmic Lessons */}
                   {nameResult.karmicLessons.length > 0 && (

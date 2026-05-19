@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useStore } from '../store/useStore';
-import type { NumerologyMethod, ThemeMode } from '../store/useStore';
+import type { NumerologyMethod, ThemeMode, Language } from '../store/useStore';
+import { useTranslation } from '../i18n/useTranslation';
 import { GlassCard } from '../components/GlassCard';
 import { useNavigate } from 'react-router-dom';
 import { APP_VERSION } from '../components/PWAPrompts';
@@ -8,7 +9,8 @@ import { searchCities, findCity } from '../data/cities';
 
 export function SettingsPage() {
   const navigate = useNavigate();
-  const { profiles, activeProfileId, setActiveProfile, updateProfile, deleteProfile, numerologyMethod, setNumerologyMethod, themeMode, setThemeMode } = useStore();
+  const { profiles, activeProfileId, setActiveProfile, updateProfile, deleteProfile, numerologyMethod, setNumerologyMethod, themeMode, setThemeMode, language, setLanguage } = useStore();
+  const { t } = useTranslation();
   const activeProfile = profiles.find(p => p.id === activeProfileId);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editHour, setEditHour] = useState('');
@@ -161,29 +163,56 @@ export function SettingsPage() {
       </GlassCard>
 
       <GlassCard>
-        <h3 className="font-medium text-white mb-2">Vzhľad aplikácie</h3>
-        <p className="text-sm text-slate-500 mb-4">Vyber si svetlú, tmavú tému alebo nech sa prispôsobí systému.</p>
+        <h3 className="font-medium text-white mb-2">{t('settings.appearance')}</h3>
+        <p className="text-sm text-slate-500 mb-4">
+          {language === 'sk' ? 'Vyber si svetlú, tmavú tému alebo nech sa prispôsobí systému.' : 'Choose light, dark theme, or let it adapt to the system.'}
+        </p>
         <div className="grid grid-cols-3 gap-2">
           <button
             type="button"
             onClick={() => setThemeMode('light' as ThemeMode)}
             className={`py-3 rounded-xl text-sm border-2 transition-all ${themeMode === 'light' ? 'border-amber-500 bg-amber-50 text-amber-700 font-medium' : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'}`}
           >
-            ☀ Svetlá
+            {t('settings.themeLight')}
           </button>
           <button
             type="button"
             onClick={() => setThemeMode('dark' as ThemeMode)}
             className={`py-3 rounded-xl text-sm border-2 transition-all ${themeMode === 'dark' ? 'border-indigo-500 bg-indigo-50 text-indigo-700 font-medium' : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'}`}
           >
-            ☾ Tmavá
+            {t('settings.themeDark')}
           </button>
           <button
             type="button"
             onClick={() => setThemeMode('system' as ThemeMode)}
             className={`py-3 rounded-xl text-sm border-2 transition-all ${themeMode === 'system' ? 'border-slate-500 bg-slate-100 text-slate-700 font-medium' : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'}`}
           >
-            ⚙ Podľa systému
+            {t('settings.themeSystem')}
+          </button>
+        </div>
+      </GlassCard>
+
+      <GlassCard>
+        <h3 className="font-medium text-white mb-2">{t('settings.language')}</h3>
+        <p className="text-sm text-slate-500 mb-4">
+          {language === 'sk'
+            ? 'Jazyk používateľského rozhrania. Výklady (numerologické čísla, gene keys atď.) zostávajú v slovenčine — sú citáciami z konkrétnych slovenských kníh.'
+            : 'UI language. Detailed interpretations (numerology meanings, gene keys, etc.) stay in Slovak — they are citations from specific Slovak books.'}
+        </p>
+        <div className="grid grid-cols-2 gap-2">
+          <button
+            type="button"
+            onClick={() => setLanguage('sk' as Language)}
+            className={`py-3 rounded-xl text-sm border-2 transition-all ${language === 'sk' ? 'border-indigo-500 bg-indigo-50 text-indigo-700 font-medium' : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'}`}
+          >
+            🇸🇰 {t('settings.languageSk')}
+          </button>
+          <button
+            type="button"
+            onClick={() => setLanguage('en' as Language)}
+            className={`py-3 rounded-xl text-sm border-2 transition-all ${language === 'en' ? 'border-indigo-500 bg-indigo-50 text-indigo-700 font-medium' : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'}`}
+          >
+            🇬🇧 {t('settings.languageEn')}
           </button>
         </div>
       </GlassCard>

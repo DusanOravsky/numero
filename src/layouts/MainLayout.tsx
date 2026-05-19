@@ -1,30 +1,34 @@
 import { useState } from 'react';
 import { Outlet, NavLink, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from '../i18n/useTranslation';
+import type { TranslationKey } from '../i18n/translations';
 
-const NAV_ITEMS = [
-  { path: '/', label: 'Dashboard', icon: '⬡' },
-  { path: '/numerology', label: 'Numerológia', icon: '✦' },
-  { path: '/astrology', label: 'Astrológia', icon: '☆' },
-  { path: '/human-design', label: 'Human Design', icon: '◎' },
-  { path: '/relationships', label: 'Vzťahy', icon: '♡' },
-  { path: '/chakras', label: 'Čakry', icon: '◈' },
-  { path: '/kabalah', label: 'Kabala', icon: '⚘' },
-  { path: '/theta-healing', label: 'Theta', icon: '∞' },
-  { path: '/clients', label: 'Klienti', icon: '♟' },
-  { path: '/settings', label: 'Nastavenia', icon: '⚙' },
+const NAV_DEFS: { path: string; labelKey: TranslationKey; icon: string }[] = [
+  { path: '/', labelKey: 'nav.dashboard', icon: '⬡' },
+  { path: '/numerology', labelKey: 'nav.numerology', icon: '✦' },
+  { path: '/astrology', labelKey: 'nav.astrology', icon: '☆' },
+  { path: '/human-design', labelKey: 'nav.humanDesign', icon: '◎' },
+  { path: '/relationships', labelKey: 'nav.relationships', icon: '♡' },
+  { path: '/chakras', labelKey: 'nav.chakras', icon: '◈' },
+  { path: '/kabalah', labelKey: 'nav.kabalah', icon: '⚘' },
+  { path: '/theta-healing', labelKey: 'nav.theta', icon: '∞' },
+  { path: '/clients', labelKey: 'nav.clients', icon: '♟' },
+  { path: '/settings', labelKey: 'nav.settings', icon: '⚙' },
 ];
 
 // Pre mobilnú spodnú navigáciu vyberieme len najpoužívanejšie položky.
-// Zvyšok sa zobrazí v bottom-sheet po klepnutí na "Viac".
 const MOBILE_PRIMARY = ['/', '/numerology', '/astrology', '/human-design', '/relationships'];
-const MOBILE_PRIMARY_ITEMS = NAV_ITEMS.filter(i => MOBILE_PRIMARY.includes(i.path));
-const MOBILE_MORE_ITEMS = NAV_ITEMS.filter(i => !MOBILE_PRIMARY.includes(i.path));
 
 export function MainLayout() {
   const location = useLocation();
+  const { t } = useTranslation();
   const logoSrc = `${import.meta.env.BASE_URL}icons/logo.svg`;
   const [showMoreSheet, setShowMoreSheet] = useState(false);
+
+  const navItems = NAV_DEFS.map(d => ({ path: d.path, label: t(d.labelKey), icon: d.icon }));
+  const mobilePrimaryItems = navItems.filter(i => MOBILE_PRIMARY.includes(i.path));
+  const mobileMoreItems = navItems.filter(i => !MOBILE_PRIMARY.includes(i.path));
 
   return (
     <div className="min-h-screen flex flex-col lg:flex-row">
@@ -36,7 +40,7 @@ export function MainLayout() {
           </h1>
         </div>
         <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
-          {NAV_ITEMS.map(item => (
+          {navItems.map(item => (
             <NavLink
               key={item.path}
               to={item.path}
@@ -81,7 +85,7 @@ export function MainLayout() {
 
       <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-50" aria-label="Hlavná navigácia">
         <div className="grid grid-cols-6 items-center py-1.5 px-1">
-          {MOBILE_PRIMARY_ITEMS.map(item => (
+          {mobilePrimaryItems.map(item => (
             <NavLink
               key={item.path}
               to={item.path}
@@ -99,11 +103,11 @@ export function MainLayout() {
           <button
             type="button"
             onClick={() => setShowMoreSheet(true)}
-            aria-label="Viac"
+            aria-label={t('nav.more')}
             className="flex flex-col items-center gap-0.5 py-2 rounded-xl text-slate-400 hover:text-indigo-600"
           >
             <span className="text-lg">⋯</span>
-            <span className="text-[9px]">Viac</span>
+            <span className="text-[9px]">{t('nav.more')}</span>
           </button>
         </div>
       </nav>
@@ -127,9 +131,9 @@ export function MainLayout() {
               className="lg:hidden fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl z-[70] p-6 pb-8 shadow-2xl"
             >
               <div className="w-12 h-1 bg-slate-300 rounded-full mx-auto mb-4" />
-              <h3 className="font-medium text-slate-800 mb-4">Viac sekcií</h3>
+              <h3 className="font-medium text-slate-800 mb-4">{t('nav.more')}</h3>
               <div className="grid grid-cols-2 gap-3">
-                {MOBILE_MORE_ITEMS.map(item => (
+                {mobileMoreItems.map(item => (
                   <NavLink
                     key={item.path}
                     to={item.path}
@@ -150,7 +154,7 @@ export function MainLayout() {
                 onClick={() => setShowMoreSheet(false)}
                 className="w-full mt-4 py-2 text-sm text-slate-500"
               >
-                Zavrieť
+                {t('common.close')}
               </button>
             </motion.div>
           </>

@@ -48,6 +48,7 @@ export interface SavedReport {
 
 export type NumerologyMethod = 'characterological' | 'developmental';
 export type ThemeMode = 'light' | 'dark' | 'system';
+export type Language = 'sk' | 'en';
 
 interface AppState {
   profiles: UserProfile[];
@@ -55,7 +56,7 @@ interface AppState {
   clients: Client[];
   reports: SavedReport[];
   favorites: string[];
-  language: 'sk';
+  language: Language;
   numerologyMethod: NumerologyMethod;
   themeMode: ThemeMode;
 
@@ -75,6 +76,7 @@ interface AppState {
 
   setNumerologyMethod: (m: NumerologyMethod) => void;
   setThemeMode: (m: ThemeMode) => void;
+  setLanguage: (l: Language) => void;
 }
 
 const STORE_VERSION = 4;
@@ -121,6 +123,7 @@ export const useStore = create<AppState>()(
 
       setNumerologyMethod: (m) => set({ numerologyMethod: m }),
       setThemeMode: (m) => set({ themeMode: m }),
+      setLanguage: (l) => set({ language: l }),
     }),
     {
       name: 'numero-store',

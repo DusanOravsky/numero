@@ -146,46 +146,61 @@ export function NumerologyPage() {
 
           {activeTab === 'overview' && (
             <div className="space-y-6">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <GlassCard glow>
-                  <h2 className="text-lg font-medium text-white mb-1">Životné číslo</h2>
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className="w-20 h-20 rounded-full bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center">
-                      <span className="text-3xl font-serif font-bold text-white">{result.lifePathNumber}</span>
-                    </div>
-                    <div>
-                      <p className="text-sm text-slate-400">z {result.lifePathFrom}</p>
-                      <p className="text-lg font-medium text-white">{lifePathInfo?.title || ''}</p>
-                      <div className="flex gap-1 mt-1 flex-wrap">
-                        {lifePathInfo?.keywords.map(k => (
-                          <span key={k} className="text-xs px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300">{k}</span>
-                        ))}
-                      </div>
-                    </div>
+              {/* HERO STRIP — Životné číslo na celú šírku, kompaktný layout */}
+              <GlassCard glow>
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                  {/* ŽČ kruh */}
+                  <div className="w-20 h-20 rounded-full bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center shrink-0 mx-auto sm:mx-0">
+                    <span className="text-3xl font-serif font-bold text-white">{result.lifePathNumber}</span>
                   </div>
-                  <p className="text-sm text-slate-300">{result.formula}</p>
-                </GlassCard>
 
-                <GlassCard>
-                  <h2 className="text-lg font-medium text-white mb-4">
-                    Mriežka 3x3 – {numerologyMethod === 'characterological' ? 'Charakterová' : 'Vývojová'}
+                  {/* Detail */}
+                  <div className="flex-1 min-w-0 text-center sm:text-left">
+                    <div className="flex items-baseline gap-2 flex-wrap justify-center sm:justify-start">
+                      <h2 className="text-lg font-medium text-white">Životné číslo {result.lifePathNumber}</h2>
+                      <span className="text-sm text-slate-500">z {result.lifePathFrom}</span>
+                    </div>
+                    {lifePathInfo?.title && (
+                      <p className="text-sm text-indigo-700 font-medium mt-0.5">{lifePathInfo.title}</p>
+                    )}
+                    <div className="flex gap-1 mt-2 flex-wrap justify-center sm:justify-start">
+                      {lifePathInfo?.keywords.map(k => (
+                        <span key={k} className="text-[11px] px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300">{k}</span>
+                      ))}
+                    </div>
+                    <p className="text-[11px] text-slate-500 mt-2 font-mono">{result.formula}</p>
+                  </div>
+                </div>
+              </GlassCard>
+
+              {/* MRIEŽKA — plná šírka, dosť priestoru */}
+              <GlassCard>
+                <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
+                  <h2 className="text-lg font-medium text-white">
+                    Mriežka 3×3 — {numerologyMethod === 'characterological' ? 'Charakterová' : 'Vývojová'}
                   </h2>
-                  {numerologyMethod === 'characterological' ? (
-                    <>
-                      <NumerologyGrid grid={result.grid} />
-                      <div className="flex gap-4 mt-4 justify-center text-xs">
-                        <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-blue-400"></span> Základné</span>
-                        <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-rose-400"></span> Doplnkové</span>
-                      </div>
-                      <p className="text-[11px] text-slate-500 mt-3 italic text-center">
-                        Zdroj: Robin Steinová – Numerológia: Čísla Lásky
-                      </p>
-                    </>
-                  ) : devResult ? (
-                    <DevelopmentalNumerologyView result={devResult} gender={profile?.gender} />
-                  ) : null}
-                </GlassCard>
-              </div>
+                  <button
+                    onClick={() => navigate('/settings')}
+                    className="text-[11px] text-indigo-600 hover:text-indigo-800 underline"
+                  >
+                    Zmeniť metódu
+                  </button>
+                </div>
+                {numerologyMethod === 'characterological' ? (
+                  <div className="space-y-4">
+                    <NumerologyGrid grid={result.grid} />
+                    <div className="flex gap-4 justify-center text-xs">
+                      <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-blue-400"></span> Základné</span>
+                      <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-rose-400"></span> Doplnkové</span>
+                    </div>
+                    <p className="text-[11px] text-slate-500 italic text-center">
+                      Zdroj: Robin Steinová – Numerológia: Čísla Lásky
+                    </p>
+                  </div>
+                ) : devResult ? (
+                  <DevelopmentalNumerologyView result={devResult} gender={profile?.gender} />
+                ) : null}
+              </GlassCard>
 
               {lifePathInfo && (
                 <GlassCard delay={0.2}>

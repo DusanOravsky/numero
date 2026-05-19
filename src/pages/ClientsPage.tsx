@@ -22,14 +22,27 @@ export function ClientsPage() {
   const [birthPlace, setBirthPlace] = useState('');
   const [citySuggestions, setCitySuggestions] = useState<{ name: string }[]>([]);
   const [notes, setNotes] = useState('');
+  const [tagsInput, setTagsInput] = useState('');
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
   const [formError, setFormError] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
+  const [activeTagFilter, setActiveTagFilter] = useState<string | null>(null);
+  const [bulkMode, setBulkMode] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
   const resetForm = () => {
-    setName(''); setGender(''); setDay(''); setMonth(''); setYear(''); setHour(''); setMinute(''); setBirthPlace(''); setNotes('');
+    setName(''); setGender(''); setDay(''); setMonth(''); setYear(''); setHour(''); setMinute(''); setBirthPlace(''); setNotes(''); setTagsInput('');
     setEditingClient(null); setCitySuggestions([]);
   };
+
+  const parseTags = (input: string): string[] =>
+    input.split(',').map(t => t.trim()).filter(Boolean);
+
+  const allTags = (() => {
+    const set = new Set<string>();
+    clients.forEach(c => c.tags?.forEach(t => set.add(t)));
+    return Array.from(set).sort();
+  })();
 
   const startEdit = (client: Client) => {
     setEditingClient(client);
@@ -42,6 +55,7 @@ export function ClientsPage() {
     setMinute(client.birthMinute !== undefined ? String(client.birthMinute) : '');
     setBirthPlace(client.birthPlace || '');
     setNotes(client.notes || '');
+    setTagsInput((client.tags || []).join(', '));
     setShowForm(true);
   };
 
@@ -76,6 +90,7 @@ export function ClientsPage() {
       birthLatitude: city?.lat,
       birthLongitude: city?.lon,
       notes: notes.trim() || undefined,
+      tags: parseTags(tagsInput).length > 0 ? parseTags(tagsInput) : undefined,
     };
 
     if (editingClient) {
@@ -90,9 +105,13 @@ export function ClientsPage() {
   const clientReports = (clientId: string) => reports.filter(r => r.clientId === clientId);
 
   const filteredClients = (() => {
+    let result = clients;
+    if (activeTagFilter) {
+      result = result.filter(c => c.tags?.includes(activeTagFilter));
+    }
     const q = searchQuery.trim().toLowerCase();
-    if (!q) return clients;
-    return clients.filter(c => {
+    if (!q) return result;
+    return result.filter(c => {
       // Meno
       if (c.name.toLowerCase().includes(q)) return true;
       // Dátum (D.M.RRRR alebo časti)
@@ -107,9 +126,46 @@ export function ClientsPage() {
       if (c.birthPlace && c.birthPlace.toLowerCase().includes(q)) return true;
       // Poznámky
       if (c.notes && c.notes.toLowerCase().includes(q)) return true;
+      // Tagy
+      if (c.tags?.some(t => t.toLowerCase().includes(q))) return true;
       return false;
     });
   })();
+
+  const toggleSelected = (id: string) => {
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
+
+  const exitBulkMode = () => {
+    setBulkMode(false);
+    setSelectedIds(new Set());
+  };
+
+  const bulkDelete = () => {
+    if (selectedIds.size === 0) return;
+    if (!confirm(`Vymazať ${selectedIds.size} ${selectedIds.size === 1 ? 'klienta' : 'klientov'} a všetky ich výklady?`)) return;
+    selectedIds.forEach(id => deleteClient(id));
+    exitBulkMode();
+  };
+
+  const bulkAddTag = () => {
+    if (selectedIds.size === 0) return;
+    const tag = prompt('Pridať tag (jeden alebo viac oddelených čiarkou):');
+    if (!tag) return;
+    const newTags = parseTags(tag);
+    if (newTags.length === 0) return;
+    selectedIds.forEach(id => {
+      const c = clients.find(x => x.id === id);
+      if (!c) return;
+      const merged = Array.from(new Set([...(c.tags || []), ...newTags]));
+      updateClient(id, { tags: merged });
+    });
+    exitBulkMode();
+  };
 
   if (selectedClient) {
     const cReports = clientReports(selectedClient.id);
@@ -145,6 +201,18 @@ export function ClientsPage() {
             <div className="mt-4 pt-4 border-t border-white/5">
               <p className="text-xs text-slate-400 mb-1">Poznámky</p>
               <p className="text-sm text-slate-300">{selectedClient.notes}</p>
+            </div>
+          )}
+          {selectedClient.tags && selectedClient.tags.length > 0 && (
+            <div className="mt-4 pt-4 border-t border-white/5">
+              <p className="text-xs text-slate-400 mb-2">Tagy</p>
+              <div className="flex flex-wrap gap-1.5">
+                {selectedClient.tags.map(tag => (
+                  <span key={tag} className="text-xs px-2 py-1 rounded-full bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">
+                    {tag}
+                  </span>
+                ))}
+              </div>
             </div>
           )}
         </GlassCard>
@@ -297,6 +365,14 @@ export function ClientsPage() {
               }}
             />
           </label>
+          {clients.length > 1 && (
+            <button
+              onClick={() => bulkMode ? exitBulkMode() : setBulkMode(true)}
+              className={`px-4 py-2 rounded-xl text-sm border ${bulkMode ? 'bg-amber-500/15 text-amber-700 border-amber-400' : 'border-slate-300 text-slate-600 hover:bg-slate-50'}`}
+            >
+              {bulkMode ? '✕ Zrušiť výber' : '☑ Hromadne'}
+            </button>
+          )}
           <button
             onClick={() => setShowForm(!showForm)}
             className="px-4 py-2 rounded-xl text-sm bg-indigo-600 text-white hover:bg-indigo-500"
@@ -355,6 +431,35 @@ export function ClientsPage() {
               <label className="block text-sm text-slate-400 mb-1">Poznámky</label>
               <textarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="Voliteľné poznámky o klientovi..." rows={3} className="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white focus:outline-none focus:border-indigo-500/50 resize-none" />
             </div>
+            <div>
+              <label className="block text-sm text-slate-400 mb-1">Tagy (oddelené čiarkou)</label>
+              <input
+                type="text"
+                value={tagsInput}
+                onChange={e => setTagsInput(e.target.value)}
+                placeholder="napr. rodina, VIP, dieťa"
+                className="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white focus:outline-none focus:border-indigo-500/50"
+              />
+              {allTags.length > 0 && (
+                <div className="mt-2 flex flex-wrap gap-1">
+                  <span className="text-[10px] text-slate-500 uppercase mr-1 self-center">Existujúce:</span>
+                  {allTags.map(tag => (
+                    <button
+                      key={tag}
+                      type="button"
+                      onClick={() => {
+                        const cur = parseTags(tagsInput);
+                        if (cur.includes(tag)) return;
+                        setTagsInput(cur.length === 0 ? tag : `${tagsInput}, ${tag}`);
+                      }}
+                      className="text-[11px] px-2 py-0.5 rounded-full bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 hover:bg-indigo-500/25"
+                    >
+                      + {tag}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
             {formError && (
               <p className="text-sm text-rose-600 px-1">{formError}</p>
             )}
@@ -406,41 +511,153 @@ export function ClientsPage() {
         </div>
       )}
 
+      {/* Tag chip filtre */}
+      {allTags.length > 0 && (
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-xs text-slate-500 uppercase">Filter podľa tagu:</span>
+          <button
+            onClick={() => setActiveTagFilter(null)}
+            className={`text-xs px-3 py-1 rounded-full border ${
+              activeTagFilter === null
+                ? 'bg-indigo-600 text-white border-indigo-600'
+                : 'border-slate-300 text-slate-600 hover:bg-slate-50'
+            }`}
+          >
+            Všetci ({clients.length})
+          </button>
+          {allTags.map(tag => {
+            const count = clients.filter(c => c.tags?.includes(tag)).length;
+            const active = activeTagFilter === tag;
+            return (
+              <button
+                key={tag}
+                onClick={() => setActiveTagFilter(active ? null : tag)}
+                className={`text-xs px-3 py-1 rounded-full border ${
+                  active
+                    ? 'bg-indigo-600 text-white border-indigo-600'
+                    : 'bg-indigo-500/10 text-indigo-700 border-indigo-300 hover:bg-indigo-500/20'
+                }`}
+              >
+                {tag} ({count})
+              </button>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Bulk-mode toolbar */}
+      {bulkMode && (
+        <GlassCard>
+          <div className="flex flex-wrap items-center gap-3 justify-between">
+            <div className="flex items-center gap-3">
+              <span className="text-sm text-slate-300">
+                Vybraných: <strong>{selectedIds.size}</strong> / {filteredClients.length}
+              </span>
+              <button
+                onClick={() => {
+                  if (selectedIds.size === filteredClients.length) {
+                    setSelectedIds(new Set());
+                  } else {
+                    setSelectedIds(new Set(filteredClients.map(c => c.id)));
+                  }
+                }}
+                className="text-xs text-indigo-600 hover:text-indigo-800 underline"
+              >
+                {selectedIds.size === filteredClients.length ? 'Zrušiť výber' : 'Vybrať všetkých'}
+              </button>
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={bulkAddTag}
+                disabled={selectedIds.size === 0}
+                className="px-3 py-1.5 rounded-lg text-xs bg-indigo-600 text-white hover:bg-indigo-500 disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                + Pridať tag
+              </button>
+              <button
+                onClick={bulkDelete}
+                disabled={selectedIds.size === 0}
+                className="px-3 py-1.5 rounded-lg text-xs bg-red-600 text-white hover:bg-red-500 disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                Vymazať vybrané
+              </button>
+            </div>
+          </div>
+        </GlassCard>
+      )}
+
       {clients.length > 0 && filteredClients.length === 0 && (
         <GlassCard>
           <p className="text-center text-slate-400 py-4">
-            Žiadny klient nezodpovedá vyhľadávaniu „{searchQuery}".
+            Žiadny klient nezodpovedá filtrom.
+            {activeTagFilter && (
+              <button onClick={() => setActiveTagFilter(null)} className="ml-2 text-indigo-600 underline">
+                Vyčistiť tag filter
+              </button>
+            )}
           </p>
         </GlassCard>
       )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filteredClients.map((client, idx) => (
-          <motion.div
-            key={client.id}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: idx * 0.05 }}
-          >
-            <GlassCard className="cursor-pointer hover:scale-[1.02] transition-transform" onClick={() => navigate(`/clients/${client.id}`)}>
-              <div className="flex items-start justify-between">
-                <div>
-                  <h3 className="font-medium text-white">{client.name}</h3>
-                  <p className="text-sm text-slate-400">
-                    {client.birthDay}.{client.birthMonth}.{client.birthYear}
-                    {client.birthHour !== undefined && ` ${client.birthHour}:${String(client.birthMinute || 0).padStart(2, '0')}`}
-                    {client.birthPlace && ` | ${client.birthPlace}`}
-                  </p>
-                  {client.notes && <p className="text-xs text-slate-500 mt-1 line-clamp-1">{client.notes}</p>}
+        {filteredClients.map((client, idx) => {
+          const isSelected = selectedIds.has(client.id);
+          return (
+            <motion.div
+              key={client.id}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: idx * 0.05 }}
+            >
+              <GlassCard
+                className={`cursor-pointer transition-transform ${
+                  bulkMode ? (isSelected ? 'ring-2 ring-indigo-500' : 'hover:ring-1 hover:ring-indigo-300') : 'hover:scale-[1.02]'
+                }`}
+                onClick={() => bulkMode ? toggleSelected(client.id) : navigate(`/clients/${client.id}`)}
+              >
+                <div className="flex items-start gap-3">
+                  {bulkMode && (
+                    <input
+                      type="checkbox"
+                      checked={isSelected}
+                      onChange={() => toggleSelected(client.id)}
+                      onClick={e => e.stopPropagation()}
+                      className="mt-1 w-4 h-4 accent-indigo-600 cursor-pointer"
+                    />
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0">
+                        <h3 className="font-medium text-white truncate">{client.name}</h3>
+                        <p className="text-sm text-slate-400">
+                          {client.birthDay}.{client.birthMonth}.{client.birthYear}
+                          {client.birthHour !== undefined && ` ${client.birthHour}:${String(client.birthMinute || 0).padStart(2, '0')}`}
+                          {client.birthPlace && ` | ${client.birthPlace}`}
+                        </p>
+                        {client.notes && <p className="text-xs text-slate-500 mt-1 line-clamp-1">{client.notes}</p>}
+                        {client.tags && client.tags.length > 0 && (
+                          <div className="flex flex-wrap gap-1 mt-1.5">
+                            {client.tags.map(tag => (
+                              <span key={tag} className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                      {!bulkMode && (
+                        <div className="text-right flex flex-col items-end gap-1 shrink-0">
+                          <span className="text-xs text-indigo-300">{clientReports(client.id).length} výkladov</span>
+                          <button onClick={(e) => { e.stopPropagation(); startEdit(client); }} className="text-xs px-2 py-1 rounded-lg border border-amber-300 text-amber-600 hover:bg-amber-50">Upraviť</button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
-                <div className="text-right flex flex-col items-end gap-1">
-                  <span className="text-xs text-indigo-300">{clientReports(client.id).length} výkladov</span>
-                  <button onClick={(e) => { e.stopPropagation(); startEdit(client); }} className="text-xs px-2 py-1 rounded-lg border border-amber-300 text-amber-600 hover:bg-amber-50">Upraviť</button>
-                </div>
-              </div>
-            </GlassCard>
-          </motion.div>
-        ))}
+              </GlassCard>
+            </motion.div>
+          );
+        })}
       </div>
     </div>
   );

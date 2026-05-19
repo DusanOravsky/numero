@@ -33,6 +33,7 @@ export interface Client {
   partnerId?: string;
   childrenIds?: string[];
   notes?: string;
+  tags?: string[];
   createdAt: string;
 }
 

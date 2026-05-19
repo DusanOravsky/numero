@@ -16,6 +16,7 @@ import type { ThetaHealingResult } from '../engine/thetaHealingEngine';
 import { reduceToSingle } from '../engine/numerologyEngine';
 import { ClientSummary } from '../components/ClientSummary';
 import { ClientNumerology } from '../components/ClientNumerology';
+import { AIChat } from '../components/AIChat';
 import { ClientRelationships } from '../components/ClientRelationships';
 import { ClientExport } from '../components/ClientExport';
 import { SkeletonClientDashboard } from '../components/Skeleton';
@@ -102,6 +103,30 @@ export function ClientDashboard() {
         humanDesign={humanDesign}
         kabalah={kabalah}
         theta={theta}
+      />
+
+      {/* AI integrálny výklad pre klienta (D1) */}
+      <AIChat
+        context={{
+          name: client.name,
+          gender: client.gender,
+          birth: {
+            day: client.birthDay,
+            month: client.birthMonth,
+            year: client.birthYear,
+            hour: client.birthHour,
+            minute: client.birthMinute,
+            place: client.birthPlace,
+          },
+          numerology,
+          astrology,
+          humanDesign,
+          kabalah,
+          theta,
+        }}
+        title={`✦ AI výklad pre klienta: ${client.name}`}
+        initialUserMessage={`Vyhotov mi prosím profesionálny integratívny výklad pre klienta ${client.name}, ktorý môžem použiť počas konzultácie. Zameraj sa na hlavnú životnú tému, silné stránky, výzvy aktuálneho obdobia (ORV) a praktické odporúčania.`}
+        storageKey={`client-${client.id}`}
       />
 
       <ClientNumerology

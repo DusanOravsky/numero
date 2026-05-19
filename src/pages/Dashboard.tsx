@@ -13,6 +13,7 @@ import { calculateThetaHealing } from '../engine/thetaHealingEngine';
 import { orvDescriptions } from '../data/orvDescriptions';
 import { getDailyMantra, getDailyQuote } from '../data/mantrasAndQuotes';
 import { getDailyTarot } from '../data/tarotCards';
+import { AIChat } from '../components/AIChat';
 
 export function Dashboard() {
   const navigate = useNavigate();
@@ -286,6 +287,31 @@ export function Dashboard() {
           kabalah={fullResults.kabalah}
           theta={fullResults.theta}
           respectMethodPreference={false}
+        />
+      )}
+
+      {/* AI integrálny výklad (D1) */}
+      {profile && fullResults && (
+        <AIChat
+          context={{
+            name: profile.name,
+            gender: profile.gender,
+            birth: {
+              day: profile.birthDay,
+              month: profile.birthMonth,
+              year: profile.birthYear,
+              hour: profile.birthHour,
+              minute: profile.birthMinute,
+              place: profile.birthPlace,
+            },
+            numerology: fullResults.numerology,
+            astrology: fullResults.astrology,
+            humanDesign: fullResults.humanDesign,
+            kabalah: fullResults.kabalah,
+            theta: fullResults.theta,
+          }}
+          title="✦ AI integrálny výklad"
+          storageKey={`dashboard-${profile.id}`}
         />
       )}
 

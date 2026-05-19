@@ -8,6 +8,10 @@ import { APP_VERSION } from '../components/PWAPrompts';
 import { getErrorLog, clearErrorLog } from '../components/ErrorBoundary';
 import { getPerfLog, clearPerfLog } from '../hooks/usePerformanceMetrics';
 import { searchCities, findCity } from '../data/cities';
+import {
+  getApiKey, setApiKey, getModel, setModel, testApiKey,
+  CLAUDE_MODELS, type ClaudeModel,
+} from '../engine/aiInterpretation';
 
 export function SettingsPage() {
   const navigate = useNavigate();
@@ -21,6 +25,30 @@ export function SettingsPage() {
   const [editName, setEditName] = useState('');
   const [editGender, setEditGender] = useState<'male' | 'female' | ''>('');
   const [citySuggestions, setCitySuggestions] = useState<{ name: string }[]>([]);
+
+  // AI integrácia
+  const [aiKey, setAiKey] = useState(getApiKey());
+  const [aiModel, setAiModel] = useState<ClaudeModel>(getModel());
+  const [aiTesting, setAiTesting] = useState(false);
+  const [aiTestResult, setAiTestResult] = useState<{ ok: boolean; message: string } | null>(null);
+
+  const handleSaveApiKey = () => {
+    setApiKey(aiKey.trim());
+    setAiTestResult({ ok: true, message: aiKey.trim() ? 'Kľúč uložený.' : 'Kľúč vymazaný.' });
+  };
+
+  const handleTestKey = async () => {
+    setAiTesting(true);
+    setAiTestResult(null);
+    const result = await testApiKey(aiKey.trim());
+    setAiTestResult(result);
+    setAiTesting(false);
+  };
+
+  const handleModelChange = (m: ClaudeModel) => {
+    setAiModel(m);
+    setModel(m);
+  };
 
   const startEdit = (profileId: string) => {
     const p = profiles.find(pr => pr.id === profileId);
@@ -321,6 +349,90 @@ export function SettingsPage() {
             </>
           );
         })()}
+      </GlassCard>
+
+      {/* AI integrácia (D1) */}
+      <GlassCard>
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="font-medium text-white">✦ AI integrácia (Claude)</h3>
+          {aiKey && <span className="text-[10px] uppercase text-emerald-400 px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30">Aktívna</span>}
+        </div>
+        <p className="text-xs text-slate-400 mb-3">
+          Pre integratívne AI výklady cez Anthropic Claude. <strong>API kľúč sa ukladá iba lokálne</strong> v tvojom prehliadači a posiela sa výlučne na <span className="font-mono">api.anthropic.com</span>.
+          Získaš ho na <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noreferrer" className="text-indigo-400 underline hover:text-indigo-300">console.anthropic.com</a> ($5 minimum credit).
+        </p>
+
+        <div className="space-y-3">
+          <div>
+            <label className="block text-xs text-slate-400 mb-1">API kľúč</label>
+            <div className="flex gap-2">
+              <input
+                type="password"
+                value={aiKey}
+                onChange={(e) => setAiKey(e.target.value)}
+                placeholder="sk-ant-api03-…"
+                className="flex-1 px-3 py-2 rounded-xl bg-slate-800/50 border border-indigo-500/30 text-white text-sm font-mono focus:outline-none focus:border-indigo-500"
+              />
+              <button
+                onClick={handleSaveApiKey}
+                className="px-4 py-2 rounded-xl bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-500"
+              >
+                Uložiť
+              </button>
+              <button
+                onClick={handleTestKey}
+                disabled={aiTesting || !aiKey.trim()}
+                className="px-4 py-2 rounded-xl border border-slate-300 text-slate-600 hover:bg-slate-50 text-sm disabled:opacity-40"
+              >
+                {aiTesting ? '⋯' : 'Test'}
+              </button>
+            </div>
+            {aiTestResult && (
+              <p className={`text-xs mt-2 ${aiTestResult.ok ? 'text-emerald-300' : 'text-rose-300'}`}>
+                {aiTestResult.ok ? '✓' : '✗'} {aiTestResult.message}
+              </p>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-xs text-slate-400 mb-1">Model</label>
+            <div className="space-y-1">
+              {CLAUDE_MODELS.map(m => (
+                <label key={m.id} className={`flex items-center gap-3 p-2 rounded-lg border cursor-pointer transition-colors ${
+                  aiModel === m.id
+                    ? 'bg-indigo-500/15 border-indigo-500'
+                    : 'border-slate-700 hover:bg-slate-800/40'
+                }`}>
+                  <input
+                    type="radio"
+                    name="claude-model"
+                    checked={aiModel === m.id}
+                    onChange={() => handleModelChange(m.id)}
+                    className="accent-indigo-600"
+                  />
+                  <div className="flex-1">
+                    <p className="text-sm text-white">{m.label}</p>
+                    <p className="text-[11px] text-slate-500 font-mono">{m.id} · {m.cost}</p>
+                  </div>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          {aiKey && (
+            <button
+              onClick={() => {
+                if (!confirm('Naozaj odstrániť API kľúč?')) return;
+                setApiKey('');
+                setAiKey('');
+                setAiTestResult({ ok: true, message: 'Kľúč odstránený.' });
+              }}
+              className="text-xs text-rose-400 hover:text-rose-300 underline"
+            >
+              Odstrániť kľúč
+            </button>
+          )}
+        </div>
       </GlassCard>
 
       <GlassCard>

@@ -15,6 +15,7 @@ export function SettingsPage() {
   const [editMinute, setEditMinute] = useState('');
   const [editPlace, setEditPlace] = useState('');
   const [editName, setEditName] = useState('');
+  const [editGender, setEditGender] = useState<'male' | 'female' | 'other' | ''>('');
   const [citySuggestions, setCitySuggestions] = useState<{ name: string }[]>([]);
 
   const startEdit = (profileId: string) => {
@@ -22,6 +23,7 @@ export function SettingsPage() {
     if (!p) return;
     setEditingId(profileId);
     setEditName(p.name);
+    setEditGender(p.gender || '');
     setEditHour(p.birthHour !== undefined ? String(p.birthHour) : '');
     setEditMinute(p.birthMinute !== undefined ? String(p.birthMinute) : '');
     setEditPlace(p.birthPlace || '');
@@ -37,6 +39,7 @@ export function SettingsPage() {
     const city = findCity(editPlace);
     updateProfile(editingId, {
       name: trimmedName,
+      gender: editGender || undefined,
       birthHour: editHour ? parseInt(editHour) : undefined,
       birthMinute: editMinute ? parseInt(editMinute) : undefined,
       birthPlace: editPlace.trim() || undefined,
@@ -114,6 +117,14 @@ export function SettingsPage() {
                   <div>
                     <label className="block text-xs text-slate-500 mb-1">Meno</label>
                     <input type="text" value={editName} onChange={e => setEditName(e.target.value)} className="w-full px-3 py-2 rounded-lg bg-white border border-slate-300 text-slate-800 text-sm" />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-slate-500 mb-1">Pohlavie</label>
+                    <div className="grid grid-cols-3 gap-2">
+                      <button type="button" onClick={() => setEditGender('male')} className={`py-1.5 rounded-lg text-xs border-2 ${editGender === 'male' ? 'border-blue-500 bg-blue-50 text-blue-700 font-medium' : 'border-slate-200 bg-white text-slate-600'}`}>♂ Muž</button>
+                      <button type="button" onClick={() => setEditGender('female')} className={`py-1.5 rounded-lg text-xs border-2 ${editGender === 'female' ? 'border-rose-500 bg-rose-50 text-rose-700 font-medium' : 'border-slate-200 bg-white text-slate-600'}`}>♀ Žena</button>
+                      <button type="button" onClick={() => setEditGender(editGender === 'other' ? '' : 'other')} className={`py-1.5 rounded-lg text-xs border-2 ${editGender === 'other' ? 'border-slate-500 bg-slate-100 text-slate-700 font-medium' : 'border-slate-200 bg-white text-slate-600'}`}>Iné</button>
+                    </div>
                   </div>
                   <div>
                     <label className="block text-xs text-slate-500 mb-1">Čas narodenia (24h)</label>

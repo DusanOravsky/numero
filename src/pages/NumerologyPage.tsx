@@ -155,7 +155,7 @@ export function NumerologyPage() {
                       </p>
                     </>
                   ) : devResult ? (
-                    <DevelopmentalNumerologyView result={devResult} />
+                    <DevelopmentalNumerologyView result={devResult} gender={profile?.gender} />
                   ) : null}
                 </GlassCard>
               </div>

@@ -13,6 +13,7 @@ export function ClientsPage() {
   const [showForm, setShowForm] = useState(false);
   const [editingClient, setEditingClient] = useState<Client | null>(null);
   const [name, setName] = useState('');
+  const [gender, setGender] = useState<'male' | 'female' | 'other' | ''>('');
   const [day, setDay] = useState('');
   const [month, setMonth] = useState('');
   const [year, setYear] = useState('');
@@ -25,13 +26,14 @@ export function ClientsPage() {
   const [formError, setFormError] = useState('');
 
   const resetForm = () => {
-    setName(''); setDay(''); setMonth(''); setYear(''); setHour(''); setMinute(''); setBirthPlace(''); setNotes('');
+    setName(''); setGender(''); setDay(''); setMonth(''); setYear(''); setHour(''); setMinute(''); setBirthPlace(''); setNotes('');
     setEditingClient(null); setCitySuggestions([]);
   };
 
   const startEdit = (client: Client) => {
     setEditingClient(client);
     setName(client.name);
+    setGender(client.gender || '');
     setDay(String(client.birthDay));
     setMonth(String(client.birthMonth));
     setYear(String(client.birthYear));
@@ -63,6 +65,7 @@ export function ClientsPage() {
     const city = findCity(birthPlace);
     const data = {
       name: name.trim(),
+      gender: gender || undefined,
       birthDay: parseInt(day),
       birthMonth: parseInt(month),
       birthYear: parseInt(year),
@@ -203,6 +206,14 @@ export function ClientsPage() {
             <div>
               <label className="block text-sm text-slate-400 mb-1">Meno klienta</label>
               <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Meno a priezvisko" className="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white focus:outline-none focus:border-indigo-500/50" />
+            </div>
+            <div>
+              <label className="block text-sm text-slate-400 mb-1">Pohlavie (voliteľné)</label>
+              <div className="grid grid-cols-3 gap-2">
+                <button type="button" onClick={() => setGender('male')} className={`py-2.5 rounded-xl text-sm border-2 transition-all ${gender === 'male' ? 'border-blue-500 bg-blue-50 text-blue-700 font-medium' : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'}`}>♂ Muž</button>
+                <button type="button" onClick={() => setGender('female')} className={`py-2.5 rounded-xl text-sm border-2 transition-all ${gender === 'female' ? 'border-rose-500 bg-rose-50 text-rose-700 font-medium' : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'}`}>♀ Žena</button>
+                <button type="button" onClick={() => setGender(gender === 'other' ? '' : 'other')} className={`py-2.5 rounded-xl text-sm border-2 transition-all ${gender === 'other' ? 'border-slate-500 bg-slate-100 text-slate-700 font-medium' : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'}`}>Iné</button>
+              </div>
             </div>
             <div>
               <label className="block text-sm text-slate-400 mb-1">Dátum narodenia</label>

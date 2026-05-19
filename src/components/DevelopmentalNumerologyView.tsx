@@ -5,9 +5,11 @@ import { developmentalMeanings, developmentalGridIntro } from '../data/developme
 
 interface Props {
   result: DevelopmentalNumerologyResult;
+  /** Biologické pohlavie osoby — pre porovnanie s polaritou ega */
+  gender?: 'male' | 'female' | 'other';
 }
 
-export function DevelopmentalNumerologyView({ result }: Props) {
+export function DevelopmentalNumerologyView({ result, gender }: Props) {
   const [selected, setSelected] = useState<number | null>(null);
 
   const layout = [
@@ -96,10 +98,33 @@ export function DevelopmentalNumerologyView({ result }: Props) {
               ? 'Nepárny počet jednotiek – energia dávania, vymedzovania priestoru, ochrany, akcie a iniciatívy.'
               : 'Párny počet jednotiek – energia prijímania, otvorenia, plnenia priestoru teplom, trpezlivosti.'}
           </p>
-          <p className="text-[11px] text-slate-500 italic mt-1">
-            Polaritu ega porovnaj so svojím biologickým pohlavím – ak je rovnaká, rozvíjaš svoju prirodzenú polaritu;
-            ak je opačná, tvojou životnou úlohou je naučiť sa aj druhú polaritu.
-          </p>
+
+          {/* Kontextový výklad podľa pohlavia */}
+          {gender && gender !== 'other' && (() => {
+            const genderMatchesEgo =
+              (gender === 'male' && result.egoPolarity === 'masculine') ||
+              (gender === 'female' && result.egoPolarity === 'feminine');
+            return (
+              <div className={`mt-2 p-2 rounded-lg ${genderMatchesEgo ? 'bg-green-50 border border-green-200' : 'bg-amber-50 border border-amber-200'}`}>
+                <p className={`text-[11px] font-medium ${genderMatchesEgo ? 'text-green-700' : 'text-amber-700'}`}>
+                  {genderMatchesEgo
+                    ? `✓ Súlad: ${gender === 'male' ? 'muž' : 'žena'} s ${result.egoPolarity === 'masculine' ? 'mužským' : 'ženským'} egom`
+                    : `⚠ Kríženie: ${gender === 'male' ? 'muž' : 'žena'} s ${result.egoPolarity === 'masculine' ? 'mužským' : 'ženským'} egom`}
+                </p>
+                <p className="text-[11px] text-slate-600 mt-1">
+                  {genderMatchesEgo
+                    ? 'Polarita ega je v súlade s tvojim biologickým pohlavím – tvojou úlohou je rozvíjať túto prirodzenú polaritu s múdrosťou.'
+                    : `Tvoje biologické pohlavie a vibrácia ega sú opačné. Životnou úlohou je vedome sa naučiť ${gender === 'male' ? 'mužský' : 'ženský'} princíp – to, čo prirodzene poznáš ${gender === 'male' ? 'zo ženského sveta' : 'z mužského sveta'}, doplniť o opačnú polaritu, aby si žil/a v plnom potenciáli.`}
+                </p>
+              </div>
+            );
+          })()}
+
+          {!gender && (
+            <p className="text-[11px] text-slate-500 italic mt-1">
+              Pre presnejší výklad pridaj v profile pohlavie – ukážeme, či je polarita ega v súlade s biologickým pohlavím alebo či je tvojou úlohou naučiť sa opačnú polaritu.
+            </p>
+          )}
         </div>
       ) : (
         <div className="p-3 rounded-xl border bg-slate-50 border-slate-200">

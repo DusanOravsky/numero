@@ -1,9 +1,12 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+export type Gender = 'male' | 'female' | 'other';
+
 export interface UserProfile {
   id: string;
   name: string;
+  gender?: Gender;
   birthDay: number;
   birthMonth: number;
   birthYear: number;
@@ -18,6 +21,7 @@ export interface UserProfile {
 export interface Client {
   id: string;
   name: string;
+  gender?: Gender;
   birthDay: number;
   birthMonth: number;
   birthYear: number;

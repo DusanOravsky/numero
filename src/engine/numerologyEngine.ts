@@ -71,6 +71,18 @@ export function buildGrid(day: number, month: number, year: number): { value: nu
   const monthRed = reduceToSingle(month);
   const yearRed = reduceToSingle(year);
 
+  // Dvojciferné medzisúčty roku (Steinová school):
+  // 1985 → 1+9+8+5 = 23 → cifry 2,3 idú do mriežky pred konečným 5
+  // Ak je medzisúčet jednociferný, neopakuje sa.
+  const yearSum = String(year).split('').reduce((s, d) => s + parseInt(d, 10), 0);
+  const yearMidDigits: number[] = [];
+  if (yearSum >= 10) {
+    String(yearSum).split('').forEach(d => {
+      const n = parseInt(d, 10);
+      if (n >= 1 && n <= 9) yearMidDigits.push(n);
+    });
+  }
+
   const supplementary: number[] = [];
   if (day > 9) supplementary.push(dayRed);
   if (month > 9) supplementary.push(monthRed);
@@ -80,6 +92,11 @@ export function buildGrid(day: number, month: number, year: number): { value: nu
 
   baseDigits.forEach(d => {
     if (d >= 1 && d <= 9) grid[d].push({ value: d, isBase: true });
+  });
+
+  // Cifry dvojciferného medzisúčtu roku (Steinová: ide do mriežky pred konečnou redukciou)
+  yearMidDigits.forEach(d => {
+    grid[d].push({ value: d, isBase: false });
   });
 
   supplementary.forEach(d => {

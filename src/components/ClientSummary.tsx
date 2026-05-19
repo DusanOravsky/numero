@@ -7,6 +7,7 @@ import type { KabalahResult } from '../engine/kabalahEngine';
 import type { ThetaHealingResult } from '../engine/thetaHealingEngine';
 import { reduceToSingle } from '../engine/numerologyEngine';
 import { calculateDevelopmentalNumerology } from '../engine/developmentalNumerologyEngine';
+import { useStore } from '../store/useStore';
 import { planetInSignDescriptions } from '../data/planetSignDescriptions';
 import { orvDescriptions } from '../data/orvDescriptions';
 import { getGeneKeyByGate } from '../data/geneKeys';
@@ -26,6 +27,7 @@ interface ClientSummaryProps {
 }
 
 export function ClientSummary({ clientName, numerology, astrology, humanDesign, kabalah, theta }: ClientSummaryProps) {
+  const numerologyMethod = useStore(s => s.numerologyMethod);
   const lpInfo = lifePaths[String(numerology.lifePathNumber > 9 ? reduceToSingle(numerology.lifePathNumber) : numerology.lifePathNumber)];
 
   // Vývojová mriežka (Lívia / Červenák)
@@ -69,15 +71,13 @@ export function ClientSummary({ clientName, numerology, astrology, humanDesign, 
             <strong>Tieň:</strong> {lpInfo?.shadow || '-'}.
           </p>
 
-          {/* Dva pohľady na mriežku */}
-          <div className="rounded-xl border border-slate-200 bg-white p-4 space-y-3">
-            <p className="font-medium text-slate-800">Dva pohľady na numerologickú mriežku</p>
-
-            <div className="border-l-2 border-blue-300 pl-3 space-y-1">
+          {/* Pohľad na mriežku — len pre aktívnu metódu */}
+          {numerologyMethod === 'characterological' && (
+            <div className="rounded-xl border border-blue-200 bg-blue-50/40 p-4 space-y-2">
               <p className="text-xs text-blue-700 font-semibold uppercase tracking-wide">
                 Charakterová mriežka (vrodené kvality)
               </p>
-              <p className="text-xs text-slate-600">
+              <p className="text-xs text-slate-700">
                 {numerology.fullPlanes.length > 0 && (
                   <><strong>Plné roviny:</strong> {numerology.fullPlanes.join(', ')}. Tieto kvality má od narodenia. </>
                 )}
@@ -88,16 +88,18 @@ export function ClientSummary({ clientName, numerology, astrology, humanDesign, 
                   <><strong>Izolované:</strong> {numerology.isolatedNumbers.join(', ')} – energie odrezané od zvyšku, vyžadujú vedomú integráciu. </>
                 )}
               </p>
-              <p className="text-[11px] text-slate-400 italic">
+              <p className="text-[11px] text-slate-500 italic">
                 Zdroj: Robin Steinová – Numerológia: Čísla Lásky
               </p>
             </div>
+          )}
 
-            <div className="border-l-2 border-amber-300 pl-3 space-y-1">
+          {numerologyMethod === 'developmental' && (
+            <div className="rounded-xl border border-amber-200 bg-amber-50/40 p-4 space-y-2">
               <p className="text-xs text-amber-700 font-semibold uppercase tracking-wide">
                 Vývojová mriežka (životné úlohy)
               </p>
-              <p className="text-xs text-slate-600">
+              <p className="text-xs text-slate-700">
                 {devStrong.length > 0 && (
                   <>
                     <strong>Silné oblasti:</strong>{' '}
@@ -132,15 +134,11 @@ export function ClientSummary({ clientName, numerology, astrology, humanDesign, 
                   <em>Rok ≥ 2000 sa počíta špeciálne (20 + zvyšok).</em>
                 )}
               </p>
-              <p className="text-[11px] text-slate-400 italic">
+              <p className="text-[11px] text-slate-500 italic">
                 Zdroj: kniha Lívia Mičková – Duchovná numerológia
               </p>
             </div>
-
-            <p className="text-[11px] text-slate-500">
-              Obe metódy sa dopĺňajú – Charakterová ukazuje, <em>kto si</em>, Vývojová <em>čo si sa prišiel naučiť</em>. Aktívnu metódu pre detailné zobrazenie si môžeš zmeniť v Nastaveniach.
-            </p>
-          </div>
+          )}
 
           <p>
             <strong>Astrológia</strong> dopĺňa tento obraz: Slnko v <strong>{astrology.sunSign.name}</strong> ({astrology.sunSign.element}) –

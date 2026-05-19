@@ -4,6 +4,35 @@ All notable changes to this project are documented in this file. Dates are
 in ISO 8601 (YYYY-MM-DD). The format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 2.2.0 — 2026-05-19
+
+PWA stratégia: offline-first + auto-popup s offline-safe update flow.
+
+**Cieľ:** appka musí fungovať aj keď je GitHub Pages offline. Ale keď
+je nová verzia dostupná, ukáž to. A keď klikneš "Aktualizovať" počas
+GitHub outage, neznič cache.
+
+Zmeny:
+- workbox: NetworkFirst → CacheFirst pre HTML navigation requests
+  → app sa otvára okamžite z cache, nikdy nečaká na sieť
+- workbox: skipWaiting/clientsClaim ODSTRÁNENÉ
+  → SW sa neaktivuje sám, čaká na manuálny krok
+- Auto-update prompt sa zobrazí IBA RAZ po reálnom upgrade
+  (porovnanie localStorage.app-version vs APP_VERSION)
+- handleUpdate volá nový checkForUpdate() ktorý:
+  - 1. ping HEAD na index.html (online check, no-store)
+  - 2. ak online → SW.update() + reload
+  - 3. ak offline → alert "GitHub je offline" + appka beží ďalej
+- forceUpdate() (manuálne v Settings) tiež má online-check
+  pred mazaním cache
+- Settings → "Skontrolovať update" tlačidlo (manuálny trigger)
+- Settings → "Vynútiť cache wipe" zostáva ako fallback v expandable
+
+Rieši:
+- v2.1.4 infinite loop "Nová verzia" prompt
+- offline crash pri "Aktualizovať" keď je GitHub down
+- nepríjemný auto-popup pri každom controllerchange evente
+
 ## 2.1.5 — 2026-05-19
 
 PWA update infinite-loop fix:

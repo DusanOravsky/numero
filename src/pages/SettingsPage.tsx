@@ -3,7 +3,7 @@ import { useStore } from '../store/useStore';
 import type { NumerologyMethod } from '../store/useStore';
 import { GlassCard } from '../components/GlassCard';
 import { useNavigate } from 'react-router-dom';
-import { APP_VERSION, forceUpdate, clearAIData } from '../components/PWAPrompts';
+import { APP_VERSION, forceUpdate, checkForUpdate, clearAIData } from '../components/PWAPrompts';
 import { getErrorLog, clearErrorLog } from '../components/ErrorBoundary';
 import { getPerfLog, clearPerfLog } from '../hooks/usePerformanceMetrics';
 import { searchCities, findCity } from '../data/cities';
@@ -399,18 +399,44 @@ export function SettingsPage() {
           <p>Verzia: {APP_VERSION}</p>
           <p>Offline-first PWA. Všetky dáta lokálne.</p>
         </div>
-        <button
-          onClick={async () => {
-            if (!confirm('Vynútiť stiahnutie najnovšej verzie?\n\nUnregister-uje service worker, vyčistí cache a obnoví aplikáciu. Tvoje dáta (profily, klienti) zostávajú bezpečne uložené v localStorage.')) return;
-            await forceUpdate();
-          }}
-          className="w-full py-2.5 rounded-xl border border-amber-300 text-amber-700 hover:bg-amber-50 text-sm font-medium"
-        >
-          ↻ Vynútiť aktualizáciu (cache wipe)
-        </button>
-        <p className="text-[11px] text-slate-500 mt-2">
-          Ak vidíš starú verziu napriek deploy-u, použije sa unregister všetkých service workerov a vymazanie cache. Profily ani klienti sa nestratia.
-        </p>
+        <div className="space-y-2">
+          <button
+            onClick={async () => {
+              const result = await checkForUpdate();
+              if (!result.online) {
+                alert('GitHub je offline alebo nedostupný. Aplikácia funguje ďalej z lokálnej cache. Skús neskôr.');
+              }
+              // Ak je online, app sa už reload-ne sama z checkForUpdate()
+            }}
+            className="w-full py-2.5 rounded-xl bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-500"
+          >
+            ↻ Skontrolovať update
+          </button>
+          <p className="text-[11px] text-slate-500">
+            Stiahne najnovšiu verziu zo serveru ak je dostupná. Ak je GitHub offline, appka zostane na aktuálnej verzii a nič sa nestratí.
+          </p>
+        </div>
+        <details className="mt-4">
+          <summary className="text-xs text-slate-400 cursor-pointer hover:text-slate-300 select-none">Pokročilé: vynútiť cache wipe</summary>
+          <div className="mt-2 p-3 rounded-lg bg-amber-50 border border-amber-200">
+            <p className="text-xs text-slate-600 mb-2">
+              Použiť IBA ak "Skontrolovať update" opakovane zlyháva (PWA cache môže byť poškodená).
+              <strong className="block mt-1 text-amber-700">Pozor: vyžaduje online pripojenie</strong> — bez siete by sa appka po reload nedokázala načítať.
+            </p>
+            <button
+              onClick={async () => {
+                if (!confirm('Vynútiť stiahnutie najnovšej verzie?\n\nUnregister-uje service worker, vyčistí cache a obnoví aplikáciu.\nVYŽADUJE ONLINE pripojenie.\n\nTvoje dáta (profily, klienti) zostávajú v localStorage.')) return;
+                const result = await forceUpdate();
+                if (!result.online) {
+                  alert('GitHub je offline. Cache wipe sa neuskutočnil — appka by sa po reload nedokázala načítať. Skús keď budeš online.');
+                }
+              }}
+              className="w-full py-2 rounded-xl border border-amber-300 text-amber-700 hover:bg-amber-100 text-xs font-medium"
+            >
+              ↻ Vynútiť cache wipe
+            </button>
+          </div>
+        </details>
       </GlassCard>
 
       {/* Performance metrics (C9) */}

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const APP_VERSION = '2.1.5';
+const APP_VERSION = '2.2.0';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -68,84 +68,25 @@ export function PWAPrompts() {
     window.addEventListener('online', onOnline);
     window.addEventListener('offline', onOffline);
 
-    // Version check - show update prompt if version changed.
-    // setState in effect is intentional here: sync with external state (localStorage) on mount.
+    // Auto-update prompt: zobrazí sa IBA raz po reálnom upgrade — keď sa
+    // localStorage.app-version (zo starej verzie) líši od aktuálne načítanej
+    // APP_VERSION. Po zatvorení promptu (Aktualizovať alebo Neskôr) sa verzia
+    // synchronizuje a prompt sa už znova nezobrazí pre rovnakú verziu.
     const lastVersion = localStorage.getItem('app-version');
     if (lastVersion && lastVersion !== APP_VERSION) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setShowUpdate(true);
-      // pri zmene verzie tiež reset "dismissed install" – môže si znova ukázať
       localStorage.removeItem('pwa-install-dismissed');
       localStorage.removeItem('pwa-ios-hint-dismissed');
+    } else if (!lastVersion) {
+      // First load — uložíme aktuálnu verziu
+      localStorage.setItem('app-version', APP_VERSION);
     }
-    localStorage.setItem('app-version', APP_VERSION);
-
-    // Service Worker update detection — funguje na desktop + mobile PWA.
-    // Žiadny periodický polling — kontrolujeme iba pri eventoch (battery-friendly):
-    //  1. mount (raz)
-    //  2. visibilitychange — keď user otvorí appku z pozadia, ale max raz za 6h
-    //  3. controllerchange — keď SW prevezme kontrolu (po skipWaiting)
-    let activeRegistration: ServiceWorkerRegistration | null = null;
-    let lastUpdateCheck = 0;
-    const UPDATE_THROTTLE_MS = 6 * 60 * 60 * 1000; // 6 hodín
-
-    const checkForUpdate = () => {
-      if (!activeRegistration) return;
-      const now = Date.now();
-      if (now - lastUpdateCheck < UPDATE_THROTTLE_MS) return;
-      lastUpdateCheck = now;
-      activeRegistration.update().catch(() => { /* offline OK */ });
-    };
-
-    const onControllerChange = () => {
-      // controllerchange = nový SW prevzal kontrolu (skipWaiting + clientsClaim).
-      // Prompt zobrazíme IBA ak je nová verzia naozaj iná než tá ktorú už máme
-      // — bez tejto checky by sa prompt zacyklil pri každom reloade po update.
-      const lastV = localStorage.getItem('app-version');
-      if (lastV && lastV !== APP_VERSION) {
-        setShowUpdate(true);
-      }
-    };
-
-    const onVisibilityChange = () => {
-      // Pri návrate z pozadia skontroluj update — ale max raz za 6h
-      if (!document.hidden) checkForUpdate();
-    };
-
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.ready.then(registration => {
-        activeRegistration = registration;
-
-        registration.addEventListener('updatefound', () => {
-          const newWorker = registration.installing;
-          if (newWorker) {
-            newWorker.addEventListener('statechange', () => {
-              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                // Pre kompatibilitu pošleme aj manuálny SKIP_WAITING
-                newWorker.postMessage({ type: 'SKIP_WAITING' });
-              }
-            });
-          }
-        });
-
-        // Initial check pri mount (raz)
-        lastUpdateCheck = Date.now();
-        registration.update().catch(() => { /* offline OK */ });
-      });
-
-      navigator.serviceWorker.addEventListener('controllerchange', onControllerChange);
-    }
-
-    document.addEventListener('visibilitychange', onVisibilityChange);
 
     return () => {
       window.removeEventListener('beforeinstallprompt', handler);
       window.removeEventListener('online', onOnline);
       window.removeEventListener('offline', onOffline);
-      document.removeEventListener('visibilitychange', onVisibilityChange);
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.removeEventListener('controllerchange', onControllerChange);
-      }
     };
   }, []);
 
@@ -166,8 +107,21 @@ export function PWAPrompts() {
   };
 
   const handleUpdate = async () => {
+    // Online check pred reloadom — ak je server offline, nerobíme nič
+    // (appka beží ďalej z cache, prompt zatvoríme).
     setShowUpdate(false);
-    await forceUpdate();
+    localStorage.setItem('app-version', APP_VERSION);  // sync, aby sa neukázal znova
+    const result = await checkForUpdate();
+    if (!result.online) {
+      alert('GitHub je offline. Aplikácia beží ďalej z lokálnej cache. Skús neskôr cez Settings → Skontrolovať update.');
+    }
+    // Ak online, checkForUpdate sám vykoná reload
+  };
+
+  const dismissUpdate = () => {
+    setShowUpdate(false);
+    // Synchronizujeme verziu — prompt sa znova neukáže pri ďalšom otvorení
+    localStorage.setItem('app-version', APP_VERSION);
   };
 
   return (
@@ -245,7 +199,7 @@ export function PWAPrompts() {
         )}
       </AnimatePresence>
 
-      {/* Update prompt */}
+      {/* Update prompt — zobrazí sa raz po reálnom upgrade */}
       <AnimatePresence>
         {showUpdate && (
           <motion.div
@@ -255,19 +209,17 @@ export function PWAPrompts() {
             className="fixed top-4 left-4 right-4 z-[200] bg-white rounded-2xl shadow-xl border border-indigo-200 p-4 max-w-sm mx-auto"
           >
             <div className="flex items-start gap-3">
-              <div className="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center text-lg">
-                ↑
-              </div>
+              <div className="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center text-lg">↑</div>
               <div className="flex-1">
                 <p className="font-medium text-slate-800 text-sm">Nová verzia {APP_VERSION}</p>
-                <p className="text-xs text-slate-500 mt-0.5">Dostupná aktualizácia s novými funkciami a opravami</p>
+                <p className="text-xs text-slate-500 mt-0.5">Stiahni najnovšiu verziu zo serveru. Bez internetu sa appka nezmení.</p>
               </div>
             </div>
             <div className="flex gap-2 mt-3">
-              <button onClick={handleUpdate} className="flex-1 py-2 rounded-xl bg-green-600 text-white text-sm font-medium">
+              <button onClick={handleUpdate} className="flex-1 py-2 rounded-xl bg-green-600 text-white text-sm font-medium hover:bg-green-500">
                 Aktualizovať
               </button>
-              <button onClick={() => setShowUpdate(false)} className="px-4 py-2 rounded-xl text-slate-500 text-sm">
+              <button onClick={dismissUpdate} className="px-4 py-2 rounded-xl text-slate-500 text-sm hover:bg-slate-50">
                 Neskôr
               </button>
             </div>
@@ -281,17 +233,68 @@ export function PWAPrompts() {
 export { APP_VERSION };
 
 /**
- * Force-refresh: unregister všetkých service workerov, vyčistí všetky cache
- * storage, a presunie na home (čo si stiahne novú verziu). Pomáha keď PWA
- * drží starú verziu napriek deploy-u.
+ * Bezpečná manuálna kontrola update — Dušok-style.
  *
- * Profilové dáta (numero-store) sa nemažú — zostávajú v localStorage.
- * AI kľúč a chat history sa NEZMAŽÚ tu — na to je clearAIData().
+ *  1. Najprv ping na index.html (nech zistíme či je server online)
+ *  2. Ak je server online → SW.update() stiahne nové assety → reload
+ *  3. Ak je server OFFLINE → vrátime { online: false } bez zmeny cache
+ *     → user vidí dialog "GitHub je offline, skús neskôr" a app
+ *       NIČ NESTRATÍ, beží ďalej z cache.
+ *
+ *  Profilové dáta (numero-store) sa NIKDY nemažú — sú v localStorage,
+ *  ktorý SW vôbec nečíta.
  */
-export async function forceUpdate(): Promise<void> {
+export async function checkForUpdate(): Promise<{ online: boolean; updated: boolean }> {
+  // Ping serveru (s cache: 'no-store' aby sme dostali skutočný stav siete,
+  // nie cached HTML). Ak fail → server offline alebo CORS issue.
   try {
-    // Označ že sme už na aktuálnej verzii — po reload sa prompt nezobrazí
-    // znova (lebo lastV === APP_VERSION).
+    const indexUrl = window.location.origin + (import.meta.env.BASE_URL || '/');
+    const response = await fetch(indexUrl, { cache: 'no-store', method: 'HEAD' });
+    if (!response.ok) return { online: false, updated: false };
+  } catch {
+    return { online: false, updated: false };
+  }
+
+  // Server je online. Necháme SW skontrolovať update bez mazania cache.
+  // Ak je k dispozícii nová verzia, SW sa nainštaluje na pozadí. Reload
+  // potom použije novú verziu.
+  try {
+    if ('serviceWorker' in navigator) {
+      const regs = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(regs.map(r => r.update()));
+    }
+  } catch {
+    // SW update zlyhal, ale server je online — pravdepodobne CSP issue.
+    // Pokračujeme s reloadom — browser stiahne čerstvé HTML a assety.
+  }
+
+  // Označ že sme schválili update (no-op ak verzia ostala rovnaká)
+  localStorage.setItem('app-version', APP_VERSION);
+  // Hard reload — vynúti fetch index.html (HTML sa stiahne čerstvý ak je
+  // bundle hash iný; ak je rovnaký, SW vráti cached → app sa neaktualizuje
+  // lebo nie je čo aktualizovať).
+  window.location.href = window.location.origin + (import.meta.env.BASE_URL || '/') + '?check=' + Date.now();
+  return { online: true, updated: true };
+}
+
+/**
+ * Tvrdá force-update: unregister všetkých SW + zmazanie všetkej cache.
+ * Použiť IBA ak checkForUpdate() opakovane zlyhá (PWA cache corrupted).
+ *
+ * **POZOR:** Ak je server offline pri tomto úkonu, app sa po reload
+ * nemôže načítať. Funkcia kontroluje server pred zmazaním cache.
+ */
+export async function forceUpdate(): Promise<{ online: boolean }> {
+  // Najprv overíme online stav — ak je server unreachable, nemažeme cache!
+  try {
+    const indexUrl = window.location.origin + (import.meta.env.BASE_URL || '/');
+    const response = await fetch(indexUrl, { cache: 'no-store', method: 'HEAD' });
+    if (!response.ok) return { online: false };
+  } catch {
+    return { online: false };
+  }
+
+  try {
     localStorage.setItem('app-version', APP_VERSION);
     if ('serviceWorker' in navigator) {
       const regs = await navigator.serviceWorker.getRegistrations();
@@ -302,10 +305,10 @@ export async function forceUpdate(): Promise<void> {
       await Promise.all(keys.map(k => caches.delete(k)));
     }
   } catch {
-    // ignore — best effort
+    // ignore
   }
-  // Hard reload na home (vynúti čerstvý fetch index.html + bundle)
   window.location.href = window.location.origin + (import.meta.env.BASE_URL || '/') + '?fresh=' + Date.now();
+  return { online: true };
 }
 
 /**

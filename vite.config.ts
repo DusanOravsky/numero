@@ -37,38 +37,33 @@ export default defineConfig({
         ]
       },
       workbox: {
-        // index.html je v precache (potrebné pre offline navigateFallback),
-        // ale runtime NetworkFirst handler ho prebíja pre online requests:
-        //   Online: NetworkFirst → fresh index.html → update detection ✓
-        //   Offline: NetworkFirst timeout (3s) → fallback na cache → app funguje ✓
+        // OFFLINE-FIRST stratégia s MANUÁLNYM update.
+        //  - Všetko cache-first → app sa otvorí okamžite aj keď je GitHub offline
+        //  - Žiadny skipWaiting / clientsClaim → SW čaká kým ho user manuálne aktivuje
+        //  - Update zmení iba ak user klikne "Aktualizovať" v Settings
         globPatterns: ['**/*.{js,css,html,ico,png,svg,json,webmanifest}'],
         cleanupOutdatedCaches: true,
-        skipWaiting: true,
-        clientsClaim: true,
-        // Pre offline SPA route reloady — fallback na precached index.html
-        // (workbox cache rovno indexovú stránku pri inštalácii, takže
-        // offline reload na /numero/numerology funguje)
+        // skipWaiting/clientsClaim ZÁMERNE NEDÁVAME — chceme manuálne riadený update
         navigateFallback: process.env.GITHUB_ACTIONS ? '/numero/index.html' : '/index.html',
         navigateFallbackDenylist: [/^\/api\//, /^\/_/, /\.[a-z0-9]{2,5}$/i],
         runtimeCaching: [
           {
-            // HTML / SPA navigations: NetworkFirst s 3s timeout.
-            // Online → čerstvý → update detection. Offline → cache fallback.
+            // HTML / SPA navigations: CacheFirst → okamžitý load aj offline.
+            // Cache sa update-uje IBA keď user manuálne spustí update.
             urlPattern: ({ request }) => request.mode === 'navigate',
-            handler: 'NetworkFirst',
+            handler: 'CacheFirst',
             options: {
               cacheName: 'navigations',
-              networkTimeoutSeconds: 3,
-              expiration: { maxEntries: 5, maxAgeSeconds: 30 * 24 * 60 * 60 },
+              expiration: { maxEntries: 5, maxAgeSeconds: 365 * 24 * 60 * 60 },
             },
           },
           {
-            // App shell JS/CSS chunks (hashed names, immutable) — cache-first OK
+            // App shell JS/CSS chunks (hashed names, immutable)
             urlPattern: /\/assets\/.*\.(?:js|css)$/i,
             handler: 'CacheFirst',
             options: {
               cacheName: 'assets',
-              expiration: { maxEntries: 60, maxAgeSeconds: 30 * 24 * 60 * 60 },
+              expiration: { maxEntries: 60, maxAgeSeconds: 365 * 24 * 60 * 60 },
             },
           },
           {
@@ -77,7 +72,7 @@ export default defineConfig({
             handler: 'CacheFirst',
             options: {
               cacheName: 'images',
-              expiration: { maxEntries: 50, maxAgeSeconds: 30 * 24 * 60 * 60 },
+              expiration: { maxEntries: 50, maxAgeSeconds: 365 * 24 * 60 * 60 },
             },
           },
         ],

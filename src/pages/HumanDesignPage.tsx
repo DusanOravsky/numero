@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useSubject } from '../hooks/useSubject';
 import { GlassCard } from '../components/GlassCard';
 import { EnergyCard } from '../components/EnergyCard';
@@ -105,6 +106,7 @@ const STRATEGY_DESCRIPTIONS: Record<string, string> = {
 };
 
 export function HumanDesignPage() {
+  const navigate = useNavigate();
   const subject = useSubject();
   const [manualResult, setManualResult] = useState<HumanDesignResult | null>(null);
 
@@ -130,6 +132,14 @@ export function HumanDesignPage() {
   return (
     <div className="space-y-6">
       <div>
+        {subject?.isClient && (
+          <button
+            onClick={() => navigate(`/clients/${subject.id}`)}
+            className="text-sm text-indigo-600 hover:text-indigo-800 mb-2 inline-flex items-center gap-1"
+          >
+            ← Späť na klienta {subject.name}
+          </button>
+        )}
         <div className="flex items-center gap-3 flex-wrap">
           <h1 className="font-serif text-3xl font-bold text-white">Human Design</h1>
           {subject?.isClient && (

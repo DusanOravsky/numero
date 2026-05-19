@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const APP_VERSION = '2.0.3';
+const APP_VERSION = '2.0.4';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;

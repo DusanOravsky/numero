@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useSubject } from '../hooks/useSubject';
 import { GlassCard } from '../components/GlassCard';
 import { ChakraWheel } from '../components/ChakraWheel';
@@ -26,6 +27,7 @@ function computeChakras(day: number, month: number, year: number, hour: number =
 }
 
 export function ChakrasPage() {
+  const navigate = useNavigate();
   const profile = useSubject();
   const [manualChakras, setManualChakras] = useState<ChakraState[] | null>(null);
 
@@ -49,6 +51,14 @@ export function ChakrasPage() {
   return (
     <div className="space-y-6">
       <div>
+        {profile?.isClient && (
+          <button
+            onClick={() => navigate(`/clients/${profile.id}`)}
+            className="text-sm text-indigo-600 hover:text-indigo-800 mb-2 inline-flex items-center gap-1"
+          >
+            ← Späť na klienta {profile.name}
+          </button>
+        )}
         <div className="flex items-center gap-3 flex-wrap">
           <h1 className="font-serif text-3xl font-bold text-white">Čakry</h1>
           {profile?.isClient && (

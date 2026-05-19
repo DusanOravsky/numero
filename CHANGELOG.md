@@ -4,6 +4,13 @@ All notable changes to this project are documented in this file. Dates are
 in ISO 8601 (YYYY-MM-DD). The format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 2.0.4 — 2026-05-19
+
+UX:
+- "← Späť na klienta {meno}" linka v hlavičke Numerology / Astrology /
+  Human Design / Chakras stránok keď je aktívny klient kontext
+  (?client=ID). Klik vráti späť na ClientDashboard.
+
 ## 2.0.3 — 2026-05-19
 
 PWA cache fix:

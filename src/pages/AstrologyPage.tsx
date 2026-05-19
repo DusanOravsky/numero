@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useSubject } from '../hooks/useSubject';
 import { GlassCard } from '../components/GlassCard';
 import { EnergyCard } from '../components/EnergyCard';
@@ -168,6 +169,7 @@ function getNodeDescription(sign: string, type: 'north' | 'south'): string {
 }
 
 export function AstrologyPage() {
+  const navigate = useNavigate();
   const profile = useSubject();
   const [manualResult, setManualResult] = useState<AstrologyResult | null>(null);
 
@@ -193,6 +195,14 @@ export function AstrologyPage() {
   return (
     <div className="space-y-6">
       <div>
+        {profile?.isClient && (
+          <button
+            onClick={() => navigate(`/clients/${profile.id}`)}
+            className="text-sm text-indigo-600 hover:text-indigo-800 mb-2 inline-flex items-center gap-1"
+          >
+            ← Späť na klienta {profile.name}
+          </button>
+        )}
         <div className="flex items-center gap-3 flex-wrap">
           <h1 className="font-serif text-3xl font-bold text-white">Astrológia</h1>
           {profile?.isClient && (

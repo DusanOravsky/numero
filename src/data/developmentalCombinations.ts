@@ -86,6 +86,42 @@ export const developmentalCombinations: DevelopmentalCombination[] = [
     matches: r => c(5, r) === 0,
   },
 
+  // === BIOENERGIA TELA (číslo 2) ===
+  {
+    id: 'no-bioenergy',
+    title: 'Bez 2 – krehká bioenergia tela',
+    description:
+      'Žiadna dvojka v mriežke. Telo má nižšiu prirodzenú zásobu energie. Je dôležité s ňou múdro hospodáriť — vyhýbať sa preťaženiu, výkonovému športu na hrane a vystavovaniu sa "ťažkým" miestam (cintoríny, nemocnice), kde môže ľahko dôjsť k vyčerpaniu.',
+    recommendation:
+      'Počúvať telo: keď si pýta oddych, vaňu, spánok — dopraj mu to. Pravidelné regeneračné rituály (jemný strečing, dýchanie, kvalitný spánok). Šport zvoľ skôr nízkou intenzitou (jóga, prechádzky), nie výkonový.',
+    tone: 'warn',
+    matches: r => c(2, r) === 0,
+  },
+
+  // === VNÚTORNÁ MÚDROSŤ (číslo 3) ===
+  {
+    id: 'no-inner-wisdom',
+    title: 'Bez 3 – učenie cez vonkajšie zdroje',
+    description:
+      'Žiadna trojka v mriežke. Vnútorný "internet" (priame chápanie podstaty) nie je pre teba prirodzený nástroj. Múdrosť získavaš skôr cez knihy, učiteľov, autority a vlastnú skúsenosť, nie intuitívnym vhľadom.',
+    recommendation:
+      'Vyhľadávať kvalitné zdroje a mentorov. Nezľahčovať si proces učenia — to, čo iní pochopia hneď, ty pochopíš poriadne až cez systém a opakovanie. Tvoja sila je v štruktúrovanom učení.',
+    tone: 'info',
+    matches: r => c(3, r) === 0,
+  },
+
+  // === DÔVERA / VIERA (číslo 7) ===
+  {
+    id: 'no-trust',
+    title: 'Bez 7 – učenie sa dôvere',
+    description:
+      'Žiadna sedmička v mriežke. Vysoký potenciál zvyšovať si sebadôveru. Často priťahuje ľudí, ktorí ti prejavujú nedôveru — to je odraz vlastného vnútorného stavu. Útek nepomôže, treba zmeniť čosi vnútri.',
+    recommendation:
+      'Robiť rozhodnutia z náhľadu — rozumom, intuíciou, pocitmi a duchovnou rovinou súčasne. Keď tomu dôveruješ, môžeš dôverovať svojmu úsudku. Cvičenie: každý deň si zaznamenaj jedno rozhodnutie, ktorému si dôveroval/a.',
+    tone: 'info',
+    matches: r => c(7, r) === 0,
+  },
+
   // === MÁGIA / VYTRVALOSŤ ===
   {
     id: 'mage-pattern',

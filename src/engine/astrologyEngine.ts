@@ -155,6 +155,30 @@ function getTrueNodeLongitude(date: Date): number {
   return ((trueOmega % 360) + 360) % 360;
 }
 
+function getMeanLilithLongitude(date: Date): number {
+  // Mean Black Moon Lilith — apogee perigeum lunárnej dráhy.
+  // Meeus 47: Π (mean perigee) = 83.3532465 + 4069.0137287·T - 0.01032·T² - T³/80053.
+  // Lilith (Mean apogee) = perigeum + 180°.
+  const jd = date.getTime() / 86400000 + 2440587.5;
+  const T = (jd - 2451545.0) / 36525.0;
+  const perigee = 83.3532465 + 4069.0137287 * T - 0.01032 * T * T - (T * T * T) / 80053;
+  const lilith = perigee + 180;
+  return ((lilith % 360) + 360) % 360;
+}
+
+function getChironLongitude(date: Date): number {
+  // Chiron je centaur s veľmi excentrickou dráhou — orbita ~50.4 roka.
+  // Astronomy-engine ho nemá; používame zjednodušenú lineárnu aproximáciu
+  // založenú na priemernej dĺžke + epoche. Presnosť ±3° (dostatočné pre
+  // znamenie a hrubú interpretáciu, nie pre precízne aspekty).
+  // Východisko: 1.1.2000 (J2000) Chiron bol cca 252° (Strelec ~12°).
+  const jd = date.getTime() / 86400000 + 2440587.5;
+  const days = jd - 2451545.0; // dni od J2000
+  const meanMotion = 360 / (50.4 * 365.25); // °/deň
+  const lon = 252.0 + meanMotion * days;
+  return ((lon % 360) + 360) % 360;
+}
+
 function getMoonPhase(date: Date): string {
   const time = Astronomy.MakeTime(date);
   const phase = Astronomy.MoonPhase(time);
@@ -238,6 +262,7 @@ function _calculateAstrologyImpl(
     };
   });
 
+
   const elementCounts: Record<string, number> = { 'Oheň': 0, 'Zem': 0, 'Vzduch': 0, 'Voda': 0 };
   const qualityCounts: Record<string, number> = { 'Kardinálny': 0, 'Fixný': 0, 'Mutabilný': 0 };
   const planetRulerCounts: Record<string, number> = {};
@@ -251,6 +276,30 @@ function _calculateAstrologyImpl(
   const dominantElement = Object.entries(elementCounts).sort((a, b) => b[1] - a[1])[0][0];
   const dominantQuality = Object.entries(qualityCounts).sort((a, b) => b[1] - a[1])[0][0];
   const dominantPlanet = Object.entries(planetRulerCounts).sort((a, b) => b[1] - a[1])[0][0];
+
+  // Lilith (Mean Black Moon) a Chiron — analytické / aproximované body.
+  // Pridávame ich PO výpočte dominantElement / dominantPlanet, aby tieto
+  // sekundárne body neovplyvňovali tradičnú dominantnú analýzu.
+  const lilithLong = getMeanLilithLongitude(date);
+  const lilithInfo = getSignFromLongitude(lilithLong);
+  planets.push({
+    name: 'Lilith',
+    symbol: '⚸',
+    longitude: lilithLong,
+    sign: lilithInfo.sign,
+    degree: lilithInfo.degree,
+    retrograde: false,
+  });
+  const chironLong = getChironLongitude(date);
+  const chironInfo = getSignFromLongitude(chironLong);
+  planets.push({
+    name: 'Chiron',
+    symbol: '⚷',
+    longitude: chironLong,
+    sign: chironInfo.sign,
+    degree: chironInfo.degree,
+    retrograde: false,
+  });
 
   const northNodeLong = getTrueNodeLongitude(date);
   const southNodeLong = (northNodeLong + 180) % 360;

@@ -9,6 +9,10 @@ import { reduceToSingle } from '../engine/numerologyEngine';
 import { calculateDevelopmentalNumerology } from '../engine/developmentalNumerologyEngine';
 import { deriveEnneagramType } from '../engine/enneagramEngine';
 import { enneagramTypes } from '../data/enneagram';
+import { deriveDosha } from '../engine/ayurvedaEngine';
+import { deriveTCMElement } from '../engine/tcmEngine';
+import { DOSHA_INFO } from '../data/ayurveda';
+import { TCM_ELEMENTS } from '../data/tcm';
 import { useStore } from '../store/useStore';
 import { planetInSignDescriptions } from '../data/planetSignDescriptions';
 import { orvDescriptions } from '../data/orvDescriptions';
@@ -61,6 +65,11 @@ export function ClientSummary({ clientName, birthDay, birthMonth, birthYear, num
   const enneagramType = enneagramTypes[enneagram.coreType];
   const enneagramIntegration = enneagramTypes[enneagram.integrationDirection];
   const enneagramDisintegration = enneagramTypes[enneagram.disintegrationDirection];
+
+  const doshaProfile = deriveDosha(numerology, astrology, humanDesign);
+  const primaryDosha = DOSHA_INFO[doshaProfile.primary];
+  const tcmResult = deriveTCMElement(numerology, astrology);
+  const primaryTCM = TCM_ELEMENTS[tcmResult.primary];
 
   return (
     <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
@@ -117,6 +126,20 @@ export function ClientSummary({ clientName, birthDay, birthMonth, birthYear, num
               <p className="text-xs text-slate-700">
                 <strong>Rast (→{enneagram.integrationDirection}):</strong> {enneagramIntegration?.name} — {enneagramType.growthPath.split('.')[0]}.{' '}
                 <strong>Stres (→{enneagram.disintegrationDirection}):</strong> {enneagramDisintegration?.name}.
+              </p>
+            </div>
+          )}
+
+          {/* Ayurvéda + TCM */}
+          {primaryDosha && primaryTCM && (
+            <div className="rounded-xl border border-amber-200 bg-amber-50/40 p-4 space-y-2">
+              <p className="text-xs text-amber-700 font-semibold uppercase tracking-wide">
+                Ayurvéda & TCM
+              </p>
+              <p className="text-xs text-slate-700">
+                <strong>Dóša:</strong> {primaryDosha.name} ({primaryDosha.element}) — {primaryDosha.mind.toLowerCase()}.
+                {doshaProfile.secondary && <> Sekundárna: {DOSHA_INFO[doshaProfile.secondary]?.name}.</>}
+                {' '}<strong>TCM element:</strong> {primaryTCM.name} (orgán: {primaryTCM.organ}, emócia: {primaryTCM.emotion}, cnosť: {primaryTCM.virtue}).
               </p>
             </div>
           )}

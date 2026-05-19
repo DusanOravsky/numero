@@ -14,6 +14,8 @@ import { calculateThetaHealing } from '../engine/thetaHealingEngine';
 import { deriveEnneagramType } from '../engine/enneagramEngine';
 import { enneagramTypes } from '../data/enneagram';
 import { ETIKOTERAPIA_BY_CHAKRA } from '../data/etikoterapia';
+import { deriveDosha } from '../engine/ayurvedaEngine';
+import { deriveTCMElement } from '../engine/tcmEngine';
 import { orvDescriptions } from '../data/orvDescriptions';
 import { getDailyMantra, getDailyQuote } from '../data/mantrasAndQuotes';
 import { getDailyTarot } from '../data/tarotCards';
@@ -49,7 +51,9 @@ export function Dashboard() {
     const kabalah = calculateKabalah(lp, reduceToSingle(profile.birthDay));
     const theta = calculateThetaHealing(lp);
     const enneagram = deriveEnneagramType(numerology, developmental, numerologyMethod);
-    return { numerology, developmental, astrology, humanDesign, kabalah, theta, enneagram };
+    const dosha = deriveDosha(numerology, astrology, humanDesign);
+    const tcm = deriveTCMElement(numerology, astrology);
+    return { numerology, developmental, astrology, humanDesign, kabalah, theta, enneagram, dosha, tcm };
   }, [profile, numerologyMethod]);
 
   const affirmations: Record<number, string> = {
@@ -385,6 +389,8 @@ export function Dashboard() {
             kabalah: fullResults.kabalah,
             theta: fullResults.theta,
             enneagram: fullResults.enneagram,
+            dosha: { primary: fullResults.dosha.primary, secondary: fullResults.dosha.secondary },
+            tcm: fullResults.tcm,
           }}
           title="✦ AI integrálny výklad"
           storageKey={`dashboard-${profile.id}`}

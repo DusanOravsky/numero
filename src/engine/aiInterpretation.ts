@@ -113,6 +113,8 @@ export interface ProfileContext {
   kabalah?: KabalahResult;
   theta?: ThetaHealingResult;
   enneagram?: EnneagramResult;
+  dosha?: { primary: string; secondary: string | null };
+  tcm?: { primary: string; secondary: string };
 }
 
 /**
@@ -210,6 +212,18 @@ export function summarizeProfile(ctx: ProfileContext): string {
     if (ctx.enneagram.dominantWing) lines.push(`Dominantné krídlo: ${ctx.enneagram.dominantWing}w`);
     lines.push(`Integrácia (rast): → typ ${ctx.enneagram.integrationDirection}`);
     lines.push(`Dezintegrácia (stres): → typ ${ctx.enneagram.disintegrationDirection}`);
+    lines.push('');
+  }
+
+  // Ayurvéda + TCM
+  if (ctx.dosha) {
+    lines.push('=== AYURVÉDA ===');
+    lines.push(`Primárna dóša: ${ctx.dosha.primary}${ctx.dosha.secondary ? `, sekundárna: ${ctx.dosha.secondary}` : ''}`);
+    lines.push('');
+  }
+  if (ctx.tcm) {
+    lines.push('=== TCM 5 ELEMENTOV ===');
+    lines.push(`Primárny element: ${ctx.tcm.primary}, sekundárny: ${ctx.tcm.secondary}`);
     lines.push('');
   }
 

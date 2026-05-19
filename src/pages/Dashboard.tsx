@@ -11,6 +11,7 @@ import { calculateHumanDesign } from '../engine/humanDesignEngine';
 import { calculateKabalah } from '../engine/kabalahEngine';
 import { calculateThetaHealing } from '../engine/thetaHealingEngine';
 import { orvDescriptions } from '../data/orvDescriptions';
+import { getDailyMantra, getDailyQuote } from '../data/mantrasAndQuotes';
 
 export function Dashboard() {
   const navigate = useNavigate();
@@ -225,6 +226,38 @@ export function Dashboard() {
           </div>
         </div>
       </GlassCard>
+
+      {/* Mantra + Quote (B25, B26) — rotujú každý deň podľa ODV */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <GlassCard delay={0.42}>
+          <div className="flex items-start gap-3">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center text-lg shrink-0">
+              ॐ
+            </div>
+            <div className="min-w-0">
+              <p className="text-xs text-amber-300 uppercase mb-1">Dnešná mantra (ODV {odv})</p>
+              <p className="text-sm text-slate-300 font-serif italic">"{getDailyMantra(odv)}"</p>
+            </div>
+          </div>
+        </GlassCard>
+        <GlassCard delay={0.44}>
+          {(() => {
+            const q = getDailyQuote(odv);
+            return (
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center text-lg shrink-0">
+                  ❝
+                </div>
+                <div className="min-w-0">
+                  <p className="text-xs text-cyan-300 uppercase mb-1">Dnešný citát</p>
+                  <p className="text-sm text-slate-300 font-serif italic">"{q.quote}"</p>
+                  <p className="text-xs text-slate-500 mt-1">— {q.author}</p>
+                </div>
+              </div>
+            );
+          })()}
+        </GlassCard>
+      </div>
 
       {/* Integrálny súhrn profilu — v Dashboarde ukáž OBA pohľady na mriežku */}
       {profile && fullResults && (

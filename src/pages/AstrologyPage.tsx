@@ -9,6 +9,7 @@ import { motion } from 'framer-motion';
 import { planetInSignDescriptions } from '../data/planetSignDescriptions';
 import { LunarTimeline } from '../components/LunarTimeline';
 import { NatalWheel } from '../components/NatalWheel';
+import { UpcomingEclipses } from '../components/UpcomingEclipses';
 
 function getSunSignDescription(sign: string): string {
   const descriptions: Record<string, string> = {
@@ -320,6 +321,8 @@ export function AstrologyPage() {
               </GlassCard>
 
               <LunarTimeline />
+
+              <UpcomingEclipses />
 
 
               <GlassCard>

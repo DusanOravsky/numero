@@ -318,6 +318,9 @@ export function NumerologyPage() {
                 <p className="text-sm text-slate-400">
                   <strong className="text-white">Roviny</strong> sú zoskupenia troch čísel v mriežke (riadok, stĺpec alebo uhlopriečka). <strong className="text-green-300">Plné roviny</strong> vyjadrujú schopnosti, ktoré človek dostal do vienka. <strong className="text-amber-300">Prázdne roviny</strong> naznačujú smer, ktorým sa má osoba uberať v ďalšom rozvoji.
                 </p>
+                <p className="text-[11px] text-slate-500 italic mt-2">
+                  Zdroj: Robin Steinová – Numerológia: Čísla Lásky
+                </p>
               </GlassCard>
 
               {result.fullPlanes.length > 0 && (
@@ -640,8 +643,11 @@ export function NumerologyPage() {
             <div className="space-y-4">
               <GlassCard>
                 <h3 className="font-medium text-white mb-2">Karmické trojuholníky</h3>
-                <p className="text-sm text-slate-400 mb-4">
+                <p className="text-sm text-slate-400 mb-2">
                   Karmické trojuholníky udávajú životné smerovanie na obdobie 9 rokov. Čísla vo vrcholoch vyjadrujú vplyv, smerovanie a charakter obdobia daného cyklu. Život sa delí na Duchovné detstvo (príprava) a Duchovnú dospelosť (realizácia).
+                </p>
+                <p className="text-[11px] text-slate-500 italic mb-4">
+                  Zdroj: Robin Steinová – Numerológia: Čísla Lásky
                 </p>
                 <div className="grid grid-cols-2 gap-3 mb-4">
                   <div className="p-3 rounded-xl bg-indigo-500/10 border border-indigo-500/20">

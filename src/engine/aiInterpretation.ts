@@ -475,7 +475,8 @@ function sanitizeForPrompt(text: string, maxLen: number = 80): string {
   if (!text) return '';
   return text
     .replace(/[\r\n\t]+/g, ' ')           // odstrániť whitespace control chars
-    .replace(/[\x00-\x1F\x7F]/g, '')      // ostatné control chars
+    // eslint-disable-next-line no-control-regex
+    .replace(/[\x00-\x1F\x7F]/g, '')      // sanitizácia control chars z user input
     .replace(/={3,}|---{3,}|#{2,}/g, '')   // sentinel patterns (===, ---, ##)
     .slice(0, maxLen)
     .trim();

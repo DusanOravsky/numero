@@ -267,54 +267,56 @@ export function HumanDesignPage() {
             </div>
           </GlassCard>
 
-          {/* Detailný výpis všetkých aktívnych brán */}
+          {/* Detailný výpis všetkých aktívnych brán — vedľa seba */}
           <GlassCard>
             <h3 className="font-medium text-white mb-2">Tvoje aktívne brány</h3>
             <p className="text-xs text-slate-500 mb-4">
               Brány sú špecifické energie vo tvojom dizajne. <strong className="text-amber-300">Personality brány</strong> (vedomé — Slnko čierne) sú to, čo si o sebe vieš. <strong className="text-violet-300">Design brány</strong> (nevedomé — Slnko červené) sú to, čo vidia iní, ale ty nie.
             </p>
 
-            {/* Personality gates */}
-            {result.personalityGates.length > 0 && (
-              <div className="mb-4">
-                <p className="text-xs text-amber-400 uppercase font-semibold mb-2">Vedomé (Personality)</p>
-                <div className="space-y-2">
-                  {result.personalityGates.map(g => (
-                    <div key={`p-${g.gate}-${g.planet}`} className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="w-7 h-7 rounded-full bg-amber-500/30 text-amber-200 font-bold text-xs flex items-center justify-center">{g.gate}</span>
-                        <span className="text-sm text-white font-medium">Brána {g.gate}.{g.line}</span>
-                        <span className="text-xs text-slate-400 ml-auto">{g.planet}</span>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Personality gates — ľavý stĺpec */}
+              {result.personalityGates.length > 0 && (
+                <div>
+                  <p className="text-xs text-amber-400 uppercase font-semibold mb-2">Vedomé (Personality)</p>
+                  <div className="space-y-2">
+                    {result.personalityGates.map(g => (
+                      <div key={`p-${g.gate}-${g.planet}`} className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="w-7 h-7 rounded-full bg-amber-500/30 text-amber-200 font-bold text-xs flex items-center justify-center">{g.gate}</span>
+                          <span className="text-sm text-white font-medium">Brána {g.gate}.{g.line}</span>
+                          <span className="text-xs text-slate-400 ml-auto">{g.planet}</span>
+                        </div>
+                        {GATE_DESCRIPTIONS[g.gate] && (
+                          <p className="text-xs text-slate-300">{GATE_DESCRIPTIONS[g.gate]}</p>
+                        )}
                       </div>
-                      {GATE_DESCRIPTIONS[g.gate] && (
-                        <p className="text-xs text-slate-300">{GATE_DESCRIPTIONS[g.gate]}</p>
-                      )}
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* Design gates */}
-            {result.designGates.length > 0 && (
-              <div>
-                <p className="text-xs text-violet-400 uppercase font-semibold mb-2">Nevedomé (Design)</p>
-                <div className="space-y-2">
-                  {result.designGates.map(g => (
-                    <div key={`d-${g.gate}-${g.planet}`} className="p-3 rounded-xl bg-violet-500/10 border border-violet-500/20">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="w-7 h-7 rounded-full bg-violet-500/30 text-violet-200 font-bold text-xs flex items-center justify-center">{g.gate}</span>
-                        <span className="text-sm text-white font-medium">Brána {g.gate}.{g.line}</span>
-                        <span className="text-xs text-slate-400 ml-auto">{g.planet}</span>
+              {/* Design gates — pravý stĺpec */}
+              {result.designGates.length > 0 && (
+                <div>
+                  <p className="text-xs text-violet-400 uppercase font-semibold mb-2">Nevedomé (Design)</p>
+                  <div className="space-y-2">
+                    {result.designGates.map(g => (
+                      <div key={`d-${g.gate}-${g.planet}`} className="p-3 rounded-xl bg-violet-500/10 border border-violet-500/20">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="w-7 h-7 rounded-full bg-violet-500/30 text-violet-200 font-bold text-xs flex items-center justify-center">{g.gate}</span>
+                          <span className="text-sm text-white font-medium">Brána {g.gate}.{g.line}</span>
+                          <span className="text-xs text-slate-400 ml-auto">{g.planet}</span>
+                        </div>
+                        {GATE_DESCRIPTIONS[g.gate] && (
+                          <p className="text-xs text-slate-300">{GATE_DESCRIPTIONS[g.gate]}</p>
+                        )}
                       </div>
-                      {GATE_DESCRIPTIONS[g.gate] && (
-                        <p className="text-xs text-slate-300">{GATE_DESCRIPTIONS[g.gate]}</p>
-                      )}
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </GlassCard>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import * as Astronomy from 'astronomy-engine';
 import { GlassCard } from './GlassCard';
 
@@ -21,6 +21,7 @@ const KIND_INFO: Record<string, { glyph: string; meaning: string }> = {
  * presne podľa Espenak/Meeus polynómov.
  */
 export function UpcomingEclipses() {
+  const [nowMs] = useState(() => Date.now());
   const events = useMemo<EclipseEvent[]>(() => {
     const now = new Date();
     const result: EclipseEvent[] = [];
@@ -54,7 +55,7 @@ export function UpcomingEclipses() {
       <div className="space-y-2">
         {events.map((e, i) => {
           const info = KIND_INFO[e.kind] || { glyph: '?', meaning: e.kind };
-          const daysFromNow = Math.round((e.date.getTime() - Date.now()) / 86400000);
+          const daysFromNow = Math.round((e.date.getTime() - nowMs) / 86400000);
           return (
             <div
               key={i}

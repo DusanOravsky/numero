@@ -1,34 +1,18 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
-import { calculateFullNumerology, getGridCount } from '../engine/numerologyEngine';
-import type { NumerologyResult } from '../engine/numerologyEngine';
+import { calculateFullNumerology, getGridCount, reduceToSingle } from '../engine/numerologyEngine';
 import { calculateAstrology } from '../engine/astrologyEngine';
-import type { AstrologyResult } from '../engine/astrologyEngine';
 import { calculateHumanDesign } from '../engine/humanDesignEngine';
-import type { HumanDesignResult } from '../engine/humanDesignEngine';
 import { evaluateChakras } from '../engine/chakraEngine';
-import type { ChakraState } from '../engine/chakraEngine';
 import { calculateKabalah } from '../engine/kabalahEngine';
-import type { KabalahResult } from '../engine/kabalahEngine';
 import { calculateThetaHealing } from '../engine/thetaHealingEngine';
-import type { ThetaHealingResult } from '../engine/thetaHealingEngine';
-import { reduceToSingle } from '../engine/numerologyEngine';
 import { ClientSummary } from '../components/ClientSummary';
 import { ClientNumerology } from '../components/ClientNumerology';
 import { AIChat } from '../components/AIChat';
 import { ClientRelationships } from '../components/ClientRelationships';
 import { ClientExport } from '../components/ClientExport';
 import { SkeletonClientDashboard } from '../components/Skeleton';
-
-interface AllResults {
-  numerology: NumerologyResult;
-  astrology: AstrologyResult;
-  humanDesign: HumanDesignResult;
-  chakras: ChakraState[];
-  kabalah: KabalahResult;
-  theta: ThetaHealingResult;
-}
 
 export function ClientDashboard() {
   const { id } = useParams();

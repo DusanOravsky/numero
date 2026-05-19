@@ -348,6 +348,7 @@ export function ClientsPage() {
                   // Validácia + sanitizácia. Bránime zlým dátam aj prompt-injection
                   // útokom cez maliciózne pripravený JSON súbor.
                   const c = data.client;
+                  // eslint-disable-next-line no-control-regex
                   const safeName = String(c.name || '').replace(/[\x00-\x1F\x7F\r\n]/g, '').trim().slice(0, 80);
                   if (!safeName || !/^[\p{L}\p{M}\d\s\-'.]+$/u.test(safeName)) {
                     alert('Neplatné meno klienta.');
@@ -370,9 +371,12 @@ export function ClientsPage() {
                     alert('Neplatná minúta narodenia.');
                     return;
                   }
+                  // eslint-disable-next-line no-control-regex
                   const safePlace = c.birthPlace ? String(c.birthPlace).replace(/[\x00-\x1F\x7F\r\n]/g, '').slice(0, 100) : undefined;
+                  // eslint-disable-next-line no-control-regex
                   const safeNotes = c.notes ? String(c.notes).replace(/[\x00-\x1F\x7F]/g, '').slice(0, 2000) : undefined;
                   const safeTags = Array.isArray(c.tags)
+                    // eslint-disable-next-line no-control-regex
                     ? c.tags.map((t: unknown) => String(t).replace(/[\x00-\x1F\x7F]/g, '').slice(0, 30)).filter(Boolean).slice(0, 20)
                     : undefined;
                   const importedClient: Client = {

@@ -29,13 +29,16 @@ export function PersonalYearTimeline({
   const currentMonth = today.getMonth() + 1;
   const currentDay = today.getDate();
 
+  // Pred narodeninami v tomto roku ešte platí cyklus minulého roku.
+  const beforeBirthday = currentMonth < birthMonth || (currentMonth === birthMonth && currentDay < birthDay);
+  const activeCycleYear = beforeBirthday ? currentYear - 1 : currentYear;
+
   const rows: { year: number; age: number; orv: number; isCurrent: boolean; isPast: boolean }[] = [];
   for (let y = currentYear - yearsBack; y <= currentYear + yearsAhead; y++) {
-    // ORV pre rok y po narodeninách
     const orv = calculateORV(birthDay, birthMonth, y, birthMonth, birthDay);
     const age = y - birthYear;
-    const isCurrent = y === currentYear || (y === currentYear - 1 && (currentMonth < birthMonth || (currentMonth === birthMonth && currentDay < birthDay)));
-    const isPast = y < currentYear;
+    const isCurrent = y === activeCycleYear;
+    const isPast = y < activeCycleYear;
     rows.push({ year: y, age, orv, isCurrent, isPast });
   }
 

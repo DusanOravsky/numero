@@ -114,6 +114,40 @@ export function ModalityPage() {
         </p>
       </div>
 
+      {/* Ako sa to počíta — vysvetlenie pre laikov */}
+      <GlassCard>
+        <h3 className="font-medium text-white mb-3">Ako sa to počíta</h3>
+        <div className="space-y-3 text-sm text-slate-300">
+          <p>
+            Tieto modality nie sú tradičný dotazník — sú <strong className="text-white">derivované z tvojich existujúcich výsledkov</strong>. Každý systém sa pozerá na tie isté dáta z iného uhla:
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="p-3 rounded-xl bg-amber-50 border border-amber-200">
+              <p className="text-xs text-amber-700 font-semibold mb-1">Ayurvéda</p>
+              <p className="text-xs text-slate-700">
+                Dominantný astro element (Oheň→Pitta, Vzduch→Vata, Zem/Voda→Kapha) → dóša.
+                HD typ → energetický štýl. ŽČ → temperament.
+                Plné/prázdne roviny → stabilita vs variabilita.
+              </p>
+            </div>
+            <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200">
+              <p className="text-xs text-emerald-700 font-semibold mb-1">TCM 5 elementov</p>
+              <p className="text-xs text-slate-700">
+                Astro element priamo mapuje na TCM element.
+                ŽČ dodáva sekundárny element (1,9→Drevo, 3,7→Oheň, 2,5→Zem, 4,8→Kov, 6→Voda).
+              </p>
+            </div>
+            <div className="p-3 rounded-xl bg-violet-50 border border-violet-200">
+              <p className="text-xs text-violet-700 font-semibold mb-1">Bachove kvety</p>
+              <p className="text-xs text-slate-700">
+                Čakry, ktoré sú blokované (skóre &lt; 50) → mapujú sa na esencie
+                riešiace danú emočnú tému (strach, vina, nedôvera...).
+              </p>
+            </div>
+          </div>
+        </div>
+      </GlassCard>
+
       {/* Ayurvéda */}
       <GlassCard delay={0.1}>
         <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">

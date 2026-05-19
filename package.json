@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:analyze": "ANALYZE=1 tsc -b && ANALYZE=1 vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",
@@ -36,6 +37,7 @@
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.6.0",
     "postcss": "^8.5.14",
+    "rollup-plugin-visualizer": "^7.0.1",
     "sharp": "^0.34.5",
     "tailwindcss": "^4.3.0",
     "typescript": "~6.0.2",

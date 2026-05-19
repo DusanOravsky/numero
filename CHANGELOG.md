@@ -4,6 +4,14 @@ All notable changes to this project are documented in this file. Dates are
 in ISO 8601 (YYYY-MM-DD). The format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 2.1.1 — 2026-05-19
+
+UI cleanup:
+- Odstránené duplicity zo Settings: "Vzhľad aplikácie" sekcia
+  (Light/Dark) a "Jazyk" sekcia (SK/EN) — obe sú už v sidebar footer.
+- Settings stránka je kratšia a fokusovaná na profily / metódu /
+  AI integráciu / diagnostiku.
+
 ## 2.1.0 — 2026-05-19
 
 Hĺbkový code review fixy (5 CRITICAL + 10 HIGH + 6 MEDIUM/LOW):

@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useStore } from '../store/useStore';
-import type { NumerologyMethod, ThemeMode, Language } from '../store/useStore';
-import { useTranslation } from '../i18n/useTranslation';
+import type { NumerologyMethod } from '../store/useStore';
 import { GlassCard } from '../components/GlassCard';
 import { useNavigate } from 'react-router-dom';
 import { APP_VERSION, forceUpdate, clearAIData } from '../components/PWAPrompts';
@@ -15,8 +14,7 @@ import {
 
 export function SettingsPage() {
   const navigate = useNavigate();
-  const { profiles, activeProfileId, setActiveProfile, updateProfile, deleteProfile, numerologyMethod, setNumerologyMethod, themeMode, setThemeMode, language, setLanguage } = useStore();
-  const { t } = useTranslation();
+  const { profiles, activeProfileId, setActiveProfile, updateProfile, deleteProfile, numerologyMethod, setNumerologyMethod } = useStore();
   const activeProfile = profiles.find(p => p.id === activeProfileId);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editHour, setEditHour] = useState('');
@@ -189,54 +187,6 @@ export function SettingsPage() {
           {profiles.length === 0 && (
             <p className="text-sm text-slate-500 text-center py-4">Žiadne profily. Vytvorte si prvý.</p>
           )}
-        </div>
-      </GlassCard>
-
-      <GlassCard>
-        <h3 className="font-medium text-white mb-2">{t('settings.appearance')}</h3>
-        <p className="text-sm text-slate-500 mb-4">
-          {language === 'sk' ? 'Vyber si svetlú alebo tmavú tému.' : 'Choose between light and dark theme.'}
-        </p>
-        <div className="grid grid-cols-2 gap-2">
-          <button
-            type="button"
-            onClick={() => setThemeMode('light' as ThemeMode)}
-            className={`py-3 rounded-xl text-sm border-2 transition-all ${themeMode === 'light' ? 'border-amber-500 bg-amber-50 text-amber-700 font-medium' : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'}`}
-          >
-            {t('settings.themeLight')}
-          </button>
-          <button
-            type="button"
-            onClick={() => setThemeMode('dark' as ThemeMode)}
-            className={`py-3 rounded-xl text-sm border-2 transition-all ${themeMode === 'dark' ? 'border-indigo-500 bg-indigo-50 text-indigo-700 font-medium' : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'}`}
-          >
-            {t('settings.themeDark')}
-          </button>
-        </div>
-      </GlassCard>
-
-      <GlassCard>
-        <h3 className="font-medium text-white mb-2">{t('settings.language')}</h3>
-        <p className="text-sm text-slate-500 mb-4">
-          {language === 'sk'
-            ? 'Jazyk používateľského rozhrania. Výklady (numerologické čísla, gene keys atď.) zostávajú v slovenčine — sú citáciami z konkrétnych slovenských kníh.'
-            : 'UI language. Detailed interpretations (numerology meanings, gene keys, etc.) stay in Slovak — they are citations from specific Slovak books.'}
-        </p>
-        <div className="grid grid-cols-2 gap-2">
-          <button
-            type="button"
-            onClick={() => setLanguage('sk' as Language)}
-            className={`py-3 rounded-xl text-sm border-2 transition-all ${language === 'sk' ? 'border-indigo-500 bg-indigo-50 text-indigo-700 font-medium' : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'}`}
-          >
-            🇸🇰 {t('settings.languageSk')}
-          </button>
-          <button
-            type="button"
-            onClick={() => setLanguage('en' as Language)}
-            className={`py-3 rounded-xl text-sm border-2 transition-all ${language === 'en' ? 'border-indigo-500 bg-indigo-50 text-indigo-700 font-medium' : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'}`}
-          >
-            🇬🇧 {t('settings.languageEn')}
-          </button>
         </div>
       </GlassCard>
 

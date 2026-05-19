@@ -327,7 +327,7 @@ Pripomienka:
     },
     body: JSON.stringify({
       model,
-      max_tokens: 2000,
+      max_tokens: 3500,
       system: buildSystemPrompt(),
       messages: [
         { role: 'user', content: userPrompt },
@@ -411,7 +411,7 @@ ${systemContext}`;
     },
     body: JSON.stringify({
       model,
-      max_tokens: 2000,
+      max_tokens: 4096,
       stream: true,
       system: fullSystem,
       messages: messages.map(m => ({ role: m.role, content: m.content })),

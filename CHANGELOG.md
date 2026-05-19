@@ -4,6 +4,16 @@ All notable changes to this project are documented in this file. Dates are
 in ISO 8601 (YYYY-MM-DD). The format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 2.0.1 — 2026-05-19
+
+UI polish:
+- Theme picker (Light/Dark only — System dropped) ako segmented control
+  v sidebar footer s clean SVG ikonami
+- Language picker (SK/EN) prerobený na rovnaký segmented štýl
+- Dashboard quick-nav 8 kariet → čisté pastelové bg-50/100 farby
+  s farebnými ikonami a tmavým textom (nahradené slabé /10 gradienty
+  ktoré boli nečitateľné na svetlom pozadí)
+
 ## 2.0.0 — 2026-05-19
 
 **MAJOR**: AI Claude integrácia, ~32 nových features (B-batch + C-batch),

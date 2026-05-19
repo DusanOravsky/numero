@@ -195,9 +195,9 @@ export function SettingsPage() {
       <GlassCard>
         <h3 className="font-medium text-white mb-2">{t('settings.appearance')}</h3>
         <p className="text-sm text-slate-500 mb-4">
-          {language === 'sk' ? 'Vyber si svetlú, tmavú tému alebo nech sa prispôsobí systému.' : 'Choose light, dark theme, or let it adapt to the system.'}
+          {language === 'sk' ? 'Vyber si svetlú alebo tmavú tému.' : 'Choose between light and dark theme.'}
         </p>
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-2 gap-2">
           <button
             type="button"
             onClick={() => setThemeMode('light' as ThemeMode)}
@@ -211,13 +211,6 @@ export function SettingsPage() {
             className={`py-3 rounded-xl text-sm border-2 transition-all ${themeMode === 'dark' ? 'border-indigo-500 bg-indigo-50 text-indigo-700 font-medium' : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'}`}
           >
             {t('settings.themeDark')}
-          </button>
-          <button
-            type="button"
-            onClick={() => setThemeMode('system' as ThemeMode)}
-            className={`py-3 rounded-xl text-sm border-2 transition-all ${themeMode === 'system' ? 'border-slate-500 bg-slate-100 text-slate-700 font-medium' : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'}`}
-          >
-            {t('settings.themeSystem')}
           </button>
         </div>
       </GlassCard>

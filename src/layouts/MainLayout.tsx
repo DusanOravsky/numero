@@ -60,30 +60,31 @@ export function MainLayout() {
             </NavLink>
           ))}
         </nav>
-        <div className="p-4 border-t border-slate-100 space-y-3">
-          {/* Theme picker */}
-          <div className="flex items-center gap-1 justify-center">
+        <div className="p-4 border-t border-slate-100 space-y-2.5">
+          {/* Theme picker — segmented control (Light / Dark) */}
+          <div className="grid grid-cols-2 gap-0 p-0.5 bg-slate-100 rounded-lg">
             {([
-              { id: 'light', icon: '☀', label: 'Svetlá' },
-              { id: 'dark', icon: '☾', label: 'Tmavá' },
-              { id: 'system', icon: '⚙', label: 'Systém' },
+              { id: 'light', svg: <SunIcon />, label: 'Svetlá' },
+              { id: 'dark', svg: <MoonIcon />, label: 'Tmavá' },
             ] as const).map(opt => (
               <button
                 key={opt.id}
                 onClick={() => setThemeMode(opt.id)}
                 title={opt.label}
-                className={`flex-1 px-2 py-1.5 rounded-lg text-sm transition-colors ${
+                aria-label={opt.label}
+                className={`flex items-center justify-center gap-1.5 py-1.5 rounded-md text-xs font-medium transition-colors ${
                   themeMode === opt.id
-                    ? 'bg-indigo-100 text-indigo-700 font-medium'
-                    : 'text-slate-500 hover:bg-slate-100'
+                    ? 'bg-white text-indigo-600 shadow-sm'
+                    : 'text-slate-500 hover:text-slate-700'
                 }`}
               >
-                {opt.icon}
+                {opt.svg}
+                <span>{opt.label}</span>
               </button>
             ))}
           </div>
-          {/* Language picker */}
-          <div className="flex items-center gap-1 justify-center">
+          {/* Language picker — segmented control */}
+          <div className="grid grid-cols-2 gap-0 p-0.5 bg-slate-100 rounded-lg">
             {([
               { id: 'sk', label: 'SK' },
               { id: 'en', label: 'EN' },
@@ -91,10 +92,10 @@ export function MainLayout() {
               <button
                 key={opt.id}
                 onClick={() => setLanguage(opt.id)}
-                className={`flex-1 px-3 py-1 rounded-lg text-xs font-medium transition-colors ${
+                className={`py-1.5 rounded-md text-xs font-semibold transition-colors ${
                   language === opt.id
-                    ? 'bg-indigo-100 text-indigo-700'
-                    : 'text-slate-500 hover:bg-slate-100'
+                    ? 'bg-white text-indigo-600 shadow-sm'
+                    : 'text-slate-500 hover:text-slate-700'
                 }`}
               >
                 {opt.label}
@@ -204,5 +205,22 @@ export function MainLayout() {
         )}
       </AnimatePresence>
     </div>
+  );
+}
+
+function SunIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="4" />
+      <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+    </svg>
+  );
+}
+
+function MoonIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+    </svg>
   );
 }

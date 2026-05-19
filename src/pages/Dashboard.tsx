@@ -317,14 +317,14 @@ export function Dashboard() {
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {[
-          { path: '/numerology', label: 'Numerológia', icon: '✦', color: 'from-indigo-500/10 to-violet-500/10' },
-          { path: '/astrology', label: 'Astrológia', icon: '☆', color: 'from-cyan-500/10 to-blue-500/10' },
-          { path: '/human-design', label: 'Human Design', icon: '◎', color: 'from-purple-500/10 to-fuchsia-500/10' },
-          { path: '/chakras', label: 'Čakry', icon: '◈', color: 'from-green-500/10 to-emerald-500/10' },
-          { path: '/relationships', label: 'Vzťahy', icon: '♡', color: 'from-rose-500/10 to-pink-500/10' },
-          { path: '/kabalah', label: 'Kabala', icon: '⚘', color: 'from-amber-500/10 to-yellow-500/10' },
-          { path: '/theta-healing', label: 'Theta Healing', icon: '∞', color: 'from-teal-500/10 to-cyan-500/10' },
-          { path: '/settings', label: 'Nastavenia', icon: '⚙', color: 'from-slate-500/10 to-gray-500/10' },
+          { path: '/numerology', label: 'Numerológia', icon: '✦', bg: 'bg-indigo-50 hover:bg-indigo-100', border: 'border-indigo-200', iconColor: 'text-indigo-600', textColor: 'text-indigo-900' },
+          { path: '/astrology', label: 'Astrológia', icon: '☆', bg: 'bg-cyan-50 hover:bg-cyan-100', border: 'border-cyan-200', iconColor: 'text-cyan-600', textColor: 'text-cyan-900' },
+          { path: '/human-design', label: 'Human Design', icon: '◎', bg: 'bg-purple-50 hover:bg-purple-100', border: 'border-purple-200', iconColor: 'text-purple-600', textColor: 'text-purple-900' },
+          { path: '/chakras', label: 'Čakry', icon: '◈', bg: 'bg-emerald-50 hover:bg-emerald-100', border: 'border-emerald-200', iconColor: 'text-emerald-600', textColor: 'text-emerald-900' },
+          { path: '/relationships', label: 'Vzťahy', icon: '♡', bg: 'bg-rose-50 hover:bg-rose-100', border: 'border-rose-200', iconColor: 'text-rose-600', textColor: 'text-rose-900' },
+          { path: '/kabalah', label: 'Kabala', icon: '⚘', bg: 'bg-amber-50 hover:bg-amber-100', border: 'border-amber-200', iconColor: 'text-amber-600', textColor: 'text-amber-900' },
+          { path: '/theta-healing', label: 'Theta Healing', icon: '∞', bg: 'bg-teal-50 hover:bg-teal-100', border: 'border-teal-200', iconColor: 'text-teal-600', textColor: 'text-teal-900' },
+          { path: '/settings', label: 'Nastavenia', icon: '⚙', bg: 'bg-slate-50 hover:bg-slate-100', border: 'border-slate-200', iconColor: 'text-slate-600', textColor: 'text-slate-900' },
         ].map((item, idx) => (
           <motion.button
             key={item.path}
@@ -332,10 +332,10 @@ export function Dashboard() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 + idx * 0.05 }}
             onClick={() => navigate(item.path)}
-            className={`bg-gradient-to-br ${item.color} border border-white/5 rounded-2xl p-4 text-left hover:scale-105 transition-transform`}
+            className={`${item.bg} border ${item.border} rounded-2xl p-4 text-left hover:scale-105 transition-all shadow-sm`}
           >
-            <span className="text-2xl">{item.icon}</span>
-            <p className="text-sm font-medium text-white mt-2">{item.label}</p>
+            <span className={`text-2xl ${item.iconColor}`}>{item.icon}</span>
+            <p className={`text-sm font-medium ${item.textColor} mt-2`}>{item.label}</p>
           </motion.button>
         ))}
       </div>

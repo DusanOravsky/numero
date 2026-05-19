@@ -3,8 +3,8 @@ import { GlassCard } from '../components/GlassCard';
 import { calculateFullNumerology, reduceToSingle } from '../engine/numerologyEngine';
 import { calculatePartnerCompatibility, calculateParentChild } from '../engine/compatibilityEngine';
 import type { CompatibilityResult, ParentChildResult } from '../engine/compatibilityEngine';
-import { calculateAstrology } from '../engine/astrologyEngine';
-import type { AstrologyResult } from '../engine/astrologyEngine';
+import { calculateAstrology, calculateSynastryAspects, summarizeSynastry } from '../engine/astrologyEngine';
+import type { AstrologyResult, SynastryAspect } from '../engine/astrologyEngine';
 import { calculateHumanDesign } from '../engine/humanDesignEngine';
 import { PartnerBodygraph } from '../components/PartnerBodygraph';
 import { findCity } from '../data/cities';
@@ -673,6 +673,75 @@ export function RelationshipsPage() {
                 : 'Vaše dominantné živly sú odlišné -- to prináša rôznorodosť, ale vyžaduje viac pochopenia a prispôsobenia.'}
             </p>
           </GlassCard>
+
+          {/* Detailné aspekty medzi všetkými planétami */}
+          {(() => {
+            const aspects = calculateSynastryAspects(synastryResult.person1.result, synastryResult.person2.result);
+            const summary = summarizeSynastry(aspects);
+            if (aspects.length === 0) return null;
+            const planetSymbols: Record<string, string> = {
+              'Slnko': '☉', 'Mesiac': '☽', 'Merkúr': '☿', 'Venuša': '♀', 'Mars': '♂',
+              'Jupiter': '♃', 'Saturn': '♄', 'Urán': '♅', 'Neptún': '♆', 'Pluto': '♇',
+            };
+            return (
+              <GlassCard>
+                <h3 className="font-medium text-white mb-2">Synastrické aspekty (všetky planéty)</h3>
+                <p className="text-xs text-slate-500 mb-3">
+                  Každý uhol medzi planétami partnerov tvorí aspekt – buď harmonický (trigon, sextil), napäťový (kvadratúra, opozícia) alebo neutrálny (spojenie). Orbis = odchýlka od ideálu.
+                </p>
+
+                {/* Súhrnný score */}
+                <div className="grid grid-cols-4 gap-2 mb-4">
+                  <div className="p-2 rounded-lg bg-indigo-50 border border-indigo-200 text-center">
+                    <p className="text-[10px] uppercase text-indigo-700 font-semibold">Skóre</p>
+                    <p className="text-2xl font-bold text-indigo-700">{summary.score}</p>
+                  </div>
+                  <div className="p-2 rounded-lg bg-green-50 border border-green-200 text-center">
+                    <p className="text-[10px] uppercase text-green-700 font-semibold">Harmonické</p>
+                    <p className="text-2xl font-bold text-green-700">{summary.harmonic}</p>
+                  </div>
+                  <div className="p-2 rounded-lg bg-rose-50 border border-rose-200 text-center">
+                    <p className="text-[10px] uppercase text-rose-700 font-semibold">Napäťové</p>
+                    <p className="text-2xl font-bold text-rose-700">{summary.tense}</p>
+                  </div>
+                  <div className="p-2 rounded-lg bg-slate-50 border border-slate-200 text-center">
+                    <p className="text-[10px] uppercase text-slate-700 font-semibold">Neutrálne</p>
+                    <p className="text-2xl font-bold text-slate-700">{summary.neutral}</p>
+                  </div>
+                </div>
+
+                {/* Top 12 najpresnejších */}
+                <div className="space-y-1.5">
+                  <p className="text-[11px] uppercase tracking-wide text-slate-500 font-semibold mb-2">
+                    Top 12 najpresnejších ({summary.total} celkom)
+                  </p>
+                  {summary.topAspects.map((a: SynastryAspect, i: number) => {
+                    const bg = a.nature === 'harmonic' ? 'bg-green-50 border-green-200' :
+                               a.nature === 'tense' ? 'bg-rose-50 border-rose-200' :
+                               'bg-slate-50 border-slate-200';
+                    const iconColor = a.nature === 'harmonic' ? 'text-green-700' :
+                                      a.nature === 'tense' ? 'text-rose-700' : 'text-slate-700';
+                    return (
+                      <div key={i} className={`p-2 rounded-lg border ${bg} flex items-center justify-between gap-2`}>
+                        <div className="flex items-center gap-2 text-sm">
+                          <span className="text-base">{planetSymbols[a.planet1] || ''}</span>
+                          <strong className="text-slate-800">{a.planet1}</strong>
+                          <span className={`text-base ${iconColor}`}>{a.symbol}</span>
+                          <strong className="text-slate-800">{a.planet2}</strong>
+                          <span className="text-base">{planetSymbols[a.planet2] || ''}</span>
+                        </div>
+                        <span className="text-[10px] text-slate-500 shrink-0">orb {a.orb.toFixed(1)}°</span>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                <p className="text-[11px] text-slate-500 italic mt-3">
+                  Skóre vychádza z prevahy harmonických aspektov nad napäťovými. Napäťové nie sú "zlé" — sú motorom rastu vzťahu, ak sa s nimi vedome pracuje.
+                </p>
+              </GlassCard>
+            );
+          })()}
 
           <button onClick={reset} className="px-4 py-2 rounded-xl text-sm glass text-slate-400 hover:text-white">Nový výpočet</button>
         </div>

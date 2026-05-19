@@ -309,3 +309,96 @@ export function calculateAstrology(
 ): AstrologyResult {
   return _memoAstro(day, month, year, hour, minute, latitude, longitude, timezoneOffsetHours);
 }
+
+// ============================================
+// SYNASTRIA – aspekty medzi dvoma horoskopmi
+// ============================================
+
+export type SynastryAspectName = 'conjunction' | 'opposition' | 'trine' | 'square' | 'sextile';
+
+export interface SynastryAspect {
+  planet1: string;
+  planet2: string;
+  aspect: SynastryAspectName;
+  exactDegrees: number; // ideálny uhol
+  actualDegrees: number; // skutočný uhol medzi planétami
+  orb: number; // odchýlka od ideálu
+  symbol: string;
+  nature: 'harmonic' | 'tense' | 'neutral';
+  description: string;
+}
+
+const ASPECT_DEFINITIONS: Record<SynastryAspectName, { angle: number; orb: number; symbol: string; nature: 'harmonic' | 'tense' | 'neutral'; description: string }> = {
+  conjunction: { angle: 0, orb: 8, symbol: '☌', nature: 'neutral', description: 'spojenie – energie sa miešajú a zosilňujú' },
+  opposition: { angle: 180, orb: 8, symbol: '☍', nature: 'tense', description: 'opozícia – výzva, napätie, hľadanie rovnováhy' },
+  trine: { angle: 120, orb: 7, symbol: '△', nature: 'harmonic', description: 'trigón – plynulý tok, prirodzená harmónia' },
+  square: { angle: 90, orb: 7, symbol: '□', nature: 'tense', description: 'kvadratúra – tlak, potreba aktívne riešiť' },
+  sextile: { angle: 60, orb: 5, symbol: '⚹', nature: 'harmonic', description: 'sextil – príležitosť, mierna podpora' },
+};
+
+function angularDistance(lon1: number, lon2: number): number {
+  const diff = Math.abs(lon1 - lon2);
+  return diff > 180 ? 360 - diff : diff;
+}
+
+/**
+ * Vypočíta synastrické aspekty medzi dvoma natálnymi horoskopmi.
+ * Používa skutočné ekliptické dĺžky planét pre presnejšie aspekty (s orbisom).
+ */
+export function calculateSynastryAspects(r1: AstrologyResult, r2: AstrologyResult): SynastryAspect[] {
+  const aspects: SynastryAspect[] = [];
+
+  r1.planets.forEach(p1 => {
+    r2.planets.forEach(p2 => {
+      const distance = angularDistance(p1.longitude, p2.longitude);
+
+      (Object.entries(ASPECT_DEFINITIONS) as Array<[SynastryAspectName, typeof ASPECT_DEFINITIONS[SynastryAspectName]]>).forEach(([name, def]) => {
+        const orb = Math.abs(distance - def.angle);
+        if (orb <= def.orb) {
+          aspects.push({
+            planet1: p1.name,
+            planet2: p2.name,
+            aspect: name,
+            exactDegrees: def.angle,
+            actualDegrees: distance,
+            orb,
+            symbol: def.symbol,
+            nature: def.nature,
+            description: def.description,
+          });
+        }
+      });
+    });
+  });
+
+  // Najpresnejšie aspekty (najmenší orb) najvyššie
+  aspects.sort((a, b) => a.orb - b.orb);
+  return aspects;
+}
+
+/** Súhrnné štatistiky synastrie */
+export interface SynastrySummary {
+  total: number;
+  harmonic: number;
+  tense: number;
+  neutral: number;
+  /** Skóre 0..100: prevaha harmonických nad napäťovými */
+  score: number;
+  topAspects: SynastryAspect[];
+}
+
+export function summarizeSynastry(aspects: SynastryAspect[]): SynastrySummary {
+  const harmonic = aspects.filter(a => a.nature === 'harmonic').length;
+  const tense = aspects.filter(a => a.nature === 'tense').length;
+  const neutral = aspects.filter(a => a.nature === 'neutral').length;
+  const total = aspects.length;
+  const score = total === 0 ? 50 : Math.round(50 + ((harmonic - tense) / total) * 50);
+  return {
+    total,
+    harmonic,
+    tense,
+    neutral,
+    score: Math.max(0, Math.min(100, score)),
+    topAspects: aspects.slice(0, 12),
+  };
+}

@@ -6,6 +6,7 @@ import { calculateKabalah, SEFIROT } from '../engine/kabalahEngine';
 import type { KabalahResult } from '../engine/kabalahEngine';
 import { reduceToSingle } from '../engine/numerologyEngine';
 import { motion } from 'framer-motion';
+import { TreeOfLife } from '../components/TreeOfLife';
 
 export function KabalahPage() {
   const { profiles, activeProfileId } = useStore();
@@ -107,6 +108,9 @@ export function KabalahPage() {
               </p>
             </div>
           </GlassCard>
+
+          {/* Tree of Life vizualizácia (B31) */}
+          <TreeOfLife result={result} />
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <GlassCard>

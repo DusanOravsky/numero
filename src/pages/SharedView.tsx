@@ -15,7 +15,6 @@ import type { KabalahResult } from '../engine/kabalahEngine';
 import { calculateThetaHealing } from '../engine/thetaHealingEngine';
 import type { ThetaHealingResult } from '../engine/thetaHealingEngine';
 import lifePathsData from '../data/lifePaths.json';
-import { planetInSignDescriptions } from '../data/planetSignDescriptions';
 import { orvDescriptions } from '../data/orvDescriptions';
 import { getGeneKeyByGate } from '../data/geneKeys';
 
@@ -66,8 +65,8 @@ export function SharedView() {
     if (!clientData) return null;
     const { birthDay: d, birthMonth: m, birthYear: y, birthHour: h, birthMinute: min } = clientData;
     const numerology = calculateFullNumerology(d, m, y);
-    const astrology = calculateAstrology(d, m, y, h || 12, min || 0);
-    const humanDesign = calculateHumanDesign(d, m, y, h || 12, min || 0);
+    const astrology = calculateAstrology(d, m, y, h ?? 12, min ?? 0);
+    const humanDesign = calculateHumanDesign(d, m, y, h ?? 12, min ?? 0);
     const gridCounts = getGridCount(numerology.grid);
     const chakras = evaluateChakras(numerology.lifePathNumber, gridCounts, numerology.isolatedNumbers, humanDesign.definedCenters, astrology.dominantElement);
     const lp = numerology.lifePathNumber > 9 ? reduceToSingle(numerology.lifePathNumber) : numerology.lifePathNumber;

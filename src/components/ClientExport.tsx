@@ -40,7 +40,6 @@ interface ClientExportProps {
 export function ClientExport({ client, numerology, astrology, humanDesign, kabalah, theta }: ClientExportProps) {
   const [shareMsg, setShareMsg] = useState('');
   const { clients } = useStore();
-  const lpInfo = lifePaths[String(numerology.lifePathNumber > 9 ? reduceToSingle(numerology.lifePathNumber) : numerology.lifePathNumber)];
 
   return (
     <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8 }}>
@@ -222,7 +221,7 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
                 const partner = clients.find(c => c.id === client.partnerId);
                 if (partner) {
                   const partnerNum = calculateFullNumerology(partner.birthDay, partner.birthMonth, partner.birthYear);
-                  const compat = calculatePartnerCompatibility(numerology, partnerNum, client.name, partner.name);
+                  const compat = calculatePartnerCompatibility(numerology, partnerNum);
                   addSection('PARTNERSKA KOMPATIBILITA');
                   addBoldLine(`${client.name} & ${partner.name} - Celkove skore: ${compat.overallScore}%`);
                   addLine(`Zivotne cisla: ${numerology.lifePathNumber} + ${partnerNum.lifePathNumber} | Zhoda: ${compat.lifePathCompatibility.score}%`);

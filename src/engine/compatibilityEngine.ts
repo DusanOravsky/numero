@@ -42,9 +42,7 @@ function getLifePathScore(lp1: number, lp2: number): number {
 
 export function calculatePartnerCompatibility(
   person1: NumerologyResult,
-  person2: NumerologyResult,
-  name1: string,
-  name2: string
+  person2: NumerologyResult
 ): CompatibilityResult {
   const lpScore = getLifePathScore(person1.lifePathNumber, person2.lifePathNumber);
 
@@ -63,8 +61,6 @@ export function calculatePartnerCompatibility(
 
   const orvDiff = Math.abs(person1.orv - person2.orv);
   const energeticScore = Math.max(40, 100 - orvDiff * 10);
-  void name1;
-  void name2;
 
   const overallScore = Math.round((lpScore * 0.3 + planeScore * 0.25 + llScore * 0.25 + energeticScore * 0.2));
 
@@ -167,7 +163,7 @@ export function calculateParentChild(
     emotionalNeeds.push(`Rodič môže pomôcť rozvíjať energie čísel: ${parentCanHelp.join(', ')}`);
   }
 
-  let communicationStyle = '';
+  let communicationStyle: string;
   if (childLP === 1 || childLP === 8) communicationStyle = 'Priama komunikácia, rešpektujte ich nezávislosť. Dajte im možnosť rozhodovať.';
   else if (childLP === 2 || childLP === 6) communicationStyle = 'Jemná, empatická komunikácia plná potvrdení a bezpečia.';
   else if (childLP === 3 || childLP === 5) communicationStyle = 'Hravá a kreatívna komunikácia. Nechajte ich objavovať a experimentovať.';
@@ -175,7 +171,7 @@ export function calculateParentChild(
   else communicationStyle = 'Láskavá komunikácia s rešpektom k ich hlbokej citlivosti a múdrosti.';
 
   const parentLP = parent.lifePathNumber > 9 ? reduceToSingle(parent.lifePathNumber) : parent.lifePathNumber;
-  let parentRole = '';
+  let parentRole: string;
   if (parentLP === 1) parentRole = 'Vodca – učíte dieťa nezávislosti a odvahe ísť vlastnou cestou';
   else if (parentLP === 2) parentRole = 'Diplomat – učíte dieťa empatii, spolupráci a jemnosti';
   else if (parentLP === 3) parentRole = 'Tvorca – učíte dieťa kreativite a radosti zo sebavyjadrenia';

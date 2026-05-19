@@ -166,12 +166,12 @@ export function AstrologyPage() {
   const [result, setResult] = useState<AstrologyResult | null>(null);
 
   const handleCalculate = (day: number, month: number, year: number, hour?: number, minute?: number, lat?: number, lon?: number) => {
-    setResult(calculateAstrology(day, month, year, hour || 12, minute || 0, lat || 48.15, lon || 17.11));
+    setResult(calculateAstrology(day, month, year, hour ?? 12, minute ?? 0, lat ?? 48.15, lon ?? 17.11));
   };
 
   useEffect(() => {
     if (profile && !result) {
-      setResult(calculateAstrology(profile.birthDay, profile.birthMonth, profile.birthYear, profile.birthHour || 12, profile.birthMinute || 0));
+      setResult(calculateAstrology(profile.birthDay, profile.birthMonth, profile.birthYear, profile.birthHour ?? 12, profile.birthMinute ?? 0));
     }
   }, [profile, result]);
 

@@ -106,7 +106,7 @@ function calculateAscendant(date: Date, latitude: number, longitude: number): nu
 function getMeanNodeLongitude(date: Date): number {
   const jd = date.getTime() / 86400000 + 2440587.5;
   const T = (jd - 2451545.0) / 36525.0;
-  let omega = 125.04452 - 1934.136261 * T + 0.0020708 * T * T + T * T * T / 450000;
+  const omega = 125.04452 - 1934.136261 * T + 0.0020708 * T * T + T * T * T / 450000;
   return ((omega % 360) + 360) % 360;
 }
 

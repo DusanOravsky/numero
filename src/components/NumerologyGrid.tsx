@@ -59,13 +59,6 @@ const NUMBER_MEANINGS: Record<number, { positive: string; negative: string; them
   },
 };
 
-const COUNT_MEANINGS: Record<number, Record<number, string>> = {
-  0: { 1: 'Absencia – treba vedome rozvíjať', 2: 'Absencia – treba vedome rozvíjať', 3: 'Absencia – treba vedome rozvíjať', 4: 'Absencia – treba vedome rozvíjať', 5: 'Absencia – treba vedome rozvíjať', 6: 'Absencia – treba vedome rozvíjať', 7: 'Absencia – treba vedome rozvíjať', 8: 'Absencia – treba vedome rozvíjať', 9: 'Absencia – treba vedome rozvíjať' },
-  1: { 1: 'Prítomné, ale slabšie', 2: 'Prítomné, ale slabšie', 3: 'Prítomné, ale slabšie', 4: 'Prítomné, ale slabšie', 5: 'Prítomné, ale slabšie', 6: 'Prítomné, ale slabšie', 7: 'Prítomné, ale slabšie', 8: 'Prítomné, ale slabšie', 9: 'Prítomné, ale slabšie' },
-  2: { 1: 'Vyvážené, silná energia', 2: 'Vyvážené, silná energia', 3: 'Vyvážené, silná energia', 4: 'Vyvážené, silná energia', 5: 'Vyvážené, silná energia', 6: 'Vyvážené, silná energia', 7: 'Vyvážené, silná energia', 8: 'Vyvážené, silná energia', 9: 'Vyvážené, silná energia' },
-  3: { 1: 'Veľmi silné – dominantná energia', 2: 'Veľmi silné – dominantná energia', 3: 'Veľmi silné – dominantná energia', 4: 'Veľmi silné – dominantná energia', 5: 'Veľmi silné – dominantná energia', 6: 'Veľmi silné – dominantná energia', 7: 'Veľmi silné – dominantná energia', 8: 'Veľmi silné – dominantná energia', 9: 'Veľmi silné – dominantná energia' },
-};
-
 export function NumerologyGrid({ grid, highlightPlane }: NumerologyGridProps) {
   const [selectedNum, setSelectedNum] = useState<number | null>(null);
 

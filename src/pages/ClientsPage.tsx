@@ -4,6 +4,7 @@ import { useStore } from '../store/useStore';
 import { GlassCard } from '../components/GlassCard';
 import { motion } from 'framer-motion';
 import { searchCities, findCity } from '../data/cities';
+import { isValidDate } from '../engine/numerologyEngine';
 import type { Client } from '../store/useStore';
 
 export function ClientsPage() {
@@ -21,6 +22,7 @@ export function ClientsPage() {
   const [citySuggestions, setCitySuggestions] = useState<{ name: string }[]>([]);
   const [notes, setNotes] = useState('');
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
+  const [formError, setFormError] = useState('');
 
   const resetForm = () => {
     setName(''); setDay(''); setMonth(''); setYear(''); setHour(''); setMinute(''); setBirthPlace(''); setNotes('');
@@ -42,7 +44,22 @@ export function ClientsPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim() || !day || !month || !year) return;
+    setFormError('');
+    if (!name.trim()) {
+      setFormError('Zadajte meno klienta.');
+      return;
+    }
+    const dNum = parseInt(day);
+    const mNum = parseInt(month);
+    const yNum = parseInt(year);
+    if (!dNum || !mNum || !yNum) {
+      setFormError('Vyplňte celý dátum narodenia.');
+      return;
+    }
+    if (!isValidDate(dNum, mNum, yNum)) {
+      setFormError(`Neplatný dátum: ${dNum}.${mNum}.${yNum}.`);
+      return;
+    }
     const city = findCity(birthPlace);
     const data = {
       name: name.trim(),
@@ -222,6 +239,9 @@ export function ClientsPage() {
               <label className="block text-sm text-slate-400 mb-1">Poznámky</label>
               <textarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="Voliteľné poznámky o klientovi..." rows={3} className="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white focus:outline-none focus:border-indigo-500/50 resize-none" />
             </div>
+            {formError && (
+              <p className="text-sm text-rose-600 px-1">{formError}</p>
+            )}
             <button type="submit" className="w-full py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-medium hover:from-indigo-500 hover:to-violet-500 glow">
               {editingClient ? 'Uložiť zmeny' : 'Pridať klienta'}
             </button>

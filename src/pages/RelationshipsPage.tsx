@@ -84,11 +84,14 @@ interface SynastryResult {
 
 function getElementCompatibility(el1: string, el2: string): { score: number; description: string } {
   if (el1 === el2) return { score: 95, description: 'Rovnaký živel -- prirodzená harmónia a vzájomné pochopenie.' };
+  // Komplementárne (trigón v astrológii): Oheň-Vzduch a Zem-Voda
   const compatible: Record<string, string> = { 'Oheň': 'Vzduch', 'Vzduch': 'Oheň', 'Zem': 'Voda', 'Voda': 'Zem' };
   if (compatible[el1] === el2) return { score: 80, description: 'Komplementárne živly -- vzájomne sa posilňujete a inšpirujete.' };
-  const neutral: Record<string, string[]> = { 'Oheň': ['Zem'], 'Zem': ['Vzduch'], 'Vzduch': ['Voda'], 'Voda': ['Oheň'] };
-  if (neutral[el1]?.includes(el2)) return { score: 55, description: 'Neutrálna kombinácia -- vyžaduje vedomú prácu na pochopení odlišností.' };
-  return { score: 45, description: 'Protichodné živly -- silná príťažlivosť, ale aj napätie a výzvy.' };
+  // Opozičné (kvadratúra): Oheň-Voda, Zem-Vzduch
+  const opposite: Record<string, string> = { 'Oheň': 'Voda', 'Voda': 'Oheň', 'Zem': 'Vzduch', 'Vzduch': 'Zem' };
+  if (opposite[el1] === el2) return { score: 45, description: 'Protichodné živly -- silná príťažlivosť, ale aj napätie a výzvy.' };
+  // Neutrálne (kvadratúra menej intenzívna): Oheň-Zem, Vzduch-Voda
+  return { score: 55, description: 'Neutrálna kombinácia -- vyžaduje vedomú prácu na pochopení odlišností.' };
 }
 
 function getPlanetByName(result: AstrologyResult, name: string) {
@@ -117,14 +120,11 @@ function calculateSynastry(
     ? getElementCompatibility(mars1.sign.element, mars2.sign.element)
     : { score: 70, description: 'Nedá sa presne určiť.' };
 
+  const complementary: Record<string, string> = { 'Oheň': 'Vzduch', 'Vzduch': 'Oheň', 'Zem': 'Voda', 'Voda': 'Zem' };
   const elBalance = {
     person1: r1.dominantElement,
     person2: r2.dominantElement,
-    compatible: r1.dominantElement === r2.dominantElement ||
-      (r1.dominantElement === 'Oheň' && r2.dominantElement === 'Vzduch') ||
-      (r1.dominantElement === 'Vzduch' && r2.dominantElement === 'Oheň') ||
-      (r1.dominantElement === 'Zem' && r2.dominantElement === 'Voda') ||
-      (r1.dominantElement === 'Voda' && r2.dominantElement === 'Zem'),
+    compatible: r1.dominantElement === r2.dominantElement || complementary[r1.dominantElement] === r2.dominantElement,
   };
 
   const overallScore = Math.round(
@@ -159,7 +159,7 @@ export function RelationshipsPage() {
     if (!isPersonValid(partner1) || !isPersonValid(partner2)) return;
     const p1 = calculateFullNumerology(parseInt(partner1.day), parseInt(partner1.month), parseInt(partner1.year));
     const p2 = calculateFullNumerology(parseInt(partner2.day), parseInt(partner2.month), parseInt(partner2.year));
-    setCompatibility(calculatePartnerCompatibility(p1, p2, partner1.name, partner2.name));
+    setCompatibility(calculatePartnerCompatibility(p1, p2));
   };
 
   const handleAstroCalc = () => {
@@ -374,8 +374,8 @@ export function RelationshipsPage() {
 
           {/* Human Design composite comparison */}
           {(() => {
-            const hd1 = calculateHumanDesign(parseInt(partner1.day), parseInt(partner1.month), parseInt(partner1.year), partner1.hour ? parseInt(partner1.hour) : 12, 0);
-            const hd2 = calculateHumanDesign(parseInt(partner2.day), parseInt(partner2.month), parseInt(partner2.year), partner2.hour ? parseInt(partner2.hour) : 12, 0);
+            const hd1 = calculateHumanDesign(parseInt(partner1.day), parseInt(partner1.month), parseInt(partner1.year), partner1.hour !== '' ? parseInt(partner1.hour) : 12, partner1.minute !== '' ? parseInt(partner1.minute) : 0);
+            const hd2 = calculateHumanDesign(parseInt(partner2.day), parseInt(partner2.month), parseInt(partner2.year), partner2.hour !== '' ? parseInt(partner2.hour) : 12, partner2.minute !== '' ? parseInt(partner2.minute) : 0);
             return (
               <GlassCard>
                 <h3 className="font-medium text-purple-300 mb-3">Human Design kompatibilita</h3>
@@ -475,7 +475,7 @@ export function RelationshipsPage() {
                 familyResults.slice(i + 1).map(({ child: c2 }, j) => {
                   const n1 = calculateFullNumerology(parseInt(c1.day), parseInt(c1.month), parseInt(c1.year));
                   const n2 = calculateFullNumerology(parseInt(c2.day), parseInt(c2.month), parseInt(c2.year));
-                  const compat = calculatePartnerCompatibility(n1, n2, c1.name, c2.name);
+                  const compat = calculatePartnerCompatibility(n1, n2);
                   return (
                     <div key={`${i}-${j}`} className="p-3 rounded-xl glass-light mb-2">
                       <div className="flex items-center justify-between">

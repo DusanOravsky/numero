@@ -50,7 +50,7 @@ const GATE_ORDER: number[] = [
   38, 54, 61, 60
 ];
 
-const HD_WHEEL_START = 302.0;
+const HD_WHEEL_START = 302.625;
 const GATE_SIZE = 5.625;
 const LINE_SIZE = 0.9375;
 
@@ -90,7 +90,7 @@ const CHANNEL_DEFINITIONS: { gates: [number, number]; centers: [string, string];
   { gates: [37, 40], centers: ['Solárny plexus', 'Srdce/Ego'], name: 'Komunita' },
   { gates: [39, 55], centers: ['Koreň', 'Solárny plexus'], name: 'Emocionalita' },
   { gates: [42, 53], centers: ['Sakrálne', 'Koreň'], name: 'Dozrievanie' },
-  { gates: [47, 64], centers: ['Ajna', 'Hlava'], name: 'Abstracia' },
+  { gates: [47, 64], centers: ['Ajna', 'Hlava'], name: 'Abstrakcia' },
 ];
 
 const GATES_BY_CENTER: Record<string, number[]> = {
@@ -134,33 +134,72 @@ const PROFILES: Record<string, { name: string; description: string }> = {
   '6/3': { name: 'Vzor Mučeník', description: 'Optimistický experimentátor hľadajúci autenticitu.' },
 };
 
-const INCARNATION_CROSSES: Record<string, string> = {
-  '1': 'Kríž Sfingu',
-  '2': 'Kríž Vodiča',
-  '3': 'Kríž Zákonov',
-  '4': 'Kríž Vysvetlenia',
-  '5': 'Kríž Rytmu',
-  '7': 'Kríž Interakcie',
-  '8': 'Kríž Prínosu',
-  '9': 'Kríž Plánovania',
-  '10': 'Kríž Lásky',
-  '13': 'Kríž Sfingu',
-  '14': 'Kríž Bubeníka',
-  '15': 'Kríž Extrémov',
-  '16': 'Kríž Experimentovania',
-  '17': 'Kríž Služby',
-  '19': 'Kríž Potreby',
-  '20': 'Kríž Spania',
-  '21': 'Kríž Kontroly',
-  '22': 'Kríž Vládnutia',
-  '23': 'Kríž Vysvetlenia',
-  '24': 'Kríž Neočakávaného',
-  '25': 'Kríž Ducha',
-  '26': 'Kríž Prefíkanosti',
-  '27': 'Kríž Neočakávaného',
-  '28': 'Kríž Rizika',
-  '29': 'Kríž Oddanosti',
-  '30': 'Kríž Zázrakov',
+// Klasifikácia inkarnačného kríža podľa profilu:
+// Right Angle (osobný osud): profily 1/3, 1/4, 2/4, 2/5, 3/5, 3/6, 4/6, 4/1, 5/1, 5/2, 6/2, 6/3
+//   Reálne RA profily: 1/3, 1/4, 2/4, 4/6 (konvenčne zúžené – tu používame zjednodušenú klasifikáciu)
+// Juxtaposition (fixovaný osud): 3/5
+// Left Angle (transpersonálny): 4/1, 5/1, 5/2, 6/2, 6/3
+function getCrossAngle(line1: number, line2: number): 'Right Angle' | 'Juxtaposition' | 'Left Angle' {
+  // Štandardná HD klasifikácia: Right Angle = osobný (1/3, 1/4, 2/4, 2/5, 3/5, 3/6, 4/6),
+  // Juxtaposition = fixovaný (3/5 v niektorých systémoch, alebo profil = 3/5),
+  // Left Angle = transpersonálny (4/1, 5/1, 5/2, 6/2, 6/3).
+  // Tu používame jednoduchú implementáciu na základe rozsahu osobnostnej línie.
+  if (line2 < line1) return 'Left Angle';
+  if (line1 === 3 && line2 === 5) return 'Juxtaposition';
+  return 'Right Angle';
+}
+
+// Mapovanie kombinácie 4 brán na názov kríža (zjednodušený výber najznámejších krížov).
+// Kľúč: "pSun-pEarth-dSun-dEarth"
+const NAMED_CROSSES: Record<string, string> = {
+  // Najbežnejšie krížy podľa Sun/Earth osi (osobnosť/dizajn)
+  '1-2-7-13': 'Kríž Sfingy',
+  '13-7-1-2': 'Kríž Sfingy',
+  '2-1-13-7': 'Kríž Sfingy',
+  '7-13-2-1': 'Kríž Sfingy',
+  '3-50-60-56': 'Kríž Zákonov',
+  '4-49-23-43': 'Kríž Vysvetlenia',
+  '5-35-15-10': 'Kríž Rytmu',
+  '8-14-55-59': 'Kríž Prínosu',
+  '9-16-64-63': 'Kríž Plánovania',
+  '10-15-25-46': 'Kríž Lásky',
+  '11-12-46-25': 'Kríž Edenu',
+  '14-8-59-55': 'Kríž Bubeníka',
+  '15-10-46-25': 'Kríž Extrémov',
+  '16-9-63-64': 'Kríž Experimentovania',
+  '17-18-58-52': 'Kríž Služby',
+  '19-33-49-44': 'Kríž Potreby',
+  '20-34-37-40': 'Kríž Spania',
+  '21-48-38-39': 'Kríž Kontroly',
+  '22-47-26-45': 'Kríž Vládnutia',
+  '23-43-49-4': 'Kríž Pohlcovania',
+  '24-44-19-33': 'Kríž Neočakávaného',
+  '25-46-58-52': 'Kríž Ducha',
+  '26-45-22-47': 'Kríž Prefíkanosti',
+  '27-28-19-33': 'Kríž Výživy',
+  '28-27-33-19': 'Kríž Rizika',
+  '29-30-20-34': 'Kríž Oddanosti',
+  '30-29-34-20': 'Kríž Zázrakov',
+};
+
+// Záložné názvy podľa osobnostnej brány Slnka (pre prípad, že presná kombinácia nie je v NAMED_CROSSES)
+const CROSS_NAME_BY_SUN: Record<number, string> = {
+  1: 'Kríž Sfingy', 2: 'Kríž Vodiča', 3: 'Kríž Zákonov', 4: 'Kríž Vysvetlenia',
+  5: 'Kríž Rytmu', 6: 'Kríž Edenu', 7: 'Kríž Sfingy', 8: 'Kríž Prínosu',
+  9: 'Kríž Plánovania', 10: 'Kríž Lásky', 11: 'Kríž Edenu', 12: 'Kríž Vyhýbania',
+  13: 'Kríž Sfingy', 14: 'Kríž Bubeníka', 15: 'Kríž Extrémov', 16: 'Kríž Experimentovania',
+  17: 'Kríž Služby', 18: 'Kríž Služby', 19: 'Kríž Potreby', 20: 'Kríž Spania',
+  21: 'Kríž Kontroly', 22: 'Kríž Vládnutia', 23: 'Kríž Vysvetlenia', 24: 'Kríž Neočakávaného',
+  25: 'Kríž Ducha', 26: 'Kríž Prefíkanosti', 27: 'Kríž Výživy', 28: 'Kríž Rizika',
+  29: 'Kríž Oddanosti', 30: 'Kríž Zázrakov', 31: 'Kríž Vplyvu', 32: 'Kríž Naplnenia',
+  33: 'Kríž Ústupu', 34: 'Kríž Sily', 35: 'Kríž Vedomia', 36: 'Kríž Krízy',
+  37: 'Kríž Plánov', 38: 'Kríž Napätia', 39: 'Kríž Provokácie', 40: 'Kríž Dovŕšenia',
+  41: 'Kríž Predstáv', 42: 'Kríž Maja', 43: 'Kríž Vysvetlenia', 44: 'Kríž Prebudenia',
+  45: 'Kríž Vládnutia', 46: 'Kríž Tela', 47: 'Kríž Útlaku', 48: 'Kríž Hĺbky',
+  49: 'Kríž Vysvetlenia', 50: 'Kríž Hodnôt', 51: 'Kríž Šoku', 52: 'Kríž Sústredenia',
+  53: 'Kríž Začiatkov', 54: 'Kríž Ambícií', 55: 'Kríž Ducha', 56: 'Kríž Stimulácie',
+  57: 'Kríž Prenikavosti', 58: 'Kríž Služby', 59: 'Kríž Stratégie', 60: 'Kríž Limitov',
+  61: 'Kríž Tajomstva', 62: 'Kríž Detailov', 63: 'Kríž Pochybností', 64: 'Kríž Zmätku',
 };
 
 function degreeToGateLine(eclipticLongitude: number): { gate: number; line: number } {
@@ -352,11 +391,30 @@ function getNotSelfTheme(type: HDType): HDNotSelfTheme {
   }
 }
 
+function getTimezoneOffsetHD(day: number, month: number, year: number, baseOffset: number): number {
+  // CET/CEST: letný čas od poslednej nedele marca do poslednej nedele októbra
+  if (baseOffset === 1 || baseOffset === 2) {
+    const marchLast = new Date(year, 2, 31);
+    const marchSunday = 31 - marchLast.getDay();
+    const octLast = new Date(year, 9, 31);
+    const octSunday = 31 - octLast.getDay();
+    const dayOfYear = Math.floor((new Date(year, month - 1, day).getTime() - new Date(year, 0, 1).getTime()) / 86400000) + 1;
+    const marchSundayDOY = Math.floor((new Date(year, 2, marchSunday).getTime() - new Date(year, 0, 1).getTime()) / 86400000) + 1;
+    const octSundayDOY = Math.floor((new Date(year, 9, octSunday).getTime() - new Date(year, 0, 1).getTime()) / 86400000) + 1;
+    if (dayOfYear >= marchSundayDOY && dayOfYear < octSundayDOY) return 2; // CEST
+    return 1; // CET
+  }
+  return baseOffset;
+}
+
 export function calculateHumanDesign(
   day: number, month: number, year: number,
-  hour: number = 12, minute: number = 0
+  hour: number = 12, minute: number = 0,
+  timezoneOffsetHours: number = 1
 ): HumanDesignResult {
-  const birthDate = new Date(Date.UTC(year, month - 1, day, hour, minute));
+  const tz = getTimezoneOffsetHD(day, month, year, timezoneOffsetHours);
+  const utcHour = hour - tz;
+  const birthDate = new Date(Date.UTC(year, month - 1, day, utcHour, minute));
   const designDate = findDesignDate(birthDate);
 
   const personalityActivations = getActivations(birthDate, 'personality');
@@ -379,7 +437,14 @@ export function calculateHumanDesign(
   const openCenters = ALL_CENTERS.filter(c => !defined.has(c));
 
   const pSunGate = personalityActivations.find(a => a.planet === 'Slnko')!.gate;
-  const cross = INCARNATION_CROSSES[String(pSunGate)] || `Kríž Brány ${pSunGate}`;
+  const pEarthGate = personalityActivations.find(a => a.planet === 'Zem')!.gate;
+  const dSunGate = designActivations.find(a => a.planet === 'Slnko')!.gate;
+  const dEarthGate = designActivations.find(a => a.planet === 'Zem')!.gate;
+
+  const crossKey = `${pSunGate}-${pEarthGate}-${dSunGate}-${dEarthGate}`;
+  const angle = getCrossAngle(pSunLine, dSunLine);
+  const baseName = NAMED_CROSSES[crossKey] || CROSS_NAME_BY_SUN[pSunGate] || `Kríž Brány ${pSunGate}`;
+  const cross = `${angle} – ${baseName} (${pSunGate}/${pEarthGate} | ${dSunGate}/${dEarthGate})`;
 
   return {
     type,

@@ -80,8 +80,8 @@ export function ClientRelationships({
           const partner = clients.find(c => c.id === client.partnerId);
           if (!partner) return null;
           const partnerNum = calculateFullNumerology(partner.birthDay, partner.birthMonth, partner.birthYear);
-          const compat = calculatePartnerCompatibility(numerology, partnerNum, client.name, partner.name);
-          const partnerHD = calculateHumanDesign(partner.birthDay, partner.birthMonth, partner.birthYear, partner.birthHour || 12, partner.birthMinute || 0);
+          const compat = calculatePartnerCompatibility(numerology, partnerNum);
+          const partnerHD = calculateHumanDesign(partner.birthDay, partner.birthMonth, partner.birthYear, partner.birthHour ?? 12, partner.birthMinute ?? 0);
           return (
             <div className="space-y-3">
               <GlassCard glow>

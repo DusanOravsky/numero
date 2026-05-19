@@ -98,7 +98,7 @@ function analyzeChannels(result1: HumanDesignResult, result2: HumanDesignResult)
   return { electromagnetic, compromise, dominant1, dominant2 };
 }
 
-function getConditioningAnalysis(result1: HumanDesignResult, result2: HumanDesignResult, name1: string, name2: string) {
+function getConditioningAnalysis(result1: HumanDesignResult, result2: HumanDesignResult) {
   const defined1 = new Set(result1.definedCenters.map(n => nameToKey[n] || n));
   const defined2 = new Set(result2.definedCenters.map(n => nameToKey[n] || n));
 
@@ -121,7 +121,7 @@ export function PartnerBodygraph({ result1, result2, name1, name2 }: PartnerBody
   const definedKeys2 = new Set(result2.definedCenters.map(n => nameToKey[n] || n));
 
   const channelAnalysis = analyzeChannels(result1, result2);
-  const conditioning = getConditioningAnalysis(result1, result2, name1, name2);
+  const conditioning = getConditioningAnalysis(result1, result2);
 
   // Determine channel line colors for the composite
   const getChannelColor = (channelKey: string): string => {

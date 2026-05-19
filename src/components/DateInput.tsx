@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { searchCities, findCity } from '../data/cities';
+import { isValidDate } from '../engine/numerologyEngine';
 
 interface DateInputProps {
   onSubmit: (day: number, month: number, year: number, hour?: number, minute?: number, lat?: number, lon?: number) => void;
@@ -16,22 +17,30 @@ export function DateInput({ onSubmit, showTime = false, showPlace = false, label
   const [minute, setMinute] = useState('0');
   const [birthPlace, setBirthPlace] = useState('');
   const [citySuggestions, setCitySuggestions] = useState<{ name: string }[]>([]);
+  const [error, setError] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
     const d = parseInt(day);
     const m = parseInt(month);
     const y = parseInt(year);
-    if (d && m && y && d >= 1 && d <= 31 && m >= 1 && m <= 12 && y >= 1900 && y <= 2100) {
-      const city = findCity(birthPlace);
-      onSubmit(
-        d, m, y,
-        showTime ? parseInt(hour) : undefined,
-        showTime ? parseInt(minute) : undefined,
-        city?.lat,
-        city?.lon
-      );
+    if (!d || !m || !y) {
+      setError('Vyplňte deň, mesiac a rok.');
+      return;
     }
+    if (!isValidDate(d, m, y)) {
+      setError(`Neplatný dátum: ${d}.${m}.${y}. Skontrolujte deň/mesiac.`);
+      return;
+    }
+    const city = findCity(birthPlace);
+    onSubmit(
+      d, m, y,
+      showTime ? parseInt(hour) : undefined,
+      showTime ? parseInt(minute) : undefined,
+      city?.lat,
+      city?.lon
+    );
   };
 
   return (
@@ -92,6 +101,9 @@ export function DateInput({ onSubmit, showTime = false, showPlace = false, label
             </div>
           )}
         </div>
+      )}
+      {error && (
+        <p className="text-sm text-rose-600 px-1">{error}</p>
       )}
       <button type="submit" className="w-full py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-medium hover:from-indigo-500 hover:to-violet-500 transition-all duration-300 glow">
         Vypočítať

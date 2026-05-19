@@ -3,8 +3,19 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 const APP_VERSION = '1.3.0';
 
+interface BeforeInstallPromptEvent extends Event {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
+}
+
+declare global {
+  interface Window {
+    _deferredInstallPrompt?: BeforeInstallPromptEvent;
+  }
+}
+
 export function PWAPrompts() {
-  const [installPrompt, setInstallPrompt] = useState<Event | null>(null);
+  const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [showInstall, setShowInstall] = useState(false);
   const [showUpdate, setShowUpdate] = useState(false);
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
@@ -13,8 +24,9 @@ export function PWAPrompts() {
     // Install prompt
     const handler = (e: Event) => {
       e.preventDefault();
-      setInstallPrompt(e);
-      (window as any)._deferredInstallPrompt = e;
+      const promptEvent = e as BeforeInstallPromptEvent;
+      setInstallPrompt(promptEvent);
+      window._deferredInstallPrompt = promptEvent;
       const dismissed = localStorage.getItem('pwa-install-dismissed');
       if (!dismissed) setShowInstall(true);
     };
@@ -58,7 +70,7 @@ export function PWAPrompts() {
 
   const handleInstall = async () => {
     if (!installPrompt) return;
-    (installPrompt as any).prompt();
+    installPrompt.prompt();
     setShowInstall(false);
   };
 

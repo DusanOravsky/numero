@@ -49,8 +49,8 @@ export function generateInterpretation(
   astrology?: AstrologyResult,
   humanDesign?: HumanDesignResult,
   chakras?: ChakraState[],
-  kabalah?: KabalahResult,
-  theta?: ThetaHealingResult
+  _kabalah?: KabalahResult,
+  _theta?: ThetaHealingResult
 ): FullInterpretation {
   const themes: InterpretationTheme[] = [];
 

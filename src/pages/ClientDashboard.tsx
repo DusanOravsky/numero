@@ -42,8 +42,8 @@ export function ClientDashboard() {
     const { birthDay: d, birthMonth: m, birthYear: y, birthHour: h, birthMinute: min } = client;
 
     const numerology = calculateFullNumerology(d, m, y);
-    const astrology = calculateAstrology(d, m, y, h || 12, min || 0);
-    const humanDesign = calculateHumanDesign(d, m, y, h || 12, min || 0);
+    const astrology = calculateAstrology(d, m, y, h ?? 12, min ?? 0);
+    const humanDesign = calculateHumanDesign(d, m, y, h ?? 12, min ?? 0);
     const gridCounts = getGridCount(numerology.grid);
     const chakras = evaluateChakras(numerology.lifePathNumber, gridCounts, numerology.isolatedNumbers, humanDesign.definedCenters, astrology.dominantElement);
     const lp = numerology.lifePathNumber > 9 ? reduceToSingle(numerology.lifePathNumber) : numerology.lifePathNumber;

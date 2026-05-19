@@ -109,12 +109,12 @@ export function HumanDesignPage() {
   const [result, setResult] = useState<HumanDesignResult | null>(null);
 
   const handleCalculate = (day: number, month: number, year: number, hour?: number, minute?: number, lat?: number, lon?: number) => {
-    setResult(calculateHumanDesign(day, month, year, hour || 12, minute || 0)); void lat; void lon;
+    setResult(calculateHumanDesign(day, month, year, hour ?? 12, minute ?? 0)); void lat; void lon;
   };
 
   useEffect(() => {
     if (profile && !result) {
-      setResult(calculateHumanDesign(profile.birthDay, profile.birthMonth, profile.birthYear, profile.birthHour || 12, profile.birthMinute || 0));
+      setResult(calculateHumanDesign(profile.birthDay, profile.birthMonth, profile.birthYear, profile.birthHour ?? 12, profile.birthMinute ?? 0));
     }
   }, [profile, result]);
 

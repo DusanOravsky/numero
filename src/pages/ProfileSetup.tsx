@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import { GlassCard } from '../components/GlassCard';
 import { searchCities, findCity } from '../data/cities';
+import { isValidDate } from '../engine/numerologyEngine';
 
 export function ProfileSetup() {
   const navigate = useNavigate();
@@ -15,13 +16,26 @@ export function ProfileSetup() {
   const [minute, setMinute] = useState('');
   const [birthPlace, setBirthPlace] = useState('');
   const [citySuggestions, setCitySuggestions] = useState<{ name: string; lat: number; lon: number }[]>([]);
+  const [error, setError] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
     const d = parseInt(day);
     const m = parseInt(month);
     const y = parseInt(year);
-    if (!name.trim() || !d || !m || !y) return;
+    if (!name.trim()) {
+      setError('Zadajte meno.');
+      return;
+    }
+    if (!d || !m || !y) {
+      setError('Vyplňte celý dátum narodenia.');
+      return;
+    }
+    if (!isValidDate(d, m, y)) {
+      setError(`Neplatný dátum: ${d}.${m}.${y}.`);
+      return;
+    }
 
     const city = findCity(birthPlace);
     const id = crypto.randomUUID();
@@ -154,6 +168,9 @@ export function ProfileSetup() {
               <p className="text-xs text-slate-500 mt-1">Dôležité pre presný ascendent a astrologické domy</p>
             </div>
 
+            {error && (
+              <p className="text-sm text-rose-600 px-1">{error}</p>
+            )}
             <button
               type="submit"
               className="w-full py-4 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-medium text-lg hover:from-indigo-500 hover:to-violet-500 transition-all duration-300 glow mt-4"

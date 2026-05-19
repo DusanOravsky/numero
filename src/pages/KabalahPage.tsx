@@ -116,6 +116,52 @@ export function KabalahPage() {
             </p>
           </GlassCard>
 
+          {/* Jednoducho povedané — takeaway pre laikov */}
+          <GlassCard glow>
+            <h3 className="font-medium text-white mb-3">Jednoducho povedané</h3>
+            <div className="space-y-3 text-sm text-slate-300">
+              <p>
+                Predstav si Strom života ako <strong>mapu tvojej duše</strong>. Máš v nej 10 „staníc" (sefír), z ktorých každá zastupuje inú kvalitu — od čistej inšpirácie hore až po konkrétne činy dole.
+              </p>
+              <p>
+                <strong>Tvoja hlavná stanica</strong> je <span className="text-indigo-300 font-medium">{result.primarySefira.name} ({result.primarySefira.meaning})</span> — to je téma, cez ktorú rastieš. Nie je to niečo, čo „máš" alebo „nemáš" — je to energia, ktorú sa učíš vedome používať.
+              </p>
+              <p>
+                <strong>Čo si z toho vziať:</strong>
+              </p>
+              <ul className="space-y-1 ml-4">
+                <li className="flex items-start gap-2"><span className="text-emerald-400 shrink-0">→</span> Tvoj dar: {result.primarySefira.gift.toLowerCase()}</li>
+                <li className="flex items-start gap-2"><span className="text-amber-400 shrink-0">→</span> Tvoja výzva: {result.primarySefira.shadow.toLowerCase()}</li>
+                <li className="flex items-start gap-2"><span className="text-indigo-400 shrink-0">→</span> Praktický krok: {result.malchutAction.toLowerCase()}</li>
+              </ul>
+            </div>
+          </GlassCard>
+
+          {/* Prepojenie so systémami */}
+          <GlassCard>
+            <h3 className="font-medium text-white mb-3">Ako to súvisí s ostatnými systémami</h3>
+            <p className="text-xs text-slate-500 mb-3">
+              Kabala nie je izolovaný systém — prepája sa s numerológiou aj čakrami. Tu vidíš, kde sa tvoje výsledky stretávajú.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="p-3 rounded-xl bg-indigo-50 border border-indigo-200">
+                <p className="text-xs text-indigo-700 font-semibold mb-1">Numerológia → Kabala</p>
+                <p className="text-xs text-slate-700">
+                  Tvoje <strong>životné číslo</strong> určuje primárnu sefiru. Rovnaké číslo, ktoré definuje tvoj charakter v numerológii, definuje aj tvoju duchovnú tému v Kabale.
+                </p>
+              </div>
+              <div className="p-3 rounded-xl bg-purple-50 border border-purple-200">
+                <p className="text-xs text-purple-700 font-semibold mb-1">Kabala → Čakry</p>
+                <p className="text-xs text-slate-700">
+                  Sefira <strong>{result.primarySefira.name}</strong> zodpovedá <strong>{result.primarySefira.chakra}. čakre</strong>. Keď pracuješ na tejto sefíre, automaticky posilňuješ aj danú čakru.
+                </p>
+              </div>
+            </div>
+            <p className="text-xs text-slate-500 mt-3 italic">
+              Všetky systémy v tejto appke ukazujú rôzne uhly pohľadu na tú istú osobnosť — nie sú to oddelené informácie, ale časti jednej mapy.
+            </p>
+          </GlassCard>
+
           <GlassCard glow>
             <div className="text-center mb-6">
               <p className="text-xs text-slate-400 uppercase tracking-wider">Vaša primárna sefira</p>
@@ -285,12 +331,14 @@ export function KabalahPage() {
             </div>
           </GlassCard>
 
-          <button
-            onClick={() => setManualResult(null)}
-            className="px-4 py-2 rounded-xl text-sm font-medium glass text-slate-400 hover:text-white"
-          >
-            Nový výpočet
-          </button>
+          {manualResult && (
+            <button
+              onClick={() => setManualResult(null)}
+              className="px-4 py-2 rounded-xl text-sm font-medium glass text-slate-400 hover:text-white"
+            >
+              Nový výpočet
+            </button>
+          )}
         </div>
       )}
     </div>

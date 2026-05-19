@@ -74,6 +74,22 @@ export function ThetaHealingPage() {
             </div>
           </GlassCard>
 
+          {/* Jednoducho povedané */}
+          <GlassCard>
+            <h3 className="font-medium text-white mb-3">Čo si z toho vziať</h3>
+            <div className="space-y-3 text-sm text-slate-300">
+              <p>
+                Theta Healing ti ukazuje <strong className="text-white">podvedomé presvedčenia</strong>, ktoré ti bránia — veci, ktoré si hovoríš sám sebe bez toho, aby si si to uvedomoval. Napríklad „Nie som dosť dobrý" alebo „Nemôžem mať úspech aj lásku."
+              </p>
+              <p>
+                <strong>Prakticky:</strong> Nižšie nájdeš presvedčenia typické pre tvoje životné číslo. Pri každom je „kopacie" cvičenie — séria otázok, ktoré ťa dovedú ku koreňu. A potom nové presvedčenie, ktorým to staré vedome nahradíš.
+              </p>
+              <p className="text-xs text-slate-500 italic">
+                Nie musíš pracovať so všetkými naraz. Vyber si to, pri ktorom cítiš najväčší odpor — tam je zvyčajne najväčší potenciál rastu.
+              </p>
+            </div>
+          </GlassCard>
+
           <GlassCard glow>
             <h3 className="font-medium text-white mb-2">Limitujúce presvedčenia</h3>
             <p className="text-xs text-slate-400 mb-4">Toto sú podvedomé presvedčenia, ktoré sú typické pre vaše životné číslo. Kliknite na presvedčenie pre zobrazenie healing procesu.</p>
@@ -171,12 +187,14 @@ export function ThetaHealingPage() {
             </div>
           </GlassCard>
 
-          <button
-            onClick={() => setManualResult(null)}
-            className="px-4 py-2 rounded-xl text-sm font-medium glass text-slate-400 hover:text-white"
-          >
-            Nový výpočet
-          </button>
+          {manualResult && (
+            <button
+              onClick={() => setManualResult(null)}
+              className="px-4 py-2 rounded-xl text-sm font-medium glass text-slate-400 hover:text-white"
+            >
+              Nový výpočet
+            </button>
+          )}
         </div>
       )}
     </div>

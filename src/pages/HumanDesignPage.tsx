@@ -174,6 +174,36 @@ export function HumanDesignPage() {
             </p>
           </GlassCard>
 
+          {/* Jednoducho povedané — personalizované takeaway */}
+          <GlassCard>
+            <h3 className="font-medium text-white mb-3">Čo si z toho vziať</h3>
+            <div className="space-y-3 text-sm text-slate-300">
+              <p>
+                Tvoj Human Design ti hovorí <strong className="text-white">tri praktické veci</strong>, ktoré môžeš hneď začať používať:
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="p-3 rounded-xl bg-indigo-50 border border-indigo-200">
+                  <p className="text-xs text-indigo-700 font-semibold mb-1">1. Ako rozhodovať</p>
+                  <p className="text-xs text-slate-700">
+                    Tvoja autorita (<strong>{result.authority}</strong>) ti ukazuje, ako sa dopracovať k správnemu rozhodnutiu — nie hlavou, ale {result.authority === 'Emocionálna' ? 'čakaním na emocionálnu jasnosť' : result.authority === 'Sakrálna' ? 'reakciou z brucha (uh-huh / unh-unh)' : result.authority === 'Slezinová' ? 'prvotnou intuíciou v momente' : 'tvojím vnútorným kompasom'}.
+                  </p>
+                </div>
+                <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200">
+                  <p className="text-xs text-emerald-700 font-semibold mb-1">2. Ako fungovať vo svete</p>
+                  <p className="text-xs text-slate-700">
+                    Ako <strong>{result.type}</strong> je tvoja stratégia „<strong>{result.strategy.toLowerCase()}</strong>". To nie je obmedzenie — je to spôsob, ako sa ti otvárajú správne príležitosti.
+                  </p>
+                </div>
+                <div className="p-3 rounded-xl bg-rose-50 border border-rose-200">
+                  <p className="text-xs text-rose-700 font-semibold mb-1">3. Kedy niečo nie je pre teba</p>
+                  <p className="text-xs text-slate-700">
+                    Keď cítiš „<strong>{result.notSelfTheme.toLowerCase()}</strong>" — je to signál, že žiješ mimo svoj dizajn. Nie je to chyba, len navigačný bod.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </GlassCard>
+
           <GlassCard glow>
             <div className={`p-6 rounded-xl bg-gradient-to-br ${typeColors[result.type] || typeColors['Generátor']}`}>
               <p className="text-xs text-slate-400 uppercase tracking-wider">Váš typ</p>
@@ -443,12 +473,14 @@ export function HumanDesignPage() {
             );
           })()}
 
-          <button
-            onClick={() => setManualResult(null)}
-            className="px-4 py-2 rounded-xl text-sm font-medium glass text-slate-400 hover:text-white"
-          >
-            Nový výpočet
-          </button>
+          {manualResult && (
+            <button
+              onClick={() => setManualResult(null)}
+              className="px-4 py-2 rounded-xl text-sm font-medium glass text-slate-400 hover:text-white"
+            >
+              Nový výpočet
+            </button>
+          )}
         </div>
       )}
     </div>

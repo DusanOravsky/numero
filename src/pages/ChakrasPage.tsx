@@ -279,12 +279,14 @@ export function ChakrasPage() {
             ))}
           </div>
 
-          <button
-            onClick={() => setManualChakras(null)}
-            className="px-4 py-2 rounded-xl text-sm font-medium glass text-slate-400 hover:text-white"
-          >
-            Nový výpočet
-          </button>
+          {manualChakras && (
+            <button
+              onClick={() => setManualChakras(null)}
+              className="px-4 py-2 rounded-xl text-sm font-medium glass text-slate-400 hover:text-white"
+            >
+              Nový výpočet
+            </button>
+          )}
         </div>
       )}
     </div>

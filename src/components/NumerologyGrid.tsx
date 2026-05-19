@@ -73,6 +73,9 @@ export function NumerologyGrid({ grid, highlightPlane }: NumerologyGridProps) {
 
   return (
     <div>
+      <p className="text-[11px] text-indigo-600 italic text-center mb-2">
+        👆 Klikni na číslo pre detail (význam, počet, dar/tieň)
+      </p>
       <div className="grid grid-cols-3 gap-2 max-w-xs mx-auto">
         {gridLayout.map((row, rowIdx) =>
           row.map((num, colIdx) => {

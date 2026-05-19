@@ -156,7 +156,12 @@ export function DevelopmentalNumerologyView({ result, gender }: Props) {
 
       {/* Mriežka */}
       <div>
-        <h4 className="font-medium text-slate-800 mb-2">Mriežka</h4>
+        <div className="flex items-center justify-between mb-2">
+          <h4 className="font-medium text-slate-800">Mriežka</h4>
+          <span className="text-[11px] text-indigo-600 italic">
+            👆 Klikni na číslo pre detail
+          </span>
+        </div>
         <div className="grid grid-cols-3 gap-2 max-w-xs mx-auto">
           {layout.map((row, rIdx) =>
             row.map((num, cIdx) => {

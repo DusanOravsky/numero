@@ -262,6 +262,11 @@ export function AstrologyPage() {
                       <div className="text-right">
                         <span className="text-sm text-indigo-300">{planet.sign.symbol} {planet.sign.name}</span>
                         <span className="text-xs text-slate-500 ml-2">{planet.degree.toFixed(1)}°</span>
+                        {result.planetHouses[planet.name] && (
+                          <span className="block text-[10px] text-amber-700 mt-0.5">
+                            {result.planetHouses[planet.name]}. dom
+                          </span>
+                        )}
                       </div>
                     </div>
                     {planetInSignDescriptions[planet.name]?.[planet.sign.name] && (
@@ -305,6 +310,34 @@ export function AstrologyPage() {
                 <h3 className="font-medium text-white mb-2">Mesačná fáza pri narodení</h3>
                 <p className="text-lg text-indigo-300 font-serif">{result.moonPhase}</p>
                 <p className="text-xs text-slate-400 mt-2">{getMoonPhaseDescription(result.moonPhase)}</p>
+              </GlassCard>
+
+              <GlassCard>
+                <h3 className="font-medium text-white mb-2">Astrologické domy (Whole Sign)</h3>
+                <p className="text-xs text-slate-500 mb-3">
+                  12 domov začína znamením ascendentu. Každý dom predstavuje oblasť života. Planéty v dome ukazujú, aká energia v tej oblasti pôsobí.
+                </p>
+                <div className="grid grid-cols-2 gap-2">
+                  {result.houses.map(h => {
+                    const planetsInHouse = result.planets.filter(p => result.planetHouses[p.name] === h.number);
+                    return (
+                      <div key={h.number} className="p-2 rounded-lg bg-amber-50 border border-amber-200">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-bold text-amber-700">{h.number}. {h.sign.symbol}</span>
+                          <span className="text-[10px] text-slate-500">{h.sign.name}</span>
+                        </div>
+                        <p className="text-[10px] text-slate-600 mt-0.5 leading-tight">{h.theme}</p>
+                        {planetsInHouse.length > 0 && (
+                          <div className="flex gap-1 mt-1">
+                            {planetsInHouse.map(p => (
+                              <span key={p.name} title={p.name} className="text-sm">{p.symbol}</span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
               </GlassCard>
 
               <GlassCard>

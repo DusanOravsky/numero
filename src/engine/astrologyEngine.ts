@@ -34,11 +34,22 @@ export interface PlanetPosition {
   retrograde: boolean;
 }
 
+export interface House {
+  number: number;
+  sign: ZodiacSign;
+  cuspDegree: number; // pre Whole Sign vždy 0
+  theme: string;
+}
+
 export interface AstrologyResult {
   sunSign: ZodiacSign;
   moonSign: ZodiacSign;
   ascendant: ZodiacSign;
+  ascendantDegree: number;
   planets: PlanetPosition[];
+  houses: House[];
+  /** Mapa: planéta → číslo domu */
+  planetHouses: Record<string, number>;
   dominantElement: string;
   dominantQuality: string;
   dominantPlanet: string;
@@ -46,6 +57,21 @@ export interface AstrologyResult {
   northNode: ZodiacSign;
   southNode: ZodiacSign;
 }
+
+const HOUSE_THEMES: Record<number, string> = {
+  1: 'Ja, telo, prvý dojem, vitalita',
+  2: 'Hodnoty, financie, hmotné zdroje, sebahodnota',
+  3: 'Komunikácia, súrodenci, krátke cesty, učenie',
+  4: 'Domov, rodina, korene, súkromie, otec/matka',
+  5: 'Tvorba, deti, romantika, hra, sebavyjadrenie',
+  6: 'Práca, zdravie, denné rutiny, služba',
+  7: 'Partnerstvá, manželstvo, otvorené konflikty, "iný"',
+  8: 'Transformácia, intimita, smrť/znovuzrodenie, zdieľané zdroje',
+  9: 'Filozofia, ďaleké cesty, vyššie štúdium, viera',
+  10: 'Kariéra, verejný obraz, ambície, autorita',
+  11: 'Priatelia, komunita, sny, kolektív',
+  12: 'Podvedomie, izolácia, duchovno, skryté veci',
+};
 
 function getSignFromLongitude(longitude: number): { sign: ZodiacSign; degree: number } {
   const normalizedLong = ((longitude % 360) + 360) % 360;
@@ -231,11 +257,35 @@ function _calculateAstrologyImpl(
   const northNodeInfo = getSignFromLongitude(northNodeLong);
   const southNodeInfo = getSignFromLongitude(southNodeLong);
 
+  // Whole Sign domy: celé znamenie ascendentu = 1. dom, ďalšie znamenia = 2., 3. dom...
+  const ascSignIdx = ZODIAC_SIGNS.indexOf(ascInfo.sign);
+  const houses: House[] = [];
+  for (let i = 0; i < 12; i++) {
+    const signIdx = (ascSignIdx + i) % 12;
+    houses.push({
+      number: i + 1,
+      sign: ZODIAC_SIGNS[signIdx],
+      cuspDegree: 0,
+      theme: HOUSE_THEMES[i + 1],
+    });
+  }
+
+  // Mapovanie planét do domov podľa znamení
+  const planetHouses: Record<string, number> = {};
+  planets.forEach(p => {
+    const planetSignIdx = ZODIAC_SIGNS.indexOf(p.sign);
+    const houseNumber = ((planetSignIdx - ascSignIdx + 12) % 12) + 1;
+    planetHouses[p.name] = houseNumber;
+  });
+
   return {
     sunSign: sunInfo.sign,
     moonSign: moonInfo.sign,
     ascendant: ascInfo.sign,
+    ascendantDegree: ascInfo.degree,
     planets,
+    houses,
+    planetHouses,
     dominantElement,
     dominantQuality,
     dominantPlanet,

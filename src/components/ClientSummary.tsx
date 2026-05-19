@@ -122,7 +122,7 @@ export function ClientSummary({ clientName, numerology, astrology, humanDesign, 
                 )}
               </p>
               <p className="text-[11px] text-slate-400 italic">
-                Zdroj: Lívia Mičková – Duchovná numerológia (vykladá Červenák)
+                Zdroj: kniha Lívia Mičková – Duchovná numerológia
               </p>
             </div>
 

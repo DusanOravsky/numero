@@ -157,7 +157,7 @@ export function DevelopmentalNumerologyView({ result }: Props) {
 
       <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
         <p className="text-[11px] text-slate-500 italic">
-          Zdroj výkladov: Lívia Mičková – <strong>Duchovná numerológia</strong> a <strong>Duchovná numerológia pre deti</strong>. Postup výpočtu podľa prednášky Červenáka.
+          Zdroj: kniha Lívia Mičková – <strong>Duchovná numerológia</strong> (a <strong>Duchovná numerológia pre deti</strong>).
         </p>
       </div>
     </div>

@@ -192,7 +192,7 @@ export function SettingsPage() {
                 <p className="text-xs text-slate-500 mt-1">
                   Ukazuje <strong>životné úlohy a karmické cykly</strong>, ktoré si duša prišla riešiť. Do mriežky vstupujú aj <strong>4 "zakrúžkované" pomocné čísla</strong>. Roky 2000+ sa počítajú špeciálne (rok = 20 + zvyšok). Významy: 1 = Ego (mužské/ženské), 2 = Bioenergia tela, 3 = Vnútorná múdrosť, 4 = Sebavedomie, 5 = Intuícia, 6 = Vytrvalosť (2+ = mág), 7 = Dôvera, 8 = Škola lásky, 9 = Hmotný svet/financie.
                 </p>
-                <p className="text-[11px] text-indigo-600 mt-2 italic">Zdroj: Lívia Mičková – Duchovná numerológia (vykladá Červenák)</p>
+                <p className="text-[11px] text-indigo-600 mt-2 italic">Zdroj: kniha Lívia Mičková – Duchovná numerológia</p>
               </div>
             </div>
           </label>

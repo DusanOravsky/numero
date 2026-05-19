@@ -173,4 +173,4 @@ export const developmentalMeanings: Record<number, DevelopmentalCellMeaning> = {
   },
 };
 
-export const developmentalGridIntro = `Vývojová mriežka (Lívia / Červenák) sa líši od klasickej v tom, že do mriežky vstupujú aj 4 "zakrúžkované" pomocné čísla, ktoré ukazujú karmické cykly a životnú školu duše. Mriežka neukazuje, "kto si", ale "čo si sa prišiel naučiť". Roky 2000+ sa počítajú špeciálne (rok = 20 + zvyšok).`;
+export const developmentalGridIntro = `Vývojová mriežka sa líši od klasickej v tom, že do mriežky vstupujú aj 4 "zakrúžkované" pomocné čísla, ktoré ukazujú karmické cykly a životnú školu duše. Mriežka neukazuje, "kto si", ale "čo si sa prišiel naučiť". Roky 2000+ sa počítajú špeciálne (rok = 20 + zvyšok). Zdroj: kniha Lívia Mičková – Duchovná numerológia.`;

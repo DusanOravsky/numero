@@ -1,5 +1,6 @@
-import { NumerologyResult, reduceToSingle } from './numerologyEngine';
-import { DevelopmentalNumerologyResult } from './developmentalNumerologyEngine';
+import type { NumerologyResult } from './numerologyEngine';
+import { reduceToSingle } from './numerologyEngine';
+import type { DevelopmentalNumerologyResult } from './developmentalNumerologyEngine';
 
 export interface EnneagramResult {
   coreType: number; // 1-9

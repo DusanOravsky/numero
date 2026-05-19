@@ -76,6 +76,40 @@ export function DevelopmentalNumerologyView({ result }: Props) {
         ))}
       </div>
 
+      {/* Polarita ega - zhrnutie z počtu jednotiek */}
+      {result.oneCount > 0 ? (
+        <div className={`p-3 rounded-xl border ${
+          result.egoPolarity === 'masculine'
+            ? 'bg-blue-50 border-blue-200'
+            : 'bg-rose-50 border-rose-200'
+        }`}>
+          <div className="flex items-center gap-2 mb-1">
+            <span className={`text-lg ${result.egoPolarity === 'masculine' ? 'text-blue-600' : 'text-rose-500'}`}>
+              {result.egoPolarity === 'masculine' ? '♂' : '♀'}
+            </span>
+            <p className={`font-semibold ${result.egoPolarity === 'masculine' ? 'text-blue-700' : 'text-rose-700'}`}>
+              {result.egoPolarity === 'masculine' ? 'Mužské ego' : 'Ženské ego'} ({result.oneCount}× číslo 1)
+            </p>
+          </div>
+          <p className="text-xs text-slate-700">
+            {result.egoPolarity === 'masculine'
+              ? 'Nepárny počet jednotiek – energia dávania, vymedzovania priestoru, ochrany, akcie a iniciatívy.'
+              : 'Párny počet jednotiek – energia prijímania, otvorenia, plnenia priestoru teplom, trpezlivosti.'}
+          </p>
+          <p className="text-[11px] text-slate-500 italic mt-1">
+            Polaritu ega porovnaj so svojím biologickým pohlavím – ak je rovnaká, rozvíjaš svoju prirodzenú polaritu;
+            ak je opačná, tvojou životnou úlohou je naučiť sa aj druhú polaritu.
+          </p>
+        </div>
+      ) : (
+        <div className="p-3 rounded-xl border bg-slate-50 border-slate-200">
+          <p className="text-sm text-slate-700">
+            <strong>Bez čísla 1 v mriežke</strong> – veľmi slabé ego, človek sa silne vníma ako súčasť celku
+            a môže mať tendenciu strácať sa v iných. Učí sa vymedziť seba.
+          </p>
+        </div>
+      )}
+
       {/* Mriežka */}
       <div>
         <h4 className="font-medium text-slate-800 mb-2">Mriežka</h4>

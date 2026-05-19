@@ -38,11 +38,11 @@ export const developmentalMeanings: Record<number, DevelopmentalCellMeaning> = {
       fourPlus: 'Vysoké ego – riziko egoizmu, sebectva, pýchy. Treba učiť sa pokore a vnímať sa ako súčasť celku.',
     },
     parityNote: {
-      even: 'Ženské ego (párny počet) – energia prijímania, otvorenia, materstva, plnenia priestoru teplom. V minulom živote bola duša ženou; v tomto živote sa má naučiť mužský princíp – dávať, vymedzovať, ochraňovať.',
-      odd: 'Mužské ego (nepárny počet) – energia dávania, vymedzovania priestoru, ochrany. V minulom živote bola duša mužom; v tomto živote sa má naučiť ženský princíp – prijímať, otvárať sa, byť trpezlivá.',
+      even: 'Ženské ego (párny počet jednotiek, napr. 11, 1111) – energia prijímania, otvorenia, plnenia priestoru teplom, trpezlivosti, intuície. Učí, ako byť otvorený svetu a iným ľuďom.',
+      odd: 'Mužské ego (nepárny počet jednotiek, napr. 1, 111, 11111) – energia dávania, vymedzovania priestoru, ochrany, akcie a iniciatívy. Učí, ako konať, viesť a vymedziť hranice.',
     },
     recommendation:
-      'Test rýchlej diagnostiky: radšej dávaš (mužské) alebo radšej prijímaš (ženské)? Ak si muž s ženským egom alebo žena s mužským egom, tvoja úloha v tomto živote je naučiť sa druhú polaritu.',
+      'Polaritu ega porovnaj so svojim biologickým pohlavím: ak je rovnaká (muž s mužským / žena so ženským egom), si v súlade so svojou prirodzenou polaritou — tvoja úloha je rozvíjať tento princíp s múdrosťou. Ak je opačná (muž so ženským / žena s mužským egom), tvoja životná úloha je vedome sa naučiť aj druhú polaritu — to čo chýba, tu prišla duša doplniť.',
   },
 
   2: {

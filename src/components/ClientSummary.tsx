@@ -118,6 +118,16 @@ export function ClientSummary({ clientName, numerology, astrology, humanDesign, 
                     4.={devNumerology.circled[3].value}.{' '}
                   </>
                 )}
+                {devNumerology.oneCount > 0 && (
+                  <>
+                    <strong>Polarita ega:</strong>{' '}
+                    {devNumerology.egoPolarity === 'masculine' ? '♂ mužské' : '♀ ženské'}
+                    {' '}({devNumerology.oneCount}× číslo 1, {devNumerology.egoPolarity === 'masculine' ? 'nepárny' : 'párny'} počet){' '}
+                    – {devNumerology.egoPolarity === 'masculine'
+                        ? 'energia dávania, vymedzovania, akcie.'
+                        : 'energia prijímania, otvorenia, trpezlivosti.'}{' '}
+                  </>
+                )}
                 {devNumerology.isPost2000 && (
                   <em>Rok ≥ 2000 sa počíta špeciálne (20 + zvyšok).</em>
                 )}

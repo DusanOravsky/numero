@@ -29,6 +29,8 @@ export interface DevelopmentalGridCell {
   circledIndex?: number; // 1..4 pre zakrúžkované
 }
 
+export type EgoPolarity = 'masculine' | 'feminine' | 'none';
+
 export interface DevelopmentalNumerologyResult {
   birthDay: number;
   birthMonth: number;
@@ -41,6 +43,10 @@ export interface DevelopmentalNumerologyResult {
   // mriežka: pole 1..9 → zoznam buniek (každá bunka = jeden zápis čísla)
   grid: DevelopmentalGridCell[][];
   counts: Record<number, number>;
+  /** počet jednotiek v mriežke */
+  oneCount: number;
+  /** mužské (nepárny počet jednotiek) / ženské (párny) / žiadne (0) */
+  egoPolarity: EgoPolarity;
 }
 
 function reduceTwoDigit(n: number): number {
@@ -134,6 +140,10 @@ export function calculateDevelopmentalNumerology(
   const counts: Record<number, number> = {};
   for (let i = 1; i <= 9; i++) counts[i] = grid[i].length;
 
+  const oneCount = counts[1] || 0;
+  const egoPolarity: EgoPolarity =
+    oneCount === 0 ? 'none' : oneCount % 2 === 0 ? 'feminine' : 'masculine';
+
   return {
     birthDay: day,
     birthMonth: month,
@@ -145,5 +155,7 @@ export function calculateDevelopmentalNumerology(
     dateDigits,
     grid,
     counts,
+    oneCount,
+    egoPolarity,
   };
 }

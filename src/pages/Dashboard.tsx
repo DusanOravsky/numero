@@ -5,7 +5,6 @@ import { useStore } from '../store/useStore';
 import { GlassCard } from '../components/GlassCard';
 import { VibrationCard } from '../components/VibrationCard';
 import { ClientSummary } from '../components/ClientSummary';
-import { LoveLanguagesCard } from '../components/LoveLanguagesCard';
 import { calculateFullNumerology, calculateORV, calculateOMV, calculateODV, reduceToSingle } from '../engine/numerologyEngine';
 import { calculateAstrology } from '../engine/astrologyEngine';
 import { calculateHumanDesign } from '../engine/humanDesignEngine';
@@ -221,11 +220,6 @@ export function Dashboard() {
           </div>
         </div>
       </GlassCard>
-
-      {/* Jazyky lásky pre samotnú osobu */}
-      {fullResults && (
-        <LoveLanguagesCard numerology={fullResults.numerology} compact />
-      )}
 
       {/* Integrálny súhrn profilu */}
       {profile && fullResults && (

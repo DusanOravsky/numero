@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const APP_VERSION = '2.2.2';
+const APP_VERSION = '2.2.3';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -233,20 +233,20 @@ export function PWAPrompts() {
 export { APP_VERSION };
 
 /**
- * Bezpečná manuálna kontrola update — Dušok-style.
+ * Bezpečná manuálna kontrola update.
  *
- *  1. Najprv ping na index.html (nech zistíme či je server online)
- *  2. Ak je server online → SW.update() stiahne nové assety → reload
- *  3. Ak je server OFFLINE → vrátime { online: false } bez zmeny cache
- *     → user vidí dialog "GitHub je offline, skús neskôr" a app
- *       NIČ NESTRATÍ, beží ďalej z cache.
+ *  1. Ping na index.html (HEAD, no-store) — overíme online stav
+ *  2. Ak server offline → return { online: false }, žiadne mazanie cache
+ *     → app beží ďalej, user vidí alert
+ *  3. Ak online → vyčistíme cache + unregister SW + reload
+ *     (CacheFirst stratégia by inak vrátila starý HTML; bez wipe-u by
+ *     manuálny check nemal žiadny efekt keď je nový SW v "waiting" state)
  *
- *  Profilové dáta (numero-store) sa NIKDY nemažú — sú v localStorage,
- *  ktorý SW vôbec nečíta.
+ *  Profilové dáta (numero-store, klienti, AI history) sú v localStorage,
+ *  ktorý cache wipe nemaže — zostávajú zachované.
  */
 export async function checkForUpdate(): Promise<{ online: boolean; updated: boolean }> {
-  // Ping serveru (s cache: 'no-store' aby sme dostali skutočný stav siete,
-  // nie cached HTML). Ak fail → server offline alebo CORS issue.
+  // Ping serveru (s cache: 'no-store' aby sme dostali skutočný stav siete)
   try {
     const indexUrl = window.location.origin + (import.meta.env.BASE_URL || '/');
     const response = await fetch(indexUrl, { cache: 'no-store', method: 'HEAD' });
@@ -255,24 +255,22 @@ export async function checkForUpdate(): Promise<{ online: boolean; updated: bool
     return { online: false, updated: false };
   }
 
-  // Server je online. Necháme SW skontrolovať update bez mazania cache.
-  // Ak je k dispozícii nová verzia, SW sa nainštaluje na pozadí. Reload
-  // potom použije novú verziu.
+  // Server je online — bezpečne môžeme vyčistiť cache (app sa po reload
+  // dokáže nabootovať z čerstvej siete).
   try {
+    localStorage.setItem('app-version', APP_VERSION);
     if ('serviceWorker' in navigator) {
       const regs = await navigator.serviceWorker.getRegistrations();
-      await Promise.all(regs.map(r => r.update()));
+      await Promise.all(regs.map(r => r.unregister()));
+    }
+    if ('caches' in window) {
+      const keys = await caches.keys();
+      await Promise.all(keys.map(k => caches.delete(k)));
     }
   } catch {
-    // SW update zlyhal, ale server je online — pravdepodobne CSP issue.
-    // Pokračujeme s reloadom — browser stiahne čerstvé HTML a assety.
+    // ignore — best effort
   }
-
-  // Označ že sme schválili update (no-op ak verzia ostala rovnaká)
-  localStorage.setItem('app-version', APP_VERSION);
-  // Hard reload — vynúti fetch index.html (HTML sa stiahne čerstvý ak je
-  // bundle hash iný; ak je rovnaký, SW vráti cached → app sa neaktualizuje
-  // lebo nie je čo aktualizovať).
+  // Hard reload na home (vynúti čerstvý fetch index.html + bundle)
   window.location.href = window.location.origin + (import.meta.env.BASE_URL || '/') + '?check=' + Date.now();
   return { online: true, updated: true };
 }

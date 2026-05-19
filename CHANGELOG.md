@@ -4,6 +4,25 @@ All notable changes to this project are documented in this file. Dates are
 in ISO 8601 (YYYY-MM-DD). The format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 2.2.3 — 2026-05-19
+
+PWA fix: manuálny "Skontrolovať update" v Settings teraz reálne funguje.
+
+**Problém:** v2.2.0 priniesol CacheFirst pre HTML navigation requests +
+odstránil `skipWaiting/clientsClaim`. Manuálne kliknutie na
+"Skontrolovať update" volalo iba `SW.update()`, ktorý nainštaloval
+nový SW do "waiting" stavu. Reload potom servíroval starý HTML z cache
+→ verzia sa nezmenila, žiadny pop-up.
+
+**Fix:** `checkForUpdate()` má teraz rovnaký flow ako `forceUpdate()`:
+1. HEAD ping na `index.html` (no-store) — overenie online stavu
+2. Ak offline → alert "GitHub je offline" + appka beží ďalej
+3. Ak online → unregister SW + cache wipe + hard reload `/?check=...`
+
+Bezpečnosť: cache wipe sa robí IBA keď je server overene online,
+takže appka sa po reload garantovane nabootuje. localStorage (profily,
+klienti, AI history, API kľúč) zostáva netknutý.
+
 ## 2.2.2 — 2026-05-19
 
 UX:

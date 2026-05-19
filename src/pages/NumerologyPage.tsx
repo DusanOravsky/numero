@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import { GlassCard } from '../components/GlassCard';
 import { NumerologyGrid } from '../components/NumerologyGrid';
@@ -33,7 +33,22 @@ export function NumerologyPage() {
   const [devResult, setDevResult] = useState<DevelopmentalNumerologyResult | null>(null);
   const [nameResult, setNameResult] = useState<NameNumerologyResult | null>(null);
   const [nameInput, setNameInput] = useState('');
-  const [activeTab, setActiveTab] = useState<'overview' | 'planes' | 'vibrations' | 'karmic' | 'love' | 'name'>('overview');
+  const [searchParams, setSearchParams] = useSearchParams();
+  type TabId = 'overview' | 'planes' | 'vibrations' | 'karmic' | 'love' | 'name';
+  const validTabs: TabId[] = ['overview', 'planes', 'vibrations', 'karmic', 'love', 'name'];
+  const urlTab = searchParams.get('tab');
+  const initialTab: TabId = urlTab && (validTabs as string[]).includes(urlTab) ? (urlTab as TabId) : 'overview';
+  const [activeTab, setActiveTab] = useState<TabId>(initialTab);
+
+  // Keep URL ?tab=… in sync with active tab
+  useEffect(() => {
+    const current = searchParams.get('tab');
+    if (current !== activeTab) {
+      const next = new URLSearchParams(searchParams);
+      next.set('tab', activeTab);
+      setSearchParams(next, { replace: true });
+    }
+  }, [activeTab, searchParams, setSearchParams]);
 
   // Cycle picker pre vibrácie – default = dnes
   const todayISO = new Date().toISOString().slice(0, 10);

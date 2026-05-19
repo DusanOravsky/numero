@@ -18,6 +18,7 @@ import { ClientSummary } from '../components/ClientSummary';
 import { ClientNumerology } from '../components/ClientNumerology';
 import { ClientRelationships } from '../components/ClientRelationships';
 import { ClientExport } from '../components/ClientExport';
+import { SkeletonClientDashboard } from '../components/Skeleton';
 
 interface AllResults {
   numerology: NumerologyResult;
@@ -77,7 +78,7 @@ export function ClientDashboard() {
     );
   }
 
-  if (!results) return <div className="text-center py-20"><p className="text-slate-400">Počítam...</p></div>;
+  if (!results) return <SkeletonClientDashboard />;
 
   const { numerology, astrology, humanDesign, chakras, kabalah, theta } = results;
 

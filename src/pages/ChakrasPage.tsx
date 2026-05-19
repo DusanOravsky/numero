@@ -9,6 +9,7 @@ import type { ChakraState } from '../engine/chakraEngine';
 import { calculateHumanDesign } from '../engine/humanDesignEngine';
 import { calculateAstrology } from '../engine/astrologyEngine';
 import { motion } from 'framer-motion';
+import { SkeletonChakraList } from '../components/Skeleton';
 
 export function ChakrasPage() {
   const { profiles, activeProfileId } = useStore();

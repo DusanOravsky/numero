@@ -149,6 +149,11 @@ export function ProfileSetup() {
                 />
                 <span className="text-xs text-slate-500">Pre presnejší HD a ascendent</span>
               </div>
+              {(!hour || !minute) && (
+                <p className="text-[11px] text-amber-700 mt-2 leading-relaxed">
+                  ⚠ Bez presného času sa Mesiac môže pohnúť o znamenie a ascendent o ~1 znamenie za 2 hodiny. Ak nepoznáš čas, použi <strong>12:00</strong>.
+                </p>
+              )}
             </div>
 
             <div>

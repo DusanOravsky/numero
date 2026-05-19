@@ -14,7 +14,7 @@ export default defineConfig({
         name: 'Integrálna mapa bytia',
         short_name: 'Integrálna mapa',
         description: 'Numerológia, astrológia, Human Design a sebarozvoj – offline PWA',
-        theme_color: '#4f46e5',
+        theme_color: '#fafaf9',
         background_color: '#fafaf9',
         display: 'standalone',
         orientation: 'portrait',

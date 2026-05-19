@@ -6,6 +6,7 @@ import { GlassCard } from '../components/GlassCard';
 import { useNavigate } from 'react-router-dom';
 import { APP_VERSION } from '../components/PWAPrompts';
 import { getErrorLog, clearErrorLog } from '../components/ErrorBoundary';
+import { getPerfLog, clearPerfLog } from '../hooks/usePerformanceMetrics';
 import { searchCities, findCity } from '../data/cities';
 
 export function SettingsPage() {
@@ -330,6 +331,54 @@ export function SettingsPage() {
           <p>Offline-first PWA. Všetky dáta lokálne.</p>
         </div>
       </GlassCard>
+
+      {/* Performance metrics (C9) */}
+      {(() => {
+        const log = getPerfLog();
+        if (log.length === 0) return null;
+        const lcp = log.find(e => e.name === 'LCP');
+        const cls = log.find(e => e.name === 'CLS');
+        return (
+          <GlassCard>
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="font-medium text-white">Výkonnostné metriky</h3>
+              <button
+                onClick={() => { clearPerfLog(); window.location.reload(); }}
+                className="text-xs text-rose-500 hover:text-rose-300 underline"
+              >
+                Vymazať log
+              </button>
+            </div>
+            <div className="grid grid-cols-2 gap-2 mb-2">
+              {lcp && (
+                <div className="p-2 rounded-lg bg-cyan-500/10 border border-cyan-500/30">
+                  <p className="text-[10px] text-cyan-300 uppercase">LCP (Largest Contentful Paint)</p>
+                  <p className="text-lg text-white font-mono">{lcp.duration}<span className="text-xs text-slate-400 ml-1">ms</span></p>
+                  <p className="text-[10px] text-slate-500">cieľ: &lt; 2500ms</p>
+                </div>
+              )}
+              {cls && (
+                <div className="p-2 rounded-lg bg-purple-500/10 border border-purple-500/30">
+                  <p className="text-[10px] text-purple-300 uppercase">CLS (Cumulative Layout Shift)</p>
+                  <p className="text-lg text-white font-mono">{cls.duration}</p>
+                  <p className="text-[10px] text-slate-500">cieľ: &lt; 0.1</p>
+                </div>
+              )}
+            </div>
+            <p className="text-[11px] text-slate-500">
+              {log.length} záznamov v logu. Najnovších 10 mount-time súborov:
+            </p>
+            <div className="mt-1 space-y-1 max-h-32 overflow-y-auto">
+              {log.filter(e => !['LCP', 'CLS'].includes(e.name)).slice(0, 10).map((e, i) => (
+                <div key={i} className="flex justify-between text-[11px]">
+                  <span className="text-slate-400 font-mono">{e.name}</span>
+                  <span className="text-slate-300">{e.duration}ms</span>
+                </div>
+              ))}
+            </div>
+          </GlassCard>
+        );
+      })()}
 
       {/* Diagnostika — error log (C8) */}
       {(() => {

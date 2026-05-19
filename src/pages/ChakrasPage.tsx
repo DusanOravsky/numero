@@ -44,10 +44,14 @@ export function ChakrasPage() {
         <p className="text-slate-400 mt-1">Energetická analýza čakrového systému</p>
       </div>
 
-      {!chakras && (
+      {!chakras && !profile && (
         <GlassCard>
           <DateInput onSubmit={handleCalculate} label="Dátum narodenia" />
         </GlassCard>
+      )}
+
+      {!chakras && profile && (
+        <SkeletonChakraList />
       )}
 
       {chakras && (

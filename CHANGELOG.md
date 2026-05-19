@@ -4,6 +4,15 @@ All notable changes to this project are documented in this file. Dates are
 in ISO 8601 (YYYY-MM-DD). The format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 2.0.2 — 2026-05-19
+
+Bug fix:
+- ClientNumerology "Otvoriť detail →" tlačidlá v ClientDashboard
+  (Numerológia / Astrológia / HD / Čakry / Kabala / Theta) navigovali
+  bez ?client=ID, takže sa vždy otvoril vlastný profil namiesto
+  klientovho. Pridaný `clientId` prop a všetky 6 navigácií ho
+  pridajú do query stringu.
+
 ## 2.0.1 — 2026-05-19
 
 UI polish:

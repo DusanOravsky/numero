@@ -136,6 +136,7 @@ export function ClientDashboard() {
         chakras={chakras}
         kabalah={kabalah}
         theta={theta}
+        clientId={client.id}
       />
 
       <ClientRelationships

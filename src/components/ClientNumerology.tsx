@@ -23,10 +23,13 @@ interface ClientNumerologyProps {
   chakras: ChakraState[];
   kabalah: KabalahResult;
   theta: ThetaHealingResult;
+  /** ID klienta — ak je definované, "Otvoriť detail" linky pridajú ?client=ID */
+  clientId?: string;
 }
 
-export function ClientNumerology({ numerology, astrology, humanDesign, chakras, kabalah, theta }: ClientNumerologyProps) {
+export function ClientNumerology({ numerology, astrology, humanDesign, chakras, kabalah, theta, clientId }: ClientNumerologyProps) {
   const navigate = useNavigate();
+  const q = clientId ? `?client=${clientId}` : '';
   const lpInfo = lifePaths[String(numerology.lifePathNumber > 9 ? reduceToSingle(numerology.lifePathNumber) : numerology.lifePathNumber)];
 
   return (
@@ -35,7 +38,7 @@ export function ClientNumerology({ numerology, astrology, humanDesign, chakras, 
       <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
         <div className="flex items-center justify-between mb-3">
           <h2 className="font-serif text-xl font-bold text-indigo-300">Numerológia</h2>
-          <button onClick={() => navigate('/numerology')} className="text-xs text-slate-400 hover:text-white">Otvoriť detail →</button>
+          <button onClick={() => navigate('/numerology' + q)} className="text-xs text-slate-400 hover:text-white">Otvoriť detail →</button>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           <GlassCard className="lg:col-span-1">
@@ -95,7 +98,7 @@ export function ClientNumerology({ numerology, astrology, humanDesign, chakras, 
       <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
         <div className="flex items-center justify-between mb-3">
           <h2 className="font-serif text-xl font-bold text-cyan-300">Astrológia</h2>
-          <button onClick={() => navigate('/astrology')} className="text-xs text-slate-400 hover:text-white">Otvoriť detail →</button>
+          <button onClick={() => navigate('/astrology' + q)} className="text-xs text-slate-400 hover:text-white">Otvoriť detail →</button>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <EnergyCard title="Slnko" value={`${astrology.sunSign.symbol} ${astrology.sunSign.name}`} subtitle={astrology.sunSign.element} color="gold" />
@@ -122,7 +125,7 @@ export function ClientNumerology({ numerology, astrology, humanDesign, chakras, 
       <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
         <div className="flex items-center justify-between mb-3">
           <h2 className="font-serif text-xl font-bold text-purple-300">Human Design</h2>
-          <button onClick={() => navigate('/human-design')} className="text-xs text-slate-400 hover:text-white">Otvoriť detail →</button>
+          <button onClick={() => navigate('/human-design' + q)} className="text-xs text-slate-400 hover:text-white">Otvoriť detail →</button>
         </div>
         <GlassCard>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
@@ -154,7 +157,7 @@ export function ClientNumerology({ numerology, astrology, humanDesign, chakras, 
       <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
         <div className="flex items-center justify-between mb-3">
           <h2 className="font-serif text-xl font-bold text-green-300">Čakry</h2>
-          <button onClick={() => navigate('/chakras')} className="text-xs text-slate-400 hover:text-white">Otvoriť detail →</button>
+          <button onClick={() => navigate('/chakras' + q)} className="text-xs text-slate-400 hover:text-white">Otvoriť detail →</button>
         </div>
         <GlassCard>
           <ChakraWheel chakras={chakras} />
@@ -165,7 +168,7 @@ export function ClientNumerology({ numerology, astrology, humanDesign, chakras, 
       <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
         <div className="flex items-center justify-between mb-3">
           <h2 className="font-serif text-xl font-bold text-amber-300">Kabala</h2>
-          <button onClick={() => navigate('/kabalah')} className="text-xs text-slate-400 hover:text-white">Otvoriť detail →</button>
+          <button onClick={() => navigate('/kabalah' + q)} className="text-xs text-slate-400 hover:text-white">Otvoriť detail →</button>
         </div>
         <GlassCard>
           <div className="grid grid-cols-2 gap-4">
@@ -188,7 +191,7 @@ export function ClientNumerology({ numerology, astrology, humanDesign, chakras, 
       <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}>
         <div className="flex items-center justify-between mb-3">
           <h2 className="font-serif text-xl font-bold text-teal-300">Theta Healing</h2>
-          <button onClick={() => navigate('/theta-healing')} className="text-xs text-slate-400 hover:text-white">Otvoriť detail →</button>
+          <button onClick={() => navigate('/theta-healing' + q)} className="text-xs text-slate-400 hover:text-white">Otvoriť detail →</button>
         </div>
         <GlassCard>
           <p className="text-xs text-slate-400 mb-3">Hlavné limitujúce presvedčenia:</p>

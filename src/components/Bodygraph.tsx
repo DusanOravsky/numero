@@ -25,18 +25,21 @@ interface CenterInfo {
   color: string;
   top: string;
   left: string;
+  /** Brány patriace tomuto centru — pre zobrazenie aktívnych čísel pri centre. */
+  gates: number[];
 }
 
+// Brány priradené k jednotlivým centrám podľa štandardnej HD mapy.
 const CENTERS: Record<string, CenterInfo> = {
-  'Hlava':    { label: 'Hlava', fullName: 'Inšpirácia', color: '#f5c542', top: '2%', left: '50%' },
-  'Ajna':     { label: 'Ajna', fullName: 'Myslenie', color: '#4ade80', top: '15%', left: '50%' },
-  'Hrdlo':    { label: 'Hrdlo', fullName: 'Prejav', color: '#a78bfa', top: '28%', left: '50%' },
-  'G':        { label: 'G', fullName: 'Identita', color: '#facc15', top: '42%', left: '50%' },
-  'Ego':      { label: 'Ego', fullName: 'Vôľa', color: '#f87171', top: '36%', left: '80%' },
-  'Sakrálne': { label: 'Sakrál', fullName: 'Sila', color: '#ef4444', top: '58%', left: '50%' },
-  'SP':       { label: 'SP', fullName: 'Emócie', color: '#fb923c', top: '53%', left: '80%' },
-  'Slezina':  { label: 'Slezina', fullName: 'Intuícia', color: '#fbbf24', top: '53%', left: '20%' },
-  'Koreň':    { label: 'Koreň', fullName: 'Tlak', color: '#ef4444', top: '72%', left: '50%' },
+  'Hlava':    { label: 'Hlava', fullName: 'Inšpirácia', color: '#f5c542', top: '2%', left: '50%', gates: [64, 61, 63] },
+  'Ajna':     { label: 'Ajna', fullName: 'Myslenie', color: '#4ade80', top: '15%', left: '50%', gates: [47, 24, 4, 17, 43, 11] },
+  'Hrdlo':    { label: 'Hrdlo', fullName: 'Prejav', color: '#a78bfa', top: '28%', left: '50%', gates: [62, 23, 56, 16, 20, 31, 8, 33, 35, 12, 45] },
+  'G':        { label: 'G', fullName: 'Identita', color: '#facc15', top: '42%', left: '50%', gates: [1, 13, 25, 46, 2, 15, 10, 7] },
+  'Ego':      { label: 'Ego', fullName: 'Vôľa', color: '#f87171', top: '36%', left: '80%', gates: [21, 40, 26, 51] },
+  'Sakrálne': { label: 'Sakrál', fullName: 'Sila', color: '#ef4444', top: '58%', left: '50%', gates: [34, 5, 14, 29, 9, 3, 42, 27, 59] },
+  'SP':       { label: 'SP', fullName: 'Emócie', color: '#fb923c', top: '53%', left: '80%', gates: [36, 22, 37, 6, 49, 55, 30] },
+  'Slezina':  { label: 'Slezina', fullName: 'Intuícia', color: '#fbbf24', top: '53%', left: '20%', gates: [48, 57, 44, 50, 32, 28, 18] },
+  'Koreň':    { label: 'Koreň', fullName: 'Tlak', color: '#ef4444', top: '72%', left: '50%', gates: [58, 38, 54, 53, 60, 52, 19, 39, 41] },
 };
 
 export function Bodygraph({ result }: BodygraphProps) {
@@ -80,9 +83,10 @@ export function Bodygraph({ result }: BodygraphProps) {
         })}
       </svg>
 
-      {/* Centers as positioned divs */}
+      {/* Centers as positioned divs with active gate numbers */}
       {Object.entries(CENTERS).map(([key, cfg]) => {
         const defined = definedKeys.has(key);
+        const activeGates = cfg.gates.filter(g => result.allActivatedGates.includes(g));
         return (
           <div
             key={key}
@@ -90,7 +94,7 @@ export function Bodygraph({ result }: BodygraphProps) {
             style={{ top: cfg.top, left: cfg.left }}
           >
             <div
-              className={`w-9 h-9 rounded-md flex items-center justify-center text-[9px] font-bold border-2 transition-all ${
+              className={`w-12 h-12 rounded-md flex items-center justify-center text-[9px] font-bold border-2 transition-all ${
                 defined ? 'text-white shadow-md' : 'text-slate-400'
               }`}
               style={{
@@ -98,10 +102,29 @@ export function Bodygraph({ result }: BodygraphProps) {
                 borderColor: defined ? cfg.color : '#e2e8f0',
                 boxShadow: defined ? `0 2px 8px ${cfg.color}30` : 'none',
               }}
-              title={`${cfg.label} – ${cfg.fullName}`}
+              title={`${cfg.label} – ${cfg.fullName}${activeGates.length > 0 ? ` · brány ${activeGates.join(', ')}` : ''}`}
             >
               {cfg.label.length > 4 ? cfg.label.slice(0, 3) : cfg.label}
             </div>
+            {activeGates.length > 0 && (
+              <div className="mt-1 flex flex-wrap gap-0.5 justify-center max-w-[80px]">
+                {activeGates.slice(0, 6).map(g => (
+                  <span
+                    key={g}
+                    className="text-[8px] px-1 py-0 rounded font-mono"
+                    style={{
+                      backgroundColor: defined ? `${cfg.color}40` : '#f1f5f9',
+                      color: defined ? cfg.color : '#64748b',
+                    }}
+                  >
+                    {g}
+                  </span>
+                ))}
+                {activeGates.length > 6 && (
+                  <span className="text-[8px] text-slate-500">+{activeGates.length - 6}</span>
+                )}
+              </div>
+            )}
           </div>
         );
       })}

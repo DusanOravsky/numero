@@ -11,6 +11,7 @@ import { planetInSignDescriptions } from '../data/planetSignDescriptions';
 import { orvDescriptions } from '../data/orvDescriptions';
 import { getGeneKeyByGate } from '../data/geneKeys';
 import { developmentalMeanings } from '../data/developmentalMeanings';
+import { loveLanguageDescriptions } from '../data/orvDescriptions';
 import lifePathsData from '../data/lifePaths.json';
 
 const lifePaths = lifePathsData as Record<string, { title: string; keywords: string[]; description: string; gift: string; shadow: string }>;
@@ -197,14 +198,98 @@ export function ClientSummary({ clientName, numerology, astrology, humanDesign, 
             {numerology.isolatedNumbers.length > 0 && <>Izolované čísla ({numerology.isolatedNumbers.join(', ')}) naznačujú energie, ktoré sú odrezané od zvyšku – vyžadujú vedomú pozornosť a integráciu.</>}
           </p>
 
-          <p>
-            <strong>Vo vzťahoch</strong> je primárny jazyk lásky <strong>{numerology.loveLanguages[0]?.language || '-'}</strong> –
-            {numerology.loveLanguages[0]?.language === 'Fyzický dotyk' ? ' najhlbšie prijíma a vyjadruje lásku cez fyzickú blízkosť, objatie, dotyk. Bez fyzického kontaktu sa cíti odpojený.' :
-             numerology.loveLanguages[0]?.language === 'Slová uistenia' ? ' potrebuje počuť slová uznania, ocenenia a potvrdenia. Kritika ho hlboko zraňuje.' :
-             numerology.loveLanguages[0]?.language === 'Kvalitný čas' ? ' najdôležitejšia je plná pozornosť a spoločne strávený čas. Rozptýlenie partnera vníma ako nezáujem.' :
-             numerology.loveLanguages[0]?.language === 'Obdarovávanie' ? ' oceňuje premyslené dary a zdieľanie. Nie je to materializmus – ide o symbol: "myslel som na teba."' :
-             ' najhlbšie vníma lásku cez praktickú pomoc a službu. Keď mu niekto uľahčí život, cíti sa milovaný.'}
-          </p>
+          {/* Jazyky lásky – bohatý blok */}
+          {numerology.loveLanguages && numerology.loveLanguages.length > 0 && (
+            <div className="rounded-xl border border-rose-200 bg-rose-50/40 p-4 space-y-3">
+              <p className="font-medium text-slate-800 flex items-center gap-2">
+                <span className="text-rose-500">♡</span> Jazyky lásky
+              </p>
+              <p className="text-xs text-slate-600">
+                Numerologický rebríček toho, ako <strong>{clientName}</strong> najhlbšie prijíma
+                a prejavuje lásku. Skóre vyplýva z numerologickej mriežky (napr. čím viac čísel z roviny
+                3-6-9 Empatia, tým silnejšie „Slová uistenia"; rovina 7-8-9 Energia podporuje „Fyzický dotyk").
+              </p>
+
+              {/* Primárny jazyk – detailne */}
+              {numerology.loveLanguages[0] && (() => {
+                const top = numerology.loveLanguages[0];
+                const info = loveLanguageDescriptions[top.language];
+                return (
+                  <div className="p-3 rounded-lg bg-white border border-rose-200">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-[10px] uppercase tracking-wide text-rose-700 font-semibold">
+                        Primárny jazyk – {top.score} bodov
+                      </span>
+                    </div>
+                    <p className="font-semibold text-slate-800 text-base">{top.language}</p>
+                    {info && (
+                      <>
+                        <p className="text-xs text-slate-700 mt-1.5">{info.description}</p>
+                        <p className="text-xs text-slate-600 mt-1.5">
+                          <strong className="text-slate-800">Príklady prejavu:</strong> {info.examples}
+                        </p>
+                        <p className="text-xs text-rose-700 mt-1">
+                          <strong>Ako lásku prejaviť tomuto človeku:</strong> {info.howToShow}
+                        </p>
+                      </>
+                    )}
+                  </div>
+                );
+              })()}
+
+              {/* Sekundárny jazyk – stručne */}
+              {numerology.loveLanguages[1] && (() => {
+                const second = numerology.loveLanguages[1];
+                const info = loveLanguageDescriptions[second.language];
+                return (
+                  <div className="p-3 rounded-lg bg-white border border-indigo-200">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-[10px] uppercase tracking-wide text-indigo-700 font-semibold">
+                        Sekundárny jazyk – {second.score} bodov
+                      </span>
+                    </div>
+                    <p className="font-medium text-slate-800">{second.language}</p>
+                    {info && <p className="text-xs text-slate-600 mt-1">{info.description}</p>}
+                  </div>
+                );
+              })()}
+
+              {/* Rebríček ostatných */}
+              <div className="space-y-1.5">
+                <p className="text-[11px] uppercase tracking-wide text-slate-500 font-semibold">
+                  Celý rebríček
+                </p>
+                {numerology.loveLanguages.map((lang, idx) => {
+                  const widthPct = Math.max(0, Math.min(100, (lang.score + 5) * 8));
+                  return (
+                    <div key={lang.language}>
+                      <div className="flex items-center justify-between text-xs mb-0.5">
+                        <span className={idx === 0 ? 'text-slate-800 font-medium' : 'text-slate-600'}>
+                          {idx + 1}. {lang.language}
+                        </span>
+                        <span className="text-slate-500">{lang.score}</span>
+                      </div>
+                      <div className="h-1.5 bg-slate-200 rounded-full overflow-hidden">
+                        <div
+                          className={`h-full rounded-full ${
+                            idx === 0
+                              ? 'bg-gradient-to-r from-rose-500 to-pink-500'
+                              : 'bg-gradient-to-r from-indigo-400 to-violet-400'
+                          }`}
+                          style={{ width: `${widthPct}%` }}
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <p className="text-[11px] text-slate-500 italic">
+                Pozn.: Záporné skóre neznamená neschopnosť — len to, že tento jazyk vyžaduje vedomé úsilie.
+                Vo vzťahu je dôležité poznať jazyk lásky partnera a vedome ho používať.
+              </p>
+            </div>
+          )}
 
           <p>
             <strong>Aktuálne obdobie:</strong> Nachádza sa v osobnom roku <strong>{numerology.orv}</strong> ({orvDescriptions[numerology.orv]?.title || ''}).

@@ -4,6 +4,7 @@ import { GlassCard } from './GlassCard';
 import { EnergyCard } from './EnergyCard';
 import { NumerologyGrid } from './NumerologyGrid';
 import { ChakraWheel } from './ChakraWheel';
+import { LoveLanguagesCard } from './LoveLanguagesCard';
 import type { NumerologyResult } from '../engine/numerologyEngine';
 import type { AstrologyResult } from '../engine/astrologyEngine';
 import type { HumanDesignResult } from '../engine/humanDesignEngine';
@@ -82,6 +83,11 @@ export function ClientNumerology({ numerology, astrology, humanDesign, chakras, 
               </div>
             )}
           </GlassCard>
+        </div>
+
+        {/* Jazyky lásky pre klienta */}
+        <div className="mt-4">
+          <LoveLanguagesCard numerology={numerology} title="Jazyky lásky klienta" />
         </div>
       </motion.section>
 

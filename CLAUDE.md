@@ -87,9 +87,14 @@ Anthropic Claude priamo z prehliadača (header `anthropic-dangerous-direct-brows
 - API kľúč len v `localStorage` (nikdy v store ani v bundle)
 - Settings → "✦ AI integrácia (Claude)" — input + Test + Save
 - Modely: Haiku 4.5 / Sonnet 4.6 (default) / Opus 4.7
+- **Interpretation lenses** (v2.3.0): integratívny ezoterický (default), logické úrovne (NLP/Dilts), etikoterapia (Vogeltanz/Bezděk), koučing (GROW). Volia sa v Settings, perzistované v `localStorage` pod `anthropic-lens`. Lens iba mení system prompt, žiadny vplyv na engine výpočty.
 - Triggery: Dashboard (celý profil), Numerology Prehľad (per metóda), ClientDashboard (per klient)
 - Komponent: `components/AIChat.tsx` so streaming, históriou per profile/klient/metóda v localStorage
-- Engine: `engine/aiInterpretation.ts` — `summarizeProfile()`, `streamChat()`, `testApiKey()`
+- Engine: `engine/aiInterpretation.ts` — `summarizeProfile()`, `streamChat()`, `testApiKey()`, `buildSystemPrompt()` (kombinuje base + lens-specific prompt)
+
+## Doplnkové modality
+
+- **Etikoterapia** (`src/data/etikoterapia.ts`) — slovensko-česká liečebná tradícia (Vogeltanz, Bezděk). Mapuje 7 čakier na etické príčiny + cnosti + orgány + reflexné otázky + praktickú cestu. Renderuje sa ako collapsible sekcia v ChakrasPage pri každej čakrovej karte. **Nie je medicínsky nástroj** — vždy s disclaimerom. Pri blokovanej čakre auto-open.
 
 ## Performance & quality
 

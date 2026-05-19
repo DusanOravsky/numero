@@ -108,6 +108,23 @@ Trigger pointy (default `initialUserMessage`):
 - Numerology Prehľad → method-specific výklad (Charakterová alebo Vývojová)
 - ClientDashboard → profesionálny výklad pre klienta na konzultáciu
 
+### Interpretation lenses (v2.3.0+)
+
+Settings → AI integrácia má picker "Štýl výkladu". Lens iba mení system prompt, žiadny vplyv na engine:
+
+- `default` — integratívny ezoterický (pôvodný štýl)
+- `logical-levels` — NLP logické úrovne (Dilts): poslanie → identita → hodnoty → schopnosti → správanie → prostredie
+- `etikoterapia` — Vogeltanz/Bezděk: cnosti, neresti, reflexné otázky, etické darčeky/úlohy
+- `coaching` — GROW model (Whitmore): Goal, Reality, Options, Will
+
+Lens je v `localStorage` pod `anthropic-lens`. `aiInterpretation.ts` má `buildSystemPrompt()` ktorá kombinuje base + lens prompt. Pri zmene lensu treba reštartovať rozhovor (lens ovplyvňuje iba system prompt, ktorý sa posiela pri každom volaní, ale lens-specific inštrukcie cielia na PRVÚ odpoveď).
+
+## Etikoterapia v ChakrasPage (v2.3.0+)
+
+`src/data/etikoterapia.ts` exportuje `ETIKOTERAPIA_BY_CHAKRA` s mappingom 1-7. ChakrasPage renderuje collapsible sekciu "✦ Etická príčina a cnosť" v každej čakrovej karte. Pri `state.status === 'blocked'` sa otvára automaticky (`<details open>`).
+
+**Princíp:** etikoterapia je reflexný nástroj, nie diagnostika. Vždy s disclaimerom v päte sekcie. UI farby: rose/red pre etickú tému a blokujúce emócie, emerald/green pre cnosť a praktickú cestu, indigo pre reflexné otázky.
+
 ## Vizualizácie
 
 | Komponent | Use case |

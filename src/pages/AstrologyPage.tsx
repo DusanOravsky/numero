@@ -11,6 +11,7 @@ import { LunarTimeline } from '../components/LunarTimeline';
 import { NatalWheel } from '../components/NatalWheel';
 import { UpcomingEclipses } from '../components/UpcomingEclipses';
 import { ProgressionsView } from '../components/ProgressionsView';
+import { SolarReturnView } from '../components/SolarReturnView';
 
 function getSunSignDescription(sign: string): string {
   const descriptions: Record<string, string> = {
@@ -332,6 +333,18 @@ export function AstrologyPage() {
                   birthYear={profile.birthYear}
                   birthHour={profile.birthHour ?? 12}
                   birthMinute={profile.birthMinute ?? 0}
+                />
+              )}
+
+              {profile && (
+                <SolarReturnView
+                  birthDay={profile.birthDay}
+                  birthMonth={profile.birthMonth}
+                  birthYear={profile.birthYear}
+                  birthHour={profile.birthHour ?? 12}
+                  birthMinute={profile.birthMinute ?? 0}
+                  latitude={profile.birthLatitude}
+                  longitude={profile.birthLongitude}
                 />
               )}
 

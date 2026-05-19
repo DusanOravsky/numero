@@ -430,6 +430,49 @@ export function calculateProgressions(
 }
 
 // ============================================
+// SOLAR RETURN — výročný horoskop
+// ============================================
+
+/**
+ * Solar return: presný okamih, keď Slnko opäť dosiahne natálnu longitúdu.
+ * Vracia AstrologyResult pre tento okamih + dátum solárneho návratu.
+ *
+ * @param targetYear - rok, pre ktorý chceme výročný horoskop (default: aktuálny)
+ */
+export function calculateSolarReturn(
+  birthDay: number, birthMonth: number, birthYear: number,
+  birthHour: number, birthMinute: number,
+  latitude: number = 48.15, longitude: number = 17.11,
+  targetYear?: number,
+  timezoneOffsetHours: number = 1
+): { date: Date; result: AstrologyResult; ageAtReturn: number } | null {
+  const tz = getTimezoneOffset(birthDay, birthMonth, birthYear, timezoneOffsetHours);
+  const utcHour = birthHour - tz;
+  const birthDate = new Date(Date.UTC(birthYear, birthMonth - 1, birthDay, utcHour, birthMinute));
+  const natalSunLon = getSunLongitude(birthDate);
+
+  const year = targetYear ?? new Date().getFullYear();
+  // Hľadáme od ~30 dní pred výročím
+  const searchStart = Astronomy.MakeTime(new Date(Date.UTC(year, birthMonth - 1, birthDay - 30)));
+  const result = Astronomy.SearchSunLongitude(natalSunLon, searchStart, 60);
+  if (!result) return null;
+
+  const returnDate = result.date;
+  const returnY = returnDate.getUTCFullYear();
+  const returnM = returnDate.getUTCMonth() + 1;
+  const returnD = returnDate.getUTCDate();
+  const returnHr = returnDate.getUTCHours();
+  const returnMin = returnDate.getUTCMinutes();
+  // calculateAstrology potrebuje LOCAL čas + tz offset; kompenzujeme pre default tz=1.
+  const localHr = returnHr + getTimezoneOffset(returnD, returnM, returnY, 1);
+  return {
+    date: returnDate,
+    result: calculateAstrology(returnD, returnM, returnY, localHr, returnMin, latitude, longitude),
+    ageAtReturn: year - birthYear,
+  };
+}
+
+// ============================================
 // SYNASTRIA – aspekty medzi dvoma horoskopmi
 // ============================================
 

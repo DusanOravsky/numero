@@ -323,6 +323,23 @@ export function RelationshipsPage() {
 
       {mode === 'partner' && compatibility && (
         <div className="space-y-6">
+          {/* Čo si z toho vziať — partnerský summary */}
+          <GlassCard>
+            <h3 className="font-medium text-white mb-3">Čo si z toho vziať</h3>
+            <div className="space-y-2 text-sm text-slate-300">
+              <p>
+                Kompatibilita <strong className="text-white">{compatibility.overallScore}%</strong> neznamená „dobrý" alebo „zlý" vzťah — hovorí o tom, koľko vecí vám ide prirodzene a kde musíte vedome pracovať.
+              </p>
+              <p>
+                <strong>Silné stránky</strong> ({compatibility.strengths.length}) sú to, čo vás drží spolu bez námahy.
+                <strong> Výzvy</strong> ({compatibility.challenges.length}) sú oblasti, kde sa musíte učiť — nie dôvod odísť, ale príležitosť rásť.
+              </p>
+              <p className="text-xs text-slate-500 italic">
+                Žiadny vzťah nie je 100% — rozdielnosti sú motor rastu. Dôležité je, či ste obaja ochotní na nich vedome pracovať.
+              </p>
+            </div>
+          </GlassCard>
+
           <GlassCard glow>
             <div className="text-center">
               <p className="text-sm text-slate-400">{partner1.name} & {partner2.name}</p>
@@ -569,6 +586,22 @@ export function RelationshipsPage() {
 
       {mode === 'family' && familyResults && (
         <div className="space-y-6">
+          {/* Čo si z toho vziať — rodič-dieťa summary */}
+          <GlassCard>
+            <h3 className="font-medium text-white mb-3">Čo si z toho vziať</h3>
+            <div className="space-y-2 text-sm text-slate-300">
+              <p>
+                Každé dieťa prichádza s <strong className="text-white">vlastnou energiou</strong> — nie je kópia rodiča. Kompatibilita ukazuje, kde si prirodzene rozumiete a kde potrebujete prispôsobiť prístup.
+              </p>
+              <p>
+                <strong>Rola rodiča</strong> hovorí, čím ste pre toto konkrétne dieťa. <strong>Komunikácia</strong> ukazuje, ako s ním najlepšie hovoriť. <strong>Potreby dieťaťa</strong> sú to, čo od vás naozaj potrebuje — a nemusí to byť to, čo si myslíte.
+              </p>
+              <p className="text-xs text-slate-500 italic">
+                Nízke % nie je zlyhanie — je to signál, že toto dieťa vás učí niečo nové. Práve tam je najväčší rast pre oboch.
+              </p>
+            </div>
+          </GlassCard>
+
           <p className="text-sm text-slate-400">Rodič: <span className="text-white font-medium">{parent.name}</span></p>
 
           {familyResults.map(({ child, result }, idx) => (

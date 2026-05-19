@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { useStore } from '../store/useStore';
+import { useSubject } from '../hooks/useSubject';
 import { GlassCard } from '../components/GlassCard';
 import { EnergyCard } from '../components/EnergyCard';
 import { DateInput } from '../components/DateInput';
@@ -105,14 +105,13 @@ const STRATEGY_DESCRIPTIONS: Record<string, string> = {
 };
 
 export function HumanDesignPage() {
-  const { profiles, activeProfileId } = useStore();
-  const profile = profiles.find(p => p.id === activeProfileId);
+  const subject = useSubject();
   const [manualResult, setManualResult] = useState<HumanDesignResult | null>(null);
 
   const profileResult = useMemo<HumanDesignResult | null>(() => {
-    if (!profile) return null;
-    return calculateHumanDesign(profile.birthDay, profile.birthMonth, profile.birthYear, profile.birthHour ?? 12, profile.birthMinute ?? 0);
-  }, [profile]);
+    if (!subject) return null;
+    return calculateHumanDesign(subject.birthDay, subject.birthMonth, subject.birthYear, subject.birthHour ?? 12, subject.birthMinute ?? 0);
+  }, [subject]);
 
   const result = manualResult ?? profileResult;
 
@@ -131,8 +130,17 @@ export function HumanDesignPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-serif text-3xl font-bold text-white">Human Design</h1>
-        <p className="text-slate-400 mt-1">Váš energetický plán</p>
+        <div className="flex items-center gap-3 flex-wrap">
+          <h1 className="font-serif text-3xl font-bold text-white">Human Design</h1>
+          {subject?.isClient && (
+            <span className="text-xs px-3 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-700">
+              Klient: <strong>{subject.name}</strong>
+            </span>
+          )}
+        </div>
+        <p className="text-slate-400 mt-1">
+          {subject?.isClient ? `Energetický plán klienta ${subject.name}` : 'Váš energetický plán'}
+        </p>
       </div>
 
       {!result && (

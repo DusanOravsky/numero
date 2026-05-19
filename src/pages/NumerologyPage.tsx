@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useStore } from '../store/useStore';
+import { useSubject } from '../hooks/useSubject';
 import { GlassCard } from '../components/GlassCard';
 import { NumerologyGrid } from '../components/NumerologyGrid';
 import { EnergyCard } from '../components/EnergyCard';
@@ -32,8 +33,10 @@ const isolatedInfo = isolatedData as Record<string, { type: string; effect: stri
 
 export function NumerologyPage() {
   const navigate = useNavigate();
-  const { profiles, activeProfileId, numerologyMethod } = useStore();
-  const profile = profiles.find(p => p.id === activeProfileId);
+  const { numerologyMethod } = useStore();
+  // Subject = aktívny profil alebo klient z ?client=ID query param.
+  // Nazývame ju 'profile' kvôli minimalizácii diff-ov v rendrovacom kóde.
+  const profile = useSubject();
   const [manualResult, setManualResult] = useState<NumerologyResult | null>(null);
   const [manualDevResult, setManualDevResult] = useState<DevelopmentalNumerologyResult | null>(null);
 
@@ -104,8 +107,17 @@ export function NumerologyPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-serif text-3xl font-bold text-white">Numerológia</h1>
-        <p className="text-slate-400 mt-1">Kompletný numerologický rozbor</p>
+        <div className="flex items-center gap-3 flex-wrap">
+          <h1 className="font-serif text-3xl font-bold text-white">Numerológia</h1>
+          {profile?.isClient && (
+            <span className="text-xs px-3 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-700">
+              Klient: <strong>{profile.name}</strong>
+            </span>
+          )}
+        </div>
+        <p className="text-slate-400 mt-1">
+          {profile?.isClient ? `Numerologický rozbor klienta ${profile.name}` : 'Kompletný numerologický rozbor'}
+        </p>
       </div>
 
       {!result && (

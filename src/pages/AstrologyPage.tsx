@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { useStore } from '../store/useStore';
+import { useSubject } from '../hooks/useSubject';
 import { GlassCard } from '../components/GlassCard';
 import { EnergyCard } from '../components/EnergyCard';
 import { DateInput } from '../components/DateInput';
@@ -168,8 +168,7 @@ function getNodeDescription(sign: string, type: 'north' | 'south'): string {
 }
 
 export function AstrologyPage() {
-  const { profiles, activeProfileId } = useStore();
-  const profile = profiles.find(p => p.id === activeProfileId);
+  const profile = useSubject();
   const [manualResult, setManualResult] = useState<AstrologyResult | null>(null);
 
   const profileResult = useMemo<AstrologyResult | null>(() => {
@@ -194,8 +193,17 @@ export function AstrologyPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-serif text-3xl font-bold text-white">Astrológia</h1>
-        <p className="text-slate-400 mt-1">Astrologický profil a analýza</p>
+        <div className="flex items-center gap-3 flex-wrap">
+          <h1 className="font-serif text-3xl font-bold text-white">Astrológia</h1>
+          {profile?.isClient && (
+            <span className="text-xs px-3 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-700">
+              Klient: <strong>{profile.name}</strong>
+            </span>
+          )}
+        </div>
+        <p className="text-slate-400 mt-1">
+          {profile?.isClient ? `Astrologický profil klienta ${profile.name}` : 'Astrologický profil a analýza'}
+        </p>
       </div>
 
       {!result && (

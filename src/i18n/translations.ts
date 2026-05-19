@@ -8,7 +8,7 @@ export type TranslationKey =
   // Navigácia
   | 'nav.dashboard' | 'nav.numerology' | 'nav.astrology' | 'nav.humanDesign'
   | 'nav.relationships' | 'nav.chakras' | 'nav.kabalah' | 'nav.theta'
-  | 'nav.clients' | 'nav.settings' | 'nav.more'
+  | 'nav.modality' | 'nav.clients' | 'nav.settings' | 'nav.more'
   // Spoločné akcie
   | 'common.save' | 'common.cancel' | 'common.delete' | 'common.edit'
   | 'common.add' | 'common.close' | 'common.calculate' | 'common.today'
@@ -74,6 +74,7 @@ const sk: Dictionary = {
   'nav.chakras': 'Čakry',
   'nav.kabalah': 'Kabala',
   'nav.theta': 'Theta',
+  'nav.modality': 'Modality',
   'nav.clients': 'Klienti',
   'nav.settings': 'Nastavenia',
   'nav.more': 'Viac',
@@ -240,6 +241,7 @@ const en: Dictionary = {
   'nav.chakras': 'Chakras',
   'nav.kabalah': 'Kabbalah',
   'nav.theta': 'Theta',
+  'nav.modality': 'Modalities',
   'nav.clients': 'Clients',
   'nav.settings': 'Settings',
   'nav.more': 'More',

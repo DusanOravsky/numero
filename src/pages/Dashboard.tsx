@@ -328,7 +328,7 @@ export function Dashboard() {
                 </div>
                 <div className="min-w-0">
                   <p className="text-xs text-purple-300 uppercase mb-1">Tarot dňa: {t.name}</p>
-                  <p className="text-xs text-slate-400">{t.advice}</p>
+                  <p className="text-xs text-slate-400">{t.dailyAdvice}</p>
                 </div>
               </div>
             );

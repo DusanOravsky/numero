@@ -157,32 +157,58 @@ export function NumerologyPage() {
 
           {activeTab === 'overview' && (
             <div className="space-y-6">
-              {/* HERO STRIP — Životné číslo na celú šírku, kompaktný layout */}
-              <GlassCard glow>
-                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                  {/* ŽČ kruh */}
-                  <div className="w-20 h-20 rounded-full bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center shrink-0 mx-auto sm:mx-0">
-                    <span className="text-3xl font-serif font-bold text-white">{result.lifePathNumber}</span>
-                  </div>
+              {/* HERO STRIP — pri Charakterovej ŽČ, pri Vývojovej K3 (Životné poslanie) */}
+              {numerologyMethod === 'characterological' ? (
+                <GlassCard glow>
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                    {/* ŽČ kruh */}
+                    <div className="w-20 h-20 rounded-full bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center shrink-0 mx-auto sm:mx-0">
+                      <span className="text-3xl font-serif font-bold text-white">{result.lifePathNumber}</span>
+                    </div>
 
-                  {/* Detail */}
-                  <div className="flex-1 min-w-0 text-center sm:text-left">
-                    <div className="flex items-baseline gap-2 flex-wrap justify-center sm:justify-start">
-                      <h2 className="text-lg font-medium text-white">Životné číslo {result.lifePathNumber}</h2>
-                      <span className="text-sm text-slate-500">z {result.lifePathFrom}</span>
+                    {/* Detail */}
+                    <div className="flex-1 min-w-0 text-center sm:text-left">
+                      <div className="flex items-baseline gap-2 flex-wrap justify-center sm:justify-start">
+                        <h2 className="text-lg font-medium text-white">Životné číslo {result.lifePathNumber}</h2>
+                        <span className="text-sm text-slate-500">z {result.lifePathFrom}</span>
+                      </div>
+                      {lifePathInfo?.title && (
+                        <p className="text-sm text-indigo-700 font-medium mt-0.5">{lifePathInfo.title}</p>
+                      )}
+                      <div className="flex gap-1 mt-2 flex-wrap justify-center sm:justify-start">
+                        {lifePathInfo?.keywords.map(k => (
+                          <span key={k} className="text-[11px] px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300">{k}</span>
+                        ))}
+                      </div>
+                      <p className="text-[11px] text-slate-500 mt-2 font-mono">{result.formula}</p>
                     </div>
-                    {lifePathInfo?.title && (
-                      <p className="text-sm text-indigo-700 font-medium mt-0.5">{lifePathInfo.title}</p>
-                    )}
-                    <div className="flex gap-1 mt-2 flex-wrap justify-center sm:justify-start">
-                      {lifePathInfo?.keywords.map(k => (
-                        <span key={k} className="text-[11px] px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300">{k}</span>
-                      ))}
-                    </div>
-                    <p className="text-[11px] text-slate-500 mt-2 font-mono">{result.formula}</p>
                   </div>
-                </div>
-              </GlassCard>
+                </GlassCard>
+              ) : devResult ? (
+                <GlassCard glow>
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                    {/* K3 kruh */}
+                    <div className="w-20 h-20 rounded-full bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center shrink-0 mx-auto sm:mx-0">
+                      <span className="text-3xl font-serif font-bold text-white">{devResult.circled[2].value}</span>
+                    </div>
+
+                    {/* Detail */}
+                    <div className="flex-1 min-w-0 text-center sm:text-left">
+                      <div className="flex items-baseline gap-2 flex-wrap justify-center sm:justify-start">
+                        <h2 className="text-lg font-medium text-white">Životné poslanie (K3)</h2>
+                        <span className="text-sm text-slate-500">z {devResult.circled[2].value}</span>
+                      </div>
+                      <p className="text-sm text-amber-700 font-medium mt-0.5">3. zakrúžkované – plnenie poslania duše</p>
+                      <p className="text-[11px] text-slate-500 mt-2 font-mono">
+                        K1={devResult.circled[0].value} · K2={devResult.circled[1].value} · K3={devResult.circled[2].value} · K4={devResult.circled[3].value}
+                      </p>
+                      <p className="text-[11px] text-slate-500 mt-1">
+                        K1 psych. stabilita · K2 mat. stabilita · <strong>K3 životné poslanie</strong> · K4 detské sny
+                      </p>
+                    </div>
+                  </div>
+                </GlassCard>
+              ) : null}
 
               {/* MRIEŽKA — plná šírka, dosť priestoru */}
               <GlassCard>
@@ -213,7 +239,7 @@ export function NumerologyPage() {
                 ) : null}
               </GlassCard>
 
-              {lifePathInfo && (
+              {numerologyMethod === 'characterological' && lifePathInfo && (
                 <GlassCard delay={0.2}>
                   <h3 className="font-serif text-xl font-bold text-white mb-3">Výklad životného čísla {result.lifePathNumber}</h3>
                   <p className="text-slate-300 mb-4">{lifePathInfo.description}</p>
@@ -235,10 +261,13 @@ export function NumerologyPage() {
                       <p className="text-sm text-slate-300">{lifePathInfo.recommendation}</p>
                     </div>
                   </div>
+                  <p className="text-[11px] text-slate-500 italic mt-3 text-center">
+                    Zdroj: Robin Steinová – Numerológia: Čísla Lásky
+                  </p>
                 </GlassCard>
               )}
 
-              {result.isolatedNumbers.length > 0 && (
+              {numerologyMethod === 'characterological' && result.isolatedNumbers.length > 0 && (
                 <GlassCard delay={0.3}>
                   <h3 className="font-medium text-white mb-2">Izolované čísla</h3>
                   <p className="text-sm text-slate-400 mb-4">Izolované čísla sú obklopené prázdnymi políčkami v mriežke. Spôsobuje to zablokovanie energie, čo sa môže prejaviť ako frustrácia, zmeny nálad, vnútorné napätie alebo agresivita.</p>
@@ -321,44 +350,94 @@ export function NumerologyPage() {
                 );
               })()}
 
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-                <VibrationCard
-                  title="VDD"
-                  value={result.vdd}
-                  subtitle="Vek duchovnej dospelosti"
-                  icon="⟡"
-                  color="purple"
-                  formula={`36 - ŽČ(${result.lifePathNumber}) = ${result.vdd}`}
-                  description="Vek duchovnej dospelosti (VDD) je okamih, kedy človek začína plniť svoje životné poslanie. Do tohto veku sa pripravuje – učí sa, zbiera skúsenosti. Po VDD nastupujú karmické cykly K1-K4."
-                />
-                <VibrationCard
-                  title="ODD"
-                  value={result.oddPeriod}
-                  subtitle="Obdobie duch. detstva"
-                  icon="◇"
-                  color="purple"
-                  formula={`VDD(${result.vdd}) ÷ 3 = ${result.oddPeriod}`}
-                  description={`Obdobie duchovného detstva (ODD) = ${result.oddPeriod} rokov. Duchovné detstvo trvá od narodenia do ${result.vdd} rokov a delí sa na 3 cykly po ${result.oddPeriod} rokov: 1. cyklus (0–${result.oddPeriod} r.) = vplyv matky, 2. cyklus (${result.oddPeriod}–${result.oddPeriod * 2} r.) = vplyv otca, 3. cyklus (${result.oddPeriod * 2}–${result.vdd} r.) = vplyv spoločnosti.`}
-                />
-                <VibrationCard
-                  title="ΣT"
-                  value={result.sigmaT}
-                  subtitle={result.age === 'aquarius' ? 'Vek Vodnára' : 'Vek Rýb'}
-                  icon="☿"
-                  color="gold"
-                  formula={`D + M + R = ${result.sigmaT}`}
-                  description="Suma tarotu (ΣT) je súčet celého dátumu narodenia bez redukcie. Určuje, či osoba patrí do Veku Rýb (< 2000, duchovná introspekcia) alebo Veku Vodnára (>= 2000, nové paradigmy a technológie)."
-                />
-                <VibrationCard
-                  title="Kozmický vek"
-                  value={result.sigmaT >= 2000 ? 2 : 1}
-                  subtitle={result.age === 'aquarius' ? 'Vodnár' : 'Ryby'}
-                  icon="⚛"
-                  color="indigo"
-                  formula={`ΣT = ${result.sigmaT} → ${result.age === 'aquarius' ? '≥ 2000 = Vodnár' : '< 2000 = Ryby'}`}
-                  description={result.age === 'aquarius' ? 'Vek Vodnára – nové technológie, kolektívne vedomie, inovácie. Človek je otvorený novým prístupom a má schopnosť prepájať duchovné s moderným.' : 'Vek Rýb – hlboká duchovnosť, introspekcia, tradičná múdrosť. Človek inklinuje k duchovným cestám a vnútornému hľadaniu pravdy.'}
-                />
-              </div>
+              {numerologyMethod === 'characterological' && (
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                  <VibrationCard
+                    title="VDD"
+                    value={result.vdd}
+                    subtitle="Vek duchovnej dospelosti"
+                    icon="⟡"
+                    color="purple"
+                    formula={`36 - ŽČ(${result.lifePathNumber}) = ${result.vdd}`}
+                    description="Vek duchovnej dospelosti (VDD) je okamih, kedy človek začína plniť svoje životné poslanie. Do tohto veku sa pripravuje – učí sa, zbiera skúsenosti. Po VDD nastupujú karmické cykly K1-K4."
+                  />
+                  <VibrationCard
+                    title="ODD"
+                    value={result.oddPeriod}
+                    subtitle="Obdobie duch. detstva"
+                    icon="◇"
+                    color="purple"
+                    formula={`VDD(${result.vdd}) ÷ 3 = ${result.oddPeriod}`}
+                    description={`Obdobie duchovného detstva (ODD) = ${result.oddPeriod} rokov. Duchovné detstvo trvá od narodenia do ${result.vdd} rokov a delí sa na 3 cykly po ${result.oddPeriod} rokov: 1. cyklus (0–${result.oddPeriod} r.) = vplyv matky, 2. cyklus (${result.oddPeriod}–${result.oddPeriod * 2} r.) = vplyv otca, 3. cyklus (${result.oddPeriod * 2}–${result.vdd} r.) = vplyv spoločnosti.`}
+                  />
+                  <VibrationCard
+                    title="ΣT"
+                    value={result.sigmaT}
+                    subtitle={result.age === 'aquarius' ? 'Vek Vodnára' : 'Vek Rýb'}
+                    icon="☿"
+                    color="gold"
+                    formula={`D + M + R = ${result.sigmaT}`}
+                    description="Suma tarotu (ΣT) je súčet celého dátumu narodenia bez redukcie. Určuje, či osoba patrí do Veku Rýb (< 2000, duchovná introspekcia) alebo Veku Vodnára (>= 2000, nové paradigmy a technológie)."
+                  />
+                  <VibrationCard
+                    title="Kozmický vek"
+                    value={result.sigmaT >= 2000 ? 2 : 1}
+                    subtitle={result.age === 'aquarius' ? 'Vodnár' : 'Ryby'}
+                    icon="⚛"
+                    color="indigo"
+                    formula={`ΣT = ${result.sigmaT} → ${result.age === 'aquarius' ? '≥ 2000 = Vodnár' : '< 2000 = Ryby'}`}
+                    description={result.age === 'aquarius' ? 'Vek Vodnára – nové technológie, kolektívne vedomie, inovácie. Človek je otvorený novým prístupom a má schopnosť prepájať duchovné s moderným.' : 'Vek Rýb – hlboká duchovnosť, introspekcia, tradičná múdrosť. Človek inklinuje k duchovným cestám a vnútornému hľadaniu pravdy.'}
+                  />
+                </div>
+              )}
+
+              {/* Vysvetlenie a porovnanie metód — pre obe je obsah iný */}
+              {numerologyMethod === 'developmental' && devResult ? (
+                <GlassCard>
+                  <h3 className="font-medium text-white mb-2">Čo znamenajú tieto čísla</h3>
+                  <p className="text-sm text-slate-700 mb-3">
+                    Vývojová numerológia (Lívia Mičková) nepoužíva klasické životné číslo zo Steinovej tradície. Namiesto neho pracuje so <strong>4 zakrúžkovanými číslami (K1–K4)</strong>, ktoré opisujú postupné karmické úlohy duše počas života.
+                  </p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+                    <div className="p-3 rounded-lg bg-amber-50 border border-amber-200">
+                      <p className="text-xs text-amber-700 font-semibold uppercase mb-1">K1 – Psychická stabilita ({devResult.circled[0].value})</p>
+                      <p className="text-xs text-slate-700">Téma prvého cyklu: budovanie vnútorného sveta a sebaobrazu.</p>
+                    </div>
+                    <div className="p-3 rounded-lg bg-amber-50 border border-amber-200">
+                      <p className="text-xs text-amber-700 font-semibold uppercase mb-1">K2 – Materiálna stabilita ({devResult.circled[1].value})</p>
+                      <p className="text-xs text-slate-700">Druhý cyklus: usadenie sa vo svete, hmotná báza.</p>
+                    </div>
+                    <div className="p-3 rounded-lg bg-orange-100 border border-orange-300">
+                      <p className="text-xs text-orange-800 font-semibold uppercase mb-1">★ K3 – Životné poslanie ({devResult.circled[2].value})</p>
+                      <p className="text-xs text-slate-700"><strong>Najdôležitejšie z karmických čísel.</strong> To, prečo si tu — hlavná misia duše.</p>
+                    </div>
+                    <div className="p-3 rounded-lg bg-amber-50 border border-amber-200">
+                      <p className="text-xs text-amber-700 font-semibold uppercase mb-1">K4 – Detské sny ({devResult.circled[3].value})</p>
+                      <p className="text-xs text-slate-700">Záver života: napĺňanie detských snov, návrat k pôvodnej radosti.</p>
+                    </div>
+                  </div>
+
+                  <details className="mt-3">
+                    <summary className="text-sm font-medium text-indigo-700 cursor-pointer hover:text-indigo-800 select-none">
+                      Porovnanie s Charakterovou metódou (Steinová)
+                    </summary>
+                    <div className="mt-3 space-y-2 text-xs text-slate-600">
+                      <p>
+                        <strong className="text-blue-700">Charakterová (Steinová):</strong> hlavné je <strong>životné číslo</strong> ({result.lifePathNumber} z {result.lifePathFrom}). Vyjadruje vrodenú povahu — kto si od narodenia. K tomu sa viaže VDD (vek duchovnej dospelosti = {result.vdd} r.), ΣT (suma tarotu) a klasické karmické trojuholníky.
+                      </p>
+                      <p>
+                        <strong className="text-amber-700">Vývojová (Lívia):</strong> hlavné sú <strong>4 zakrúžkované karmické čísla</strong> ({devResult.circled[0].value}, {devResult.circled[1].value}, {devResult.circled[2].value}, {devResult.circled[3].value}). Vyjadrujú postupné úlohy duše počas života. K3 je vrcholná misia. Roviny ani izolované čísla sa nepoužívajú.
+                      </p>
+                      <p className="italic">
+                        Obe metódy môžu byť pravdivé súčasne — ide o dva uhly pohľadu na tú istú dušu. Ak chceš vidieť obe naraz, prepni sa v Settings na druhú metódu, alebo pozri Dashboard, ktorý oba zobrazuje.
+                      </p>
+                    </div>
+                  </details>
+                  <p className="text-[11px] text-slate-500 italic mt-3">
+                    Zdroj: kniha Lívia Mičková – Duchovná numerológia
+                  </p>
+                </GlassCard>
+              ) : null}
             </div>
           )}
 

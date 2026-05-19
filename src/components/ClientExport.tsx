@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { GlassCard } from './GlassCard';
 import { calculateFullNumerology, reduceToSingle } from '../engine/numerologyEngine';
+import { calculateDevelopmentalNumerology } from '../engine/developmentalNumerologyEngine';
 import type { NumerologyResult } from '../engine/numerologyEngine';
 import type { AstrologyResult } from '../engine/astrologyEngine';
 import type { HumanDesignResult } from '../engine/humanDesignEngine';
@@ -24,6 +25,7 @@ interface Client {
   birthYear: number;
   birthHour?: number;
   birthMinute?: number;
+  birthPlace?: string;
   partnerId?: string;
   childrenIds?: string[];
 }
@@ -74,19 +76,31 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
                 }
               };
 
-              const addSection = (text: string) => {
-                checkPage(15);
+              // Farebné palety sekcií (RGB)
+              const sectionColors: Record<string, [number, number, number]> = {
+                indigo: [79, 70, 229],
+                cyan: [8, 145, 178],
+                purple: [124, 58, 237],
+                green: [22, 163, 74],
+                amber: [180, 83, 9],
+                rose: [225, 29, 72],
+                slate: [100, 116, 139],
+                teal: [13, 148, 136],
+              };
+
+              const addSection = (text: string, color: keyof typeof sectionColors = 'indigo', icon?: string) => {
+                checkPage(18);
                 y += 4;
-                doc.setDrawColor(79, 70, 229);
-                doc.setLineWidth(0.5);
-                doc.line(14, y, 196, y);
-                y += 7;
-                doc.setFontSize(14);
+                const [r, g, b] = sectionColors[color];
+                // Farebný pruh vľavo namiesto čiary cez celú šírku
+                doc.setFillColor(r, g, b);
+                doc.rect(14, y - 1, 3, 10, 'F');
+                doc.setFontSize(13);
                 doc.setFont('helvetica', 'bold');
-                doc.setTextColor(79, 70, 229);
-                doc.text(text, 14, y);
+                doc.setTextColor(r, g, b);
+                doc.text(`${icon ? icon + '  ' : ''}${text}`, 21, y + 6);
                 doc.setTextColor(0, 0, 0);
-                y += 8;
+                y += 12;
               };
 
               const addLine = (text: string) => {
@@ -111,32 +125,89 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
               const addSpace = () => { y += 4; };
 
               // === TITLE PAGE ===
+              // Čakrový gradient pruh navrchu strany (7 farieb, každá ~28mm široká)
+              const chakraColors: Array<[number, number, number]> = [
+                [239, 68, 68],   // Korenova - cervena
+                [249, 115, 22], // Sakralna - oranzova
+                [234, 179, 8],  // Solarny plexus - zlta
+                [34, 197, 94],  // Srdcova - zelena
+                [59, 130, 246], // Krcna - modra
+                [99, 102, 241], // Tretie oko - indigo
+                [168, 85, 247], // Korunna - fialova
+              ];
+              const stripeWidth = 196 / chakraColors.length;
+              chakraColors.forEach((c, i) => {
+                doc.setFillColor(c[0], c[1], c[2]);
+                doc.rect(7 + i * stripeWidth, 0, stripeWidth, 6, 'F');
+              });
+
+              // Lemovky stránky
+              doc.setDrawColor(220, 220, 220);
+              doc.setLineWidth(0.3);
+              doc.line(14, 280, 196, 280);
+
               doc.setFontSize(10);
               doc.setFont('helvetica', 'normal');
-              doc.setTextColor(150, 150, 150);
-              doc.text('Integralna mapa bytia', 105, 60, { align: 'center' });
+              doc.setTextColor(120, 120, 130);
+              doc.text('Integralna mapa bytia', 105, 50, { align: 'center' });
               doc.setTextColor(0, 0, 0);
 
-              doc.setFontSize(26);
+              // Hlavny nadpis s shadow efektom
+              doc.setFontSize(28);
               doc.setFont('helvetica', 'bold');
-              doc.text('INTEGRALNY PROFIL', 105, 85, { align: 'center' });
-
-              doc.setDrawColor(79, 70, 229);
-              doc.setLineWidth(1);
-              doc.line(60, 92, 150, 92);
-
-              doc.setFontSize(18);
-              doc.setFont('helvetica', 'normal');
-              doc.text(client.name, 105, 110, { align: 'center' });
-
-              doc.setFontSize(12);
-              doc.setTextColor(100, 100, 100);
-              doc.text(`${client.birthDay}.${client.birthMonth}.${client.birthYear}${client.birthHour !== undefined ? ` ${client.birthHour}:${String(client.birthMinute || 0).padStart(2, '0')}` : ''}`, 105, 122, { align: 'center' });
+              doc.setTextColor(79, 70, 229);
+              doc.text('INTEGRALNY PROFIL', 105, 80, { align: 'center' });
               doc.setTextColor(0, 0, 0);
 
-              doc.setFontSize(10);
+              // Dvojitá čiara pod nadpisom
+              doc.setDrawColor(79, 70, 229);
+              doc.setLineWidth(0.8);
+              doc.line(50, 86, 160, 86);
+              doc.setLineWidth(0.3);
+              doc.line(50, 88, 160, 88);
+
+              // Box s menom
+              doc.setDrawColor(220, 220, 220);
+              doc.setFillColor(248, 250, 252);
+              doc.roundedRect(45, 100, 120, 36, 3, 3, 'FD');
+
+              doc.setFontSize(20);
+              doc.setFont('helvetica', 'normal');
+              doc.setTextColor(30, 27, 75);
+              doc.text(client.name, 105, 116, { align: 'center' });
+
+              doc.setFontSize(11);
+              doc.setTextColor(100, 100, 110);
+              doc.text(
+                `${client.birthDay}.${client.birthMonth}.${client.birthYear}${client.birthHour !== undefined ? ` ${client.birthHour}:${String(client.birthMinute || 0).padStart(2, '0')}` : ''}`,
+                105, 126, { align: 'center' }
+              );
+              if (client.birthPlace) {
+                doc.text(client.birthPlace, 105, 132, { align: 'center' });
+              }
+              doc.setTextColor(0, 0, 0);
+
+              // Životné číslo ako veľký akcent
+              const lpNumber = numerology.lifePathNumber;
+              doc.setFillColor(79, 70, 229);
+              doc.circle(105, 165, 15, 'F');
+              doc.setFontSize(28);
+              doc.setFont('helvetica', 'bold');
+              doc.setTextColor(255, 255, 255);
+              doc.text(String(lpNumber), 105, 173, { align: 'center' });
+              doc.setTextColor(0, 0, 0);
+
+              doc.setFontSize(11);
+              doc.setFont('helvetica', 'italic');
+              doc.setTextColor(79, 70, 229);
+              doc.text(`Zivotne cislo - ${lpTitle}`, 105, 188, { align: 'center' });
+              doc.setTextColor(0, 0, 0);
+              doc.setFont('helvetica', 'normal');
+
+              // Spodok titulnej strany
+              doc.setFontSize(9);
               doc.setTextColor(150, 150, 150);
-              doc.text(new Date().toLocaleDateString('sk-SK'), 105, 140, { align: 'center' });
+              doc.text(new Date().toLocaleDateString('sk-SK'), 105, 270, { align: 'center' });
               doc.setTextColor(0, 0, 0);
 
               addPageNumber();
@@ -145,7 +216,7 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
               y = 20;
 
               // === NUMEROLOGIA ===
-              addSection('NUMEROLOGIA');
+              addSection('NUMEROLOGIA', 'indigo');
               addBoldLine(`Zivotne cislo: ${numerology.lifePathNumber} z ${numerology.lifePathFrom} - ${lpTitle}`);
               addLine(lpDesc);
               addSpace();
@@ -156,10 +227,72 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
               if (numerology.isolatedNumbers.length > 0) addLine(`Izolovane cisla: ${numerology.isolatedNumbers.join(', ')}`);
               addSpace();
 
+              // Vizuálna mriežka 3×3 (Charakterová)
+              checkPage(50);
+              addBoldLine('Mriezka 3x3 (Charakterova):');
+              const gridSize = 14;
+              const gridStartX = 14;
+              const gridStartY = y + 2;
+              const gridLayout = [[3, 6, 9], [2, 5, 8], [1, 4, 7]];
+              gridLayout.forEach((row, rIdx) => {
+                row.forEach((num, cIdx) => {
+                  const cx = gridStartX + cIdx * gridSize;
+                  const cy = gridStartY + rIdx * gridSize;
+                  const items = numerology.grid[num] || [];
+                  if (items.length > 0) {
+                    doc.setFillColor(238, 242, 255);
+                    doc.setDrawColor(99, 102, 241);
+                  } else {
+                    doc.setFillColor(248, 250, 252);
+                    doc.setDrawColor(220, 220, 220);
+                  }
+                  doc.setLineWidth(0.3);
+                  doc.roundedRect(cx, cy, gridSize - 1, gridSize - 1, 1, 1, 'FD');
+                  // Číslo políčka v rohu
+                  doc.setFontSize(6);
+                  doc.setTextColor(160, 160, 160);
+                  doc.text(String(num), cx + 1, cy + 3);
+                  // Obsah – počet výskytov
+                  if (items.length > 0) {
+                    doc.setFontSize(10);
+                    doc.setFont('helvetica', 'bold');
+                    doc.setTextColor(79, 70, 229);
+                    doc.text(items.map(it => it.value).join(' '), cx + gridSize / 2 - 0.5, cy + gridSize / 2 + 2, { align: 'center' });
+                    doc.setFont('helvetica', 'normal');
+                  }
+                });
+              });
+              doc.setTextColor(0, 0, 0);
+              y += gridSize * 3 + 6;
+              addSpace();
+
               addBoldLine('Karmicke cykly:');
               numerology.karmicTriangles.forEach(t => {
                 addLine(`  ${t.label}: ${t.fromAge}-${t.toAge || '...'} r. | Vibracia ${t.vibration} - ${cycleVibrationDescriptions[t.vibration] || ''}`);
               });
+              addSpace();
+
+              // === VYVOJOVA NUMEROLOGIA (Livia / Cervenak) ===
+              const devNum = calculateDevelopmentalNumerology(client.birthDay, client.birthMonth, client.birthYear);
+              addSection('VYVOJOVA NUMEROLOGIA', 'amber');
+              addLine(`D+M = ${devNum.dayMonthSum} | R = ${devNum.yearSum}${devNum.isPost2000 ? ' (rok >= 2000: 20 + zvysok)' : ''}`);
+              addBoldLine('Karmicke cykly (zakruzkovane cisla):');
+              const cycleNames = [
+                'K1 - Psychicka stabilita',
+                'K2 - Materialna stabilita',
+                'K3 - Zivotne poslanie',
+                'K4 - Detske sny',
+              ];
+              devNum.circled.forEach((c, idx) => {
+                addLine(`  ${cycleNames[idx]}: ${c.value}  (${c.formula})`);
+              });
+              addSpace();
+              if (devNum.oneCount > 0) {
+                addBoldLine(`Polarita ega: ${devNum.egoPolarity === 'masculine' ? 'Muzske ego' : 'Zenske ego'} (${devNum.oneCount}x cislo 1)`);
+                addLine(devNum.egoPolarity === 'masculine'
+                  ? 'Neparny pocet jednotiek - energia davania, vymedzovania, akcie.'
+                  : 'Parny pocet jednotiek - energia prijimania, otvorenia, trpezlivosti.');
+              }
               addSpace();
 
               // === GENE KEYS ===
@@ -167,7 +300,7 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
               const earthGate = humanDesign.personalityGates.find(g => g.planet === 'Zem')?.gate;
               const topGeneKeys = [sunGate, earthGate].filter((g): g is number => g !== undefined).map(g => getGeneKeyByGate(g)).filter(Boolean);
               if (topGeneKeys.length > 0) {
-                addSection('GENOVE KLUCE');
+                addSection('GENOVE KLUCE', 'purple');
                 topGeneKeys.forEach(gk => {
                   if (!gk) return;
                   addBoldLine(`Brana ${gk.gate}:`);
@@ -180,7 +313,7 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
               }
 
               // === ASTROLOGIA ===
-              addSection('ASTROLOGIA');
+              addSection('ASTROLOGIA', 'cyan');
               addLine(`Slnko: ${astrology.sunSign.name} (${astrology.sunSign.element}) - ${planetInSignDescriptions['Slnko']?.[astrology.sunSign.name] || ''}`);
               addLine(`Mesiac: ${astrology.moonSign.name} (${astrology.moonSign.element}) - ${planetInSignDescriptions['Mesiac']?.[astrology.moonSign.name] || ''}`);
               addLine(`Ascendent: ${astrology.ascendant.name} (${astrology.ascendant.element})`);
@@ -188,7 +321,7 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
               addSpace();
 
               // === HUMAN DESIGN ===
-              addSection('HUMAN DESIGN');
+              addSection('HUMAN DESIGN', 'purple');
               addBoldLine(`Typ: ${humanDesign.type} | Autorita: ${humanDesign.authority}`);
               addLine(`Strategia: ${humanDesign.strategy}`);
               addLine(`Profil: ${humanDesign.profile.line1}/${humanDesign.profile.line2} - ${humanDesign.profile.name}: ${humanDesign.profile.description}`);
@@ -198,18 +331,18 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
               addSpace();
 
               // === JAZYKY LASKY ===
-              addSection('JAZYKY LASKY');
+              addSection('JAZYKY LASKY', 'rose');
               numerology.loveLanguages.forEach((l, i) => addLine(`${i + 1}. ${l.language}: ${l.score} bodov`));
               addSpace();
 
               // === THETA HEALING ===
-              addSection('THETA HEALING');
+              addSection('THETA HEALING', 'teal');
               addBoldLine('Limitujuce presvedcenia:');
               theta.primaryBeliefs.forEach(b => addLine(`  "${b.belief}" (${b.level}, ${b.emotion})`));
               addSpace();
 
               // === KABALA ===
-              addSection('KABALA');
+              addSection('KABALA', 'amber');
               addLine(`Primarna sefira: ${kabalah.primarySefira.name} (${kabalah.primarySefira.meaning})`);
               addLine(`Dar: ${kabalah.primarySefira.gift}`);
               addLine(`Tien: ${kabalah.primarySefira.shadow}`);
@@ -222,7 +355,7 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
                 if (partner) {
                   const partnerNum = calculateFullNumerology(partner.birthDay, partner.birthMonth, partner.birthYear);
                   const compat = calculatePartnerCompatibility(numerology, partnerNum);
-                  addSection('PARTNERSKA KOMPATIBILITA');
+                  addSection('PARTNERSKA KOMPATIBILITA', 'rose');
                   addBoldLine(`${client.name} & ${partner.name} - Celkove skore: ${compat.overallScore}%`);
                   addLine(`Zivotne cisla: ${numerology.lifePathNumber} + ${partnerNum.lifePathNumber} | Zhoda: ${compat.lifePathCompatibility.score}%`);
                   addLine(`Jazyky lasky: ${compat.loveLanguageMatch.score}%`);

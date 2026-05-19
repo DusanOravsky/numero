@@ -8,6 +8,7 @@ import type { AstrologyResult, SynastryAspect } from '../engine/astrologyEngine'
 import { motion } from 'framer-motion';
 import { planetInSignDescriptions } from '../data/planetSignDescriptions';
 import { LunarTimeline } from '../components/LunarTimeline';
+import { NatalWheel } from '../components/NatalWheel';
 
 function getSunSignDescription(sign: string): string {
   const descriptions: Record<string, string> = {
@@ -240,6 +241,9 @@ export function AstrologyPage() {
               </div>
             </div>
           </GlassCard>
+
+          {/* Natálne koliesko (B29) */}
+          <NatalWheel result={result} />
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <GlassCard>

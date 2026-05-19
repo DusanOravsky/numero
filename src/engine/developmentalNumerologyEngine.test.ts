@@ -101,6 +101,31 @@ describe('Polarita ega podľa parity počtu jednotiek', () => {
   });
 });
 
+describe('Pokrytie kombinácií pre chýbajúce čísla 1-9', () => {
+  it('Pre každé z čísel 1-9 existuje pravidlo "Bez X" v kombináciách', async () => {
+    // Importujeme dynamicky aby sme nemali cyclic dep
+    const { developmentalCombinations } = await import('../data/developmentalCombinations');
+
+    // Pre každé číslo 1-9 zostavíme syntetický result kde dané číslo je 0
+    // a ostatné sú aspoň 1, a overíme, že nájdeme "Bez X" pravidlo.
+    for (let missing = 1; missing <= 9; missing++) {
+      const counts: Record<number, number> = {};
+      for (let i = 1; i <= 9; i++) {
+        counts[i] = i === missing ? 0 : 1;
+      }
+      const fakeResult = {
+        birthDay: 1, birthMonth: 1, birthYear: 1990,
+        isPost2000: false, dayMonthSum: 2, yearSum: 19,
+        circled: [], dateDigits: [], grid: [], counts,
+        oneCount: counts[1], egoPolarity: 'masculine' as const,
+      };
+      const matched = developmentalCombinations.filter(c => c.matches(fakeResult));
+      const hasMissing = matched.some(c => c.id.startsWith('no-') || c.title.toLowerCase().includes('bez'));
+      expect(hasMissing, `Chýba pravidlo pre Bez ${missing}`).toBe(true);
+    }
+  });
+});
+
 describe('Mriežka - cifry dátumu + zakrúžkované', () => {
   it('LOCK: 30.8.1979 - presné počty v mriežke', () => {
     const r = calculateDevelopmentalNumerology(30, 8, 1979);

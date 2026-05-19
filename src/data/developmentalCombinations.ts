@@ -32,6 +32,18 @@ export const developmentalCombinations: DevelopmentalCombination[] = [
     matches: r => c(3, r) >= 3 && c(2, r) >= 3,
   },
 
+  // === EGO (číslo 1) ===
+  {
+    id: 'no-ego',
+    title: 'Bez 1 – tlmené ego, hľadanie seba',
+    description:
+      'Žiadna jednotka v mriežke. Veľmi nízke ego, človek sa silno vníma ako súčasť celku — bez vymedzenia voči nemu. Riziko: stráca sa v iných, ťažko nájde vlastný hlas, nevie, „čo chce ja". Často mu chýba vnútorný kompas pre rozhodovanie.',
+    recommendation:
+      'Cvičenie „dnes urobím jedno rozhodnutie len pre seba". Hľadať samostatné záujmy, koníčky a aktivity. Vedome sa pýtať „čo chcem JA?" pred tým, než sa pýtam ostatných. Bezpečné prostredie, kde sa môžeš učiť presadzovať.',
+    tone: 'warn',
+    matches: r => c(1, r) === 0,
+  },
+
   // === EGO + SEBAVEDOMIE ===
   {
     id: 'high-ego-low-confidence',
@@ -52,6 +64,16 @@ export const developmentalCombinations: DevelopmentalCombination[] = [
       'Tréning vyjadrenia osobných potrieb. Cvičenie „dnes urobím jedno rozhodnutie len pre seba". Hľadanie samostatných záujmov a rozhodnutí.',
     tone: 'warn',
     matches: r => c(1, r) <= 1 && c(4, r) === 0,
+  },
+  {
+    id: 'no-confidence',
+    title: 'Bez 4 – nízke sebavedomie, vysoký potenciál rastu',
+    description:
+      'Žiadna štvorka v mriežke. Sebavedomie nie je vrodená sila — je úlohou v tomto živote. Často kritickí rodičia v detstve, vnútorný hlas „nie som dosť dobrý". Ale: práve preto má človek najvyšší potenciál si ho vedome budovať.',
+    recommendation:
+      '7-dňová audio nahrávka pozitívnych afirmácií, denne. Sústrediť sa na to, čo už dokázal/a — viesť si denník malých úspechov. Nájsť svoju hodnotu v tom, čo si, nie len v tom, čo robíš.',
+    tone: 'warn',
+    matches: r => c(4, r) === 0,
   },
   {
     id: 'high-confidence-stubborn',
@@ -146,8 +168,8 @@ export const developmentalCombinations: DevelopmentalCombination[] = [
 
   // === LÁSKA ===
   {
-    id: 'love-school-beginner',
-    title: 'V škole lásky úplný začiatočník',
+    id: 'no-love-school',
+    title: 'Bez 8 – V škole lásky úplný začiatočník',
     description:
       'Žiadna osmička. Človek prišiel preskúmať lásku vo všetkých jej formách – od základov. Bude konfrontovaný s rôznymi „učiteľmi" lásky.',
     recommendation:
@@ -188,14 +210,24 @@ export const developmentalCombinations: DevelopmentalCombination[] = [
     matches: r => c(9, r) === 3 && c(4, r) <= 1,
   },
   {
+    id: 'no-material-grounding',
+    title: 'Bez 9 – učenie sa hmotnému svetu',
+    description:
+      'Žiadna deviatka v mriežke. Hmotný svet, peniaze, financie nie sú prirodzená sila. Človek sa musí vedome učiť pracovať s materiálnym — môže mať tendenciu odsudzovať peniaze alebo sa im naopak otrocky podriaďovať.',
+    recommendation:
+      'Naučiť sa základné finančné princípy: rozpočet, úspory, rozdiel aktíva vs pasíva. Vyhýbať sa špekulatívnym investíciám. Pri väčších rozhodnutiach konzultovať s niekým, kto má hmotnému svetu lepšie rozumie.',
+    tone: 'warn',
+    matches: r => c(9, r) === 0,
+  },
+  {
     id: 'live-paycheck-to-paycheck',
     title: 'Zo zamestnania od výplaty po výplatu',
     description:
-      'Žiadna alebo jedna deviatka. Klasický vzor: chodí do práce, dostáva výplatu, žije z nej. Akékoľvek väčšie investície alebo dlhy sú riziko.',
+      'Iba jedna deviatka. Klasický vzor: chodí do práce, dostáva výplatu, žije z nej. Akékoľvek väčšie investície alebo dlhy sú riziko.',
     recommendation:
       'Držať sa stabilného zdroja príjmu, vyhýbať sa špekulatívnym investíciám. Ak ide o väčšie rozhodnutie, konzultovať s niekým, kto má vyššie deviatky.',
     tone: 'info',
-    matches: r => c(9, r) <= 1,
+    matches: r => c(9, r) === 1,
   },
 
   // === KOMBINÁCIE ENERGIE ===

@@ -19,6 +19,7 @@ import isolatedData from '../data/isolatedNumbers.json';
 import planesData from '../data/planes.json';
 import { orvDescriptions, loveLanguageDescriptions, loveLanguageScoringExplanation, cosmicAgeDescriptions } from '../data/orvDescriptions';
 import { cycleVibrationDescriptions } from '../data/planetSignDescriptions';
+import { findMissingCharacterNumbers } from '../data/characterMissingNumbers';
 
 const planesInfo = planesData as { full: Record<string, { description: string; gift: string; recommendation: string }>; empty: Record<string, { description: string; lesson: string; recommendation: string }> };
 
@@ -280,6 +281,45 @@ export function NumerologyPage() {
                   </div>
                 </GlassCard>
               )}
+
+              {/* Chýbajúce čísla 1-9 — len pre Charakterovú */}
+              {numerologyMethod === 'characterological' && (() => {
+                const missing = findMissingCharacterNumbers(result.grid);
+                if (missing.length === 0) return null;
+                return (
+                  <GlassCard delay={0.35}>
+                    <h3 className="font-medium text-white mb-2">Chýbajúce čísla v mriežke</h3>
+                    <p className="text-sm text-slate-500 mb-4">
+                      Každé chýbajúce číslo predstavuje energiu, ktorú si do tohto života neprinies/neprinesla ako vrodený dar — je to oblasť na vedomé rozvíjanie. Tieto témy nie sú slabosti, sú smerom rastu.
+                    </p>
+                    <div className="space-y-3">
+                      {missing.map(info => (
+                        <motion.div
+                          key={info.number}
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: info.number * 0.05 }}
+                          className="p-3 rounded-xl bg-amber-50 border border-amber-200"
+                        >
+                          <div className="flex items-center gap-2 mb-1">
+                            <div className="w-7 h-7 rounded-lg bg-amber-200 text-amber-800 font-bold flex items-center justify-center text-sm shrink-0">
+                              {info.number}
+                            </div>
+                            <p className="text-sm font-medium text-amber-700">{info.title}</p>
+                          </div>
+                          <p className="text-xs text-slate-700 mt-1">{info.description}</p>
+                          <p className="text-xs text-slate-600 mt-1.5 italic">
+                            <strong>Odporúčanie:</strong> {info.recommendation}
+                          </p>
+                        </motion.div>
+                      ))}
+                    </div>
+                    <p className="text-[11px] text-slate-500 italic mt-3">
+                      Zdroj: Robin Steinová – Numerológia: Čísla Lásky
+                    </p>
+                  </GlassCard>
+                );
+              })()}
 
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
                 <VibrationCard

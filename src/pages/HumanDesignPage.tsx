@@ -497,52 +497,119 @@ export function HumanDesignPage() {
             ])];
             const geneKeysList: GeneKey[] = getGeneKeysForGates(allGates);
             if (geneKeysList.length === 0) return null;
+
+            // Najdôležitejšie: Slnko personality + Slnko design (inkarnačný kríž)
+            const sunGate = result.personalityGates.find(g => g.planet === 'Slnko')?.gate;
+            const earthGate = result.personalityGates.find(g => g.planet === 'Zem')?.gate;
+            const primaryGates = [sunGate, earthGate].filter((g): g is number => g !== undefined);
+            const primaryKeys = geneKeysList.filter(gk => primaryGates.includes(gk.gate));
+            const secondaryKeys = geneKeysList.filter(gk => !primaryGates.includes(gk.gate));
+
             return (
-              <GlassCard>
-                <h3 className="font-medium text-white mb-4">Génové kľúče</h3>
-                <p className="text-xs text-slate-400 mb-4">
-                  Génové kľúče (Gene Keys) od Richarda Rudda ukazujú cestu transformácie od tieňa (nízka frekvencia) cez dar (stredná frekvencia) k siddhi (najvyššia frekvencia) pre každú bránu vo vašom dizajne. NLP techniky pomáhajú aktivovať tento transformačný proces.
-                </p>
-                <div className="space-y-4">
-                  {geneKeysList.slice(0, 12).map((gk, idx) => (
-                    <motion.div
-                      key={gk.gate}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: idx * 0.03 }}
-                      className="p-4 rounded-xl glass-light"
-                    >
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm font-bold text-indigo-300">Brána {gk.gate} – Génový kľúč</span>
+              <>
+                <GlassCard>
+                  <h3 className="font-medium text-white mb-3">Génové kľúče — čo to je a čo si z toho vziať</h3>
+                  <div className="space-y-3 text-sm text-slate-300">
+                    <p>
+                      Každá brána v tvojom dizajne má <strong className="text-white">tri frekvencie</strong> — ako tri poschodia toho istého domu:
+                    </p>
+                    <div className="grid grid-cols-3 gap-2">
+                      <div className="text-center p-2 rounded-lg bg-red-500/10 border border-red-500/20">
+                        <p className="text-xs font-bold text-red-300">Tieň</p>
+                        <p className="text-[10px] text-slate-400">Keď si pod tlakom, nevedomý. Kde „uviazneš".</p>
                       </div>
-                      <div className="grid grid-cols-3 gap-2 mb-3">
-                        <div className="text-center p-2 rounded-lg bg-red-500/10 border border-red-500/20">
-                          <p className="text-[10px] text-red-400 uppercase">Tieň</p>
-                          <p className="text-xs font-medium text-red-300">{gk.shadow}</p>
+                      <div className="text-center p-2 rounded-lg bg-amber-500/10 border border-amber-500/20">
+                        <p className="text-xs font-bold text-amber-300">Dar</p>
+                        <p className="text-[10px] text-slate-400">Keď si vedomý a autentický. Tvoja sila.</p>
+                      </div>
+                      <div className="text-center p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+                        <p className="text-xs font-bold text-emerald-300">Siddhi</p>
+                        <p className="text-[10px] text-slate-400">Najvyššia forma. Vzácna, ale ukazuje smer.</p>
+                      </div>
+                    </div>
+                    <p className="text-xs text-slate-500 italic">
+                      Prakticky: rozpoznaj tieň (bez súdenia), žij dar (vedomá voľba). Siddhi príde samo, keď prestaneš tlačiť.
+                    </p>
+                  </div>
+                </GlassCard>
+
+                {/* Primárne kľúče — Slnko + Zem (najdôležitejšie) */}
+                {primaryKeys.length > 0 && (
+                  <GlassCard glow>
+                    <h3 className="font-medium text-white mb-2">Tvoje hlavné génové kľúče</h3>
+                    <p className="text-xs text-slate-500 mb-4">
+                      Tieto sú z tvojho vedomého Slnka a Zeme — definujú tvoju <strong>životnú tému</strong>. Ak pracuješ len s dvoma kľúčmi, vyber si tieto.
+                    </p>
+                    <div className="space-y-4">
+                      {primaryKeys.map(gk => (
+                        <div key={gk.gate} className="p-4 rounded-xl bg-indigo-500/10 border border-indigo-500/30">
+                          <div className="flex items-center gap-2 mb-3">
+                            <span className="w-9 h-9 rounded-full bg-indigo-500/30 text-indigo-200 font-bold flex items-center justify-center">{gk.gate}</span>
+                            <div>
+                              <p className="text-sm font-medium text-white">Génový kľúč {gk.gate}</p>
+                              <p className="text-[10px] text-slate-400">{gk.gate === sunGate ? 'Vedomé Slnko — tvoja hlavná životná téma' : 'Vedomá Zem — tvoje zakotvenie'}</p>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-2 mb-3 text-sm">
+                            <span className="text-red-300 font-medium">{gk.shadow}</span>
+                            <span className="text-slate-500">→</span>
+                            <span className="text-amber-300 font-medium">{gk.gift}</span>
+                            <span className="text-slate-500">→</span>
+                            <span className="text-emerald-300 font-medium">{gk.siddhi}</span>
+                          </div>
+
+                          <div className="space-y-2 text-xs text-slate-400">
+                            <p><span className="text-red-400 font-medium">Tieň:</span> {gk.shadowDescription}</p>
+                            <p><span className="text-amber-400 font-medium">Dar:</span> {gk.giftDescription}</p>
+                          </div>
+
+                          <div className="mt-3 p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+                            <p className="text-[10px] text-emerald-400 uppercase mb-1">Čo s tým prakticky</p>
+                            <p className="text-xs text-slate-300">
+                              Keď zistíš, že si v tieni (<em>{gk.shadow.toLowerCase()}</em>) — zastav sa. Nie je to chyba, je to signál.
+                              Vedomá voľba: prejdi k daru (<em>{gk.gift.toLowerCase()}</em>).
+                              {gk.nlpTechnique && <> Technika: <strong>{gk.nlpTechnique}</strong> — {gk.nlpDescription}</>}
+                            </p>
+                          </div>
                         </div>
-                        <div className="text-center p-2 rounded-lg bg-amber-500/10 border border-amber-500/20">
-                          <p className="text-[10px] text-amber-400 uppercase">Dar</p>
-                          <p className="text-xs font-medium text-amber-300">{gk.gift}</p>
-                        </div>
-                        <div className="text-center p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
-                          <p className="text-[10px] text-emerald-400 uppercase">Siddhi</p>
-                          <p className="text-xs font-medium text-emerald-300">{gk.siddhi}</p>
-                        </div>
+                      ))}
+                    </div>
+                  </GlassCard>
+                )}
+
+                {/* Ostatné kľúče — collapsible */}
+                {secondaryKeys.length > 0 && (
+                  <GlassCard>
+                    <details>
+                      <summary className="text-sm font-medium text-indigo-700 cursor-pointer hover:text-indigo-800 select-none">
+                        Ďalšie génové kľúče ({secondaryKeys.length}) — planéty a design
+                      </summary>
+                      <p className="text-xs text-slate-500 mt-2 mb-4">
+                        Tieto kľúče sú z ďalších planét a nevedomého dizajnu. Sú dôležité, ale nie tak urgentné ako hlavné dva.
+                      </p>
+                      <div className="space-y-3 mt-3">
+                        {secondaryKeys.map(gk => (
+                          <div key={gk.gate} className="p-3 rounded-xl glass-light">
+                            <div className="flex items-center gap-2 mb-2">
+                              <span className="w-7 h-7 rounded-full bg-slate-700/50 text-slate-300 font-bold text-xs flex items-center justify-center">{gk.gate}</span>
+                              <span className="text-sm text-white">Kľúč {gk.gate}</span>
+                            </div>
+                            <div className="flex items-center gap-2 text-xs mb-2">
+                              <span className="px-2 py-0.5 rounded-full bg-red-500/15 text-red-300">{gk.shadow}</span>
+                              <span className="text-slate-500">→</span>
+                              <span className="px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-300">{gk.gift}</span>
+                              <span className="text-slate-500">→</span>
+                              <span className="px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300">{gk.siddhi}</span>
+                            </div>
+                            <p className="text-xs text-slate-400">{gk.shadowDescription}</p>
+                          </div>
+                        ))}
                       </div>
-                      <div className="space-y-1 mb-2">
-                        <p className="text-xs text-slate-400"><span className="text-red-400">Tieň:</span> {gk.shadowDescription}</p>
-                        <p className="text-xs text-slate-400"><span className="text-amber-400">Dar:</span> {gk.giftDescription}</p>
-                        <p className="text-xs text-slate-400"><span className="text-emerald-400">Siddhi:</span> {gk.siddhiDescription}</p>
-                      </div>
-                      <div className="mt-2 p-2 rounded-lg bg-indigo-500/10 border border-indigo-500/20">
-                        <p className="text-[10px] text-indigo-400 uppercase mb-1">NLP technika na transformáciu</p>
-                        <p className="text-xs font-medium text-indigo-300">{gk.nlpTechnique}</p>
-                        <p className="text-xs text-slate-400 mt-1">{gk.nlpDescription}</p>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-              </GlassCard>
+                    </details>
+                  </GlassCard>
+                )}
+              </>
             );
           })()}
 

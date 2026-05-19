@@ -44,7 +44,7 @@ export function MainLayout() {
           ))}
         </nav>
         <div className="p-4 border-t border-slate-100 text-center">
-          <p className="text-[10px] text-slate-400">v1.3.0</p>
+          <p className="text-[10px] text-slate-400">v1.4.0</p>
         </div>
       </aside>
 

@@ -219,29 +219,91 @@ export function ClientsPage() {
           </GlassCard>
         )}
 
-        <button
-          onClick={() => { if (confirm('Naozaj vymazať klienta a všetky jeho výklady?')) { deleteClient(selectedClient.id); setSelectedClient(null); } }}
-          className="px-4 py-2 rounded-xl text-sm text-red-300 border border-red-500/30 hover:bg-red-500/10"
-        >
-          Vymazať klienta
-        </button>
+        <div className="flex flex-wrap gap-2">
+          <button
+            onClick={() => {
+              const exportData = {
+                version: 1,
+                exportedAt: new Date().toISOString(),
+                client: selectedClient,
+                reports: cReports,
+              };
+              const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = `klient-${selectedClient.name.replace(/\s+/g, '-').toLowerCase()}-${new Date().toISOString().slice(0, 10)}.json`;
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+              URL.revokeObjectURL(url);
+            }}
+            className="px-4 py-2 rounded-xl text-sm bg-indigo-600 text-white hover:bg-indigo-500"
+          >
+            ↓ Export JSON
+          </button>
+          <button
+            onClick={() => { if (confirm('Naozaj vymazať klienta a všetky jeho výklady?')) { deleteClient(selectedClient.id); setSelectedClient(null); } }}
+            className="px-4 py-2 rounded-xl text-sm text-red-300 border border-red-500/30 hover:bg-red-500/10"
+          >
+            Vymazať klienta
+          </button>
+        </div>
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h1 className="font-serif text-3xl font-bold text-white">Klienti</h1>
           <p className="text-slate-400 mt-1">Pridajte klienta (meno + dátum) → kliknite naň pre kompletný výklad. Čas a miesto sa dajú doplniť cez "Upraviť".</p>
         </div>
-        <button
-          onClick={() => setShowForm(!showForm)}
-          className="px-4 py-2 rounded-xl text-sm bg-indigo-600 text-white hover:bg-indigo-500"
-        >
-          {showForm ? 'Zrušiť' : '+ Nový klient'}
-        </button>
+        <div className="flex gap-2 shrink-0">
+          <label className="px-4 py-2 rounded-xl text-sm border border-indigo-500/40 text-indigo-700 hover:bg-indigo-50 cursor-pointer">
+            ↑ Import
+            <input
+              type="file"
+              accept=".json,application/json"
+              className="hidden"
+              onChange={async (e) => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+                try {
+                  const text = await file.text();
+                  const data = JSON.parse(text);
+                  if (!data.client || !data.client.name || !data.client.birthDay) {
+                    alert('Neplatný súbor – chýbajú údaje klienta.');
+                    return;
+                  }
+                  // Vytvor nové ID, aby nedošlo ku konfliktu s existujúcim klientom
+                  const newId = crypto.randomUUID();
+                  const importedClient: Client = {
+                    ...data.client,
+                    id: newId,
+                    createdAt: new Date().toISOString(),
+                    partnerId: undefined,   // referencie nemajú zmysel po importe
+                    childrenIds: undefined,
+                  };
+                  addClient(importedClient);
+                  alert(`Klient "${importedClient.name}" bol importovaný.`);
+                } catch (err) {
+                  console.error(err);
+                  alert('Chyba pri čítaní súboru – nie je platný JSON.');
+                } finally {
+                  e.target.value = '';
+                }
+              }}
+            />
+          </label>
+          <button
+            onClick={() => setShowForm(!showForm)}
+            className="px-4 py-2 rounded-xl text-sm bg-indigo-600 text-white hover:bg-indigo-500"
+          >
+            {showForm ? 'Zrušiť' : '+ Nový klient'}
+          </button>
+        </div>
       </div>
 
       {showForm && (

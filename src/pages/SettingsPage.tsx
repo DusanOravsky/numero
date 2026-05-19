@@ -26,6 +26,7 @@ export function SettingsPage() {
 
   // AI integrácia
   const [aiKey, setAiKey] = useState(getApiKey());
+  const [aiKeyVisible, setAiKeyVisible] = useState(false);
   const [aiModel, setAiModel] = useState<ClaudeModel>(getModel());
   const [aiTesting, setAiTesting] = useState(false);
   const [aiTestResult, setAiTestResult] = useState<{ ok: boolean; message: string } | null>(null);
@@ -309,13 +310,24 @@ export function SettingsPage() {
           <div>
             <label className="block text-xs text-slate-400 mb-1">API kľúč</label>
             <div className="flex gap-2">
-              <input
-                type="password"
-                value={aiKey}
-                onChange={(e) => setAiKey(e.target.value)}
-                placeholder="sk-ant-api03-…"
-                className="flex-1 px-3 py-2 rounded-xl bg-slate-800/50 border border-indigo-500/30 text-white text-sm font-mono focus:outline-none focus:border-indigo-500"
-              />
+              <div className="relative flex-1">
+                <input
+                  type={aiKeyVisible ? 'text' : 'password'}
+                  value={aiKey}
+                  onChange={(e) => setAiKey(e.target.value)}
+                  placeholder="sk-ant-api03-…"
+                  className="w-full px-3 py-2 pr-10 rounded-xl bg-slate-800/50 border border-indigo-500/30 text-white text-sm font-mono focus:outline-none focus:border-indigo-500"
+                />
+                <button
+                  type="button"
+                  onClick={() => setAiKeyVisible(v => !v)}
+                  title={aiKeyVisible ? 'Skryť kľúč' : 'Zobraziť kľúč'}
+                  aria-label={aiKeyVisible ? 'Skryť kľúč' : 'Zobraziť kľúč'}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200 text-sm px-1"
+                >
+                  {aiKeyVisible ? '🙈' : '👁'}
+                </button>
+              </div>
               <button
                 onClick={handleSaveApiKey}
                 className="px-4 py-2 rounded-xl bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-500"

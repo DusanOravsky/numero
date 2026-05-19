@@ -4,6 +4,14 @@ All notable changes to this project are documented in this file. Dates are
 in ISO 8601 (YYYY-MM-DD). The format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 2.2.2 — 2026-05-19
+
+UX:
+- API kľúč input v Settings → AI integrácia má teraz "👁 / 🙈"
+  toggle button vpravo v poli — klikom prepneš medzi password
+  (skryté bodky) a text (čitateľný kľúč). Užitočné pri overovaní
+  že si zadal správny kľúč.
+
 ## 2.2.1 — 2026-05-19
 
 Test bump pre overenie že auto-popup mechaniky z 2.2.0 fungujú end-to-end

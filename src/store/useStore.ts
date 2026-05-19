@@ -1,5 +1,6 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { persist, createJSONStorage } from 'zustand/middleware';
+import { indexedDbStorage } from './indexedDbStorage';
 
 export type Gender = 'male' | 'female';
 
@@ -129,6 +130,7 @@ export const useStore = create<AppState>()(
     {
       name: 'numero-store',
       version: STORE_VERSION,
+      storage: createJSONStorage(() => indexedDbStorage),
       migrate: (persistedState, version) => {
         const state = persistedState as Record<string, unknown>;
         if (version < 1) {

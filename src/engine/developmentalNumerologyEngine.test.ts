@@ -102,14 +102,32 @@ describe('Polarita ega podľa parity počtu jednotiek', () => {
 });
 
 describe('Mriežka - cifry dátumu + zakrúžkované', () => {
-  it('30.8.1979: 1× zo dňa+mesiaca+roka, ale aj cifry zo zakrúžkovaných', () => {
+  it('LOCK: 30.8.1979 - presné počty v mriežke', () => {
     const r = calculateDevelopmentalNumerology(30, 8, 1979);
-    // dátum cifry: 3,0,8,1,9,7,9 (po filtri 0): 3,8,1,9,7,9
-    // zakrúžkované cifry: 37 → 3,7; 10 → 1,0 (filter 0) → 1; 31 → 3,1; 4 → 4
-    // všetky v mriežke: 3,8,1,9,7,9 + 3,7,1,3,1,4 = 1×3, 1×8, 4×1 (1+3=4!), 2×9, 2×7, 1×3...
-    // overím: jednotka by mala byť 4×
-    expect(r.counts[1]).toBeGreaterThan(0);
-    expect(r.counts[3]).toBeGreaterThan(0);
-    expect(r.counts[7]).toBeGreaterThan(0);
+    // Cifry dátumu po filtri 0: [3, 8, 1, 9, 7, 9]
+    //   → 3:1, 8:1, 1:1, 9:2, 7:1
+    // Zakrúžkované:
+    //   C1=37 → cifry [3,7] → 3:1, 7:1
+    //   C2=10 → cifry [1,0] po filtri → [1] → 1:1
+    //   C3=31 → cifry [3,1] → 3:1, 1:1
+    //   C4=4 → cifry [4] → 4:1
+    //
+    // Spolu:
+    //   1: 1 (dátum) + 1 (C2) + 1 (C3) = 3
+    //   3: 1 (dátum) + 1 (C1) + 1 (C3) = 3
+    //   4: 0 (dátum) + 1 (C4) = 1
+    //   7: 1 (dátum) + 1 (C1) = 2
+    //   8: 1 (dátum) = 1
+    //   9: 2 (dátum) = 2
+    //   2, 5, 6: 0
+    expect(r.counts[1]).toBe(3);
+    expect(r.counts[2]).toBe(0);
+    expect(r.counts[3]).toBe(3);
+    expect(r.counts[4]).toBe(1);
+    expect(r.counts[5]).toBe(0);
+    expect(r.counts[6]).toBe(0);
+    expect(r.counts[7]).toBe(2);
+    expect(r.counts[8]).toBe(1);
+    expect(r.counts[9]).toBe(2);
   });
 });

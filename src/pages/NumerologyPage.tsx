@@ -76,14 +76,24 @@ export function NumerologyPage() {
 
   const lifePathInfo = result ? lifePaths[String(result.lifePathNumber)] : null;
 
-  const tabs = [
-    { id: 'overview' as const, label: 'Prehľad' },
-    { id: 'planes' as const, label: 'Roviny' },
-    { id: 'vibrations' as const, label: 'Vibrácie' },
-    { id: 'karmic' as const, label: 'Karmické cykly' },
-    { id: 'love' as const, label: 'Jazyky lásky' },
-    { id: 'name' as const, label: 'Meno' },
+  // Záložky — niektoré sekcie sú špecifické pre Charakterovú metódu
+  // (Roviny, Karmické cykly + Pinnacles + Challenges, Jazyky lásky), iné sú spoločné.
+  const allTabs = [
+    { id: 'overview' as const, label: 'Prehľad', methods: ['characterological', 'developmental'] },
+    { id: 'planes' as const, label: 'Roviny', methods: ['characterological'] },
+    { id: 'vibrations' as const, label: 'Vibrácie', methods: ['characterological', 'developmental'] },
+    { id: 'karmic' as const, label: 'Karmické cykly', methods: ['characterological'] },
+    { id: 'love' as const, label: 'Jazyky lásky', methods: ['characterological'] },
+    { id: 'name' as const, label: 'Meno', methods: ['characterological', 'developmental'] },
   ];
+  const tabs = allTabs.filter(t => t.methods.includes(numerologyMethod));
+
+  // Ak je aktívna záložka skrytá pri zmene metódy, prepni sa na Prehľad.
+  useEffect(() => {
+    if (!tabs.find(t => t.id === activeTab)) {
+      setActiveTab('overview');
+    }
+  }, [numerologyMethod, activeTab, tabs]);
 
   return (
     <div className="space-y-6">

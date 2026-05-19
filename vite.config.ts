@@ -37,7 +37,40 @@ export default defineConfig({
         ]
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,json}']
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,json,webmanifest}'],
+        cleanupOutdatedCaches: true,
+        navigateFallback: process.env.GITHUB_ACTIONS ? '/numero/index.html' : '/index.html',
+        navigateFallbackDenylist: [/^\/api\//, /^\/_/, /\.[a-z0-9]{2,5}$/i],
+        runtimeCaching: [
+          {
+            // SPA route navigations: cache-first with network update fallback
+            urlPattern: /^https?:\/\/[^/]+\/(numero\/)?$/,
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'navigations',
+              networkTimeoutSeconds: 3,
+              expiration: { maxEntries: 5, maxAgeSeconds: 7 * 24 * 60 * 60 },
+            },
+          },
+          {
+            // App shell JS/CSS chunks (have hashes, immutable once cached)
+            urlPattern: /\/assets\/.*\.(?:js|css)$/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'assets',
+              expiration: { maxEntries: 60, maxAgeSeconds: 30 * 24 * 60 * 60 },
+            },
+          },
+          {
+            // Local images & icons
+            urlPattern: /\.(?:png|jpe?g|svg|webp|gif)$/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'images',
+              expiration: { maxEntries: 50, maxAgeSeconds: 30 * 24 * 60 * 60 },
+            },
+          },
+        ],
       }
     })
   ],

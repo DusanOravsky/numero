@@ -59,6 +59,29 @@ export function ClientSummary({ clientName, birthDay, birthMonth, birthYear, num
     <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
       <GlassCard glow>
         <h2 className="font-serif text-xl font-bold text-indigo-600 mb-4">Integrálny súhrn osobnosti</h2>
+
+        {/* Quick takeaway — 3 najdôležitejšie veci */}
+        <div className="mb-5 p-4 rounded-xl bg-gradient-to-r from-indigo-50 to-violet-50 border border-indigo-200">
+          <p className="text-xs text-indigo-700 font-semibold uppercase tracking-wide mb-3">Najdôležitejšie na prvý pohľad</p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="text-center">
+              <p className="text-2xl font-serif font-bold text-indigo-700">{numerology.lifePathNumber}</p>
+              <p className="text-xs text-slate-700 font-medium">{lpInfo?.title || 'Životné číslo'}</p>
+              <p className="text-[10px] text-slate-500 mt-0.5">Kto si v jadre</p>
+            </div>
+            <div className="text-center">
+              <p className="text-2xl font-serif font-bold text-indigo-700">{humanDesign.type}</p>
+              <p className="text-xs text-slate-700 font-medium">{humanDesign.strategy}</p>
+              <p className="text-[10px] text-slate-500 mt-0.5">Ako správne fungovať</p>
+            </div>
+            <div className="text-center">
+              <p className="text-2xl font-serif font-bold text-indigo-700">{astrology.sunSign.symbol}</p>
+              <p className="text-xs text-slate-700 font-medium">{astrology.sunSign.name} / {astrology.moonSign.name} / {astrology.ascendant.name}</p>
+              <p className="text-[10px] text-slate-500 mt-0.5">Slnko / Mesiac / Asc</p>
+            </div>
+          </div>
+        </div>
+
         <div className="space-y-4 text-sm leading-relaxed text-slate-700">
           <p>
             <strong>{clientName}</strong> nesie životné číslo <strong>{numerology.lifePathNumber}</strong> z {numerology.lifePathFrom} ({lpInfo?.title || ''}).
@@ -327,6 +350,29 @@ export function ClientSummary({ clientName, birthDay, birthMonth, birthYear, num
               {astrology.dominantElement === 'Zem' && numerology.fullPlanes.some(p => p.includes('Vytrvalosť')) ? 'Zemský živel + Rovina vytrvalosti = vynikajúca schopnosť dotiahnuť veci do konca. ' : ''}
               ŽČ {numerology.lifePathNumber} + {astrology.sunSign.name} + HD {humanDesign.type} tvoria unikátnu kombináciu, ktorá definuje cestu tejto osobnosti.
             </p>
+          </div>
+
+          {/* Praktický záver — čo s tým */}
+          <div className="border-t border-indigo-200 pt-4 mt-4">
+            <p className="text-xs text-indigo-700 font-semibold uppercase tracking-wide mb-3">Prakticky — čo s tým robiť</p>
+            <div className="space-y-2 text-xs text-slate-700">
+              <p>
+                <strong>1. Rozhodovanie:</strong> Používaj svoju HD autoritu (<strong>{humanDesign.authority}</strong>) —
+                {humanDesign.authority === 'Emocionálna' ? ' nikdy sa nerozhoduj v emočnom výkyve, čakaj na jasnosť.' :
+                 humanDesign.authority === 'Sakrálna' ? ' počúvaj reakciu z brucha (uh-huh / unh-unh).' :
+                 humanDesign.authority === 'Slezinová' ? ' dôveruj prvému impulzu, ak ho ignoruješ, stratíš ho.' :
+                 ' dôveruj svojmu vnútornému kompasu.'}
+              </p>
+              <p>
+                <strong>2. Energia:</strong> Ako {humanDesign.type} je tvoja stratégia „{humanDesign.strategy.toLowerCase()}". Keď cítiš {humanDesign.notSelfTheme.toLowerCase()} — je to signál, že niečo nie je pre teba.
+              </p>
+              <p>
+                <strong>3. Rast:</strong> Tvoj dar je {lpInfo?.gift?.toLowerCase() || 'v tvojom životnom čísle'}. Tvoja výzva je {lpInfo?.shadow?.toLowerCase() || 'v tieni tvojho čísla'}. Vedomá práca s tieňom je cesta k daru.
+              </p>
+              <p>
+                <strong>4. Dnes:</strong> {kabalah.malchutAction}
+              </p>
+            </div>
           </div>
         </div>
       </GlassCard>

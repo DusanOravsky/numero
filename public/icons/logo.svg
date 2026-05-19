@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <!-- Pozadie -->
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#f5f5f4"/>
+    </radialGradient>
+    <radialGradient id="core" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#e0e7ff"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Kruhove pozadie -->
+  <circle cx="256" cy="256" r="256" fill="url(#bg)"/>
+
+  <!-- Jemne vonkajsie kruhy (pre hlbku) -->
+  <circle cx="256" cy="256" r="220" fill="none" stroke="#e0e7ff" stroke-width="1" opacity="0.5"/>
+  <circle cx="256" cy="256" r="180" fill="none" stroke="#e0e7ff" stroke-width="1" opacity="0.5"/>
+
+  <!-- 9 lucov mandaly -->
+  <g transform="translate(256 256)">
+    <!-- Dlhsie luce -->
+    <g stroke-width="14" stroke-linecap="round" opacity="0.9">
+      <line x1="0" y1="0" x2="0" y2="-210" stroke="#a855f7"/>
+      <line x1="0" y1="0" x2="135" y2="-161" stroke="#6366f1"/>
+      <line x1="0" y1="0" x2="207" y2="-36" stroke="#3b82f6"/>
+      <line x1="0" y1="0" x2="182" y2="105" stroke="#22c55e"/>
+      <line x1="0" y1="0" x2="72" y2="197" stroke="#eab308"/>
+      <line x1="0" y1="0" x2="-72" y2="197" stroke="#f97316"/>
+      <line x1="0" y1="0" x2="-182" y2="105" stroke="#ef4444"/>
+      <line x1="0" y1="0" x2="-207" y2="-36" stroke="#06b6d4"/>
+      <line x1="0" y1="0" x2="-135" y2="-161" stroke="#ec4899"/>
+    </g>
+
+    <!-- Body na koncoch lucov -->
+    <g>
+      <circle cx="0" cy="-210" r="9" fill="#a855f7"/>
+      <circle cx="135" cy="-161" r="9" fill="#6366f1"/>
+      <circle cx="207" cy="-36" r="9" fill="#3b82f6"/>
+      <circle cx="182" cy="105" r="9" fill="#22c55e"/>
+      <circle cx="72" cy="197" r="9" fill="#eab308"/>
+      <circle cx="-72" cy="197" r="9" fill="#f97316"/>
+      <circle cx="-182" cy="105" r="9" fill="#ef4444"/>
+      <circle cx="-207" cy="-36" r="9" fill="#06b6d4"/>
+      <circle cx="-135" cy="-161" r="9" fill="#ec4899"/>
+    </g>
+
+    <!-- Vnutorny ochranny kruh - prekryje stred lucov -->
+    <circle cx="0" cy="0" r="58" fill="url(#core)" stroke="#4f46e5" stroke-width="2"/>
+
+    <!-- Centralny bod -->
+    <circle cx="0" cy="0" r="22" fill="#4f46e5"/>
+    <circle cx="0" cy="0" r="8" fill="#ffffff" opacity="0.9"/>
+  </g>
+</svg>

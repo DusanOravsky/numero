@@ -408,8 +408,9 @@ export function RelationshipsPage() {
           ))}
 
           <button
+            type="button"
             onClick={addChild}
-            className="w-full py-3 rounded-xl border border-dashed border-indigo-500/30 text-indigo-300 text-sm hover:bg-indigo-500/10"
+            className="w-full py-3 rounded-xl border-2 border-dashed border-indigo-400 text-indigo-700 text-sm font-medium bg-indigo-50 hover:bg-indigo-100 active:bg-indigo-200"
           >
             + Pridať ďalšie dieťa
           </button>

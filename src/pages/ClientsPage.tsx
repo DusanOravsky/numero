@@ -4,12 +4,12 @@ import { useStore } from '../store/useStore';
 import { GlassCard } from '../components/GlassCard';
 import { motion } from 'framer-motion';
 import { searchCities, findCity } from '../data/cities';
-import { isValidDate } from '../engine/numerologyEngine';
+import { isValidDate, calculateLifePath } from '../engine/numerologyEngine';
 import type { Client } from '../store/useStore';
 
 export function ClientsPage() {
   const navigate = useNavigate();
-  const { clients, addClient, updateClient, deleteClient, reports } = useStore();
+  const { clients, addClient, updateClient, deleteClient, reports, deleteReport } = useStore();
   const [showForm, setShowForm] = useState(false);
   const [editingClient, setEditingClient] = useState<Client | null>(null);
   const [name, setName] = useState('');
@@ -24,6 +24,7 @@ export function ClientsPage() {
   const [notes, setNotes] = useState('');
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
   const [formError, setFormError] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
 
   const resetForm = () => {
     setName(''); setGender(''); setDay(''); setMonth(''); setYear(''); setHour(''); setMinute(''); setBirthPlace(''); setNotes('');
@@ -87,6 +88,28 @@ export function ClientsPage() {
   };
 
   const clientReports = (clientId: string) => reports.filter(r => r.clientId === clientId);
+
+  const filteredClients = (() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return clients;
+    return clients.filter(c => {
+      // Meno
+      if (c.name.toLowerCase().includes(q)) return true;
+      // Dátum (D.M.RRRR alebo časti)
+      const dateStr = `${c.birthDay}.${c.birthMonth}.${c.birthYear}`;
+      if (dateStr.includes(q)) return true;
+      // Rok narodenia samostatne
+      if (String(c.birthYear).includes(q)) return true;
+      // Životné číslo
+      const lp = calculateLifePath(c.birthDay, c.birthMonth, c.birthYear);
+      if (`zc ${lp.number}` === q || `žč ${lp.number}` === q || `${lp.number}` === q) return true;
+      // Miesto narodenia
+      if (c.birthPlace && c.birthPlace.toLowerCase().includes(q)) return true;
+      // Poznámky
+      if (c.notes && c.notes.toLowerCase().includes(q)) return true;
+      return false;
+    });
+  })();
 
   if (selectedClient) {
     const cReports = clientReports(selectedClient.id);
@@ -161,14 +184,35 @@ export function ClientsPage() {
 
         {cReports.length > 0 && (
           <GlassCard>
-            <h3 className="font-medium text-white mb-4">História výkladov</h3>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-medium text-white">História výkladov ({cReports.length})</h3>
+              <button
+                onClick={() => {
+                  if (confirm(`Vymazať všetkých ${cReports.length} výkladov klienta?`)) {
+                    cReports.forEach(r => deleteReport(r.id));
+                  }
+                }}
+                className="text-xs text-red-400 hover:text-red-300 px-2 py-1 rounded border border-red-500/30 hover:bg-red-500/10"
+              >
+                Vymazať všetky
+              </button>
+            </div>
             <div className="space-y-2">
               {cReports.map(report => (
                 <div key={report.id} className="flex items-center justify-between p-3 rounded-xl glass-light">
-                  <div>
-                    <p className="text-sm font-medium text-white">{report.title}</p>
-                    <p className="text-xs text-slate-400">{report.type} | {new Date(report.createdAt).toLocaleDateString('sk-SK')}</p>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-white truncate">{report.title}</p>
+                    <p className="text-xs text-slate-400">{report.type} | {new Date(report.createdAt).toLocaleDateString('sk-SK')} {new Date(report.createdAt).toLocaleTimeString('sk-SK', { hour: '2-digit', minute: '2-digit' })}</p>
                   </div>
+                  <button
+                    onClick={() => {
+                      if (confirm('Vymazať tento výklad?')) deleteReport(report.id);
+                    }}
+                    className="ml-3 text-red-400 hover:text-red-300 text-sm shrink-0"
+                    title="Vymazať výklad"
+                  >
+                    ✕
+                  </button>
                 </div>
               ))}
             </div>
@@ -272,8 +316,45 @@ export function ClientsPage() {
         </GlassCard>
       )}
 
+      {/* Vyhľadávací riadok */}
+      {clients.length > 0 && (
+        <div className="relative">
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
+            placeholder="Hľadať podľa mena, dátumu, ŽČ, miesta alebo poznámok..."
+            className="w-full px-4 py-3 pl-10 rounded-xl bg-white border border-slate-300 text-slate-800 text-sm focus:outline-none focus:border-indigo-400"
+          />
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">⌕</span>
+          {searchQuery && (
+            <button
+              type="button"
+              onClick={() => setSearchQuery('')}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-sm"
+              title="Vyčistiť"
+            >
+              ✕
+            </button>
+          )}
+          {searchQuery && (
+            <p className="text-xs text-slate-500 mt-1 px-1">
+              Nájdených: {filteredClients.length} z {clients.length}
+            </p>
+          )}
+        </div>
+      )}
+
+      {clients.length > 0 && filteredClients.length === 0 && (
+        <GlassCard>
+          <p className="text-center text-slate-400 py-4">
+            Žiadny klient nezodpovedá vyhľadávaniu „{searchQuery}".
+          </p>
+        </GlassCard>
+      )}
+
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {clients.map((client, idx) => (
+        {filteredClients.map((client, idx) => (
           <motion.div
             key={client.id}
             initial={{ opacity: 0, y: 10 }}

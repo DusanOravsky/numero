@@ -367,6 +367,14 @@ export function ClientsPage() {
           </label>
           {clients.length > 1 && (
             <button
+              onClick={() => navigate('/clients/compare')}
+              className="px-4 py-2 rounded-xl text-sm border border-slate-300 text-slate-600 hover:bg-slate-50"
+            >
+              ⇄ Porovnať
+            </button>
+          )}
+          {clients.length > 1 && (
+            <button
               onClick={() => bulkMode ? exitBulkMode() : setBulkMode(true)}
               className={`px-4 py-2 rounded-xl text-sm border ${bulkMode ? 'bg-amber-500/15 text-amber-700 border-amber-400' : 'border-slate-300 text-slate-600 hover:bg-slate-50'}`}
             >

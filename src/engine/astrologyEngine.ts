@@ -376,6 +376,42 @@ export function calculateSynastryAspects(r1: AstrologyResult, r2: AstrologyResul
   return aspects;
 }
 
+/**
+ * Vypočíta natálne aspekty (medzi planétami v rámci jedného horoskopu).
+ * Eliminuje seba-aspekty (planéta s ňou samou) a duplicity (A-B vs B-A).
+ */
+export function calculateNatalAspects(result: AstrologyResult): SynastryAspect[] {
+  const aspects: SynastryAspect[] = [];
+
+  for (let i = 0; i < result.planets.length; i++) {
+    for (let j = i + 1; j < result.planets.length; j++) {
+      const p1 = result.planets[i];
+      const p2 = result.planets[j];
+      const distance = angularDistance(p1.longitude, p2.longitude);
+
+      (Object.entries(ASPECT_DEFINITIONS) as Array<[SynastryAspectName, typeof ASPECT_DEFINITIONS[SynastryAspectName]]>).forEach(([name, def]) => {
+        const orb = Math.abs(distance - def.angle);
+        if (orb <= def.orb) {
+          aspects.push({
+            planet1: p1.name,
+            planet2: p2.name,
+            aspect: name,
+            exactDegrees: def.angle,
+            actualDegrees: distance,
+            orb,
+            symbol: def.symbol,
+            nature: def.nature,
+            description: def.description,
+          });
+        }
+      });
+    }
+  }
+
+  aspects.sort((a, b) => a.orb - b.orb);
+  return aspects;
+}
+
 /** Súhrnné štatistiky synastrie */
 export interface SynastrySummary {
   total: number;

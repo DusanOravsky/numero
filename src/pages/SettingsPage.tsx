@@ -4,7 +4,7 @@ import type { NumerologyMethod, ThemeMode, Language } from '../store/useStore';
 import { useTranslation } from '../i18n/useTranslation';
 import { GlassCard } from '../components/GlassCard';
 import { useNavigate } from 'react-router-dom';
-import { APP_VERSION } from '../components/PWAPrompts';
+import { APP_VERSION, forceUpdate } from '../components/PWAPrompts';
 import { getErrorLog, clearErrorLog } from '../components/ErrorBoundary';
 import { getPerfLog, clearPerfLog } from '../hooks/usePerformanceMetrics';
 import { searchCities, findCity } from '../data/cities';
@@ -430,11 +430,23 @@ export function SettingsPage() {
 
       <GlassCard>
         <h3 className="font-medium text-white mb-3">O aplikácii</h3>
-        <div className="space-y-2 text-sm text-slate-400">
+        <div className="space-y-2 text-sm text-slate-400 mb-4">
           <p><strong className="text-slate-300">Integrálna mapa bytia</strong></p>
           <p>Verzia: {APP_VERSION}</p>
           <p>Offline-first PWA. Všetky dáta lokálne.</p>
         </div>
+        <button
+          onClick={async () => {
+            if (!confirm('Vynútiť stiahnutie najnovšej verzie?\n\nUnregister-uje service worker, vyčistí cache a obnoví aplikáciu. Tvoje dáta (profily, klienti) zostávajú bezpečne uložené v localStorage.')) return;
+            await forceUpdate();
+          }}
+          className="w-full py-2.5 rounded-xl border border-amber-300 text-amber-700 hover:bg-amber-50 text-sm font-medium"
+        >
+          ↻ Vynútiť aktualizáciu (cache wipe)
+        </button>
+        <p className="text-[11px] text-slate-500 mt-2">
+          Ak vidíš starú verziu napriek deploy-u, použije sa unregister všetkých service workerov a vymazanie cache. Profily ani klienti sa nestratia.
+        </p>
       </GlassCard>
 
       {/* Performance metrics (C9) */}

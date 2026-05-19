@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const APP_VERSION = '2.0.2';
+const APP_VERSION = '2.0.3';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -119,9 +119,9 @@ export function PWAPrompts() {
     localStorage.setItem('pwa-ios-hint-dismissed', 'true');
   };
 
-  const handleUpdate = () => {
+  const handleUpdate = async () => {
     setShowUpdate(false);
-    window.location.href = window.location.origin + (import.meta.env.BASE_URL || '/');
+    await forceUpdate();
   };
 
   return (
@@ -233,3 +233,25 @@ export function PWAPrompts() {
 }
 
 export { APP_VERSION };
+
+/**
+ * Force-refresh: unregister všetkých service workerov, vyčistí všetky cache
+ * storage, a presunie na home (čo si stiahne novú verziu). Pomáha keď PWA
+ * drží starú verziu napriek deploy-u.
+ */
+export async function forceUpdate(): Promise<void> {
+  try {
+    if ('serviceWorker' in navigator) {
+      const regs = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(regs.map(r => r.unregister()));
+    }
+    if ('caches' in window) {
+      const keys = await caches.keys();
+      await Promise.all(keys.map(k => caches.delete(k)));
+    }
+  } catch {
+    // ignore — best effort
+  }
+  // Hard reload na home (vynúti čerstvý fetch index.html + bundle)
+  window.location.href = window.location.origin + (import.meta.env.BASE_URL || '/') + '?fresh=' + Date.now();
+}

@@ -4,6 +4,19 @@ All notable changes to this project are documented in this file. Dates are
 in ISO 8601 (YYYY-MM-DD). The format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 2.0.3 — 2026-05-19
+
+PWA cache fix:
+- forceUpdate() helper: unregister všetkých SW + vymazanie všetkých
+  CacheStorage entries + reload na ?fresh=timestamp
+- "Aktualizovať" tlačidlo v auto-update prompte teraz volá forceUpdate
+- Nové "↻ Vynútiť aktualizáciu (cache wipe)" tlačidlo v Settings → O
+  aplikácii — pre prípad keď používateľ vidí starú verziu napriek deploy-u
+
+Použitie: keď ste si istí, že máte na servere novú verziu ale aplikácia
+ukazuje stará dáta, klikni Vynútiť aktualizáciu. Profily ani klienti
+sa nestratia (zostávajú v localStorage).
+
 ## 2.0.2 — 2026-05-19
 
 Bug fix:

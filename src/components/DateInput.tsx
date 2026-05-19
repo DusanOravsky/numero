@@ -1,21 +1,24 @@
 import { useState } from 'react';
 import { searchCities, findCity } from '../data/cities';
 import { isValidDate } from '../engine/numerologyEngine';
+import { useSessionState } from '../hooks/useSessionState';
 
 interface DateInputProps {
   onSubmit: (day: number, month: number, year: number, hour?: number, minute?: number, lat?: number, lon?: number) => void;
   showTime?: boolean;
   showPlace?: boolean;
   label?: string;
+  /** Voliteľný kľúč pre uloženie do sessionStorage (aby vstupy prežili prepnutie stránok) */
+  persistKey?: string;
 }
 
-export function DateInput({ onSubmit, showTime = false, showPlace = false, label = 'Dátum narodenia' }: DateInputProps) {
-  const [day, setDay] = useState('');
-  const [month, setMonth] = useState('');
-  const [year, setYear] = useState('');
-  const [hour, setHour] = useState('12');
-  const [minute, setMinute] = useState('0');
-  const [birthPlace, setBirthPlace] = useState('');
+export function DateInput({ onSubmit, showTime = false, showPlace = false, label = 'Dátum narodenia', persistKey }: DateInputProps) {
+  const [day, setDay] = useSessionState<string>(persistKey ? `${persistKey}:day` : 'date-input:day', '');
+  const [month, setMonth] = useSessionState<string>(persistKey ? `${persistKey}:month` : 'date-input:month', '');
+  const [year, setYear] = useSessionState<string>(persistKey ? `${persistKey}:year` : 'date-input:year', '');
+  const [hour, setHour] = useSessionState<string>(persistKey ? `${persistKey}:hour` : 'date-input:hour', '12');
+  const [minute, setMinute] = useSessionState<string>(persistKey ? `${persistKey}:minute` : 'date-input:minute', '0');
+  const [birthPlace, setBirthPlace] = useSessionState<string>(persistKey ? `${persistKey}:place` : 'date-input:place', '');
   const [citySuggestions, setCitySuggestions] = useState<{ name: string }[]>([]);
   const [error, setError] = useState('');
 

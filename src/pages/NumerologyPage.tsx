@@ -317,6 +317,7 @@ export function NumerologyPage() {
                     },
                     numerology: result,
                     developmental: devResult || undefined,
+                    enneagram: enneagramResult || undefined,
                   }}
                   title={`✦ AI výklad numerológie (${numerologyMethod === 'characterological' ? 'Charakterová' : 'Vývojová'})`}
                   initialUserMessage={

@@ -20,6 +20,7 @@ import type { HumanDesignResult } from './humanDesignEngine';
 import type { KabalahResult } from './kabalahEngine';
 import type { ThetaHealingResult } from './thetaHealingEngine';
 import type { DevelopmentalNumerologyResult } from './developmentalNumerologyEngine';
+import type { EnneagramResult } from './enneagramEngine';
 
 const ANTHROPIC_API_KEY_STORAGE = 'anthropic-api-key';
 const ANTHROPIC_MODEL_STORAGE = 'anthropic-model';
@@ -111,6 +112,7 @@ export interface ProfileContext {
   humanDesign?: HumanDesignResult;
   kabalah?: KabalahResult;
   theta?: ThetaHealingResult;
+  enneagram?: EnneagramResult;
 }
 
 /**
@@ -201,15 +203,31 @@ export function summarizeProfile(ctx: ProfileContext): string {
     lines.push('');
   }
 
+  // Enneagram
+  if (ctx.enneagram) {
+    lines.push('=== ENNEAGRAM ===');
+    lines.push(`Typ: ${ctx.enneagram.coreType} (derivovaný z ${ctx.enneagram.method === 'characterological' ? 'ŽČ' : 'K3'})`);
+    if (ctx.enneagram.dominantWing) lines.push(`Dominantné krídlo: ${ctx.enneagram.dominantWing}w`);
+    lines.push(`Integrácia (rast): → typ ${ctx.enneagram.integrationDirection}`);
+    lines.push(`Dezintegrácia (stres): → typ ${ctx.enneagram.disintegrationDirection}`);
+    lines.push('');
+  }
+
   return lines.join('\n');
 }
 
-const SYSTEM_PROMPT_BASE = `Si skúsený duchovný sprievodca a integrátor 6 ezoterických systémov: numerológie (Charakterová Robin Steinová + Vývojová Lívia Mičková), astrológie, Human Designu, Kabaly a Theta Healingu.
+const SYSTEM_PROMPT_BASE = `Si skúsený duchovný sprievodca a integrátor 7 systémov: numerológie (Charakterová Robin Steinová + Vývojová Lívia Mičková), astrológie, Human Designu, Kabaly, Theta Healingu a Enneagramu.
 
 Spoločné pravidlá:
 - Píš v slovenčine, oslovuj VYKANÍM (ty/vy), tón priateľský, profesionálny a s rešpektom.
-- Spájaj systémy navzájom — ak má klient ŽČ 7 a HD typ Projektor, oboje hovorí o pozorovateľskej múdrosti. Ukáž tieto rezonancie.
-- Pri diskrepancii (napr. silné ego v numerológii + otvorené G centrum v HD) ju pomenuj — napätie je informácia.
+- KĽÚČOVÉ: Prepájaj systémy navzájom — ukáž, že hovoria to isté rôznymi jazykmi:
+  • ŽČ/K3 + Enneagram typ = rovnaká motivácia vyjadrená číslom vs archetypom
+  • HD typ + stratégia = AKO tú motiváciu správne žiť
+  • Astrológia (element, Slnko) = energetická kvalita
+  • Kabala (sefira) = duchovná téma
+  • Theta = podvedomá brzda, ktorá tomuto všetkému bráni
+- Pri diskrepancii (napr. Enneagram 8 = kontrola + HD Projektor = čakať) ju pomenuj — napätie je informácia a príležitosť na rast.
+- Enneagram: vždy spomeň smer integrácie (kam rásť) aj dezintegrácie (signál stresu). Krídlo modifikuje hlavný typ.
 - Cituj zdroje keď je to relevantné: Robin Steinová pre Charakterovú, Lívia Mičková pre Vývojovú.
 - Vyhýbaj sa povrchným frázam ("ste jedinečná duša"). Buď konkrétny.
 - Nehovoríš nič mimo poskytnutých dát. Pri otázkach o budúcnosti — kvalitatívne, nie predpoveď.

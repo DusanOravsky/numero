@@ -11,6 +11,7 @@ import { calculateHumanDesign } from '../engine/humanDesignEngine';
 import { calculateDevelopmentalNumerology } from '../engine/developmentalNumerologyEngine';
 import { calculateKabalah } from '../engine/kabalahEngine';
 import { calculateThetaHealing } from '../engine/thetaHealingEngine';
+import { deriveEnneagramType } from '../engine/enneagramEngine';
 import { orvDescriptions } from '../data/orvDescriptions';
 import { getDailyMantra, getDailyQuote } from '../data/mantrasAndQuotes';
 import { getDailyTarot } from '../data/tarotCards';
@@ -19,7 +20,7 @@ import { ClientExport } from '../components/ClientExport';
 
 export function Dashboard() {
   const navigate = useNavigate();
-  const { profiles, activeProfileId } = useStore();
+  const { profiles, activeProfileId, numerologyMethod } = useStore();
   const profile = profiles.find(p => p.id === activeProfileId);
 
   const today = new Date();
@@ -45,8 +46,9 @@ export function Dashboard() {
     const lp = numerology.lifePathNumber > 9 ? reduceToSingle(numerology.lifePathNumber) : numerology.lifePathNumber;
     const kabalah = calculateKabalah(lp, reduceToSingle(profile.birthDay));
     const theta = calculateThetaHealing(lp);
-    return { numerology, developmental, astrology, humanDesign, kabalah, theta };
-  }, [profile]);
+    const enneagram = deriveEnneagramType(numerology, developmental, numerologyMethod);
+    return { numerology, developmental, astrology, humanDesign, kabalah, theta, enneagram };
+  }, [profile, numerologyMethod]);
 
   const affirmations: Record<number, string> = {
     1: 'Dnes začínam s odvahou a jasnosťou.',
@@ -328,6 +330,7 @@ export function Dashboard() {
             humanDesign: fullResults.humanDesign,
             kabalah: fullResults.kabalah,
             theta: fullResults.theta,
+            enneagram: fullResults.enneagram,
           }}
           title="✦ AI integrálny výklad"
           storageKey={`dashboard-${profile.id}`}

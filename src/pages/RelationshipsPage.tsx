@@ -98,6 +98,67 @@ function getPlanetByName(result: AstrologyResult, name: string) {
   return result.planets.find(p => p.name === name);
 }
 
+/**
+ * Davison chart — REÁLNY astrologický výpočet pre stredný čas a stredné miesto narodenia páru.
+ * Používa sa keď chcete vidieť "tretiu osobu", ktorá symbolizuje samotný vzťah.
+ * Stredný moment: priemer JD oboch dátumov.
+ */
+function calculateDavison(
+  d1: number, m1: number, y1: number, h1: number, min1: number, lat1: number, lon1: number,
+  d2: number, m2: number, y2: number, h2: number, min2: number, lat2: number, lon2: number
+): AstrologyResult {
+  const t1 = new Date(Date.UTC(y1, m1 - 1, d1, h1, min1)).getTime();
+  const t2 = new Date(Date.UTC(y2, m2 - 1, d2, h2, min2)).getTime();
+  const midTime = new Date((t1 + t2) / 2);
+  const midLat = (lat1 + lat2) / 2;
+  // Priemer longitúdy s wraparound — pre páry na opačných stranách Zeme
+  let lonDiff = lon2 - lon1;
+  if (lonDiff > 180) lonDiff -= 360;
+  if (lonDiff < -180) lonDiff += 360;
+  const midLon = ((lon1 + lonDiff / 2) % 360 + 360) % 360;
+  return calculateAstrology(
+    midTime.getUTCDate(),
+    midTime.getUTCMonth() + 1,
+    midTime.getUTCFullYear(),
+    midTime.getUTCHours(),
+    midTime.getUTCMinutes(),
+    midLat,
+    midLon - (midLon > 180 ? 360 : 0)
+  );
+}
+
+/**
+ * Composite chart — pre každú planétu zoberieme midpoint longitúd dvoch ľudí
+ * (so správnym wraparound cez 0/360°). Toto NIE JE skutočný horoskop —
+ * je to symbolický graf vzťahu samotného.
+ */
+function calculateComposite(
+  r1: AstrologyResult,
+  r2: AstrologyResult
+): { planets: { name: string; symbol: string; longitude: number; signName: string; signSymbol: string; degree: number }[] } {
+  const planets = r1.planets.map(p1 => {
+    const p2 = r2.planets.find(p => p.name === p1.name);
+    if (!p2) return null;
+    // Midpoint with shorter-arc convention: ak |Δ| > 180°, pridáme 360°/2
+    let diff = p2.longitude - p1.longitude;
+    if (diff > 180) diff -= 360;
+    if (diff < -180) diff += 360;
+    const mid = ((p1.longitude + diff / 2) % 360 + 360) % 360;
+    const signIdx = Math.floor(mid / 30);
+    const ZODIAC = ['Baran', 'Býk', 'Blíženci', 'Rak', 'Lev', 'Panna', 'Váhy', 'Škorpión', 'Strelec', 'Kozorožec', 'Vodnár', 'Ryby'];
+    const SYMBOLS = ['♈', '♉', '♊', '♋', '♌', '♍', '♎', '♏', '♐', '♑', '♒', '♓'];
+    return {
+      name: p1.name,
+      symbol: p1.symbol,
+      longitude: mid,
+      signName: ZODIAC[signIdx],
+      signSymbol: SYMBOLS[signIdx],
+      degree: mid - signIdx * 30,
+    };
+  }).filter((x): x is NonNullable<typeof x> => x !== null);
+  return { planets };
+}
+
 function calculateSynastry(
   name1: string, day1: number, month1: number, year1: number, hour1: number, lat1: number, lon1: number,
   name2: string, day2: number, month2: number, year2: number, hour2: number, lat2: number, lon2: number
@@ -740,6 +801,96 @@ export function RelationshipsPage() {
                   Skóre vychádza z prevahy harmonických aspektov nad napäťovými. Napäťové nie sú "zlé" — sú motorom rastu vzťahu, ak sa s nimi vedome pracuje.
                 </p>
               </GlassCard>
+            );
+          })()}
+
+          {/* Davison + Composite charts (B18, B19) */}
+          {(() => {
+            const r1 = synastryResult.person1.result;
+            const r2 = synastryResult.person2.result;
+            const city1 = findCity(astroPartner1.birthPlace);
+            const city2 = findCity(astroPartner2.birthPlace);
+            const lat1 = city1?.lat ?? 48.15;
+            const lon1 = city1?.lon ?? 17.11;
+            const lat2 = city2?.lat ?? 48.15;
+            const lon2 = city2?.lon ?? 17.11;
+            const davison = calculateDavison(
+              parseInt(astroPartner1.day), parseInt(astroPartner1.month), parseInt(astroPartner1.year),
+              astroPartner1.hour ? parseInt(astroPartner1.hour) : 12,
+              astroPartner1.minute ? parseInt(astroPartner1.minute) : 0,
+              lat1, lon1,
+              parseInt(astroPartner2.day), parseInt(astroPartner2.month), parseInt(astroPartner2.year),
+              astroPartner2.hour ? parseInt(astroPartner2.hour) : 12,
+              astroPartner2.minute ? parseInt(astroPartner2.minute) : 0,
+              lat2, lon2
+            );
+            const composite = calculateComposite(r1, r2);
+            return (
+              <>
+                <GlassCard>
+                  <h3 className="font-medium text-white mb-1">Davison chart — vzťahový horoskop</h3>
+                  <p className="text-xs text-slate-400 mb-3">
+                    Reálny astrologický graf pre <strong>stredný čas a stredné miesto</strong> oboch narodení.
+                    Symbolizuje "tretiu osobu" — samotný vzťah ako bytosť. Ascendent {davison.ascendant.symbol} {davison.ascendant.name}.
+                  </p>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    {(() => {
+                      const sun = davison.planets.find(p => p.name === 'Slnko');
+                      const moon = davison.planets.find(p => p.name === 'Mesiac');
+                      const venus = davison.planets.find(p => p.name === 'Venuša');
+                      return (
+                        <>
+                          {sun && (
+                            <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30">
+                              <p className="text-xs text-amber-300 uppercase">Slnko vzťahu</p>
+                              <p className="text-sm text-white mt-1">{sun.symbol} {sun.sign.symbol} {sun.sign.name}</p>
+                              <p className="text-[10px] text-slate-400">{sun.degree.toFixed(1)}° · {davison.planetHouses[sun.name] ? `${davison.planetHouses[sun.name]}. dom` : ''}</p>
+                            </div>
+                          )}
+                          {moon && (
+                            <div className="p-3 rounded-xl bg-indigo-500/10 border border-indigo-500/30">
+                              <p className="text-xs text-indigo-300 uppercase">Mesiac vzťahu</p>
+                              <p className="text-sm text-white mt-1">{moon.symbol} {moon.sign.symbol} {moon.sign.name}</p>
+                              <p className="text-[10px] text-slate-400">{moon.degree.toFixed(1)}° · {davison.planetHouses[moon.name] ? `${davison.planetHouses[moon.name]}. dom` : ''}</p>
+                            </div>
+                          )}
+                          {venus && (
+                            <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30">
+                              <p className="text-xs text-rose-300 uppercase">Venuša vzťahu</p>
+                              <p className="text-sm text-white mt-1">{venus.symbol} {venus.sign.symbol} {venus.sign.name}</p>
+                              <p className="text-[10px] text-slate-400">{venus.degree.toFixed(1)}° · {davison.planetHouses[venus.name] ? `${davison.planetHouses[venus.name]}. dom` : ''}</p>
+                            </div>
+                          )}
+                        </>
+                      );
+                    })()}
+                  </div>
+                  <p className="text-[11px] text-slate-500 italic mt-3">
+                    Davison berie do úvahy presný čas a miesto — preto je užitočný pri presných narodeninových údajoch oboch partnerov.
+                  </p>
+                </GlassCard>
+
+                <GlassCard>
+                  <h3 className="font-medium text-white mb-1">Composite chart — symbolický graf vzťahu</h3>
+                  <p className="text-xs text-slate-400 mb-3">
+                    Pre každú planétu sa zoberie <strong>midpoint</strong> longitúd oboch partnerov (kratší oblúk).
+                    Composite NIE JE skutočný horoskop — je to symbolická štruktúra vzťahu samotného.
+                  </p>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    {composite.planets.map(p => (
+                      <div key={p.name} className="p-2 rounded-lg bg-violet-500/10 border border-violet-500/20">
+                        <p className="text-xs text-violet-300">{p.symbol} {p.name}</p>
+                        <p className="text-sm text-white">{p.signSymbol} {p.signName}</p>
+                        <p className="text-[10px] text-slate-400">{p.degree.toFixed(1)}°</p>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="text-[11px] text-slate-500 italic mt-3">
+                    Composite Slnko = ako vzťah žiari navonok; Composite Mesiac = vnútorný emocionálny tón vzťahu;
+                    Composite Venuša = láska ktorá medzi vami plynie.
+                  </p>
+                </GlassCard>
+              </>
             );
           })()}
 

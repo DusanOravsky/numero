@@ -241,6 +241,39 @@ export function AstrologyPage() {
             </p>
           </GlassCard>
 
+          {/* Jednoducho povedané — praktické takeaway */}
+          <GlassCard>
+            <h3 className="font-medium text-white mb-3">Čo si z toho vziať</h3>
+            <div className="space-y-3 text-sm text-slate-300">
+              <p>
+                Astrológia ti nehovorí, čo sa ti stane — hovorí ti, <strong className="text-white">akú energiu máš k dispozícii</strong>. Tu sú tri veci, ktoré ti pomôžu hneď:
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="p-3 rounded-xl bg-amber-50 border border-amber-200">
+                  <p className="text-xs text-amber-700 font-semibold mb-1">{result.sunSign.symbol} Kto si (Slnko)</p>
+                  <p className="text-xs text-slate-700">
+                    Si <strong>{result.sunSign.name}</strong> — tvoje vedomé ja, to čo ťa baví a kde sa cítiš „doma". Element {result.sunSign.element.toLowerCase()} = {result.sunSign.element === 'Oheň' ? 'akcia a vášeň' : result.sunSign.element === 'Zem' ? 'stabilita a prax' : result.sunSign.element === 'Vzduch' ? 'myslenie a komunikácia' : 'emócie a intuícia'}.
+                  </p>
+                </div>
+                <div className="p-3 rounded-xl bg-purple-50 border border-purple-200">
+                  <p className="text-xs text-purple-700 font-semibold mb-1">{result.moonSign.symbol} Čo cítiš (Mesiac)</p>
+                  <p className="text-xs text-slate-700">
+                    Mesiac v <strong>{result.moonSign.name}</strong> — tvoje emócie a podvedomie. Takto spracúvaš stres, lásku a strach. Nemusíš sa podľa toho „správať" — ale pomáha to pochopiť.
+                  </p>
+                </div>
+                <div className="p-3 rounded-xl bg-cyan-50 border border-cyan-200">
+                  <p className="text-xs text-cyan-700 font-semibold mb-1">{result.ascendant.symbol} Ako ťa vidia (Asc)</p>
+                  <p className="text-xs text-slate-700">
+                    Ascendent v <strong>{result.ascendant.name}</strong> — prvý dojem, tvoje „obaly". Nie je to kto si, je to ako ťa svet vníma a akú energiu vyžaruješ.
+                  </p>
+                </div>
+              </div>
+              <p className="text-xs text-slate-500 italic">
+                Nižšie nájdeš koliesko s presnými pozíciami, planéty v znameniach, domy a aspekty — ale tieto tri body sú 80% toho, čo potrebuješ vedieť.
+              </p>
+            </div>
+          </GlassCard>
+
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <EnergyCard
               title="Slnečné znamenie"

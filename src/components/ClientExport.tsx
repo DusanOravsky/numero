@@ -321,6 +321,56 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
               addLine(`Dominantny zivel: ${astrology.dominantElement} | Kvalita: ${astrology.dominantQuality}`);
               addSpace();
 
+              // Vizuálne natálne koliesko (zjednodušené)
+              checkPage(70);
+              addBoldLine('Natalne koliesko:');
+              const wheelCx = 65;
+              const wheelCy = y + 32;
+              const wheelR = 28;
+              const SIGN_SYMBOLS = ['Ar', 'Ta', 'Ge', 'Cn', 'Le', 'Vi', 'Li', 'Sc', 'Sg', 'Cp', 'Aq', 'Pi'];
+              const ascIdx = ['Baran', 'Býk', 'Blíženci', 'Rak', 'Lev', 'Panna', 'Váhy', 'Škorpión', 'Strelec', 'Kozorožec', 'Vodnár', 'Ryby'].indexOf(astrology.ascendant.name);
+              doc.setDrawColor(99, 102, 241);
+              doc.setLineWidth(0.5);
+              doc.circle(wheelCx, wheelCy, wheelR);
+              doc.circle(wheelCx, wheelCy, wheelR - 8);
+              for (let i = 0; i < 12; i++) {
+                const ang = ((i * 30 - (ascIdx * 30)) * Math.PI) / 180;
+                const x1 = wheelCx + (wheelR - 8) * Math.cos(ang);
+                const y1w = wheelCy - (wheelR - 8) * Math.sin(ang);
+                const x2 = wheelCx + wheelR * Math.cos(ang);
+                const y2w = wheelCy - wheelR * Math.sin(ang);
+                doc.line(x1, y1w, x2, y2w);
+                const midAng = ((i * 30 + 15 - (ascIdx * 30)) * Math.PI) / 180;
+                const lx = wheelCx + (wheelR - 4) * Math.cos(midAng);
+                const ly = wheelCy - (wheelR - 4) * Math.sin(midAng);
+                doc.setFontSize(5);
+                doc.setTextColor(99, 102, 241);
+                doc.text(SIGN_SYMBOLS[i], lx, ly, { align: 'center' });
+              }
+              // Planéty
+              doc.setFontSize(6);
+              doc.setTextColor(0, 0, 0);
+              astrology.planets.slice(0, 10).forEach((p, i) => {
+                const pAng = (((ascIdx * 30 + astrology.ascendantDegree) - p.longitude + 540) % 360) * Math.PI / 180;
+                const pr = wheelR - 16 - (i % 2) * 5;
+                const px = wheelCx + pr * Math.cos(pAng);
+                const py = wheelCy - pr * Math.sin(pAng);
+                doc.text(p.symbol, px, py, { align: 'center' });
+              });
+              // ASC label
+              doc.setFontSize(6);
+              doc.setTextColor(220, 50, 50);
+              doc.text('ASC', wheelCx - wheelR - 5, wheelCy + 1);
+              doc.setTextColor(0, 0, 0);
+              // Legenda vedľa kolieska
+              doc.setFontSize(7);
+              const legendX = wheelCx + wheelR + 10;
+              astrology.planets.slice(0, 7).forEach((p, i) => {
+                doc.text(`${p.symbol} ${p.sign.name} ${Math.floor(p.degree)}°`, legendX, wheelCy - 18 + i * 5);
+              });
+              y = wheelCy + wheelR + 8;
+              addSpace();
+
               // === HUMAN DESIGN ===
               addSection('HUMAN DESIGN', 'purple');
               addBoldLine(`Typ: ${humanDesign.type} | Autorita: ${humanDesign.authority}`);
@@ -329,6 +379,43 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
               addLine(`Inkarnacny kriz: ${humanDesign.incarnationCross}`);
               addLine(`Definovane centra: ${humanDesign.definedCenters.join(', ')}`);
               addLine(`Otvorene centra: ${humanDesign.openCenters.join(', ')}`);
+              addSpace();
+
+              // Vizuálny bodygraph — 9 centier
+              checkPage(45);
+              addBoldLine('Bodygraph (centra):');
+              const centersLayout: Array<{ name: string; x: number; y: number }> = [
+                { name: 'Hlava', x: 50, y: 0 },
+                { name: 'Ajna', x: 50, y: 10 },
+                { name: 'Hrdlo', x: 50, y: 20 },
+                { name: 'G', x: 50, y: 30 },
+                { name: 'Ego', x: 72, y: 26 },
+                { name: 'Sakrál', x: 50, y: 40 },
+                { name: 'SP', x: 72, y: 36 },
+                { name: 'Slezina', x: 28, y: 36 },
+                { name: 'Koreň', x: 50, y: 50 },
+              ];
+              const definedSet = new Set(humanDesign.definedCenters);
+              const nameMap: Record<string, string> = { 'Srdce/Ego': 'Ego', 'Solárny plexus': 'SP', 'Sakrálne': 'Sakrál' };
+              const bgStartY = y + 2;
+              centersLayout.forEach(c => {
+                const cx = 14 + c.x * 0.8;
+                const cy = bgStartY + c.y * 0.7;
+                const isDef = definedSet.has(c.name) || Object.entries(nameMap).some(([full, short]) => short === c.name && definedSet.has(full));
+                if (isDef) {
+                  doc.setFillColor(99, 102, 241);
+                  doc.setTextColor(255, 255, 255);
+                } else {
+                  doc.setFillColor(248, 250, 252);
+                  doc.setTextColor(100, 100, 100);
+                }
+                doc.setDrawColor(180, 180, 180);
+                doc.roundedRect(cx - 5, cy - 3, 10, 6, 1, 1, 'FD');
+                doc.setFontSize(5);
+                doc.text(c.name, cx, cy + 1, { align: 'center' });
+              });
+              doc.setTextColor(0, 0, 0);
+              y = bgStartY + 40;
               addSpace();
 
               // === JAZYKY LASKY ===

@@ -23,6 +23,21 @@ export interface NumerologyResult {
   dayReduction: number;
   monthReduction: number;
   yearReduction: number;
+  /** Karmic debts 13/14/16/19 detected in the calculation process. */
+  karmicDebts: KarmicDebt[];
+  /** Maturity number = lifePath + expression (or lifePath + dayReduction if name unknown). */
+  maturityNumber: number;
+  /** Birthday (day) number — characterizes innate gifts. */
+  birthdayNumber: number;
+}
+
+export interface KarmicDebt {
+  number: 13 | 14 | 16 | 19;
+  source: 'lifePath' | 'birthDay' | 'pinnacle' | 'challenge';
+  reducesTo: number;
+  theme: string;
+  description: string;
+  lesson: string;
 }
 
 const MASTER_NUMBERS = [11, 22, 33];
@@ -450,6 +465,71 @@ export function isValidDate(day: number, month: number, year: number): boolean {
   return date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day;
 }
 
+const KARMIC_DEBT_INFO: Record<13 | 14 | 16 | 19, { theme: string; description: string; lesson: string; reducesTo: number }> = {
+  13: {
+    reducesTo: 4,
+    theme: 'Práca a transformácia',
+    description: 'Karmický dlh 13 sa redukuje na 4. Z minulých životov nesiete tendenciu obchádzať ťažkú prácu, hľadať skratky alebo prenechávať zodpovednosť iným.',
+    lesson: 'Naučte sa systematickej, vytrvalej práci. Nedokončené úlohy z minulosti si vyžadujú dôkladnosť teraz. Stabilita vznikne len cez disciplínu.',
+  },
+  14: {
+    reducesTo: 5,
+    theme: 'Sloboda a sebakontrola',
+    description: 'Karmický dlh 14 sa redukuje na 5. Z minulých životov nesiete tendenciu k zneužívaniu slobody — extrémnym pôžitkom, závislostiam, nestálosti.',
+    lesson: 'Naučte sa stredne cestu medzi slobodou a zodpovednosťou. Adaptabilita áno, ale s vnútornou disciplínou. Nepodliehajte vrtkavosti.',
+  },
+  16: {
+    reducesTo: 7,
+    theme: 'Pokora a duchovné prebudenie',
+    description: 'Karmický dlh 16 sa redukuje na 7. Z minulých životov nesiete tendenciu zneužívať lásku, ego alebo duchovné poznanie. Hrozí "veža" — náhle pády.',
+    lesson: 'Naučte sa pokore a hlbokej introspekcii. Egoistický pohľad na vzťahy a duchovnosť musí byť opustený. Pravda prichádza skrz pád starého Ja.',
+  },
+  19: {
+    reducesTo: 1,
+    theme: 'Zodpovednosť a samostatnosť',
+    description: 'Karmický dlh 19 sa redukuje na 1. Z minulých životov nesiete tendenciu zneužívania moci alebo izolácie — nedokázali ste pomôcť iným keď to mohli.',
+    lesson: 'Naučte sa byť nezávislý ale nie izolovaný. Vodcovstvo musí slúžiť, nie ovládať. "Si to ty kto musí" — nie iní za teba.',
+  },
+};
+
+const KARMIC_DEBTS: ReadonlySet<number> = new Set([13, 14, 16, 19]);
+
+function detectKarmicDebts(day: number, month: number, year: number, lifePathFrom: number): KarmicDebt[] {
+  const debts: KarmicDebt[] = [];
+
+  // 1. ŽČ from-sum: ak je medzisúčet (pred redukciou) jedno z 13/14/16/19
+  // Pri jednomístnom dni môžu byť dlhy len ak from > 9
+  if (KARMIC_DEBTS.has(lifePathFrom)) {
+    const info = KARMIC_DEBT_INFO[lifePathFrom as 13 | 14 | 16 | 19];
+    debts.push({ number: lifePathFrom as 13 | 14 | 16 | 19, source: 'lifePath', ...info });
+  }
+
+  // 2. Birthday: ak je deň narodenia 13/14/16/19
+  if (KARMIC_DEBTS.has(day)) {
+    const info = KARMIC_DEBT_INFO[day as 13 | 14 | 16 | 19];
+    debts.push({ number: day as 13 | 14 | 16 | 19, source: 'birthDay', ...info });
+  }
+
+  // 3. Pinnacle/Challenge mid-sums: pinnacles počítame z monthRed+dayRed atď. — neredukujeme dvojcifery,
+  //    no možný "skrytý dlh" je ak (M+D), (D+R), (M+R) je 13/14/16/19 PRED redukciou.
+  const dayRed = reduceToSingle(day);
+  const monthRed = reduceToSingle(month);
+  const yearRed = reduceToSingle(String(year).split('').reduce((s, d) => s + parseInt(d, 10), 0));
+  const pinnacleMidSums = [
+    { src: 'pinnacle' as const, sum: monthRed + dayRed },
+    { src: 'pinnacle' as const, sum: dayRed + yearRed },
+    { src: 'pinnacle' as const, sum: monthRed + yearRed },
+  ];
+  pinnacleMidSums.forEach(({ src, sum }) => {
+    if (KARMIC_DEBTS.has(sum) && !debts.some(d => d.number === sum && d.source === src)) {
+      const info = KARMIC_DEBT_INFO[sum as 13 | 14 | 16 | 19];
+      debts.push({ number: sum as 13 | 14 | 16 | 19, source: src, ...info });
+    }
+  });
+
+  return debts;
+}
+
 export function calculateFullNumerology(day: number, month: number, year: number): NumerologyResult {
   const lifePath = calculateLifePath(day, month, year);
   const grid = buildGrid(day, month, year);
@@ -496,5 +576,14 @@ export function calculateFullNumerology(day: number, month: number, year: number
     dayReduction: reduceToSingle(day),
     monthReduction: reduceToSingle(month),
     yearReduction: reduceToSingle(year),
+    karmicDebts: detectKarmicDebts(day, month, year, lifePath.from),
+    // Maturity = ŽČ + birthday-day reduction (klasická pythag. formula bez mena);
+    // úplnú maturitu s expression ratíme v NameNumerology.
+    maturityNumber: reduceToSingle(
+      (lifePath.number > 9 && !MASTER_NUMBERS.includes(lifePath.number) ? reduceToSingle(lifePath.number) : lifePath.number)
+      + reduceToSingle(day),
+      true
+    ),
+    birthdayNumber: day,
   };
 }

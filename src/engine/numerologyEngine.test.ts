@@ -206,3 +206,34 @@ describe('calculateFullNumerology integration', () => {
     expect(r.loveLanguages.length).toBeGreaterThan(0);
   });
 });
+
+describe('karmic debts (B2)', () => {
+  it('detekuje 13 v dni narodenia', () => {
+    const r = calculateFullNumerology(13, 5, 1990);
+    expect(r.karmicDebts.some(d => d.number === 13 && d.source === 'birthDay')).toBe(true);
+  });
+  it('detekuje 14 v dni narodenia', () => {
+    const r = calculateFullNumerology(14, 6, 1985);
+    expect(r.karmicDebts.some(d => d.number === 14)).toBe(true);
+  });
+  it('detekuje 16 v dni narodenia', () => {
+    const r = calculateFullNumerology(16, 8, 1980);
+    expect(r.karmicDebts.some(d => d.number === 16)).toBe(true);
+  });
+  it('detekuje 19 v dni narodenia', () => {
+    const r = calculateFullNumerology(19, 3, 1975);
+    expect(r.karmicDebts.some(d => d.number === 19)).toBe(true);
+  });
+  it('30.8.1979 detekuje 16 v pinnacle súčte M(8)+R(8)', () => {
+    const r = calculateFullNumerology(30, 8, 1979);
+    expect(r.karmicDebts.some(d => d.number === 16 && d.source === 'pinnacle')).toBe(true);
+  });
+});
+
+describe('maturity & birthday number (B3)', () => {
+  it('30.8.1979: maturity = LP(1) + dayRed(3) = 4', () => {
+    const r = calculateFullNumerology(30, 8, 1979);
+    expect(r.maturityNumber).toBe(4);
+    expect(r.birthdayNumber).toBe(30);
+  });
+});

@@ -19,9 +19,27 @@ in ISO 8601 (YYYY-MM-DD). The format loosely follows
 - **B6** Karmic Lessons — numbers 1-9 entirely missing from the name.
 - **B7** Cornerstone (first letter), Capstone (last letter), First Vowel
   with archetypal descriptions for every Slovak/English letter.
+- **B11** Lunar phases timeline (15-day strip with glyphs + advice).
+- **B12** Lilith (Mean Black Moon) and Chiron (linear approximation)
+  added to astrology engine; do not affect dominant element analysis.
+- **B13** Upcoming solar + lunar eclipses (next 6) on AstrologyPage.
 - **B15** HD lines 1-6 detailed archetypes (Investigator, Hermit, Martyr,
   Opportunist, Heretic, Role Model) with conscious / unconscious /
   shadow / signature blocks per line; profile-specific phase summaries.
+- **B16** HD authority detail — wave + how-to-listen for Emotional /
+  Sacral / Splenic / Ego / Self-Projected / Mental / Lunar.
+- **B17** HD definition type (Single/Split/Triple/Quadruple/No) computed
+  via connected-components BFS on defined-centers graph.
+- **B23** Daily tarot card on Dashboard (Major Arcana per ODV).
+- **B24** Meditation timer with 528 Hz Solfeggio chime.
+- **B25** Daily mantra (3 variants per ODV, rotation by day-of-year).
+- **B26** Daily quote (3 variants per ODV).
+- **B28** Radar chart — 9 numerological energies as SVG polygon.
+- **B29** Natal wheel — 12-sector zodiac chart with planets, ASC, MC.
+- **B30** Bodygraph — active gate numbers shown beneath each center.
+- **B31** Tree of Life — kabbalistic SVG with 10 sefirot + 22 paths,
+  primary + secondary highlighted, path to Malchut in gold.
+- **B32** Hover mini-card tooltips on grid numbers.
 
 ### Client management (A-batch)
 
@@ -47,8 +65,21 @@ in ISO 8601 (YYYY-MM-DD). The format loosely follows
 
 ### Performance & quality (C-batch)
 
+- **C1** Component tests setup (jsdom + Testing Library); first tests
+  for PersonalYearTimeline + RadarChart9. 71 → 78 tests.
+- **C3** GitHub PR template (`.github/PULL_REQUEST_TEMPLATE.md`).
+- **C4** This `CHANGELOG.md`.
+- **C5** Bundle analyzer via `rollup-plugin-visualizer`; gated by
+  `ANALYZE=1` env. `npm run build:analyze` → `dist/stats.html`.
 - **C6** Lazy-loaded all secondary routes via `React.lazy` + `Suspense`.
   Initial bundle: 530KB → 220KB (73KB gzip).
+- **C7** Improved SW offline strategy: `cleanupOutdatedCaches`,
+  navigateFallback, runtimeCaching for navigations / assets / images.
+- **C8** Error reporting — local error log (max 20) in localStorage
+  with stack/component-stack/url/UA; copy-to-clipboard from boundary
+  fallback; diagnostics card in Settings.
+- **C9** Performance metrics — `captureWebVitals()` (LCP + CLS) and
+  `usePerformanceMetrics()` mount-timing hook; visualised in Settings.
 
 ### UX
 

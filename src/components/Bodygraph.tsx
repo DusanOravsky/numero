@@ -30,16 +30,19 @@ interface CenterInfo {
 }
 
 // Brány priradené k jednotlivým centrám podľa štandardnej HD mapy.
+// Vertikálne pozície sú v % a centrá majú -translate-y-1/2; preto je
+// najvyšší bod (Hlava) posunutý dolu z 2% na 8%, aby nesiahala nad
+// horný okraj kontainera a neprekrývala hlavičku/nadpis.
 const CENTERS: Record<string, CenterInfo> = {
-  'Hlava':    { label: 'Hlava', fullName: 'Inšpirácia', color: '#f5c542', top: '2%', left: '50%', gates: [64, 61, 63] },
-  'Ajna':     { label: 'Ajna', fullName: 'Myslenie', color: '#4ade80', top: '15%', left: '50%', gates: [47, 24, 4, 17, 43, 11] },
-  'Hrdlo':    { label: 'Hrdlo', fullName: 'Prejav', color: '#a78bfa', top: '28%', left: '50%', gates: [62, 23, 56, 16, 20, 31, 8, 33, 35, 12, 45] },
-  'G':        { label: 'G', fullName: 'Identita', color: '#facc15', top: '42%', left: '50%', gates: [1, 13, 25, 46, 2, 15, 10, 7] },
-  'Ego':      { label: 'Ego', fullName: 'Vôľa', color: '#f87171', top: '36%', left: '80%', gates: [21, 40, 26, 51] },
-  'Sakrálne': { label: 'Sakrál', fullName: 'Sila', color: '#ef4444', top: '58%', left: '50%', gates: [34, 5, 14, 29, 9, 3, 42, 27, 59] },
-  'SP':       { label: 'SP', fullName: 'Emócie', color: '#fb923c', top: '53%', left: '80%', gates: [36, 22, 37, 6, 49, 55, 30] },
-  'Slezina':  { label: 'Slezina', fullName: 'Intuícia', color: '#fbbf24', top: '53%', left: '20%', gates: [48, 57, 44, 50, 32, 28, 18] },
-  'Koreň':    { label: 'Koreň', fullName: 'Tlak', color: '#ef4444', top: '72%', left: '50%', gates: [58, 38, 54, 53, 60, 52, 19, 39, 41] },
+  'Hlava':    { label: 'Hlava', fullName: 'Inšpirácia', color: '#f5c542', top: '8%', left: '50%', gates: [64, 61, 63] },
+  'Ajna':     { label: 'Ajna', fullName: 'Myslenie', color: '#4ade80', top: '20%', left: '50%', gates: [47, 24, 4, 17, 43, 11] },
+  'Hrdlo':    { label: 'Hrdlo', fullName: 'Prejav', color: '#a78bfa', top: '32%', left: '50%', gates: [62, 23, 56, 16, 20, 31, 8, 33, 35, 12, 45] },
+  'G':        { label: 'G', fullName: 'Identita', color: '#facc15', top: '46%', left: '50%', gates: [1, 13, 25, 46, 2, 15, 10, 7] },
+  'Ego':      { label: 'Ego', fullName: 'Vôľa', color: '#f87171', top: '40%', left: '80%', gates: [21, 40, 26, 51] },
+  'Sakrálne': { label: 'Sakrál', fullName: 'Sila', color: '#ef4444', top: '62%', left: '50%', gates: [34, 5, 14, 29, 9, 3, 42, 27, 59] },
+  'SP':       { label: 'SP', fullName: 'Emócie', color: '#fb923c', top: '57%', left: '80%', gates: [36, 22, 37, 6, 49, 55, 30] },
+  'Slezina':  { label: 'Slezina', fullName: 'Intuícia', color: '#fbbf24', top: '57%', left: '20%', gates: [48, 57, 44, 50, 32, 28, 18] },
+  'Koreň':    { label: 'Koreň', fullName: 'Tlak', color: '#ef4444', top: '78%', left: '50%', gates: [58, 38, 54, 53, 60, 52, 19, 39, 41] },
 };
 
 export function Bodygraph({ result }: BodygraphProps) {
@@ -61,7 +64,7 @@ export function Bodygraph({ result }: BodygraphProps) {
   });
 
   return (
-    <div className="relative w-full max-w-sm mx-auto" style={{ aspectRatio: '3/4' }}>
+    <div className="relative w-full max-w-sm mx-auto" style={{ aspectRatio: '3/4', minHeight: 480 }}>
       {/* Channels as absolute lines using CSS */}
       <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 300 400" preserveAspectRatio="none">
         {Object.values(CHANNEL_TO_CENTERS).map(([c1, c2], i) => {
@@ -130,7 +133,7 @@ export function Bodygraph({ result }: BodygraphProps) {
       })}
 
       {/* Legend */}
-      <div className="absolute bottom-0 left-0 right-0 flex items-center justify-center gap-4 text-[9px] text-slate-500">
+      <div className="absolute -bottom-6 left-0 right-0 flex items-center justify-center gap-4 text-[9px] text-slate-500">
         <span className="flex items-center gap-1">
           <span className="w-3 h-3 rounded bg-indigo-500"></span> Definované
         </span>

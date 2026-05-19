@@ -184,7 +184,9 @@ export function HumanDesignPage() {
 
           <GlassCard>
             <h3 className="font-medium text-white mb-4 text-center">Bodygraph</h3>
-            <Bodygraph result={result} />
+            <div className="pb-8">
+              <Bodygraph result={result} />
+            </div>
           </GlassCard>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

@@ -72,6 +72,60 @@ export const HD_LINES: Record<number, HDLineInfo> = {
   },
 };
 
+export const HD_AUTHORITY_INFO: Record<string, { wave: string; how: string }> = {
+  'Emocionálna': {
+    wave: 'Emocionálna vlna sa hýbe v cykloch — od high cez nízke. Pravda neprichádza okamžite, ale postupne, počas celého cyklu.',
+    how: 'Pri rozhodnutiach NIKDY nereagujte v okamihu vzrušenia ani depresie. Počkajte 24h-3 dni, nech vaša vlna prejde celým cyklom (high → mid → low → mid). Pravda je v strednej čistote.',
+  },
+  'Sakrálna': {
+    wave: 'Sakrálne reakcie sú okamžité, telesné, instinktívne. Áno = "uh-huh", nie = "uh-uh" alebo ticho.',
+    how: 'Hľadajte otázky áno/nie a počúvajte telo. Hrudník/brucho odpovedá pred mysľou. Ak musíte premýšľať, je to "nie".',
+  },
+  'Slezinová': {
+    wave: 'Slezinová autorita hovorí raz a potichu. Inštinktívne varuje pred nebezpečenstvom alebo zelený svit pre príležitosť.',
+    how: 'Naučte sa počuť ten prvý jemný hlas — neprehlasovať ho racionalizáciou. Ak vám slezina raz povedala "nie", neopytujte sa znovu.',
+  },
+  'Ego': {
+    wave: 'Ego autorita reaguje cez srdce — ak to chcem, mám silu, je to dôležité pre mňa.',
+    how: 'Spýtajte sa: "Mám na to chuť? Stojí mi za to?" Egoická pravda je o vlastnej vôli a osobnom záujme — bez viny.',
+  },
+  'Sebaprojektovaná': {
+    wave: 'G centrum (identita) hovorí keď počujete sami seba hovoriť. Pravda sa prejaví v tom, čo poviete nahlas.',
+    how: 'Hovorte nahlas — sami so sebou alebo dôveryhodnému poslucháčovi. V slovách budete počuť, kto ste a čo je pre vás správne.',
+  },
+  'Mentálna/Environmentálna': {
+    wave: 'Mentálna autorita je závislá od prostredia — správne rozhodnutie sa prejaví v správnom mieste a s správnymi ľuďmi.',
+    how: 'Žiadny zhon. Diskutujte rozhodnutie v rôznych prostrediach — kde sa cítite jasní, čistí, tam je pravda.',
+  },
+  'Lunárna': {
+    wave: 'Lunárna autorita Reflektora trvá 28 dní — celý lunárny cyklus.',
+    how: 'Pri akomkoľvek väčšom rozhodnutí počkajte celý lunárny mesiac. Hovorte o ňom s dôveryhodnými ľuďmi cez celých 28 dní — pravda sa vyformuje v cykle.',
+  },
+};
+
+export const HD_DEFINITION_INFO: Record<string, { description: string; lesson: string }> = {
+  'No Definition': {
+    description: 'Žiadne definované centrá — všetko je otvorené, premenlivé. Toto je iba u Reflektorov.',
+    lesson: 'Vaša múdrosť: zrkadlíte zdravie kolektívu. Ste citliví na všetko — vyberte si prostredie a ľudí veľmi pozorne.',
+  },
+  'Single': {
+    description: 'Všetky vaše definované centrá sú vzájomne prepojené v jednej súvislej oblasti. Energia tečie hladko a koherentne.',
+    lesson: 'Máte vnútornú konzistenciu — viete kto ste, vaša energia je jednotná. Potrebujete druhých skôr na zrkadlenie ako na spojenie.',
+  },
+  'Split': {
+    description: 'Máte 2 oddelené oblasti definovaných centier. Energia neteče priamo medzi nimi — môžete sa cítiť „rozpoltení".',
+    lesson: 'Hľadáte druhých ľudí ako most medzi vašimi 2 časťami. Vzťahy sú dôležité — pozor však aj na nezdravú závislosť. Kľúčom je nájsť seba prv než hľadáte druhých.',
+  },
+  'Triple Split': {
+    description: 'Máte 3 oddelené oblasti definovaných centier. Vaše rozhodovanie je komplexnejšie, potrebujete viacero ľudí na rôzne aspekty.',
+    lesson: 'Vaša komplexnosť je dar. Naučte sa byť trpezlivý sami so sebou — máte 3 rôzne perspektívy ktoré treba integrovať. Vzťahy s rôznymi ľuďmi vám pomáhajú sa zorientovať.',
+  },
+  'Quadruple Split': {
+    description: 'Máte 4 oddelené oblasti definovaných centier. Veľmi vzácne — len ~1% populácie.',
+    lesson: 'Mimoriadne unikátne energetické usporiadanie. Vaša úloha je naučiť sa žiť so 4 rôznymi vnútornými hlasmi. Sociálne ste schopní mostíť mnohé svety.',
+  },
+};
+
 export const HD_PROFILE_PHASES: Record<string, string> = {
   '1/3': 'Profil 1/3 – Skúmajúci Mučeník: Hľadáte základ skrz štúdium (1) a potom ho overujete v praxi cez pokus-omyl (3). Vaše chyby sú vašou najsilnejšou múdrosťou.',
   '1/4': 'Profil 1/4 – Skúmajúci Diplomat: Hľadáte základ skrz štúdium (1) a zdieľate ho cez svoju sieť priateľov a komunity (4).',

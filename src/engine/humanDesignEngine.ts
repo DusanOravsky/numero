@@ -26,6 +26,8 @@ export interface HDProfile {
   description: string;
 }
 
+export type HDDefinition = 'No Definition' | 'Single' | 'Split' | 'Triple Split' | 'Quadruple Split';
+
 export interface HumanDesignResult {
   type: HDType;
   authority: HDAuthority;
@@ -39,6 +41,8 @@ export interface HumanDesignResult {
   designGates: GateActivation[];
   allActivatedGates: number[];
   incarnationCross: string;
+  /** Typ definície: koľko izolovaných oblastí spojených centier máme v grafe. */
+  definition: HDDefinition;
 }
 
 const GATE_ORDER: number[] = [
@@ -363,6 +367,37 @@ function isMotorConnectedToThroat(graph: Map<string, Set<string>>): boolean {
   return false;
 }
 
+function determineDefinition(definedCenters: Set<string>, channels: HDChannel[]): HDDefinition {
+  if (definedCenters.size === 0) return 'No Definition';
+  // Build undirected graph of defined centers connected by channels.
+  const adj = new Map<string, Set<string>>();
+  definedCenters.forEach(c => adj.set(c, new Set()));
+  channels.forEach(ch => {
+    if (definedCenters.has(ch.centers[0]) && definedCenters.has(ch.centers[1])) {
+      adj.get(ch.centers[0])!.add(ch.centers[1]);
+      adj.get(ch.centers[1])!.add(ch.centers[0]);
+    }
+  });
+  // Count connected components.
+  const visited = new Set<string>();
+  let components = 0;
+  for (const node of definedCenters) {
+    if (visited.has(node)) continue;
+    components++;
+    const queue = [node];
+    while (queue.length) {
+      const cur = queue.shift()!;
+      if (visited.has(cur)) continue;
+      visited.add(cur);
+      adj.get(cur)?.forEach(n => { if (!visited.has(n)) queue.push(n); });
+    }
+  }
+  if (components === 1) return 'Single';
+  if (components === 2) return 'Split';
+  if (components === 3) return 'Triple Split';
+  return 'Quadruple Split';
+}
+
 function determineType(definedCenters: Set<string>, channels: HDChannel[]): HDType {
   if (definedCenters.size === 0) return 'Reflektor';
 
@@ -474,6 +509,7 @@ function _calculateHumanDesignImpl(
     designGates: designActivations,
     allActivatedGates: Array.from(allGates),
     incarnationCross: cross,
+    definition: determineDefinition(defined, channels),
   };
 }
 

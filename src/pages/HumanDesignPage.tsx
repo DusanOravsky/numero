@@ -8,7 +8,7 @@ import type { HumanDesignResult } from '../engine/humanDesignEngine';
 import { Bodygraph } from '../components/Bodygraph';
 import { motion } from 'framer-motion';
 import { getGeneKeysForGates } from '../data/geneKeys';
-import { HD_LINES, HD_PROFILE_PHASES } from '../data/hdLines';
+import { HD_LINES, HD_PROFILE_PHASES, HD_AUTHORITY_INFO, HD_DEFINITION_INFO } from '../data/hdLines';
 import type { GeneKey } from '../data/geneKeys';
 
 const TYPE_DESCRIPTIONS: Record<string, string> = {
@@ -232,6 +232,24 @@ export function HumanDesignPage() {
               </GlassCard>
             );
           })()}
+
+          {/* Authority detail with wave (B16) + Definition type (B17) */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {HD_AUTHORITY_INFO[result.authority] && (
+              <GlassCard>
+                <h3 className="font-medium text-white mb-1">Autorita: {result.authority}</h3>
+                <p className="text-xs text-slate-400 mb-2"><strong>Vlna:</strong> {HD_AUTHORITY_INFO[result.authority].wave}</p>
+                <p className="text-sm text-emerald-700"><strong>Ako počúvať:</strong> {HD_AUTHORITY_INFO[result.authority].how}</p>
+              </GlassCard>
+            )}
+            {HD_DEFINITION_INFO[result.definition] && (
+              <GlassCard>
+                <h3 className="font-medium text-white mb-1">Definícia: {result.definition}</h3>
+                <p className="text-xs text-slate-400 mb-2">{HD_DEFINITION_INFO[result.definition].description}</p>
+                <p className="text-sm text-indigo-700"><strong>Lekcia:</strong> {HD_DEFINITION_INFO[result.definition].lesson}</p>
+              </GlassCard>
+            )}
+          </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <GlassCard>

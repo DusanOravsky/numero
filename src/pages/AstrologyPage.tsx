@@ -7,6 +7,7 @@ import { calculateAstrology, calculateNatalAspects } from '../engine/astrologyEn
 import type { AstrologyResult, SynastryAspect } from '../engine/astrologyEngine';
 import { motion } from 'framer-motion';
 import { planetInSignDescriptions } from '../data/planetSignDescriptions';
+import { LunarTimeline } from '../components/LunarTimeline';
 
 function getSunSignDescription(sign: string): string {
   const descriptions: Record<string, string> = {
@@ -311,6 +312,9 @@ export function AstrologyPage() {
                 <p className="text-lg text-indigo-300 font-serif">{result.moonPhase}</p>
                 <p className="text-xs text-slate-400 mt-2">{getMoonPhaseDescription(result.moonPhase)}</p>
               </GlassCard>
+
+              <LunarTimeline />
+
 
               <GlassCard>
                 <h3 className="font-medium text-white mb-2">Astrologické domy (Whole Sign)</h3>

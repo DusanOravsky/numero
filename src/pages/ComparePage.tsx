@@ -6,13 +6,17 @@ import { calculateFullNumerology } from '../engine/numerologyEngine';
 import { calculateDevelopmentalNumerology } from '../engine/developmentalNumerologyEngine';
 import { calculateAstrology } from '../engine/astrologyEngine';
 import { calculateHumanDesign } from '../engine/humanDesignEngine';
+import { deriveEnneagramType } from '../engine/enneagramEngine';
+import { enneagramTypes } from '../data/enneagram';
 
 const MAX_COMPARE = 4;
 
 export function ComparePage() {
   const navigate = useNavigate();
-  const { clients } = useStore();
+  const { clients, profiles, activeProfileId, numerologyMethod } = useStore();
+  const activeProfile = profiles.find(p => p.id === activeProfileId);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [includeMyProfile, setIncludeMyProfile] = useState(false);
 
   const toggle = (id: string) => {
     setSelectedIds(prev => {
@@ -26,24 +30,18 @@ export function ComparePage() {
     .map(id => clients.find(c => c.id === id))
     .filter((c): c is NonNullable<typeof c> => !!c);
 
-  const computed = selected.map(c => {
+  const allPersons: Array<{ id: string; name: string; birthDay: number; birthMonth: number; birthYear: number; birthHour?: number; birthMinute?: number; gender?: 'male' | 'female' }> = [
+    ...(includeMyProfile && activeProfile ? [{ id: activeProfile.id, name: `${activeProfile.name} (ja)`, birthDay: activeProfile.birthDay, birthMonth: activeProfile.birthMonth, birthYear: activeProfile.birthYear, birthHour: activeProfile.birthHour, birthMinute: activeProfile.birthMinute, gender: activeProfile.gender }] : []),
+    ...selected,
+  ];
+
+  const computed = allPersons.map(c => {
     const num = calculateFullNumerology(c.birthDay, c.birthMonth, c.birthYear);
     const dev = calculateDevelopmentalNumerology(c.birthDay, c.birthMonth, c.birthYear);
-    const astro = calculateAstrology(
-      c.birthDay,
-      c.birthMonth,
-      c.birthYear,
-      c.birthHour ?? 12,
-      c.birthMinute ?? 0
-    );
-    const hd = calculateHumanDesign(
-      c.birthDay,
-      c.birthMonth,
-      c.birthYear,
-      c.birthHour ?? 12,
-      c.birthMinute ?? 0
-    );
-    return { client: c, num, dev, astro, hd };
+    const astro = calculateAstrology(c.birthDay, c.birthMonth, c.birthYear, c.birthHour ?? 12, c.birthMinute ?? 0);
+    const hd = calculateHumanDesign(c.birthDay, c.birthMonth, c.birthYear, c.birthHour ?? 12, c.birthMinute ?? 0);
+    const enneagram = deriveEnneagramType(num, dev, numerologyMethod);
+    return { client: c, num, dev, astro, hd, enneagram };
   });
 
   const rows: { label: string; cells: (data: typeof computed[number]) => React.ReactNode }[] = [
@@ -71,6 +69,10 @@ export function ComparePage() {
     { label: 'HD autorita', cells: d => d.hd.authority },
     { label: 'HD def. centrá', cells: d => `${d.hd.definedCenters.length}/9` },
     { label: 'HD kanály', cells: d => d.hd.channels.length },
+    { label: 'Enneagram typ', cells: d => { const t = enneagramTypes[d.enneagram.coreType]; return t ? <strong className="text-emerald-700">{d.enneagram.coreType} ({t.name.split('/')[0].trim()})</strong> : d.enneagram.coreType; } },
+    { label: 'Enneagram krídlo', cells: d => d.enneagram.dominantWing ? `${d.enneagram.dominantWing}w` : '—' },
+    { label: 'Integrácia →', cells: d => d.enneagram.integrationDirection },
+    { label: 'Stres →', cells: d => d.enneagram.disintegrationDirection },
   ];
 
   return (
@@ -87,6 +89,20 @@ export function ComparePage() {
           Späť na klientov
         </button>
       </div>
+
+      {activeProfile && (
+        <GlassCard>
+          <label className="flex items-center gap-3 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={includeMyProfile}
+              onChange={e => setIncludeMyProfile(e.target.checked)}
+              className="w-4 h-4 rounded border-slate-400 text-indigo-600 focus:ring-indigo-500"
+            />
+            <span className="text-sm text-white">Zahrnúť môj profil ({activeProfile.name}) do porovnania</span>
+          </label>
+        </GlassCard>
+      )}
 
       {clients.length === 0 ? (
         <GlassCard>
@@ -126,7 +142,7 @@ export function ComparePage() {
         </GlassCard>
       )}
 
-      {selected.length >= 2 && (
+      {computed.length >= 2 && (
         <GlassCard>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
@@ -155,9 +171,9 @@ export function ComparePage() {
         </GlassCard>
       )}
 
-      {selected.length === 1 && (
+      {computed.length === 1 && (
         <GlassCard>
-          <p className="text-sm text-slate-500 text-center py-4">Vyber ešte aspoň jedného klienta na porovnanie.</p>
+          <p className="text-sm text-slate-500 text-center py-4">Vyber ešte aspoň jednu osobu na porovnanie (klienta alebo zaškrtni "môj profil").</p>
         </GlassCard>
       )}
     </div>

@@ -81,7 +81,7 @@ export const useStore = create<AppState>()(
       reports: [],
       favorites: [],
       language: 'sk',
-      numerologyMethod: 'characterological',
+      numerologyMethod: 'developmental',
 
       addProfile: (profile) => set((state) => ({ profiles: [...state.profiles, profile] })),
       updateProfile: (id, data) => set((state) => ({
@@ -126,7 +126,7 @@ export const useStore = create<AppState>()(
           state.clients = state.clients || [];
         }
         if (version < 3) {
-          state.numerologyMethod = state.numerologyMethod || 'characterological';
+          state.numerologyMethod = state.numerologyMethod || 'developmental';
         }
         return state as unknown as AppState;
       },

@@ -2,7 +2,9 @@ import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-route
 import { AnimatePresence } from 'framer-motion';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { PWAPrompts } from './components/PWAPrompts';
+import { OnboardingTour } from './components/OnboardingTour';
 import { useTheme } from './hooks/useTheme';
+import { useStore } from './store/useStore';
 import { MainLayout } from './layouts/MainLayout';
 import { Dashboard } from './pages/Dashboard';
 import { NumerologyPage } from './pages/NumerologyPage';
@@ -21,9 +23,12 @@ import { SharedView } from './pages/SharedView';
 function AnimatedRoutes() {
   const location = useLocation();
   useTheme();
+  const profiles = useStore(s => s.profiles);
+  const showOnboarding = profiles.length > 0;
 
   return (
     <AnimatePresence mode="wait">
+      {showOnboarding && <OnboardingTour />}
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<MainLayout />}>
           <Route index element={<Dashboard />} />

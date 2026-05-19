@@ -5,6 +5,7 @@ import { useTranslation } from '../i18n/useTranslation';
 import { GlassCard } from '../components/GlassCard';
 import { useNavigate } from 'react-router-dom';
 import { APP_VERSION } from '../components/PWAPrompts';
+import { getErrorLog, clearErrorLog } from '../components/ErrorBoundary';
 import { searchCities, findCity } from '../data/cities';
 
 export function SettingsPage() {
@@ -329,6 +330,49 @@ export function SettingsPage() {
           <p>Offline-first PWA. Všetky dáta lokálne.</p>
         </div>
       </GlassCard>
+
+      {/* Diagnostika — error log (C8) */}
+      {(() => {
+        const log = getErrorLog();
+        if (log.length === 0) return null;
+        return (
+          <GlassCard>
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="font-medium text-white">Diagnostika</h3>
+              <button
+                onClick={() => { clearErrorLog(); window.location.reload(); }}
+                className="text-xs text-rose-500 hover:text-rose-300 underline"
+              >
+                Vymazať log
+              </button>
+            </div>
+            <p className="text-xs text-slate-500 mb-3">
+              {log.length} chýb v lokálnom logu (max {20}). Užitočné pri reportovaní problémov.
+            </p>
+            <div className="space-y-2 max-h-48 overflow-y-auto">
+              {log.slice(0, 5).map((e, i) => (
+                <div key={i} className="p-2 rounded-lg bg-rose-500/10 border border-rose-500/30 text-xs">
+                  <p className="text-rose-300 font-mono break-all">{e.message}</p>
+                  <p className="text-slate-500 text-[10px] mt-1">
+                    {new Date(e.timestamp).toLocaleString('sk-SK')} · {e.url.split('/').slice(-1)[0] || '/'}
+                  </p>
+                </div>
+              ))}
+              {log.length > 5 && (
+                <p className="text-[11px] text-slate-500 text-center">… a ďalších {log.length - 5}</p>
+              )}
+            </div>
+            <button
+              onClick={() => {
+                navigator.clipboard?.writeText(JSON.stringify(log, null, 2));
+              }}
+              className="mt-2 text-xs text-indigo-400 hover:text-indigo-300 underline"
+            >
+              Skopírovať celý log do schránky
+            </button>
+          </GlassCard>
+        );
+      })()}
 
       {activeProfile && (
         <GlassCard>

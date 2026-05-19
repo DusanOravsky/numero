@@ -16,11 +16,13 @@ const NAV_ITEMS = [
 
 export function MainLayout() {
   const location = useLocation();
+  const logoSrc = `${import.meta.env.BASE_URL}icons/logo.svg`;
 
   return (
     <div className="min-h-screen flex flex-col lg:flex-row">
       <aside className="hidden lg:flex lg:flex-col lg:w-64 bg-white chakra-border-right fixed h-full z-40">
         <div className="p-6 border-b border-slate-100 text-center">
+          <img src={logoSrc} alt="" aria-hidden="true" className="w-16 h-16 mx-auto mb-3" />
           <h1 className="font-serif text-lg font-bold bg-gradient-to-r from-indigo-600 via-violet-600 to-purple-600 bg-clip-text text-transparent">
             Integrálna mapa bytia
           </h1>
@@ -49,6 +51,14 @@ export function MainLayout() {
       </aside>
 
       <main className="flex-1 lg:ml-64 pb-20 lg:pb-0">
+        {/* Mobilný header s logom – iba na mobile */}
+        <header className="lg:hidden bg-white border-b border-slate-200 px-4 py-3 flex items-center gap-3 sticky top-0 z-30">
+          <img src={logoSrc} alt="" aria-hidden="true" className="w-10 h-10 shrink-0" />
+          <h1 className="font-serif text-base font-bold bg-gradient-to-r from-indigo-600 via-violet-600 to-purple-600 bg-clip-text text-transparent">
+            Integrálna mapa bytia
+          </h1>
+        </header>
+
         <motion.div
           key={location.pathname}
           initial={{ opacity: 0, y: 20 }}

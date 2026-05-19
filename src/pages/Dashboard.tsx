@@ -110,6 +110,11 @@ export function Dashboard() {
           animate={{ opacity: 1, scale: 1 }}
           className="text-center"
         >
+          <img
+            src={`${import.meta.env.BASE_URL}icons/logo.svg`}
+            alt="Integrálna mapa bytia"
+            className="w-32 h-32 lg:w-40 lg:h-40 mx-auto mb-6 drop-shadow-lg"
+          />
           <h1 className="font-serif text-4xl lg:text-5xl font-bold bg-gradient-to-r from-indigo-400 via-violet-400 to-purple-400 bg-clip-text text-transparent mb-4">
             Integrálna mapa bytia
           </h1>

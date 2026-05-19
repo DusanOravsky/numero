@@ -7,6 +7,8 @@ import type { KabalahResult } from '../engine/kabalahEngine';
 import type { ThetaHealingResult } from '../engine/thetaHealingEngine';
 import { reduceToSingle } from '../engine/numerologyEngine';
 import { calculateDevelopmentalNumerology } from '../engine/developmentalNumerologyEngine';
+import { deriveEnneagramType } from '../engine/enneagramEngine';
+import { enneagramTypes } from '../data/enneagram';
 import { useStore } from '../store/useStore';
 import { planetInSignDescriptions } from '../data/planetSignDescriptions';
 import { orvDescriptions } from '../data/orvDescriptions';
@@ -55,6 +57,11 @@ export function ClientSummary({ clientName, birthDay, birthMonth, birthYear, num
   const devStrong = devSorted.filter(x => x.count >= 2).slice(0, 3);
   const devMissing = devSorted.filter(x => x.count === 0).slice(0, 3);
 
+  const enneagram = deriveEnneagramType(numerology, devNumerology, storedMethod);
+  const enneagramType = enneagramTypes[enneagram.coreType];
+  const enneagramIntegration = enneagramTypes[enneagram.integrationDirection];
+  const enneagramDisintegration = enneagramTypes[enneagram.disintegrationDirection];
+
   return (
     <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
       <GlassCard glow>
@@ -92,6 +99,27 @@ export function ClientSummary({ clientName, birthDay, birthMonth, birthYear, num
             <strong>Dar:</strong> {lpInfo?.gift || '-'}.<br/>
             <strong>Tieň:</strong> {lpInfo?.shadow || '-'}.
           </p>
+
+          {/* Enneagram archetyp */}
+          {enneagramType && (
+            <div className="rounded-xl border border-emerald-200 bg-emerald-50/40 p-4 space-y-2">
+              <p className="text-xs text-emerald-700 font-semibold uppercase tracking-wide">
+                Enneagram — Typ {enneagram.coreType}: {enneagramType.name}
+              </p>
+              <p className="text-xs text-slate-700">
+                {enneagramType.subtitle}.{' '}
+                <strong>Motivácia:</strong> {enneagramType.motivation.toLowerCase()}.{' '}
+                <strong>Strach:</strong> {enneagramType.fear.toLowerCase()}.
+                {enneagram.dominantWing && (
+                  <> Dominantné krídlo: <strong>{enneagram.dominantWing}w</strong> ({enneagramTypes[enneagram.dominantWing]?.name}).</>
+                )}
+              </p>
+              <p className="text-xs text-slate-700">
+                <strong>Rast (→{enneagram.integrationDirection}):</strong> {enneagramIntegration?.name} — {enneagramType.growthPath.split('.')[0]}.{' '}
+                <strong>Stres (→{enneagram.disintegrationDirection}):</strong> {enneagramDisintegration?.name}.
+              </p>
+            </div>
+          )}
 
           {/* Pohľad na mriežku — len pre aktívnu metódu */}
           {showCharacter && (

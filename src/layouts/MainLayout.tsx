@@ -15,6 +15,7 @@ const NAV_DEFS: { path: string; labelKey: TranslationKey; icon: string }[] = [
   { path: '/chakras', labelKey: 'nav.chakras', icon: '◈' },
   { path: '/kabalah', labelKey: 'nav.kabalah', icon: '⚘' },
   { path: '/theta-healing', labelKey: 'nav.theta', icon: '∞' },
+  { path: '/modality', labelKey: 'nav.modality', icon: '☘' },
   { path: '/clients', labelKey: 'nav.clients', icon: '♟' },
   { path: '/settings', labelKey: 'nav.settings', icon: '⚙' },
 ];

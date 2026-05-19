@@ -25,6 +25,7 @@ const ClientsPage = lazy(() => import('./pages/ClientsPage').then(m => ({ defaul
 const ClientDashboard = lazy(() => import('./pages/ClientDashboard').then(m => ({ default: m.ClientDashboard })));
 const ComparePage = lazy(() => import('./pages/ComparePage').then(m => ({ default: m.ComparePage })));
 const SharedView = lazy(() => import('./pages/SharedView').then(m => ({ default: m.SharedView })));
+const ModalityPage = lazy(() => import('./pages/ModalityPage').then(m => ({ default: m.ModalityPage })));
 
 function PageFallback() {
   return (
@@ -153,6 +154,14 @@ function AnimatedRoutes() {
             element={
               <Suspense fallback={<PageFallback />}>
                 <SharedView />
+              </Suspense>
+            }
+          />
+          <Route
+            path="modality"
+            element={
+              <Suspense fallback={<PageFallback />}>
+                <ModalityPage />
               </Suspense>
             }
           />

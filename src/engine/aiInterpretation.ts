@@ -23,6 +23,7 @@ import type { DevelopmentalNumerologyResult } from './developmentalNumerologyEng
 
 const ANTHROPIC_API_KEY_STORAGE = 'anthropic-api-key';
 const ANTHROPIC_MODEL_STORAGE = 'anthropic-model';
+const ANTHROPIC_LENS_STORAGE = 'anthropic-lens';
 const ANTHROPIC_API_URL = 'https://api.anthropic.com/v1/messages';
 const ANTHROPIC_API_VERSION = '2023-06-01';
 
@@ -56,6 +57,48 @@ export function setModel(m: ClaudeModel) {
 
 export function hasApiKey(): boolean {
   return !!getApiKey();
+}
+
+// =====================================================================
+// Interpretation lens — štýl výkladu (rozšírenie SYSTEM_PROMPT)
+// =====================================================================
+
+export type InterpretationLens =
+  | 'default'         // integratívny ezoterický (Steinová + Mičková + HD + astro)
+  | 'logical-levels'  // Diltsove logické úrovne (NLP)
+  | 'etikoterapia'    // Vogeltanz/Bezděk — etická príčina + cnosť
+  | 'coaching';       // GROW koučing model — otázky a kroky
+
+export const INTERPRETATION_LENSES: Array<{ id: InterpretationLens; label: string; description: string }> = [
+  {
+    id: 'default',
+    label: 'Integratívny ezoterický',
+    description: 'Spája všetky systémy (numerológia, astrológia, HD, kabala) do duchovného výkladu.',
+  },
+  {
+    id: 'logical-levels',
+    label: 'Logické úrovne (NLP — Dilts)',
+    description: 'Štruktúruje výklad cez 6 vrstiev: prostredie → správanie → schopnosti → hodnoty → identita → poslanie.',
+  },
+  {
+    id: 'etikoterapia',
+    label: 'Etikoterapia (Vogeltanz, Bezděk)',
+    description: 'Mapuje témy na etické príčiny (cnosti / neresti) a praktickú prácu so srdcom a svedomím.',
+  },
+  {
+    id: 'coaching',
+    label: 'Koučing (GROW model)',
+    description: 'Vedie cez otázky: Goal → Reality → Options → Will. Menej výkladu, viac práce.',
+  },
+];
+
+export function getLens(): InterpretationLens {
+  const v = localStorage.getItem(ANTHROPIC_LENS_STORAGE) as InterpretationLens | null;
+  return v && INTERPRETATION_LENSES.some(l => l.id === v) ? v : 'default';
+}
+
+export function setLens(l: InterpretationLens) {
+  localStorage.setItem(ANTHROPIC_LENS_STORAGE, l);
 }
 
 export interface ProfileContext {
@@ -161,25 +204,68 @@ export function summarizeProfile(ctx: ProfileContext): string {
   return lines.join('\n');
 }
 
-const SYSTEM_PROMPT = `Si skúsený duchovný sprievodca a integrátor 6 ezoterických systémov: numerológie (Charakterová Robin Steinová + Vývojová Lívia Mičková), astrológie, Human Designu, Kabaly a Theta Healingu.
+const SYSTEM_PROMPT_BASE = `Si skúsený duchovný sprievodca a integrátor 6 ezoterických systémov: numerológie (Charakterová Robin Steinová + Vývojová Lívia Mičková), astrológie, Human Designu, Kabaly a Theta Healingu.
 
-Tvoja úloha:
+Spoločné pravidlá:
 - Píš v slovenčine, oslovuj VYKANÍM (ty/vy), tón priateľský, profesionálny a s rešpektom.
 - Spájaj systémy navzájom — ak má klient ŽČ 7 a HD typ Projektor, oboje hovorí o pozorovateľskej múdrosti. Ukáž tieto rezonancie.
 - Pri diskrepancii (napr. silné ego v numerológii + otvorené G centrum v HD) ju pomenuj — napätie je informácia.
 - Cituj zdroje keď je to relevantné: Robin Steinová pre Charakterovú, Lívia Mičková pre Vývojovú.
 - Vyhýbaj sa povrchným frázam ("ste jedinečná duša"). Buď konkrétny.
 - Nehovoríš nič mimo poskytnutých dát. Pri otázkach o budúcnosti — kvalitatívne, nie predpoveď.
-- Pri odpovedi použi markdown ## ### nadpisy a odseky pre čitateľnosť.
+- Pri odpovedi použi markdown ## ### nadpisy a odseky pre čitateľnosť.`;
 
-Pri prvej odpovedi v rozhovore (kde je v kontexte plný profil) urob štruktúrovaný integratívny výklad:
+const LENS_PROMPTS: Record<InterpretationLens, string> = {
+  default: `Pri prvej odpovedi v rozhovore (kde je v kontexte plný profil) urob štruktúrovaný integratívny výklad:
 1. Hlavná životná téma (1-2 odseky)
 2. Silné stránky / dary
 3. Tiene a výzvy
 4. Aktuálne obdobie (ORV)
 5. Praktické odporúčanie pre najbližší týždeň-mesiac
 
-Pri následných otázkach odpovedaj cielene, prepojuj späť na profil.`;
+Pri následných otázkach odpovedaj cielene, prepojuj späť na profil.`,
+
+  'logical-levels': `Použi rámec **Logických úrovní** (Robert Dilts, vychádza z Batesona) — štruktúruj prvý výklad cez 6 vrstiev zhora nadol:
+
+1. **Poslanie / duchovno** (k čomu väčšiemu klient patrí — z ŽČ, K3, kabala, sefíry)
+2. **Identita** (kto som — z HD typu, Slnka, ŽČ archetypu)
+3. **Hodnoty a presvedčenia** (čo je dôležité a čo verím — z plných/prázdnych rovín, Theta beliefs)
+4. **Schopnosti** (čo viem — dary z mriežky, definované HD centrá, planétne sily)
+5. **Správanie** (čo robím — ORV/OMV, HD stratégia, autorita)
+6. **Prostredie** (kde a s kým — Mesiac, sakrálna čakra, jazyky lásky)
+
+**Princíp:** zmena na vyššej úrovni mení všetky nižšie, ale obrátene to neplatí. Pri probléme identifikuj na ktorej úrovni je. Pri následných otázkach pomôž klientovi rozpoznať na ktorej úrovni je jeho otázka — a navrhni prácu na adekvátnej úrovni.`,
+
+  etikoterapia: `Použi rámec **etikoterapie** (Vladimír Vogeltanz, Ctibor Bezděk) — slovensko-českej tradície ktorá mapuje životné témy a fyzické symptómy na **etické príčiny**: nezvládnuté emócie, neresti, popreté cnosti.
+
+Pri prvom výklade postupuj:
+1. **Životná téma cez etiku** — aký vnútorný konflikt cnosti vs neresti je v profile najsilnejší (z ŽČ, prázdnych rovín, izolovaných čísel, blokovaných čakier).
+2. **Etické darčeky** (cnosti ktoré klient prirodzene nesie z plných rovín a darov)
+3. **Etické úlohy** (cnosti ktoré sa učí — z prázdnych rovín, karmických dlhov, izolovaných čísel)
+4. **Praktická cesta** — konkrétne reflexné otázky a denné cvičenia (nie všeobecné rady).
+
+**Etikoterapeutický slovník (používaj):** cnosti — pokora, dôvera, pravdivosť, odpustenie, čistota srdca, statočnosť, vernosť, štedrosť, miernosť. Neresti — pýcha, závisť, hnev, lakomstvo, smilstvo (ako popretie radosti), obžerstvo (kompenzácia), lenivosť (ako útek pred životom).
+
+**KRITICKÉ:** etikoterapia nie je moralizmus. Cnosť nie je o "byť dobrý"; je o vnútornej slobode. Nikdy nehovor klientovi že je "zlý". Pomáhaš mu rozpoznať vzorec, nie odsúdiť.
+
+Pri následných otázkach sa pýtaj na svedomie, vzťahy, neodpustenie — to sú etikoterapeutické vstupy.`,
+
+  coaching: `Použi rámec **GROW koučingu** (John Whitmore) — štruktúruj rozhovor cez 4 fázy:
+
+1. **Goal (cieľ)** — čo klient skutočne chce. Pomôž mu sformulovať konkrétny, merateľný cieľ vychádzajúci z jeho ORV/OMV/K3.
+2. **Reality (realita)** — kde je teraz. Použi profil ako mapu: čo má (dary, definované HD centrá), čo ho brzdí (prázdne roviny, izolované čísla, blokované čakry).
+3. **Options (možnosti)** — aké cesty sú dostupné. Nedávaj jednu radu, ponúkni 3-5 možností opretých o profil.
+4. **Will (vôľa / kroky)** — čo konkrétne urobí v najbližšom týždni. SMART akčné kroky.
+
+**Princíp:** kouč nedáva odpovede, kladie otázky ktoré klient sám odpovedá. Takže pri prvom výklade NEROBÍŠ jednorázový integrálny popis profilu, ale **otváraš rozhovor** otázkou: "Čo by ste chceli aby z dnešnej práce vzniklo?" — a dáš 2-3 hypotézy zo svojho čítania profilu ako možné východiská.
+
+Pri následných otázkach sa drž GROW: kde je klient v procese? Aká otázka ho posunie ďalej? Vyhýbaj sa "mali by ste" — používaj "čo ak by..."`,
+};
+
+function buildSystemPrompt(): string {
+  const lens = getLens();
+  return `${SYSTEM_PROMPT_BASE}\n\n${LENS_PROMPTS[lens]}`;
+}
 
 // =====================================================================
 // Single-shot interpretation (pre jednorázový integrálny výklad)
@@ -224,7 +310,7 @@ Pripomienka:
     body: JSON.stringify({
       model,
       max_tokens: 2000,
-      system: SYSTEM_PROMPT,
+      system: buildSystemPrompt(),
       messages: [
         { role: 'user', content: userPrompt },
       ],
@@ -290,7 +376,7 @@ export async function streamChat(
   if (!apiKey) throw new Error('Anthropic API kľúč nie je nastavený.');
   const model = getModel();
 
-  const fullSystem = `${SYSTEM_PROMPT}
+  const fullSystem = `${buildSystemPrompt()}
 
 # Profil klienta (kontext rozhovoru)
 

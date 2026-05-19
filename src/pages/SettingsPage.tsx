@@ -10,6 +10,7 @@ import { searchCities, findCity } from '../data/cities';
 import {
   getApiKey, setApiKey, getModel, setModel, testApiKey,
   CLAUDE_MODELS, type ClaudeModel,
+  getLens, setLens, INTERPRETATION_LENSES, type InterpretationLens,
 } from '../engine/aiInterpretation';
 
 export function SettingsPage() {
@@ -28,6 +29,7 @@ export function SettingsPage() {
   const [aiKey, setAiKey] = useState(getApiKey());
   const [aiKeyVisible, setAiKeyVisible] = useState(false);
   const [aiModel, setAiModel] = useState<ClaudeModel>(getModel());
+  const [aiLens, setAiLens] = useState<InterpretationLens>(getLens());
   const [aiTesting, setAiTesting] = useState(false);
   const [aiTestResult, setAiTestResult] = useState<{ ok: boolean; message: string } | null>(null);
 
@@ -47,6 +49,11 @@ export function SettingsPage() {
   const handleModelChange = (m: ClaudeModel) => {
     setAiModel(m);
     setModel(m);
+  };
+
+  const handleLensChange = (l: InterpretationLens) => {
+    setAiLens(l);
+    setLens(l);
   };
 
   const startEdit = (profileId: string) => {
@@ -372,6 +379,37 @@ export function SettingsPage() {
                 </label>
               ))}
             </div>
+          </div>
+
+          <div>
+            <label className="block text-xs text-slate-400 mb-1">Štýl výkladu (lens)</label>
+            <p className="text-[11px] text-slate-500 mb-2">
+              Mení rámec cez ktorý AI číta tvoj profil. Tvoje dáta zostávajú rovnaké, mení sa len uhol pohľadu.
+            </p>
+            <div className="space-y-1">
+              {INTERPRETATION_LENSES.map(l => (
+                <label key={l.id} className={`flex items-start gap-3 p-2 rounded-lg border cursor-pointer transition-colors ${
+                  aiLens === l.id
+                    ? 'bg-violet-500/15 border-violet-500'
+                    : 'border-slate-700 hover:bg-slate-800/40'
+                }`}>
+                  <input
+                    type="radio"
+                    name="claude-lens"
+                    checked={aiLens === l.id}
+                    onChange={() => handleLensChange(l.id)}
+                    className="accent-violet-600 mt-1"
+                  />
+                  <div className="flex-1">
+                    <p className="text-sm text-white">{l.label}</p>
+                    <p className="text-[11px] text-slate-500 leading-relaxed">{l.description}</p>
+                  </div>
+                </label>
+              ))}
+            </div>
+            <p className="text-[10px] text-amber-400 mt-2">
+              💡 Tip: po zmene štýlu reštartuj rozhovor (tlačidlo ↻ v AI chate), aby sa nový rámec použil od začiatku.
+            </p>
           </div>
 
           {aiKey && (

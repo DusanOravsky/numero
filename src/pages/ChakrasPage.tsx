@@ -11,6 +11,7 @@ import { calculateHumanDesign } from '../engine/humanDesignEngine';
 import { calculateAstrology } from '../engine/astrologyEngine';
 import { motion } from 'framer-motion';
 import { SkeletonChakraList } from '../components/Skeleton';
+import { getEtikoterapiaForChakra } from '../data/etikoterapia';
 
 function computeChakras(day: number, month: number, year: number, hour: number = 12, minute: number = 0): ChakraState[] {
   const numerology = calculateFullNumerology(day, month, year);
@@ -205,6 +206,72 @@ export function ChakrasPage() {
                           ))}
                         </div>
                       )}
+
+                      {/* Etikoterapia — etická príčina + cnosť (Vogeltanz, Bezděk) */}
+                      {(() => {
+                        const eth = getEtikoterapiaForChakra(state.chakra.number);
+                        if (!eth) return null;
+                        const isBlocked = state.status === 'blocked';
+                        return (
+                          <details className="mt-3" open={isBlocked}>
+                            <summary className="text-xs text-rose-600 cursor-pointer hover:text-rose-800 select-none flex items-center gap-1">
+                              <span>✦ Etická príčina a cnosť (etikoterapia)</span>
+                              {isBlocked && (
+                                <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-rose-100 text-rose-700">
+                                  Pri blokáde najpotrebnejšie
+                                </span>
+                              )}
+                            </summary>
+                            <div className="mt-2 p-3 rounded-lg bg-rose-50 border border-rose-200 text-xs text-slate-700 space-y-2">
+                              <div>
+                                <p className="font-medium text-rose-900">Etická téma</p>
+                                <p className="text-slate-600">{eth.ethicalTheme}</p>
+                              </div>
+                              <div>
+                                <p className="font-medium text-rose-900">Blokujúce emócie / postoje</p>
+                                <div className="flex flex-wrap gap-1 mt-1">
+                                  {eth.blockingEmotions.map(e => (
+                                    <span key={e} className="px-2 py-0.5 rounded-full bg-rose-100 text-rose-700 text-[11px]">
+                                      {e}
+                                    </span>
+                                  ))}
+                                </div>
+                              </div>
+                              <div>
+                                <p className="font-medium text-emerald-900">Oslobodzujúca cnosť: {eth.liberatingVirtue}</p>
+                                <p className="text-slate-600 leading-relaxed">{eth.virtueDescription}</p>
+                              </div>
+                              <div>
+                                <p className="font-medium text-slate-700">Súvisiace orgány a systémy</p>
+                                <p className="text-slate-600">{eth.relatedOrgans.join(', ')}</p>
+                              </div>
+                              <div>
+                                <p className="font-medium text-slate-700">Typické indikátory bloku</p>
+                                <ul className="list-disc list-inside ml-1 text-slate-600 space-y-0.5">
+                                  {eth.symptomsHints.map((s, i) => (
+                                    <li key={i}>{s}</li>
+                                  ))}
+                                </ul>
+                              </div>
+                              <div>
+                                <p className="font-medium text-indigo-900">Otázky pre sebareflexiu</p>
+                                <ul className="list-disc list-inside ml-1 text-slate-700 space-y-0.5">
+                                  {eth.reflectionQuestions.map((q, i) => (
+                                    <li key={i} className="italic">{q}</li>
+                                  ))}
+                                </ul>
+                              </div>
+                              <div>
+                                <p className="font-medium text-emerald-900">Praktická cesta</p>
+                                <p className="text-slate-700 leading-relaxed">{eth.practicalPath}</p>
+                              </div>
+                              <p className="pt-2 border-t border-rose-200 text-[10px] text-slate-500 italic">
+                                Etikoterapia (V. Vogeltanz, C. Bezděk) — reflexný nástroj, nie medicínska diagnostika. Pri fyzických ťažkostiach navštívte lekára.
+                              </p>
+                            </div>
+                          </details>
+                        );
+                      })()}
                     </div>
                   </div>
                 </GlassCard>

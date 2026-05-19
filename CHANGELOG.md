@@ -4,6 +4,49 @@ All notable changes to this project are documented in this file. Dates are
 in ISO 8601 (YYYY-MM-DD). The format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 2.3.0 — 2026-05-19
+
+**MINOR**: Etikoterapia + AI interpretation lenses (NLP, etikoterapia, koučing).
+
+### Etikoterapia v ChakrasPage
+
+Nová sekcia "Etická príčina a cnosť" pre každú zo 7 čakier. Vychádza
+z tradície **Vladimíra Vogeltanza** a **Ctibora Bezděka** (slovensko-česká
+liečebná škola).
+
+Pre každú čakru:
+- **Etická téma** (vnútorný konflikt — strach, vina, neodpustenie...)
+- **Blokujúce emócie** (chips)
+- **Oslobodzujúca cnosť** (dôvera, sebaprijatie, pokora, odpustenie...)
+- **Súvisiace orgány a systémy** (etikoterapeutická anatómia)
+- **Typické indikátory bloku** (pre orientáciu, NIE diagnostika)
+- **3-4 reflexné otázky** pre sebareflexiu
+- **Praktická cesta** — konkrétne denné cvičenia
+
+Pri blokovanej čakre sa sekcia automaticky otvorí (najpotrebnejšie info).
+Disclaimer: reflexný nástroj, nie medicína.
+
+Súbor: `src/data/etikoterapia.ts` (mapping pre čakry 1-7).
+
+### AI interpretation lenses
+
+V Settings → AI integrácia nový picker "Štýl výkladu (lens)". Mení rámec
+cez ktorý AI číta profil — dáta zostávajú rovnaké, mení sa uhol pohľadu.
+
+4 dostupné štýly:
+1. **Integratívny ezoterický** (default) — pôvodný štýl, spája všetky systémy
+2. **Logické úrovne (NLP — Dilts)** — výklad cez 6 vrstiev: poslanie →
+   identita → hodnoty → schopnosti → správanie → prostredie
+3. **Etikoterapia (Vogeltanz, Bezděk)** — etické darčeky/úlohy, cnosti,
+   reflexné otázky pre svedomie
+4. **Koučing (GROW model)** — Goal/Reality/Options/Will, kouč nedáva odpovede
+   ale otvára otázky
+
+Implementácia: `aiInterpretation.ts` má `INTERPRETATION_LENSES` array,
+`getLens()/setLens()` (localStorage `anthropic-lens`), a `buildSystemPrompt()`
+ktorá kombinuje base prompt + lens-specific prompt. `generateAIInterpretation`
+a `streamChat` používajú túto funkciu — žiadny breaking change v API.
+
 ## 2.2.4 — 2026-05-19
 
 PWA fix: auto-popup "Nová verzia" sa konečne zobrazuje aj v inštalovanej

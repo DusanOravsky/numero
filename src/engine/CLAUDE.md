@@ -16,13 +16,16 @@
 | `numerologyEngine.ts` | Charakterová mriežka, ŽČ, ORV, VDD, roviny, jazyky lásky, pinnacles, challenges, karmic debts |
 | `developmentalNumerologyEngine.ts` | Vývojová mriežka so 4 zakrúžkovanými K1-K4 |
 | `nameNumerologyEngine.ts` | Numerológia mena: výraz, duša, osobnosť, hidden passion, karmic lessons, cornerstone, balance |
-| `astrologyEngine.ts` | Planéty, znamenia, ascendent, domy (Whole Sign), aspekty, progresie, solar return |
+| `astrologyEngine.ts` | Planéty, znamenia, ascendent, domy (Whole Sign), aspekty, progresie, solar return, tranzity (`calculateTransitAspects`) |
 | `humanDesignEngine.ts` | Typy, autority, centrá, kanály, brány, profil, definícia, inkarnačný kríž |
 | `chakraEngine.ts` | 7 čakier — cross-system výpočet z numerológie + HD + astrológia |
 | `kabalahEngine.ts` | 10 sefír, Strom života, primárna/sekundárna sefira |
 | `thetaHealingEngine.ts` | Limitujúce presvedčenia podľa ŽČ |
 | `compatibilityEngine.ts` | Partner + rodič-dieťa kompatibilita |
 | `interpretationEngine.ts` | Cross-system pattern matching |
+| `enneagramEngine.ts` | Enneagram typ 1-9 derivácia z ŽČ/K3, krídla, integrácia/dezintegrácia |
+| `ayurvedaEngine.ts` | Ayurvéda dóša scoring (Vata/Pitta/Kapha) z astro elementu + HD typu + ŽČ |
+| `tcmEngine.ts` | TCM 5 elementov (Drevo/Oheň/Zem/Kov/Voda) scoring z astro + ŽČ |
 | `aiInterpretation.ts` | Claude API client (single-shot + streaming chat) |
 
 ## Numerológia (podľa PDF Škola NUMERO + Robin Steinová)
@@ -156,6 +159,13 @@ Astronomy.SearchSunLongitude(natalSunLon, searchStart, 60)
 
 Vyhľadáva sa ±30 dní okolo výročia. Vracia `AstrologyResult` pre tento moment + miesto.
 
+### Tranzity (`calculateTransitAspects`)
+
+Výpočet aktuálnych tranzitných aspektov voči natálnym planétam:
+- Tranzitné planéty pre aktuálny dátum vs natálne pozície
+- Aspekty: konjunkcia, opozícia, trigon, kvadratúra, sextil (s orbami)
+- Použité v Dashboard dennom digeste a AstrologyPage
+
 ### Composite vs Davison (B18, B19)
 
 - **Composite** — pre každú planétu midpoint longitúd dvoch ľudí (kratší arc). NIE JE skutočný horoskop, len symbolická štruktúra.
@@ -274,11 +284,32 @@ export function calculateAstrology(day, month, year, hour = 12, minute = 0, ...)
 - **Pri zmene v engine VŽDY spusti `npm test` pred commitom.**
 - Pri pridaní nového referenčného profilu — lock test ihneď.
 
+## Enneagram engine (`enneagramEngine.ts`)
+
+- `deriveEnneagramType(lifePath, k3?)` — pure function, vracia typ 1-9
+- Derivácia z ŽČ (primárne) a K3 (vývojová metóda)
+- Vracia: typ, krídla (±1), integračnú a dezintegračnú cestu
+- Žiadne side effects, žiadne API calls
+
+## Ayurvéda engine (`ayurvedaEngine.ts`)
+
+- `deriveDosha(astroElement, hdType, lifePath)` — scoring pre Vata/Pitta/Kapha
+- Kombinuje dominantný astro element + HD typ + numerologický ŽČ
+- Vracia percentuálne rozloženie 3 dóš + dominantnú
+
+## TCM engine (`tcmEngine.ts`)
+
+- `deriveTCMElement(astroElement, lifePath)` — scoring pre Drevo/Oheň/Zem/Kov/Voda
+- Mapovanie z astro znamenia + ŽČ na 5 elementov
+- Vracia dominantný element + scoring
+
 ## AI engine (`aiInterpretation.ts`)
 
 - Anthropic Claude direct browser call (`anthropic-dangerous-direct-browser-access: true`)
 - API kľúč v `localStorage` pod `anthropic-api-key`
 - Default model: `claude-sonnet-4-6`
+- **max_tokens**: 4096 (streamChat), 3500 (summarizeProfile)
+- **ProfileContext**: rozšírený o `enneagram`, `dosha`, `tcm` polia (9 systémov celkovo)
 - `summarizeProfile(ctx)` — buduje text prompt zo všetkých systémov
 - `streamChat(messages, systemContext, onChunk, abortSignal)` — SSE streaming
 - `testApiKey(key)` — overenie cez ping na Haiku

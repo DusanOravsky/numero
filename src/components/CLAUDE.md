@@ -42,6 +42,25 @@ Každá stránka pri `subject.isClient === true` zobrazuje:
 `ClientNumerology.tsx` (zobrazené v `ClientDashboard`) má `clientId` prop —
 "Otvoriť detail →" linky pridajú `?client=ID` do navigácie.
 
+## NumerologyPage refaktor (v2.14.0)
+
+NumerologyPage bola zrefaktorovaná z ~1585 na ~1200 riadkov. Taby extrahované do `src/components/numerology/`:
+
+| Komponent | Účel |
+|---|---|
+| `PlanesTab` | Roviny (iba Charakterová) |
+| `KarmicTab` | Karmické cykly, pinnacles, challenges |
+| `LoveTab` | Jazyky lásky (iba Charakterová) |
+| `NameTab` | Numerológia mena |
+| `EnneagramTab` | Enneagram typ, krídla, integrácia/dezintegrácia |
+
+## ModalityPage (v2.14.0)
+
+Nová stránka `/modality` s 3 systémami:
+- **Ayurvéda** — dóša profil (Vata/Pitta/Kapha)
+- **TCM** — 5 elementov (Drevo/Oheň/Zem/Kov/Voda)
+- **Bachove kvety** — 17 esencií mapovaných na 7 čakier
+
 ## Method-aware UI (KRITICKÉ)
 
 Aplikácia podporuje 2 numerologické metódy. UI sa musí prispôsobiť:
@@ -131,7 +150,7 @@ Lens je v `localStorage` pod `anthropic-lens`. `aiInterpretation.ts` má `buildS
 |---|---|
 | `NumerologyGrid` | 3×3 mriežka, hover mini-card tooltip, klik = detail |
 | `RadarChart9` | SVG radar 9 numerologických energií |
-| `NatalWheel` | SVG natálne koliesko 12 sektorov + planéty |
+| `NatalWheel` | SVG natálne koliesko 12 sektorov + planéty (prepísaný: korektná arc math, anti-collision) |
 | `Bodygraph` | HD bodygraph s aktívnymi bránami pri každom centre |
 | `TreeOfLife` | SVG kabalistický strom 10 sefír + 22 ciest |
 | `ChakraWheel` | 7 čakier ako kruhový gradient |
@@ -141,6 +160,8 @@ Lens je v `localStorage` pod `anthropic-lens`. `aiInterpretation.ts` má `buildS
 | `UpcomingEclipses` | Najbližších 6 zatmení |
 | `ProgressionsView` | Sekundárne progresie s vekovým pickerom |
 | `SolarReturnView` | Výročný horoskop pre konkrétny rok |
+| `ClientExport` | PDF vizualizácie (natálne koliesko + bodygraph) |
+| `ClientSummary` | Cross-system príbeh, enneagram, ayurvéda/TCM |
 
 ## Tailwind konvencie
 

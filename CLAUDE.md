@@ -1,6 +1,6 @@
 # Integrálna mapa bytia (Número)
 
-Offline-first PWA pre numerológiu, astrológiu, Human Design, etikoterapiu, kabalu, Theta Healing a sebarozvoj.
+Offline-first PWA pre numerológiu, astrológiu, Human Design, etikoterapiu, kabalu, Theta Healing, Enneagram, Ayurvédu, TCM a sebarozvoj. **v2.14.0**
 
 > 📁 **Nested CLAUDE.md súbory:**
 > - `src/engine/CLAUDE.md` — engine pravidlá, numerológia/astrológia/HD matematika
@@ -67,8 +67,10 @@ src/
   engine/          # Výpočtové moduly (bez UI závislostí) — viď src/engine/CLAUDE.md
   data/            # Statické dáta a výklady
   components/      # Reusable UI — viď src/components/CLAUDE.md
+    numerology/    # NumerologyPage taby (PlanesTab, KarmicTab, LoveTab, NameTab, EnneagramTab)
   pages/           # Stránky (routes, lazy-loaded okrem Dashboard)
-  store/           # Zustand store s migráciou
+    ModalityPage   # Ayurvéda + TCM + Bachove kvety (/modality)
+  store/           # Zustand store s migráciou (IndexedDB persist)
   layouts/         # MainLayout so sidebar/bottom nav
   styles/          # Tailwind + light mode overrides
   hooks/           # useTheme, useSessionState, usePerformanceMetrics
@@ -87,6 +89,8 @@ Anthropic Claude priamo z prehliadača (header `anthropic-dangerous-direct-brows
 - API kľúč len v `localStorage` (nikdy v store ani v bundle)
 - Settings → "✦ AI integrácia (Claude)" — input + Test + Save
 - Modely: Haiku 4.5 / Sonnet 4.6 (default) / Opus 4.7
+- **max_tokens**: 4096 (stream chat), 3500 (summarize)
+- **ProfileContext**: 9 systémov (numerológia, astrológia, HD, čakry, kabala, theta, enneagram, dosha, tcm)
 - **Interpretation lenses** (v2.3.0): integratívny ezoterický (default), logické úrovne (NLP/Dilts), etikoterapia (Vogeltanz/Bezděk), koučing (GROW). Volia sa v Settings, perzistované v `localStorage` pod `anthropic-lens`. Lens iba mení system prompt, žiadny vplyv na engine výpočty.
 - Triggery: Dashboard (celý profil), Numerology Prehľad (per metóda), ClientDashboard (per klient)
 - Komponent: `components/AIChat.tsx` so streaming, históriou per profile/klient/metóda v localStorage
@@ -95,6 +99,10 @@ Anthropic Claude priamo z prehliadača (header `anthropic-dangerous-direct-brows
 ## Doplnkové modality
 
 - **Etikoterapia** (`src/data/etikoterapia.ts`) — slovensko-česká liečebná tradícia (Vogeltanz, Bezděk). Mapuje 7 čakier na etické príčiny + cnosti + orgány + reflexné otázky + praktickú cestu. Renderuje sa ako collapsible sekcia v ChakrasPage pri každej čakrovej karte. **Nie je medicínsky nástroj** — vždy s disclaimerom. Pri blokovanej čakre auto-open.
+- **Enneagram** (`src/engine/enneagramEngine.ts`) — typ 1-9 derivovaný z ŽČ/K3, krídla, integrácia/dezintegrácia. Tab v NumerologyPage, riadky v ComparePage.
+- **Ayurvéda** (`src/engine/ayurvedaEngine.ts`) — 3 dóše (Vata/Pitta/Kapha) derivované z astro elementu + HD typu + ŽČ. Stránka `/modality`.
+- **TCM 5 elementov** (`src/engine/tcmEngine.ts`) — Drevo/Oheň/Zem/Kov/Voda derivované z astro + ŽČ. Stránka `/modality`.
+- **Bachove kvety** — 17 esencií mapovaných na 7 čakier. Stránka `/modality`.
 
 ## Performance & quality
 
@@ -196,12 +204,32 @@ Stratégia podľa [SemVer](https://semver.org/):
 - iOS Safari: manuálny "Add to Home Screen" hint cez `showIOSHint`
 - Android/Chrome: `beforeinstallprompt` event handler s "Nainštalovať" prompt
 
-## Store (Zustand + persist)
+## Store (Zustand + persist → IndexedDB)
 
 - Verzia 4, migrácie v `src/store/useStore.ts`
 - Profily, klienti (s tags), reports (max 200), favourites
 - Preferencie: language (sk/en), numerologyMethod, themeMode
-- Persisted v localStorage pod kľúčom `numero-store`
+- Persisted cez zustand persist v **IndexedDB** (nie localStorage)
+
+## Export / Import
+
+- **Settings záloha** — export/import profily + klienti + reporty + nastavenia (JSON)
+- **Hromadný export klientov** — CSV/JSON
+- **Import zálohy** — restore zo zálohy
+- **Dashboard PDF export** — vlastný profil (natálne koliesko + bodygraph vizualizácie)
+
+## Statické dáta
+
+- 230 citátov, 225 mantier, 22 tarot kariet × 12 rád
+
+## Vzťahy a porovnania
+
+- **ComparePage** — vlastný profil v porovnaní + enneagram riadky
+- **Rodinná konštelácia** mód (otec + matka + deti) vo Vzťahoch
+
+## Dashboard
+
+- **Denný digest** — ranný rituál + enneagram tip + etikoterapia otázka + kabala čin
 
 ## Konvencie
 
@@ -216,7 +244,7 @@ Stratégia podľa [SemVer](https://semver.org/):
 
 ## Testovanie
 
-- **78 unit + component testov** (`npm test`)
+- **80+ unit + component testov** (`npm test`)
 - **4 E2E smoke testov** (`npm run test:e2e`)
 - Lock testy pre kritické hodnoty: 30.8.1979 02:40 Bratislava → HD profil 1/3, ŽČ 1 z 37, čakra root score 45
 - Component testy: PersonalYearTimeline, RadarChart9

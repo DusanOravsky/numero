@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-export type Gender = 'male' | 'female' | 'other';
+export type Gender = 'male' | 'female';
 
 export interface UserProfile {
   id: string;

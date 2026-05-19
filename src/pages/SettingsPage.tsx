@@ -15,7 +15,7 @@ export function SettingsPage() {
   const [editMinute, setEditMinute] = useState('');
   const [editPlace, setEditPlace] = useState('');
   const [editName, setEditName] = useState('');
-  const [editGender, setEditGender] = useState<'male' | 'female' | 'other' | ''>('');
+  const [editGender, setEditGender] = useState<'male' | 'female' | ''>('');
   const [citySuggestions, setCitySuggestions] = useState<{ name: string }[]>([]);
 
   const startEdit = (profileId: string) => {
@@ -120,10 +120,9 @@ export function SettingsPage() {
                   </div>
                   <div>
                     <label className="block text-xs text-slate-500 mb-1">Pohlavie</label>
-                    <div className="grid grid-cols-3 gap-2">
+                    <div className="grid grid-cols-2 gap-2">
                       <button type="button" onClick={() => setEditGender('male')} className={`py-1.5 rounded-lg text-xs border-2 ${editGender === 'male' ? 'border-blue-500 bg-blue-50 text-blue-700 font-medium' : 'border-slate-200 bg-white text-slate-600'}`}>♂ Muž</button>
                       <button type="button" onClick={() => setEditGender('female')} className={`py-1.5 rounded-lg text-xs border-2 ${editGender === 'female' ? 'border-rose-500 bg-rose-50 text-rose-700 font-medium' : 'border-slate-200 bg-white text-slate-600'}`}>♀ Žena</button>
-                      <button type="button" onClick={() => setEditGender(editGender === 'other' ? '' : 'other')} className={`py-1.5 rounded-lg text-xs border-2 ${editGender === 'other' ? 'border-slate-500 bg-slate-100 text-slate-700 font-medium' : 'border-slate-200 bg-white text-slate-600'}`}>Iné</button>
                     </div>
                   </div>
                   <div>

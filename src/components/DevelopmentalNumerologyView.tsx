@@ -6,7 +6,7 @@ import { developmentalMeanings, developmentalGridIntro } from '../data/developme
 interface Props {
   result: DevelopmentalNumerologyResult;
   /** Biologické pohlavie osoby — pre porovnanie s polaritou ega */
-  gender?: 'male' | 'female' | 'other';
+  gender?: 'male' | 'female';
 }
 
 export function DevelopmentalNumerologyView({ result, gender }: Props) {
@@ -119,7 +119,7 @@ export function DevelopmentalNumerologyView({ result, gender }: Props) {
           </p>
 
           {/* Kontextový výklad podľa pohlavia */}
-          {gender && gender !== 'other' && (() => {
+          {gender && (() => {
             const genderMatchesEgo =
               (gender === 'male' && result.egoPolarity === 'masculine') ||
               (gender === 'female' && result.egoPolarity === 'feminine');

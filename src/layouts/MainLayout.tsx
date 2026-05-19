@@ -1,5 +1,6 @@
+import { useState } from 'react';
 import { Outlet, NavLink, useLocation } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const NAV_ITEMS = [
   { path: '/', label: 'Dashboard', icon: '⬡' },
@@ -14,9 +15,16 @@ const NAV_ITEMS = [
   { path: '/settings', label: 'Nastavenia', icon: '⚙' },
 ];
 
+// Pre mobilnú spodnú navigáciu vyberieme len najpoužívanejšie položky.
+// Zvyšok sa zobrazí v bottom-sheet po klepnutí na "Viac".
+const MOBILE_PRIMARY = ['/', '/numerology', '/astrology', '/human-design', '/relationships'];
+const MOBILE_PRIMARY_ITEMS = NAV_ITEMS.filter(i => MOBILE_PRIMARY.includes(i.path));
+const MOBILE_MORE_ITEMS = NAV_ITEMS.filter(i => !MOBILE_PRIMARY.includes(i.path));
+
 export function MainLayout() {
   const location = useLocation();
   const logoSrc = `${import.meta.env.BASE_URL}icons/logo.svg`;
+  const [showMoreSheet, setShowMoreSheet] = useState(false);
 
   return (
     <div className="min-h-screen flex flex-col lg:flex-row">
@@ -46,7 +54,7 @@ export function MainLayout() {
           ))}
         </nav>
         <div className="p-4 border-t border-slate-100 text-center">
-          <p className="text-[10px] text-slate-400">v1.4.0</p>
+          <p className="text-[10px] text-slate-400">v1.5.0</p>
         </div>
       </aside>
 
@@ -72,14 +80,14 @@ export function MainLayout() {
       </main>
 
       <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-50" aria-label="Hlavná navigácia">
-        <div className="flex overflow-x-auto items-center py-2 px-1 gap-1 scrollbar-none">
-          {NAV_ITEMS.map(item => (
+        <div className="grid grid-cols-6 items-center py-1.5 px-1">
+          {MOBILE_PRIMARY_ITEMS.map(item => (
             <NavLink
               key={item.path}
               to={item.path}
               aria-label={item.label}
               className={({ isActive }) =>
-                `flex flex-col items-center gap-0.5 px-3 py-2 rounded-xl transition-all shrink-0 ${
+                `flex flex-col items-center gap-0.5 py-2 rounded-xl transition-all ${
                   isActive ? 'text-indigo-600 font-medium' : 'text-slate-400'
                 }`
               }
@@ -88,8 +96,66 @@ export function MainLayout() {
               <span className="text-[9px]">{item.label}</span>
             </NavLink>
           ))}
+          <button
+            type="button"
+            onClick={() => setShowMoreSheet(true)}
+            aria-label="Viac"
+            className="flex flex-col items-center gap-0.5 py-2 rounded-xl text-slate-400 hover:text-indigo-600"
+          >
+            <span className="text-lg">⋯</span>
+            <span className="text-[9px]">Viac</span>
+          </button>
         </div>
       </nav>
+
+      {/* Bottom sheet pre "Viac" položky */}
+      <AnimatePresence>
+        {showMoreSheet && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowMoreSheet(false)}
+              className="lg:hidden fixed inset-0 bg-black/30 z-[60]"
+            />
+            <motion.div
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+              className="lg:hidden fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl z-[70] p-6 pb-8 shadow-2xl"
+            >
+              <div className="w-12 h-1 bg-slate-300 rounded-full mx-auto mb-4" />
+              <h3 className="font-medium text-slate-800 mb-4">Viac sekcií</h3>
+              <div className="grid grid-cols-2 gap-3">
+                {MOBILE_MORE_ITEMS.map(item => (
+                  <NavLink
+                    key={item.path}
+                    to={item.path}
+                    onClick={() => setShowMoreSheet(false)}
+                    className={({ isActive }) =>
+                      `flex items-center gap-3 p-3 rounded-xl border transition-all ${
+                        isActive ? 'border-indigo-500 bg-indigo-50 text-indigo-700' : 'border-slate-200 text-slate-700 hover:bg-slate-50'
+                      }`
+                    }
+                  >
+                    <span className="text-xl">{item.icon}</span>
+                    <span className="text-sm font-medium">{item.label}</span>
+                  </NavLink>
+                ))}
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowMoreSheet(false)}
+                className="w-full mt-4 py-2 text-sm text-slate-500"
+              >
+                Zavrieť
+              </button>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

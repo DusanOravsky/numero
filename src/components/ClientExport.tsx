@@ -251,7 +251,7 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
               doc.setFont('helvetica', 'italic');
               doc.setTextColor(120, 120, 120);
               doc.text(`Vygenerovane: ${new Date().toLocaleDateString('sk-SK')} ${new Date().toLocaleTimeString('sk-SK')}`, 14, y);
-              doc.text('Integralna mapa bytia v1.4.0', 196, y, { align: 'right' });
+              doc.text('Integralna mapa bytia v1.5.0', 196, y, { align: 'right' });
               doc.setTextColor(0, 0, 0);
 
               addPageNumber();

@@ -609,3 +609,83 @@ export function summarizeSynastry(aspects: SynastryAspect[]): SynastrySummary {
     topAspects: aspects.slice(0, 12),
   };
 }
+
+export interface TransitAspect {
+  transitPlanet: string;
+  transitSign: string;
+  natalPlanet: string;
+  natalSign: string;
+  aspect: SynastryAspectName;
+  orb: number;
+  symbol: string;
+  nature: 'harmonic' | 'tense' | 'neutral';
+  description: string;
+  meaning: string;
+}
+
+const TRANSIT_MEANINGS: Record<string, Record<SynastryAspectName, string>> = {
+  'Slnko': { conjunction: 'Zvýšená energia a vitalita v tejto oblasti', opposition: 'Napätie medzi tým, čo chceš a čo svet vyžaduje', trine: 'Plynulá podpora a kreatívna energia', square: 'Výzva na akciu — niečo treba zmeniť', sextile: 'Príležitosť na sebavyjadrenie' },
+  'Mesiac': { conjunction: 'Emočná intenzita, citlivosť', opposition: 'Emocionálne napätie vo vzťahoch', trine: 'Emocionálna harmónia a pohodlie', square: 'Vnútorný nepokoj, potreba starostlivosti', sextile: 'Jemná emocionálna podpora' },
+  'Merkúr': { conjunction: 'Mentálna jasnosť, dôležitá komunikácia', opposition: 'Nedorozumenia, potreba pozorného počúvania', trine: 'Jasné myslenie, dobré rozhovory', square: 'Mentálny tlak, rozhodovacia únava', sextile: 'Nové nápady a intelektuálne podnety' },
+  'Venuša': { conjunction: 'Krása, láska, príťažlivosť', opposition: 'Vzťahové zrkadlenie — vidíš v druhom seba', trine: 'Harmónia vo vzťahoch a financiách', square: 'Hodnotový konflikt, pokušenie', sextile: 'Spoločenská príležitosť, tvorivá iskra' },
+  'Mars': { conjunction: 'Energia, vôľa, akcia — iniciuj!', opposition: 'Konflikty, potreba asertivity', trine: 'Produktívna energia, fyzická sila', square: 'Frustrácia, impulzívnosť — spomali', sextile: 'Motivácia a odvaha konať' },
+  'Jupiter': { conjunction: 'Expanzia, šťastie, rast', opposition: 'Prehnaný optimizmus, pozor na excesy', trine: 'Hojnosť a príležitosti prichádzajú', square: 'Rast cez prekonanie pohodlnosti', sextile: 'Šťastná náhoda, učenie sa' },
+  'Saturn': { conjunction: 'Vážnosť, zodpovednosť, štruktúra', opposition: 'Konfrontácia s realitou a limitmi', trine: 'Disciplinovaný rast, uznanie', square: 'Obmedzenie, lekcia trpezlivosti', sextile: 'Stabilizácia a dozrievanie' },
+};
+
+/**
+ * Vypočíta tranzitné aspekty — aktuálne planéty vs natálny horoskop.
+ * Používa zúžené orby (tranzity sú presnejšie ako synastria).
+ */
+export function calculateTransitAspects(natal: AstrologyResult, transitDate?: Date): TransitAspect[] {
+  const now = transitDate || new Date();
+  const transitChart = calculateAstrology(now.getDate(), now.getMonth() + 1, now.getFullYear(), now.getHours(), now.getMinutes());
+  const results: TransitAspect[] = [];
+
+  const outerPlanets = ['Jupiter', 'Saturn', 'Urán', 'Neptún', 'Pluto'];
+  const transitOrbs: Record<string, number> = {
+    'Slnko': 2, 'Mesiac': 2, 'Merkúr': 2, 'Venuša': 2, 'Mars': 3,
+    'Jupiter': 4, 'Saturn': 4, 'Urán': 3, 'Neptún': 3, 'Pluto': 3,
+  };
+
+  transitChart.planets.forEach(tp => {
+    if (tp.name === 'Lilith' || tp.name === 'Chiron') return;
+    const maxOrb = transitOrbs[tp.name] || 3;
+
+    natal.planets.forEach(np => {
+      if (np.name === 'Lilith' || np.name === 'Chiron') return;
+      if (tp.name === 'Mesiac' && !outerPlanets.includes(np.name) && np.name !== 'Slnko') return;
+
+      const distance = angularDistance(tp.longitude, np.longitude);
+
+      (Object.entries(ASPECT_DEFINITIONS) as Array<[SynastryAspectName, typeof ASPECT_DEFINITIONS[SynastryAspectName]]>).forEach(([name, def]) => {
+        const orb = Math.abs(distance - def.angle);
+        if (orb <= maxOrb) {
+          const meanings = TRANSIT_MEANINGS[tp.name];
+          const meaning = meanings?.[name] || def.description;
+          results.push({
+            transitPlanet: tp.name,
+            transitSign: tp.sign.name,
+            natalPlanet: np.name,
+            natalSign: np.sign.name,
+            aspect: name,
+            orb,
+            symbol: def.symbol,
+            nature: def.nature,
+            description: def.description,
+            meaning,
+          });
+        }
+      });
+    });
+  });
+
+  results.sort((a, b) => {
+    const priorityA = outerPlanets.includes(a.transitPlanet) ? 0 : 1;
+    const priorityB = outerPlanets.includes(b.transitPlanet) ? 0 : 1;
+    if (priorityA !== priorityB) return priorityA - priorityB;
+    return a.orb - b.orb;
+  });
+
+  return results;
+}

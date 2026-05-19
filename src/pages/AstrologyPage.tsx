@@ -4,8 +4,8 @@ import { useSubject } from '../hooks/useSubject';
 import { GlassCard } from '../components/GlassCard';
 import { EnergyCard } from '../components/EnergyCard';
 import { DateInput } from '../components/DateInput';
-import { calculateAstrology, calculateNatalAspects } from '../engine/astrologyEngine';
-import type { AstrologyResult, SynastryAspect } from '../engine/astrologyEngine';
+import { calculateAstrology, calculateNatalAspects, calculateTransitAspects } from '../engine/astrologyEngine';
+import type { AstrologyResult, SynastryAspect, TransitAspect } from '../engine/astrologyEngine';
 import { motion } from 'framer-motion';
 import { planetInSignDescriptions } from '../data/planetSignDescriptions';
 import { LunarTimeline } from '../components/LunarTimeline';
@@ -392,6 +392,59 @@ export function AstrologyPage() {
                 <p className="text-lg text-indigo-300 font-serif">{result.moonPhase}</p>
                 <p className="text-xs text-slate-400 mt-2">{getMoonPhaseDescription(result.moonPhase)}</p>
               </GlassCard>
+
+              {/* Tranzity — čo sa deje TERAZ */}
+              {(() => {
+                const transits: TransitAspect[] = calculateTransitAspects(result);
+                if (transits.length === 0) return null;
+                const important = transits.filter(t => ['Jupiter', 'Saturn', 'Urán', 'Neptún', 'Pluto'].includes(t.transitPlanet));
+                const personal = transits.filter(t => !['Jupiter', 'Saturn', 'Urán', 'Neptún', 'Pluto'].includes(t.transitPlanet));
+                return (
+                  <GlassCard>
+                    <h3 className="font-medium text-white mb-2">Aktuálne tranzity</h3>
+                    <p className="text-xs text-slate-500 mb-4">
+                      Planéty na oblohe práve teraz tvoria aspekty k tvojim natálnym pozíciám. Vonkajšie planéty (Jupiter–Pluto) sú dlhodobejšie a dôležitejšie.
+                    </p>
+
+                    {important.length > 0 && (
+                      <div className="mb-4">
+                        <p className="text-xs text-amber-400 uppercase font-semibold mb-2">Dlhodobé (vonkajšie planéty)</p>
+                        <div className="space-y-2">
+                          {important.slice(0, 6).map((t, i) => (
+                            <div key={i} className={`p-3 rounded-xl border ${t.nature === 'harmonic' ? 'bg-emerald-500/10 border-emerald-500/20' : t.nature === 'tense' ? 'bg-rose-500/10 border-rose-500/20' : 'bg-indigo-500/10 border-indigo-500/20'}`}>
+                              <div className="flex items-center gap-2 mb-1">
+                                <span className="text-sm font-medium text-white">{t.transitPlanet} {t.symbol} {t.natalPlanet}</span>
+                                <span className="text-xs text-slate-400 ml-auto">orb {t.orb.toFixed(1)}°</span>
+                              </div>
+                              <p className="text-xs text-slate-300">{t.meaning}</p>
+                              <p className="text-[10px] text-slate-500 mt-1">Tranzit {t.transitPlanet} v {t.transitSign} → natálny {t.natalPlanet} v {t.natalSign}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {personal.length > 0 && (
+                      <details>
+                        <summary className="text-xs text-indigo-700 font-medium cursor-pointer hover:text-indigo-800 select-none">
+                          Krátkodobé tranzity ({personal.length}) — Slnko, Mesiac, osobné planéty
+                        </summary>
+                        <div className="space-y-2 mt-3">
+                          {personal.slice(0, 8).map((t, i) => (
+                            <div key={i} className={`p-2 rounded-lg border ${t.nature === 'harmonic' ? 'bg-emerald-500/5 border-emerald-500/15' : t.nature === 'tense' ? 'bg-rose-500/5 border-rose-500/15' : 'bg-slate-500/5 border-slate-500/15'}`}>
+                              <div className="flex items-center gap-2">
+                                <span className="text-xs font-medium text-white">{t.transitPlanet} {t.symbol} {t.natalPlanet}</span>
+                                <span className="text-[10px] text-slate-400 ml-auto">{t.orb.toFixed(1)}°</span>
+                              </div>
+                              <p className="text-[10px] text-slate-400">{t.meaning}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </details>
+                    )}
+                  </GlassCard>
+                );
+              })()}
 
               <LunarTimeline />
 

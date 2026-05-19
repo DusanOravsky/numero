@@ -237,11 +237,84 @@ export function HumanDesignPage() {
             </GlassCard>
           </div>
 
+          {/* Ako čítať bodygraph — vysvetlenie pre laikov */}
+          <GlassCard>
+            <h3 className="font-medium text-white mb-3">Ako čítať bodygraph</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-slate-700">
+              <div className="p-3 rounded-xl bg-indigo-50 border border-indigo-200">
+                <p className="font-semibold text-indigo-700 mb-1">Farebné štvorce = Definované centrá</p>
+                <p>Energia, ktorú máš konzistentne. Je to tvoja spoľahlivá sila — vždy funguje rovnako, bez ohľadu na to, kto je okolo teba.</p>
+              </div>
+              <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
+                <p className="font-semibold text-slate-700 mb-1">Biele štvorce = Otvorené centrá</p>
+                <p>Tu absorbujúeš energiu od iných. Nie je to slabosť — je to miesto, kde sa učíš a získavaš múdrosť. Ale tiež miesto, kde ťa svet ovplyvňuje.</p>
+              </div>
+              <div className="p-3 rounded-xl bg-indigo-50 border border-indigo-200">
+                <p className="font-semibold text-indigo-700 mb-1">Hrubé čiary = Aktívne kanály</p>
+                <p>Spojenie dvoch centier = konzistentná životná téma a dar. Kanál je vždy aktívny — je to niečo, čo v tebe „beží" neustále.</p>
+              </div>
+              <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
+                <p className="font-semibold text-slate-700 mb-1">Čísla pri centrách = Brány</p>
+                <p>Brána je „pol kanála" — máš tú energiu, ale hľadáš prepojenie s niekým, kto má druhú polovicu. Číslo brány zodpovedá hexagramu I-Ching.</p>
+              </div>
+            </div>
+          </GlassCard>
+
           <GlassCard>
             <h3 className="font-medium text-white mb-4 text-center">Bodygraph</h3>
             <div className="pb-8">
               <Bodygraph result={result} />
             </div>
+          </GlassCard>
+
+          {/* Detailný výpis všetkých aktívnych brán */}
+          <GlassCard>
+            <h3 className="font-medium text-white mb-2">Tvoje aktívne brány</h3>
+            <p className="text-xs text-slate-500 mb-4">
+              Brány sú špecifické energie vo tvojom dizajne. <strong className="text-amber-300">Personality brány</strong> (vedomé — Slnko čierne) sú to, čo si o sebe vieš. <strong className="text-violet-300">Design brány</strong> (nevedomé — Slnko červené) sú to, čo vidia iní, ale ty nie.
+            </p>
+
+            {/* Personality gates */}
+            {result.personalityGates.length > 0 && (
+              <div className="mb-4">
+                <p className="text-xs text-amber-400 uppercase font-semibold mb-2">Vedomé (Personality)</p>
+                <div className="space-y-2">
+                  {result.personalityGates.map(g => (
+                    <div key={`p-${g.gate}-${g.planet}`} className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="w-7 h-7 rounded-full bg-amber-500/30 text-amber-200 font-bold text-xs flex items-center justify-center">{g.gate}</span>
+                        <span className="text-sm text-white font-medium">Brána {g.gate}.{g.line}</span>
+                        <span className="text-xs text-slate-400 ml-auto">{g.planet}</span>
+                      </div>
+                      {GATE_DESCRIPTIONS[g.gate] && (
+                        <p className="text-xs text-slate-300">{GATE_DESCRIPTIONS[g.gate]}</p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Design gates */}
+            {result.designGates.length > 0 && (
+              <div>
+                <p className="text-xs text-violet-400 uppercase font-semibold mb-2">Nevedomé (Design)</p>
+                <div className="space-y-2">
+                  {result.designGates.map(g => (
+                    <div key={`d-${g.gate}-${g.planet}`} className="p-3 rounded-xl bg-violet-500/10 border border-violet-500/20">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="w-7 h-7 rounded-full bg-violet-500/30 text-violet-200 font-bold text-xs flex items-center justify-center">{g.gate}</span>
+                        <span className="text-sm text-white font-medium">Brána {g.gate}.{g.line}</span>
+                        <span className="text-xs text-slate-400 ml-auto">{g.planet}</span>
+                      </div>
+                      {GATE_DESCRIPTIONS[g.gate] && (
+                        <p className="text-xs text-slate-300">{GATE_DESCRIPTIONS[g.gate]}</p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </GlassCard>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

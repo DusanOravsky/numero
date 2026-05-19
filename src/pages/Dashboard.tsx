@@ -226,6 +226,76 @@ export function Dashboard() {
         </div>
       </GlassCard>
 
+      {/* Astro tranzity dnes */}
+      {fullResults && (() => {
+        const todayAstro = calculateAstrology(currentDay, currentMonth, currentYear, 12, 0);
+        const signs = ['Baran', 'Býk', 'Blíženci', 'Rak', 'Lev', 'Panna', 'Váhy', 'Škorpión', 'Strelec', 'Kozorožec', 'Vodnár', 'Ryby'];
+        const aspectTypes: Record<number, { name: string; emoji: string; vibe: string }> = {
+          0: { name: 'spojenie', emoji: '☌', vibe: 'aktivuje a zosilňuje' },
+          6: { name: 'opozícia', emoji: '☍', vibe: 'výzva a integrácia protikladov' },
+          3: { name: 'kvadratúra', emoji: '□', vibe: 'tlak a potreba konať' },
+          4: { name: 'trigón', emoji: '△', vibe: 'plynulý tok, podpora' },
+        };
+        const transitPlanets = todayAstro.planets.filter(p => ['Jupiter', 'Saturn', 'Urán', 'Neptún', 'Pluto'].includes(p.name));
+
+        type Hit = { planet: string; transitSign: string; aspectKey: number; natalPlanet: string; natalSign: string };
+        const hits: Hit[] = [];
+
+        transitPlanets.forEach(transit => {
+          const tIdx = signs.indexOf(transit.sign.name);
+          fullResults.astrology.planets.forEach(natal => {
+            const nIdx = signs.indexOf(natal.sign.name);
+            const diff = Math.abs(tIdx - nIdx);
+            const norm = diff > 6 ? 12 - diff : diff;
+            if ([0, 3, 4, 6].includes(norm)) {
+              hits.push({
+                planet: transit.name,
+                transitSign: transit.sign.name,
+                aspectKey: norm,
+                natalPlanet: natal.name,
+                natalSign: natal.sign.name,
+              });
+            }
+          });
+        });
+
+        // Top 5 najvýraznejších (preferujeme rare aspekty)
+        const priority: Record<number, number> = { 0: 4, 6: 3, 3: 2, 4: 1 };
+        hits.sort((a, b) => priority[b.aspectKey] - priority[a.aspectKey]);
+        const top = hits.slice(0, 5);
+
+        if (top.length === 0) return null;
+
+        return (
+          <GlassCard delay={0.42}>
+            <h3 className="font-medium text-white mb-2">Astro tranzity dnes</h3>
+            <p className="text-xs text-slate-500 mb-3">
+              Hlavné aspekty pomalých tranzitných planét (Jupiter+) na váš natálny horoskop. Ovplyvňujú témy dlhodobého trvania.
+            </p>
+            <div className="space-y-2">
+              {top.map((h, i) => {
+                const aspect = aspectTypes[h.aspectKey];
+                return (
+                  <div key={i} className="p-2.5 rounded-lg bg-cyan-500/10 border border-cyan-500/20">
+                    <p className="text-xs text-slate-700">
+                      <strong className="text-cyan-700">{h.planet}</strong> v {h.transitSign}{' '}
+                      <span className="text-amber-700">{aspect.emoji} {aspect.name}</span>{' '}
+                      → natálny <strong>{h.natalPlanet}</strong> v {h.natalSign}
+                    </p>
+                    <p className="text-[11px] text-slate-500 mt-0.5 italic">
+                      {aspect.vibe}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+            <p className="text-[10px] text-slate-400 mt-2 italic">
+              Detail všetkých tranzitov: záložka Astrológia → spodná sekcia.
+            </p>
+          </GlassCard>
+        );
+      })()}
+
       {/* Integrálny súhrn profilu */}
       {profile && fullResults && (
         <ClientSummary

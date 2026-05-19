@@ -4,6 +4,28 @@ All notable changes to this project are documented in this file. Dates are
 in ISO 8601 (YYYY-MM-DD). The format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 2.2.4 — 2026-05-19
+
+PWA fix: auto-popup "Nová verzia" sa konečne zobrazuje aj v inštalovanej
+PWA na ploche (standalone mode).
+
+**Problém:** v `PWAPrompts.tsx` `useEffect` mal hneď na začiatku
+`if (isInStandaloneMode()) return;` — to znamenalo že version compare
+(localStorage.app-version vs APP_VERSION) sa **nikdy nespustil** keď
+bola appka nainštalovaná na ploche. Pop-up fungoval iba v browser
+tabe, čo je presne opačná situácia ako tá kde je auto-update najviac
+potrebný.
+
+**Symptóm:** Po manuálnej aktualizácii na 2.2.3 z plochy sa appka
+prepla na novú verziu, ale "Nová verzia" pop-up sa nikdy neukázal.
+
+**Fix:** Reštrukturalizácia `useEffect`:
+1. Online/offline listener + version compare → vždy aktívne
+2. Install hints (iOS, beforeinstallprompt) → iba ak NIE je standalone
+
+Auto-popup sa teraz triggers v každej situácii — či už máš appku
+v browser tabe alebo nainštalovanú na ploche.
+
 ## 2.2.3 — 2026-05-19
 
 PWA fix: manuálny "Skontrolovať update" v Settings teraz reálne funguje.

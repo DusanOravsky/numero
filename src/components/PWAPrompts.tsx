@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const APP_VERSION = '2.2.3';
+const APP_VERSION = '2.2.4';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -38,16 +38,41 @@ export function PWAPrompts() {
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
 
   useEffect(() => {
-    // Ak už beží ako nainštalovaná appka, nič neukazuj
-    if (isInStandaloneMode()) return;
+    // Online/offline detection — vždy aktívne (aj v standalone mode)
+    const onOnline = () => setIsOffline(false);
+    const onOffline = () => setIsOffline(true);
+    window.addEventListener('online', onOnline);
+    window.addEventListener('offline', onOffline);
+
+    // Auto-update prompt: zobrazí sa IBA raz po reálnom upgrade — keď sa
+    // localStorage.app-version (zo starej verzie) líši od aktuálne načítanej
+    // APP_VERSION. KRITICKÉ: spúšťame to AJ v standalone mode (inštalovaná
+    // PWA na ploche) — práve tam je auto-popup najpotrebnejší.
+    const lastVersion = localStorage.getItem('app-version');
+    if (lastVersion && lastVersion !== APP_VERSION) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setShowUpdate(true);
+      localStorage.removeItem('pwa-install-dismissed');
+      localStorage.removeItem('pwa-ios-hint-dismissed');
+    } else if (!lastVersion) {
+      // First load — uložíme aktuálnu verziu
+      localStorage.setItem('app-version', APP_VERSION);
+    }
+
+    // Install hints — iba ak appka NIE JE už nainštalovaná
+    if (isInStandaloneMode()) {
+      return () => {
+        window.removeEventListener('online', onOnline);
+        window.removeEventListener('offline', onOffline);
+      };
+    }
 
     // iOS Safari nepodporuje beforeinstallprompt — zobrazíme manuálny tip
+    let iosTimer: ReturnType<typeof setTimeout> | null = null;
     if (isIOS()) {
       const iosDismissed = localStorage.getItem('pwa-ios-hint-dismissed');
       if (!iosDismissed) {
-        // krátka oneskorená iniciácia, aby používateľ stihol vidieť obsah
-        const t = setTimeout(() => setShowIOSHint(true), 3000);
-        return () => clearTimeout(t);
+        iosTimer = setTimeout(() => setShowIOSHint(true), 3000);
       }
     }
 
@@ -62,28 +87,8 @@ export function PWAPrompts() {
     };
     window.addEventListener('beforeinstallprompt', handler);
 
-    // Online/offline detection
-    const onOnline = () => setIsOffline(false);
-    const onOffline = () => setIsOffline(true);
-    window.addEventListener('online', onOnline);
-    window.addEventListener('offline', onOffline);
-
-    // Auto-update prompt: zobrazí sa IBA raz po reálnom upgrade — keď sa
-    // localStorage.app-version (zo starej verzie) líši od aktuálne načítanej
-    // APP_VERSION. Po zatvorení promptu (Aktualizovať alebo Neskôr) sa verzia
-    // synchronizuje a prompt sa už znova nezobrazí pre rovnakú verziu.
-    const lastVersion = localStorage.getItem('app-version');
-    if (lastVersion && lastVersion !== APP_VERSION) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setShowUpdate(true);
-      localStorage.removeItem('pwa-install-dismissed');
-      localStorage.removeItem('pwa-ios-hint-dismissed');
-    } else if (!lastVersion) {
-      // First load — uložíme aktuálnu verziu
-      localStorage.setItem('app-version', APP_VERSION);
-    }
-
     return () => {
+      if (iosTimer) clearTimeout(iosTimer);
       window.removeEventListener('beforeinstallprompt', handler);
       window.removeEventListener('online', onOnline);
       window.removeEventListener('offline', onOffline);

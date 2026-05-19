@@ -12,6 +12,7 @@ import { calculateKabalah } from '../engine/kabalahEngine';
 import { calculateThetaHealing } from '../engine/thetaHealingEngine';
 import { orvDescriptions } from '../data/orvDescriptions';
 import { getDailyMantra, getDailyQuote } from '../data/mantrasAndQuotes';
+import { getDailyTarot } from '../data/tarotCards';
 
 export function Dashboard() {
   const navigate = useNavigate();
@@ -227,15 +228,15 @@ export function Dashboard() {
         </div>
       </GlassCard>
 
-      {/* Mantra + Quote (B25, B26) — rotujú každý deň podľa ODV */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      {/* Mantra + Quote + Tarot (B25, B26, B23) — rotujú každý deň podľa ODV */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <GlassCard delay={0.42}>
           <div className="flex items-start gap-3">
             <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center text-lg shrink-0">
               ॐ
             </div>
             <div className="min-w-0">
-              <p className="text-xs text-amber-300 uppercase mb-1">Dnešná mantra (ODV {odv})</p>
+              <p className="text-xs text-amber-300 uppercase mb-1">Dnešná mantra</p>
               <p className="text-sm text-slate-300 font-serif italic">"{getDailyMantra(odv)}"</p>
             </div>
           </div>
@@ -252,6 +253,22 @@ export function Dashboard() {
                   <p className="text-xs text-cyan-300 uppercase mb-1">Dnešný citát</p>
                   <p className="text-sm text-slate-300 font-serif italic">"{q.quote}"</p>
                   <p className="text-xs text-slate-500 mt-1">— {q.author}</p>
+                </div>
+              </div>
+            );
+          })()}
+        </GlassCard>
+        <GlassCard delay={0.46}>
+          {(() => {
+            const t = getDailyTarot(odv);
+            return (
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-fuchsia-500 flex items-center justify-center text-lg shrink-0">
+                  {t.symbol}
+                </div>
+                <div className="min-w-0">
+                  <p className="text-xs text-purple-300 uppercase mb-1">Tarot dňa: {t.name}</p>
+                  <p className="text-xs text-slate-400">{t.advice}</p>
                 </div>
               </div>
             );

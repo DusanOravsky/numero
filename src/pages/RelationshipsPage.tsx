@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { GlassCard } from '../components/GlassCard';
 import { calculateFullNumerology, reduceToSingle } from '../engine/numerologyEngine';
+import { calculateDevelopmentalNumerology } from '../engine/developmentalNumerologyEngine';
 import { calculatePartnerCompatibility, calculateParentChild } from '../engine/compatibilityEngine';
 import type { CompatibilityResult, ParentChildResult } from '../engine/compatibilityEngine';
 import { calculateAstrology, calculateSynastryAspects, summarizeSynastry } from '../engine/astrologyEngine';
@@ -400,6 +401,86 @@ export function RelationshipsPage() {
               )}
             </GlassCard>
           </div>
+
+          {/* Vývojová synastria (B20) — porovnanie K1-K4 a egoPolarity */}
+          {(() => {
+            const dev1 = calculateDevelopmentalNumerology(parseInt(partner1.day), parseInt(partner1.month), parseInt(partner1.year));
+            const dev2 = calculateDevelopmentalNumerology(parseInt(partner2.day), parseInt(partner2.month), parseInt(partner2.year));
+
+            // K3 (životné poslanie) zhoda
+            const k3Match = dev1.circled[2].value === dev2.circled[2].value;
+            // K1 (psychická stabilita) zhoda
+            const k1Match = dev1.circled[0].value === dev2.circled[0].value;
+            // Polarita ega: opačné polarity = klasická "doplnková" páril, rovnaké = súznejúce ale aj možné napätie
+            const egoComplementary = (dev1.egoPolarity === 'masculine' && dev2.egoPolarity === 'feminine') ||
+                                      (dev1.egoPolarity === 'feminine' && dev2.egoPolarity === 'masculine');
+            const egoSame = dev1.egoPolarity === dev2.egoPolarity && dev1.egoPolarity !== 'none';
+
+            return (
+              <GlassCard>
+                <h3 className="font-medium text-white mb-1">Vývojová synastria (Lívia Mičková)</h3>
+                <p className="text-xs text-slate-400 mb-3">
+                  Porovnanie 4 zakrúžkovaných karmických čísel oboch partnerov a polarity ega — ukazuje, ako sa stretávajú vaše karmické úlohy.
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30">
+                    <p className="text-xs text-amber-300 uppercase mb-1">{partner1.name}</p>
+                    <p className="text-sm text-white font-mono">
+                      K1={dev1.circled[0].value} · K2={dev1.circled[1].value} · K3={dev1.circled[2].value} · K4={dev1.circled[3].value}
+                    </p>
+                    <p className="text-[11px] text-slate-400 mt-1">
+                      Ego: {dev1.egoPolarity === 'masculine' ? 'mužské' : dev1.egoPolarity === 'feminine' ? 'ženské' : 'žiadne'} ({dev1.oneCount}× 1)
+                    </p>
+                  </div>
+                  <div className="p-3 rounded-xl bg-violet-500/10 border border-violet-500/30">
+                    <p className="text-xs text-violet-300 uppercase mb-1">{partner2.name}</p>
+                    <p className="text-sm text-white font-mono">
+                      K1={dev2.circled[0].value} · K2={dev2.circled[1].value} · K3={dev2.circled[2].value} · K4={dev2.circled[3].value}
+                    </p>
+                    <p className="text-[11px] text-slate-400 mt-1">
+                      Ego: {dev2.egoPolarity === 'masculine' ? 'mužské' : dev2.egoPolarity === 'feminine' ? 'ženské' : 'žiadne'} ({dev2.oneCount}× 1)
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mt-3 space-y-2">
+                  {k3Match && (
+                    <div className="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/30">
+                      <p className="text-xs text-emerald-300">
+                        ★ <strong>K3 zhoda ({dev1.circled[2].value})</strong> — máte rovnaké životné poslanie. Vaše duše sa stretli pre tú istú misiu — buď vás to spája hlboko, alebo súťažíte o tú istú lekciu.
+                      </p>
+                    </div>
+                  )}
+                  {k1Match && (
+                    <div className="p-2 rounded-lg bg-blue-500/10 border border-blue-500/30">
+                      <p className="text-xs text-blue-300">
+                        K1 zhoda ({dev1.circled[0].value}) — máte rovnakú psychickú konštrukciu, takže si rozumiete „bez slov", ale zdieľate aj rovnaké slabé miesta.
+                      </p>
+                    </div>
+                  )}
+                  {egoComplementary && (
+                    <div className="p-2 rounded-lg bg-rose-500/10 border border-rose-500/30">
+                      <p className="text-xs text-rose-300">
+                        ☯ Doplnková polarita ega — mužský × ženský princíp. Klasická vzťahová dynamika; aktivuje sa archetyp „Yin-Yang".
+                      </p>
+                    </div>
+                  )}
+                  {egoSame && (
+                    <div className="p-2 rounded-lg bg-amber-500/10 border border-amber-500/30">
+                      <p className="text-xs text-amber-300">
+                        ⚹ Rovnaká polarita ega — silne si rozumiete v tempe a štýle, ale možný súboj o ten istý priestor.
+                      </p>
+                    </div>
+                  )}
+                  {!k3Match && !k1Match && !egoComplementary && !egoSame && (
+                    <p className="text-xs text-slate-500 italic">
+                      Vaše vývojové čísla sú odlišné — vzťah je o vzájomnom učení a doplňovaní.
+                    </p>
+                  )}
+                </div>
+              </GlassCard>
+            );
+          })()}
 
           {compatibility.strengths.length > 0 && (
             <GlassCard>

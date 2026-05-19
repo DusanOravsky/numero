@@ -124,8 +124,26 @@ Ak sú rôzne → **zobrazí sa "Nová verzia" popup** (raz, idempotentne).
 
 Logika je v `src/components/PWAPrompts.tsx`:
 - `useEffect` mount → version compare → `setShowUpdate(true)`
-- `handleUpdate` → `checkForUpdate()` (online check + SW.update + reload)
+- `handleUpdate` → `checkForUpdate()` (online check + cache wipe + reload)
 - `dismissUpdate` → sync `app-version` → popup sa znova nezobrazí
+
+**KRITICKÉ:** version compare sa **MUSÍ** spúšťať aj v standalone mode
+(inštalovaná PWA na ploche). To je presne scenár kde je auto-popup
+najpotrebnejší. V `useEffect` je install-hint logika (iOS hint,
+beforeinstallprompt) zabalená ZA standalone-check, ale online detection
++ version compare sú VŽDY aktívne. Bez toho inštalovaná PWA nikdy
+nedostane upgrade upozornenie.
+
+**Caveat — CacheFirst HTML strikes again:** keďže HTML je CacheFirst,
+SW servíruje starý HTML aj keď je nový deployed na GitHube. Auto-popup
+sa preto zobrazí až **PO** prvom upgrade ktorý sa udeje cez:
+- Manuálny "Skontrolovať update" v Settings (cache wipe + reload)
+- Manuálny "Vynútiť aktualizáciu" v Settings (cache wipe + reload)
+
+Po prvom takom upgrade už SW slúži novú verziu HTML aj z cache, takže
+ďalšie deploye normálne triggernú auto-popup. Inak povedané: prvý
+upgrade po deploy v2.2.0+ vyžaduje manuálny krok, všetky ďalšie idú
+cez popup.
 
 ### Offline-safe update helpers
 
@@ -172,26 +190,6 @@ Stratégia podľa [SemVer](https://semver.org/):
 - `theme-color` meta pre iOS status bar zladenie
 - iOS Safari: manuálny "Add to Home Screen" hint cez `showIOSHint`
 - Android/Chrome: `beforeinstallprompt` event handler s "Nainštalovať" prompt
-
-### Version bump pravidlo (SemVer)
-
-**Pri KAŽDOM user-facing release** treba bump-núť `APP_VERSION` v
-`src/components/PWAPrompts.tsx` AJ `version` v `package.json`. PWA service
-worker porovnáva uloženú verziu v localStorage s `APP_VERSION` a ukáže
-"Nová verzia" prompt — ak sa neaktualizuje, používateľ nedostane upozornenie.
-
-Stratégia podľa [SemVer](https://semver.org/):
-
-| Bump | Kedy | Príklady |
-|---|---|---|
-| **MAJOR** (X.0.0) | Veľká nová schopnosť, breaking change v store, nový subsystém | 1.5.0 → 2.0.0 (pridali AI integráciu, B-batch features, store v4) |
-| **MINOR** (1.X.0) | Nová feature kompatibilne pridaná | 1.4.0 → 1.5.0 (bottom nav More sheet, gender simplification) |
-| **PATCH** (1.5.X) | Bug fix, UI úprava, polish bez novej funkcionality | 1.5.0 → 1.5.1 (fix Bodygraph overlap) |
-
-**Workflow:**
-1. Pri commitovaní viacerých zmien → urči najvyššiu úroveň zmeny (MAJOR > MINOR > PATCH).
-2. Bump obe `APP_VERSION` aj `package.json` v jednom commite.
-3. CHANGELOG.md → pridaj sekciu pre novú verziu (alebo posuň `Unreleased` na konkrétnu verziu).
 
 ## Store (Zustand + persist)
 

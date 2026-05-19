@@ -4,7 +4,7 @@ import { GlassCard } from './GlassCard';
 
 interface EclipseEvent {
   date: Date;
-  kind: 'Total' | 'Partial' | 'Annular' | 'Penumbral';
+  kind: string;
   type: 'Solar' | 'Lunar';
 }
 
@@ -28,13 +28,13 @@ export function UpcomingEclipses() {
       // 4 najbližšie lunárne
       let le = Astronomy.SearchLunarEclipse(now);
       for (let i = 0; i < 4; i++) {
-        result.push({ date: le.peak.date, kind: le.kind as EclipseEvent['kind'], type: 'Lunar' });
+        result.push({ date: le.peak.date, kind: String(le.kind), type: 'Lunar' });
         le = Astronomy.NextLunarEclipse(le.peak);
       }
       // 4 najbližšie solárne
       let se = Astronomy.SearchGlobalSolarEclipse(now);
       for (let i = 0; i < 4; i++) {
-        result.push({ date: se.peak.date, kind: se.kind as EclipseEvent['kind'], type: 'Solar' });
+        result.push({ date: se.peak.date, kind: String(se.kind), type: 'Solar' });
         se = Astronomy.NextGlobalSolarEclipse(se.peak);
       }
     } catch {

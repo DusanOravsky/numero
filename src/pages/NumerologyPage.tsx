@@ -22,6 +22,7 @@ import { cycleVibrationDescriptions } from '../data/planetSignDescriptions';
 import { findMissingCharacterNumbers } from '../data/characterMissingNumbers';
 import { ORVLifeHistogram } from '../components/ORVLifeHistogram';
 import { PersonalYearTimeline } from '../components/PersonalYearTimeline';
+import { RadarChart9 } from '../components/RadarChart9';
 
 const planesInfo = planesData as { full: Record<string, { description: string; gift: string; recommendation: string }>; empty: Record<string, { description: string; lesson: string; recommendation: string }> };
 
@@ -247,6 +248,26 @@ export function NumerologyPage() {
                   <DevelopmentalNumerologyView result={devResult} gender={profile?.gender} />
                 ) : null}
               </GlassCard>
+
+              {/* Radar chart 9 energií (B28) — pre obe metódy, počíta sa zo zvolenej mriežky */}
+              {numerologyMethod === 'characterological' && (
+                <RadarChart9
+                  counts={(() => {
+                    const map = new Map<number, number>();
+                    for (let i = 1; i <= 9; i++) map.set(i, result.grid[i]?.length || 0);
+                    return map;
+                  })()}
+                  title="Radar 9 energií — Charakterová mriežka"
+                  subtitle="Vizualizácia distribúcie čísel 1-9 v Charakterovej (Steinová) mriežke."
+                />
+              )}
+              {numerologyMethod === 'developmental' && devResult && (
+                <RadarChart9
+                  counts={devResult.counts}
+                  title="Radar 9 energií — Vývojová mriežka"
+                  subtitle="Vizualizácia distribúcie čísel 1-9 vo Vývojovej (Lívia) mriežke vrátane zakrúžkovaných."
+                />
+              )}
 
               {numerologyMethod === 'characterological' && lifePathInfo && (
                 <GlassCard delay={0.2}>

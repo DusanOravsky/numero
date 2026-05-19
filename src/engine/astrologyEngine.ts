@@ -360,6 +360,76 @@ export function calculateAstrology(
 }
 
 // ============================================
+// SEKUNDÁRNE PROGRESIE — "1 deň = 1 rok"
+// ============================================
+
+export interface ProgressedPosition {
+  planetName: string;
+  symbol: string;
+  natalSign: string;
+  natalDegree: number;
+  progressedSign: string;
+  progressedDegree: number;
+  signChanged: boolean;
+}
+
+/**
+ * Sekundárne progresie: pozícia planét N dní po narodení = pozícia v N. roku života.
+ * Štandardná Pythagorova / klasická prediktívna technika.
+ *
+ * @param targetAge - vek pre ktorý chceme progresie (napr. 47 rokov)
+ */
+export function calculateProgressions(
+  birthDay: number, birthMonth: number, birthYear: number,
+  birthHour: number, birthMinute: number,
+  targetAge: number,
+  timezoneOffsetHours: number = 1
+): ProgressedPosition[] {
+  const tz = getTimezoneOffset(birthDay, birthMonth, birthYear, timezoneOffsetHours);
+  const utcHour = birthHour - tz;
+  const birthDate = new Date(Date.UTC(birthYear, birthMonth - 1, birthDay, utcHour, birthMinute));
+  // Progressed date = birth + N days (where N = age in years)
+  const progressedDate = new Date(birthDate.getTime() + targetAge * 86400000);
+
+  // Natálne pozície
+  const natalPlanets: { name: string; symbol: string; body: Astronomy.Body | 'Moon' | 'Sun' }[] = [
+    { name: 'Slnko', symbol: '☉', body: 'Sun' },
+    { name: 'Mesiac', symbol: '☽', body: 'Moon' },
+    { name: 'Merkúr', symbol: '☿', body: Astronomy.Body.Mercury },
+    { name: 'Venuša', symbol: '♀', body: Astronomy.Body.Venus },
+    { name: 'Mars', symbol: '♂', body: Astronomy.Body.Mars },
+  ];
+
+  const result: ProgressedPosition[] = [];
+  for (const p of natalPlanets) {
+    let natalLon: number;
+    let progLon: number;
+    if (p.body === 'Sun') {
+      natalLon = getSunLongitude(birthDate);
+      progLon = getSunLongitude(progressedDate);
+    } else if (p.body === 'Moon') {
+      natalLon = getMoonLongitude(birthDate);
+      progLon = getMoonLongitude(progressedDate);
+    } else {
+      natalLon = getPlanetLongitudeAtDate(p.body, birthDate);
+      progLon = getPlanetLongitudeAtDate(p.body, progressedDate);
+    }
+    const natal = getSignFromLongitude(natalLon);
+    const prog = getSignFromLongitude(progLon);
+    result.push({
+      planetName: p.name,
+      symbol: p.symbol,
+      natalSign: natal.sign.name,
+      natalDegree: natal.degree,
+      progressedSign: prog.sign.name,
+      progressedDegree: prog.degree,
+      signChanged: natal.sign.name !== prog.sign.name,
+    });
+  }
+  return result;
+}
+
+// ============================================
 // SYNASTRIA – aspekty medzi dvoma horoskopmi
 // ============================================
 

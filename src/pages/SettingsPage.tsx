@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useStore } from '../store/useStore';
+import type { NumerologyMethod } from '../store/useStore';
 import { GlassCard } from '../components/GlassCard';
 import { useNavigate } from 'react-router-dom';
 import { APP_VERSION } from '../components/PWAPrompts';
@@ -7,7 +8,7 @@ import { searchCities, findCity } from '../data/cities';
 
 export function SettingsPage() {
   const navigate = useNavigate();
-  const { profiles, activeProfileId, setActiveProfile, updateProfile, deleteProfile } = useStore();
+  const { profiles, activeProfileId, setActiveProfile, updateProfile, deleteProfile, numerologyMethod, setNumerologyMethod } = useStore();
   const activeProfile = profiles.find(p => p.id === activeProfileId);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editHour, setEditHour] = useState('');
@@ -28,9 +29,14 @@ export function SettingsPage() {
 
   const saveEdit = () => {
     if (!editingId) return;
+    const trimmedName = editName.trim();
+    if (!trimmedName) {
+      alert('Meno nesmie byť prázdne.');
+      return;
+    }
     const city = findCity(editPlace);
     updateProfile(editingId, {
-      name: editName.trim() || undefined,
+      name: trimmedName,
       birthHour: editHour ? parseInt(editHour) : undefined,
       birthMinute: editMinute ? parseInt(editMinute) : undefined,
       birthPlace: editPlace.trim() || undefined,
@@ -145,13 +151,61 @@ export function SettingsPage() {
       </GlassCard>
 
       <GlassCard>
+        <h3 className="font-medium text-white mb-2">Numerologická metóda</h3>
+        <p className="text-sm text-slate-500 mb-4">
+          Aplikácia podporuje dve rôzne školy numerológie. Líšia sa vo výpočte mriežky aj vo významoch jednotlivých políčok. Vyber si tú, s ktorou pracuješ.
+        </p>
+
+        <div className="space-y-3">
+          <label className={`block p-4 rounded-xl border-2 cursor-pointer transition-all ${numerologyMethod === 'characterological' ? 'border-indigo-500 bg-indigo-50' : 'border-slate-200 bg-white hover:border-slate-300'}`}>
+            <div className="flex items-start gap-3">
+              <input
+                type="radio"
+                name="numerology-method"
+                value="characterological"
+                checked={numerologyMethod === 'characterological'}
+                onChange={() => setNumerologyMethod('characterological' as NumerologyMethod)}
+                className="mt-1"
+              />
+              <div className="flex-1">
+                <p className="font-medium text-slate-800">Charakterová mriežka</p>
+                <p className="text-xs text-slate-500 mt-1">
+                  Ukazuje <strong>vrodené kvality a archetypy</strong>, ktoré človek dostal do vienka. Mriežka sa skladá z cifier dátumu narodenia + redukcií dňa, mesiaca a roku. Významy: 1 = Ja/začiatok, 2 = Intuícia, 3 = Kreativita, 4 = Stabilita, 5 = Sloboda, 6 = Láska/rodina, 7 = Duchovno, 8 = Hojnosť, 9 = Múdrosť.
+                </p>
+                <p className="text-[11px] text-indigo-600 mt-2 italic">Zdroj: Robin Steinová – Numerológia: Čísla Lásky</p>
+              </div>
+            </div>
+          </label>
+
+          <label className={`block p-4 rounded-xl border-2 cursor-pointer transition-all ${numerologyMethod === 'developmental' ? 'border-indigo-500 bg-indigo-50' : 'border-slate-200 bg-white hover:border-slate-300'}`}>
+            <div className="flex items-start gap-3">
+              <input
+                type="radio"
+                name="numerology-method"
+                value="developmental"
+                checked={numerologyMethod === 'developmental'}
+                onChange={() => setNumerologyMethod('developmental' as NumerologyMethod)}
+                className="mt-1"
+              />
+              <div className="flex-1">
+                <p className="font-medium text-slate-800">Vývojová mriežka</p>
+                <p className="text-xs text-slate-500 mt-1">
+                  Ukazuje <strong>životné úlohy a karmické cykly</strong>, ktoré si duša prišla riešiť. Do mriežky vstupujú aj <strong>4 "zakrúžkované" pomocné čísla</strong>. Roky 2000+ sa počítajú špeciálne (rok = 20 + zvyšok). Významy: 1 = Ego (mužské/ženské), 2 = Bioenergia tela, 3 = Vnútorná múdrosť, 4 = Sebavedomie, 5 = Intuícia, 6 = Vytrvalosť (2+ = mág), 7 = Dôvera, 8 = Škola lásky, 9 = Hmotný svet/financie.
+                </p>
+                <p className="text-[11px] text-indigo-600 mt-2 italic">Zdroj: Lívia Mičková – Duchovná numerológia (vykladá Červenák)</p>
+              </div>
+            </div>
+          </label>
+        </div>
+      </GlassCard>
+
+      <GlassCard>
         <h3 className="font-medium text-white mb-3">Inštalácia</h3>
         <p className="text-sm text-slate-400 mb-3">Nainštalujte aplikáciu na plochu pre rýchly prístup a offline použitie.</p>
         <button
           onClick={() => {
-            const w = window as any;
-            if (w._deferredInstallPrompt) {
-              w._deferredInstallPrompt.prompt();
+            if (window._deferredInstallPrompt) {
+              window._deferredInstallPrompt.prompt();
             } else {
               alert('Inštalácia nie je momentálne dostupná. Skúste otvoriť cez Chrome a použiť menu → "Pridať na plochu".');
             }

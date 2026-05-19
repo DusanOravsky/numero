@@ -1,13 +1,17 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import { GlassCard } from '../components/GlassCard';
 import { NumerologyGrid } from '../components/NumerologyGrid';
 import { EnergyCard } from '../components/EnergyCard';
 import { VibrationCard } from '../components/VibrationCard';
 import { DateInput } from '../components/DateInput';
+import { DevelopmentalNumerologyView } from '../components/DevelopmentalNumerologyView';
 import { calculateFullNumerology, calculateORV } from '../engine/numerologyEngine';
 import type { NumerologyResult } from '../engine/numerologyEngine';
+import { calculateDevelopmentalNumerology } from '../engine/developmentalNumerologyEngine';
+import type { DevelopmentalNumerologyResult } from '../engine/developmentalNumerologyEngine';
 import { calculateNameNumerology } from '../engine/nameNumerologyEngine';
 import type { NameNumerologyResult } from '../engine/nameNumerologyEngine';
 import lifePathsData from '../data/lifePaths.json';
@@ -22,20 +26,24 @@ const lifePaths = lifePathsData as Record<string, { title: string; keywords: str
 const isolatedInfo = isolatedData as Record<string, { type: string; effect: string; description: string; theme: string; shadow: string; recommendation: string; body: string }>;
 
 export function NumerologyPage() {
-  const { profiles, activeProfileId } = useStore();
+  const navigate = useNavigate();
+  const { profiles, activeProfileId, numerologyMethod } = useStore();
   const profile = profiles.find(p => p.id === activeProfileId);
   const [result, setResult] = useState<NumerologyResult | null>(null);
+  const [devResult, setDevResult] = useState<DevelopmentalNumerologyResult | null>(null);
   const [nameResult, setNameResult] = useState<NameNumerologyResult | null>(null);
   const [nameInput, setNameInput] = useState('');
   const [activeTab, setActiveTab] = useState<'overview' | 'planes' | 'vibrations' | 'karmic' | 'love' | 'name'>('overview');
 
   const handleCalculate = (day: number, month: number, year: number) => {
     setResult(calculateFullNumerology(day, month, year));
+    setDevResult(calculateDevelopmentalNumerology(day, month, year));
   };
 
   useEffect(() => {
     if (profile && !result) {
       setResult(calculateFullNumerology(profile.birthDay, profile.birthMonth, profile.birthYear));
+      setDevResult(calculateDevelopmentalNumerology(profile.birthDay, profile.birthMonth, profile.birthYear));
     }
   }, [profile, result]);
 
@@ -65,6 +73,28 @@ export function NumerologyPage() {
 
       {result && (
         <>
+          {/* Info o aktívnej metóde */}
+          <div className="p-3 rounded-xl bg-indigo-50 border border-indigo-200 flex items-start gap-3">
+            <span className="text-indigo-600 mt-0.5">ⓘ</span>
+            <div className="flex-1 text-xs text-slate-700">
+              {numerologyMethod === 'characterological' ? (
+                <>
+                  Aktívna metóda: <strong>Charakterová mriežka</strong> – ukazuje vrodené kvality (1=Ja, 2=Intuícia, 6=Láska, 9=Múdrosť…). <em>Zdroj: Robin Steinová – Numerológia: Čísla Lásky.</em>
+                </>
+              ) : (
+                <>
+                  Aktívna metóda: <strong>Vývojová mriežka</strong> – ukazuje životné úlohy a karmické cykly cez 4 zakrúžkované čísla (1=Ego, 2=Bioenergia, 6=Vytrvalosť, 9=Financie…). <em>Zdroj: Lívia Mičková – Duchovná numerológia.</em>
+                </>
+              )}
+              <button
+                onClick={() => navigate('/settings')}
+                className="ml-2 text-indigo-600 underline hover:text-indigo-800"
+              >
+                Zmeniť metódu
+              </button>
+            </div>
+          </div>
+
           <div className="flex gap-2 overflow-x-auto pb-2">
             {tabs.map(tab => (
               <button
@@ -80,7 +110,7 @@ export function NumerologyPage() {
               </button>
             ))}
             <button
-              onClick={() => setResult(null)}
+              onClick={() => { setResult(null); setDevResult(null); }}
               className="px-4 py-2 rounded-xl text-sm font-medium glass text-slate-400 hover:text-white ml-auto"
             >
               Nový výpočet
@@ -110,12 +140,23 @@ export function NumerologyPage() {
                 </GlassCard>
 
                 <GlassCard>
-                  <h2 className="text-lg font-medium text-white mb-4">Mriežka 3x3</h2>
-                  <NumerologyGrid grid={result.grid} />
-                  <div className="flex gap-4 mt-4 justify-center text-xs">
-                    <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-blue-400"></span> Základné</span>
-                    <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-rose-400"></span> Doplnkové</span>
-                  </div>
+                  <h2 className="text-lg font-medium text-white mb-4">
+                    Mriežka 3x3 – {numerologyMethod === 'characterological' ? 'Charakterová' : 'Vývojová'}
+                  </h2>
+                  {numerologyMethod === 'characterological' ? (
+                    <>
+                      <NumerologyGrid grid={result.grid} />
+                      <div className="flex gap-4 mt-4 justify-center text-xs">
+                        <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-blue-400"></span> Základné</span>
+                        <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-rose-400"></span> Doplnkové</span>
+                      </div>
+                      <p className="text-[11px] text-slate-500 mt-3 italic text-center">
+                        Zdroj: Robin Steinová – Numerológia: Čísla Lásky
+                      </p>
+                    </>
+                  ) : devResult ? (
+                    <DevelopmentalNumerologyView result={devResult} />
+                  ) : null}
                 </GlassCard>
               </div>
 

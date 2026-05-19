@@ -6,9 +6,11 @@ import type { HumanDesignResult } from '../engine/humanDesignEngine';
 import type { KabalahResult } from '../engine/kabalahEngine';
 import type { ThetaHealingResult } from '../engine/thetaHealingEngine';
 import { reduceToSingle } from '../engine/numerologyEngine';
+import { calculateDevelopmentalNumerology } from '../engine/developmentalNumerologyEngine';
 import { planetInSignDescriptions } from '../data/planetSignDescriptions';
 import { orvDescriptions } from '../data/orvDescriptions';
 import { getGeneKeyByGate } from '../data/geneKeys';
+import { developmentalMeanings } from '../data/developmentalMeanings';
 import lifePathsData from '../data/lifePaths.json';
 
 const lifePaths = lifePathsData as Record<string, { title: string; keywords: string[]; description: string; gift: string; shadow: string }>;
@@ -25,6 +27,32 @@ interface ClientSummaryProps {
 export function ClientSummary({ clientName, numerology, astrology, humanDesign, kabalah, theta }: ClientSummaryProps) {
   const lpInfo = lifePaths[String(numerology.lifePathNumber > 9 ? reduceToSingle(numerology.lifePathNumber) : numerology.lifePathNumber)];
 
+  // Vývojová mriežka (Lívia / Červenák)
+  const devNumerology = calculateDevelopmentalNumerology(
+    numerology.dayReduction === 0 ? 1 : (() => {
+      // Rekonštrukcia pôvodného dňa/mesiaca/roku z NumerologyResult – ten ich nemá uložené priamo,
+      // ale máme ich v gridNumbers (cifry dátumu). Bezpečnejšie je odvodiť ich z formuly:
+      // formula: "(D→Ds) + (M→Ms) + (R→Rs) = total"
+      const m = numerology.formula.match(/\((\d+)→\d+\)\s*\+\s*\((\d+)→\d+\)\s*\+\s*\((\d+)→\d+\)/);
+      return m ? parseInt(m[1], 10) : 1;
+    })(),
+    (() => {
+      const m = numerology.formula.match(/\((\d+)→\d+\)\s*\+\s*\((\d+)→\d+\)\s*\+\s*\((\d+)→\d+\)/);
+      return m ? parseInt(m[2], 10) : 1;
+    })(),
+    (() => {
+      const m = numerology.formula.match(/\((\d+)→\d+\)\s*\+\s*\((\d+)→\d+\)\s*\+\s*\((\d+)→\d+\)/);
+      return m ? parseInt(m[3], 10) : 1900;
+    })()
+  );
+
+  // Z Vývojovej mriežky vyberieme top 3 najsilnejšie (najviac výskytov) a top 3 chýbajúce
+  const devSorted = Object.entries(devNumerology.counts)
+    .map(([k, v]) => ({ num: parseInt(k, 10), count: v }))
+    .sort((a, b) => b.count - a.count);
+  const devStrong = devSorted.filter(x => x.count >= 2).slice(0, 3);
+  const devMissing = devSorted.filter(x => x.count === 0).slice(0, 3);
+
   return (
     <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
       <GlassCard glow>
@@ -39,6 +67,69 @@ export function ClientSummary({ clientName, numerology, astrology, humanDesign, 
             <strong>Dar:</strong> {lpInfo?.gift || '-'}.<br/>
             <strong>Tieň:</strong> {lpInfo?.shadow || '-'}.
           </p>
+
+          {/* Dva pohľady na mriežku */}
+          <div className="rounded-xl border border-slate-200 bg-white p-4 space-y-3">
+            <p className="font-medium text-slate-800">Dva pohľady na numerologickú mriežku</p>
+
+            <div className="border-l-2 border-blue-300 pl-3 space-y-1">
+              <p className="text-xs text-blue-700 font-semibold uppercase tracking-wide">
+                Charakterová mriežka (vrodené kvality)
+              </p>
+              <p className="text-xs text-slate-600">
+                {numerology.fullPlanes.length > 0 && (
+                  <><strong>Plné roviny:</strong> {numerology.fullPlanes.join(', ')}. Tieto kvality má od narodenia. </>
+                )}
+                {numerology.emptyPlanes.length > 0 && (
+                  <><strong>Prázdne roviny:</strong> {numerology.emptyPlanes.join(', ')}. Tu sa učí. </>
+                )}
+                {numerology.isolatedNumbers.length > 0 && (
+                  <><strong>Izolované:</strong> {numerology.isolatedNumbers.join(', ')} – energie odrezané od zvyšku, vyžadujú vedomú integráciu. </>
+                )}
+              </p>
+              <p className="text-[11px] text-slate-400 italic">
+                Zdroj: Robin Steinová – Numerológia: Čísla Lásky
+              </p>
+            </div>
+
+            <div className="border-l-2 border-amber-300 pl-3 space-y-1">
+              <p className="text-xs text-amber-700 font-semibold uppercase tracking-wide">
+                Vývojová mriežka (životné úlohy)
+              </p>
+              <p className="text-xs text-slate-600">
+                {devStrong.length > 0 && (
+                  <>
+                    <strong>Silné oblasti:</strong>{' '}
+                    {devStrong.map(s => `${s.num} (${developmentalMeanings[s.num]?.theme.split(' – ')[0]}, ${s.count}×)`).join('; ')}.{' '}
+                  </>
+                )}
+                {devMissing.length > 0 && (
+                  <>
+                    <strong>Životné úlohy (chýbajúce):</strong>{' '}
+                    {devMissing.map(s => developmentalMeanings[s.num]?.theme.split(' – ')[0]).filter(Boolean).join(', ')}.{' '}
+                  </>
+                )}
+                {devNumerology.circled.length > 0 && (
+                  <>
+                    <strong>Karmické cykly:</strong> 1.={devNumerology.circled[0].value},{' '}
+                    2.={devNumerology.circled[1].value},{' '}
+                    3.={devNumerology.circled[2].value},{' '}
+                    4.={devNumerology.circled[3].value}.{' '}
+                  </>
+                )}
+                {devNumerology.isPost2000 && (
+                  <em>Rok ≥ 2000 sa počíta špeciálne (20 + zvyšok).</em>
+                )}
+              </p>
+              <p className="text-[11px] text-slate-400 italic">
+                Zdroj: Lívia Mičková – Duchovná numerológia (vykladá Červenák)
+              </p>
+            </div>
+
+            <p className="text-[11px] text-slate-500">
+              Obe metódy sa dopĺňajú – Charakterová ukazuje, <em>kto si</em>, Vývojová <em>čo si sa prišiel naučiť</em>. Aktívnu metódu pre detailné zobrazenie si môžeš zmeniť v Nastaveniach.
+            </p>
+          </div>
 
           <p>
             <strong>Astrológia</strong> dopĺňa tento obraz: Slnko v <strong>{astrology.sunSign.name}</strong> ({astrology.sunSign.element}) –

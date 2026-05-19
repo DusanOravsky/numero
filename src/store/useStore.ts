@@ -42,14 +42,16 @@ export interface SavedReport {
   createdAt: string;
 }
 
+export type NumerologyMethod = 'characterological' | 'developmental';
+
 interface AppState {
   profiles: UserProfile[];
   activeProfileId: string | null;
   clients: Client[];
   reports: SavedReport[];
   favorites: string[];
-  theme: 'dark';
   language: 'sk';
+  numerologyMethod: NumerologyMethod;
 
   addProfile: (profile: UserProfile) => void;
   updateProfile: (id: string, data: Partial<UserProfile>) => void;
@@ -64,9 +66,11 @@ interface AppState {
   deleteReport: (id: string) => void;
 
   toggleFavorite: (section: string) => void;
+
+  setNumerologyMethod: (m: NumerologyMethod) => void;
 }
 
-const STORE_VERSION = 2;
+const STORE_VERSION = 3;
 
 export const useStore = create<AppState>()(
   persist(
@@ -76,8 +80,8 @@ export const useStore = create<AppState>()(
       clients: [],
       reports: [],
       favorites: [],
-      theme: 'dark',
       language: 'sk',
+      numerologyMethod: 'characterological',
 
       addProfile: (profile) => set((state) => ({ profiles: [...state.profiles, profile] })),
       updateProfile: (id, data) => set((state) => ({
@@ -106,6 +110,8 @@ export const useStore = create<AppState>()(
           ? state.favorites.filter(f => f !== section)
           : [...state.favorites, section],
       })),
+
+      setNumerologyMethod: (m) => set({ numerologyMethod: m }),
     }),
     {
       name: 'numero-store',
@@ -118,6 +124,9 @@ export const useStore = create<AppState>()(
         }
         if (version < 2) {
           state.clients = state.clients || [];
+        }
+        if (version < 3) {
+          state.numerologyMethod = state.numerologyMethod || 'characterological';
         }
         return state as unknown as AppState;
       },

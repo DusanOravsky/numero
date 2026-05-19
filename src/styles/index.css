@@ -263,3 +263,55 @@ html.dark aside.bg-white, html.dark nav.bg-white, html.dark header.bg-white {
   backdrop-filter: blur(12px);
   border-color: rgba(255, 255, 255, 0.08) !important;
 }
+
+/* ============================================ */
+/*           PRINT STYLES                       */
+/* ============================================ */
+@media print {
+  /* Skry navigáciu a interaktívne prvky */
+  aside, nav, header.lg\:hidden { display: none !important; }
+  button { display: none !important; }
+  .glow, .animate-float, .animate-glow-pulse { animation: none !important; box-shadow: none !important; }
+
+  /* Hlavný obsah cez celú šírku */
+  main { margin-left: 0 !important; padding: 0 !important; }
+  main > div { padding: 1rem !important; max-width: 100% !important; }
+
+  /* Pozadie biele, nie gradient */
+  body { background: #ffffff !important; color: #000000 !important; }
+
+  /* Karty bez tieňa, len lemom — šetrí toner */
+  .glass {
+    background: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    box-shadow: none !important;
+    page-break-inside: avoid;
+    margin-bottom: 12pt !important;
+  }
+
+  /* Skry tlačidlá "Zmeniť metódu", "Nový výpočet", tabsy */
+  .overflow-x-auto { overflow: visible !important; }
+
+  /* Tlač farebných akcentov — povoliť, aby Tailwind farby prešli na papier */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Linky bez podčiarknutia v tlači */
+  a { text-decoration: none !important; color: #000 !important; }
+
+  /* Veľkosti písma optimalizované pre tlač */
+  h1 { font-size: 18pt !important; }
+  h2 { font-size: 14pt !important; }
+  h3 { font-size: 12pt !important; }
+  p, li, span { font-size: 10pt !important; line-height: 1.4 !important; }
+
+  /* Stránkovanie */
+  h1, h2, h3 { page-break-after: avoid; }
+  img, svg { page-break-inside: avoid; }
+
+  /* Skry interaktívne karty rituálov (ostane len text) */
+  details summary { display: none !important; }
+  details > div { display: block !important; }
+}

@@ -20,6 +20,34 @@ npm run dev        # localhost:5173
 npm run build      # dist/
 ```
 
+## NPM registry (DÔLEŽITÉ pre CI)
+
+Projekt má lokálny `.npmrc` s `registry=https://registry.npmjs.org/`.
+**Nesmie sa odstrániť** — globálny `~/.npmrc` na vývojárskom stroji môže byť
+nakonfigurovaný na firemný (Covestro) registry. Bez lokálneho prepisu by:
+- `npm install` v `package-lock.json` zapísal "resolved" URL na firemný registry
+- GitHub Actions deploy by zlyhal s E401 (runner nemá access k firemnému registry)
+
+Ak treba regenerovať lock súbor, použiť výslovne:
+`npm install --registry=https://registry.npmjs.org/`
+
+## Numerologické metódy (dva systémy s prepínačom)
+
+Aplikácia podporuje dve odlišné numerologické školy, prepínač je v Settings
+(`store.numerologyMethod`):
+
+1. **Charakterová** (`'characterological'`) — vrodené kvality a archetypy.
+   - Engine: `numerologyEngine.ts` (klasická mriežka z dátumu + redukcií)
+   - Zdroj: Robin Steinová – Numerológia: Čísla Lásky
+   - Významy: 1=Ja, 2=Intuícia, 3=Kreativita, 6=Láska, 9=Múdrosť…
+
+2. **Vývojová** (`'developmental'`, **default**) — životné úlohy a karmické cykly.
+   - Engine: `developmentalNumerologyEngine.ts` so 4 zakrúžkovanými číslami
+   - Roky 2000+: rok = 20 + zvyšok (napr. 2011 → 31)
+   - Zdroj: kniha Lívia Mičková – Duchovná numerológia
+   - Významy: 1=Ego (mužské/ženské), 2=Bioenergia, 4=Sebavedomie, 6=Vytrvalosť/mág…
+   - Dáta: `data/developmentalMeanings.ts`
+
 ## Štruktúra
 
 ```

@@ -1,4 +1,5 @@
 import * as Astronomy from 'astronomy-engine';
+import { memoize, birthKey } from './engineCache';
 
 export type HDType = 'Manifestor' | 'Generátor' | 'Manifestujúci Generátor' | 'Projektor' | 'Reflektor';
 export type HDAuthority = 'Emocionálna' | 'Sakrálna' | 'Slezinová' | 'Ego' | 'Sebaprojektovaná' | 'Mentálna/Environmentálna' | 'Lunárna';
@@ -230,12 +231,23 @@ function getMoonLongitude(date: Date): number {
   return ecl.elon;
 }
 
-function getMeanNodeLongitude(date: Date): number {
+function getTrueNodeLongitude(date: Date): number {
+  // True Node so periodickými korekciami (presnejšie ako Mean Node)
   const jd = date.getTime() / 86400000 + 2440587.5;
   const T = (jd - 2451545.0) / 36525.0;
-  let omega = 125.04452 - 1934.136261 * T + 0.0020708 * T * T + T * T * T / 450000;
-  omega = ((omega % 360) + 360) % 360;
-  return omega;
+  const meanOmega = 125.04452 - 1934.136261 * T + 0.0020708 * T * T + T * T * T / 450000;
+  const D = 297.8501921 + 445267.1114034 * T;
+  const M = 357.5291092 + 35999.0502909 * T;
+  const Mp = 134.9633964 + 477198.8675055 * T;
+  const F = 93.2720950 + 483202.0175233 * T;
+  const deg = Math.PI / 180;
+  const correction =
+    -1.4979 * Math.sin((2 * D - 2 * F) * deg) +
+    -0.1500 * Math.sin(M * deg) +
+    -0.1226 * Math.sin((2 * D) * deg) +
+    0.1176 * Math.sin((2 * F) * deg) +
+    -0.0801 * Math.sin((2 * Mp - 2 * F) * deg);
+  return (((meanOmega + correction) % 360) + 360) % 360;
 }
 
 function findDesignDate(birthDate: Date): Date {
@@ -275,7 +287,7 @@ function getActivations(date: Date, type: 'personality' | 'design'): GateActivat
   ];
 
   const sunLon = getSunLongitude(date);
-  const nodeLon = getMeanNodeLongitude(date);
+  const nodeLon = getTrueNodeLongitude(date);
 
   planets.forEach(p => {
     let lon: number;
@@ -407,7 +419,7 @@ function getTimezoneOffsetHD(day: number, month: number, year: number, baseOffse
   return baseOffset;
 }
 
-export function calculateHumanDesign(
+function _calculateHumanDesignImpl(
   day: number, month: number, year: number,
   hour: number = 12, minute: number = 0,
   timezoneOffsetHours: number = 1
@@ -460,6 +472,20 @@ export function calculateHumanDesign(
     allActivatedGates: Array.from(allGates),
     incarnationCross: cross,
   };
+}
+
+const _memoHD = memoize(
+  _calculateHumanDesignImpl,
+  (day, month, year, hour, minute, tz) =>
+    `hd:${birthKey(day, month, year, hour, minute, undefined, undefined, tz)}`
+);
+
+export function calculateHumanDesign(
+  day: number, month: number, year: number,
+  hour: number = 12, minute: number = 0,
+  timezoneOffsetHours: number = 1
+): HumanDesignResult {
+  return _memoHD(day, month, year, hour, minute, timezoneOffsetHours);
 }
 
 export { CENTER_THEMES, GATES_BY_CENTER, CHANNEL_DEFINITIONS };

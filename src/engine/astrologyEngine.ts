@@ -1,4 +1,5 @@
 import * as Astronomy from 'astronomy-engine';
+import { memoize, birthKey } from './engineCache';
 
 export interface ZodiacSign {
   name: string;
@@ -103,11 +104,29 @@ function calculateAscendant(date: Date, latitude: number, longitude: number): nu
   return asc;
 }
 
-function getMeanNodeLongitude(date: Date): number {
+function getTrueNodeLongitude(date: Date): number {
+  // True Node = Mean Node + periodické korekcie. Astronomická prax preferuje
+  // True Node pred Mean Node (Mean = lineárny priemer, True = skutočná pozícia
+  // s nutáciou). Posun je typicky ±1.5°, čo môže pri HD posunúť bránu.
   const jd = date.getTime() / 86400000 + 2440587.5;
   const T = (jd - 2451545.0) / 36525.0;
-  const omega = 125.04452 - 1934.136261 * T + 0.0020708 * T * T + T * T * T / 450000;
-  return ((omega % 360) + 360) % 360;
+  // Mean Node (Meeus, kapitola 47)
+  const meanOmega = 125.04452 - 1934.136261 * T + 0.0020708 * T * T + T * T * T / 450000;
+  // Hlavné periodické termíny (zjednodušené)
+  const D = 297.8501921 + 445267.1114034 * T;     // Mean elongation Moon-Sun
+  const M = 357.5291092 + 35999.0502909 * T;       // Sun mean anomaly
+  const Mp = 134.9633964 + 477198.8675055 * T;     // Moon mean anomaly
+  const F = 93.2720950 + 483202.0175233 * T;       // Moon argument of latitude
+  const deg = Math.PI / 180;
+  // Najväčší termín pre korekciu uzla (Meeus tabuľka 47.A vybrané najsilnejšie)
+  const correction =
+    -1.4979 * Math.sin((2 * D - 2 * F) * deg) +
+    -0.1500 * Math.sin(M * deg) +
+    -0.1226 * Math.sin((2 * D) * deg) +
+    0.1176 * Math.sin((2 * F) * deg) +
+    -0.0801 * Math.sin((2 * Mp - 2 * F) * deg);
+  const trueOmega = meanOmega + correction;
+  return ((trueOmega % 360) + 360) % 360;
 }
 
 function getMoonPhase(date: Date): string {
@@ -141,7 +160,7 @@ function getTimezoneOffset(day: number, month: number, year: number, baseOffset:
   return baseOffset;
 }
 
-export function calculateAstrology(
+function _calculateAstrologyImpl(
   day: number, month: number, year: number,
   hour: number = 12, minute: number = 0,
   latitude: number = 48.15, longitude: number = 17.11,
@@ -207,7 +226,7 @@ export function calculateAstrology(
   const dominantQuality = Object.entries(qualityCounts).sort((a, b) => b[1] - a[1])[0][0];
   const dominantPlanet = Object.entries(planetRulerCounts).sort((a, b) => b[1] - a[1])[0][0];
 
-  const northNodeLong = getMeanNodeLongitude(date);
+  const northNodeLong = getTrueNodeLongitude(date);
   const southNodeLong = (northNodeLong + 180) % 360;
   const northNodeInfo = getSignFromLongitude(northNodeLong);
   const southNodeInfo = getSignFromLongitude(southNodeLong);
@@ -224,4 +243,19 @@ export function calculateAstrology(
     northNode: northNodeInfo.sign,
     southNode: southNodeInfo.sign,
   };
+}
+
+const _memoAstro = memoize(
+  _calculateAstrologyImpl,
+  (day, month, year, hour, minute, lat, lon, tz) =>
+    `astro:${birthKey(day, month, year, hour, minute, lat, lon, tz)}`
+);
+
+export function calculateAstrology(
+  day: number, month: number, year: number,
+  hour: number = 12, minute: number = 0,
+  latitude: number = 48.15, longitude: number = 17.11,
+  timezoneOffsetHours: number = 1
+): AstrologyResult {
+  return _memoAstro(day, month, year, hour, minute, latitude, longitude, timezoneOffsetHours);
 }

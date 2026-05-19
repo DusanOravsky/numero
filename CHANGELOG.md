@@ -4,6 +4,25 @@ All notable changes to this project are documented in this file. Dates are
 in ISO 8601 (YYYY-MM-DD). The format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 2.1.4 — 2026-05-19
+
+PWA update detection na mobile — Dušok-style network-first pre HTML:
+
+Predtým: `index.html` bol cache-first cez precache → mobile PWA pri otvorení
+nikdy nedostala čerstvý HTML, takže nezistila že je nový bundle hash.
+
+Teraz:
+- `index.html` zostáva v precache (pre offline reload SPA routes)
+- Runtime caching pridaný `NetworkFirst` handler pre VŠETKY navigation
+  requests (`request.mode === 'navigate'`)
+- Online → fresh HTML každé otvorenie → update detection funguje
+- Offline → 3s timeout → fallback na cache → app stále plne funkčná
+
+Spojené s v2.1.3 event-based update checks (controllerchange,
+visibilitychange max 1× za 6h) → na mobile nainštalovanej PWA uvidíš
+"Nová verzia" prompt pri ďalšom otvorení po deploy-i, bez batériu
+zožierajúceho pollingu.
+
 ## 2.1.3 — 2026-05-19
 
 PWA update detection battery-friendly:

@@ -37,28 +37,33 @@ export default defineConfig({
         ]
       },
       workbox: {
+        // index.html je v precache (potrebné pre offline navigateFallback),
+        // ale runtime NetworkFirst handler ho prebíja pre online requests:
+        //   Online: NetworkFirst → fresh index.html → update detection ✓
+        //   Offline: NetworkFirst timeout (3s) → fallback na cache → app funguje ✓
         globPatterns: ['**/*.{js,css,html,ico,png,svg,json,webmanifest}'],
         cleanupOutdatedCaches: true,
-        // skipWaiting + clientsClaim: nový SW preberá kontrolu okamžite po
-        // inštalácii bez čakania kým sa zatvoria všetky karty. Nutné pre
-        // mobile PWA inštalovanú na ploche — appka tam nikdy "nezatvára".
         skipWaiting: true,
         clientsClaim: true,
+        // Pre offline SPA route reloady — fallback na precached index.html
+        // (workbox cache rovno indexovú stránku pri inštalácii, takže
+        // offline reload na /numero/numerology funguje)
         navigateFallback: process.env.GITHUB_ACTIONS ? '/numero/index.html' : '/index.html',
         navigateFallbackDenylist: [/^\/api\//, /^\/_/, /\.[a-z0-9]{2,5}$/i],
         runtimeCaching: [
           {
-            // SPA route navigations: cache-first with network update fallback
-            urlPattern: /^https?:\/\/[^/]+\/(numero\/)?$/,
+            // HTML / SPA navigations: NetworkFirst s 3s timeout.
+            // Online → čerstvý → update detection. Offline → cache fallback.
+            urlPattern: ({ request }) => request.mode === 'navigate',
             handler: 'NetworkFirst',
             options: {
               cacheName: 'navigations',
               networkTimeoutSeconds: 3,
-              expiration: { maxEntries: 5, maxAgeSeconds: 7 * 24 * 60 * 60 },
+              expiration: { maxEntries: 5, maxAgeSeconds: 30 * 24 * 60 * 60 },
             },
           },
           {
-            // App shell JS/CSS chunks (have hashes, immutable once cached)
+            // App shell JS/CSS chunks (hashed names, immutable) — cache-first OK
             urlPattern: /\/assets\/.*\.(?:js|css)$/i,
             handler: 'CacheFirst',
             options: {

@@ -42,21 +42,27 @@ export function SharedView() {
   const [clientData, setClientData] = useState<ClientData | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  // setState in effect je tu zámerné: parseujeme URL hash z location pri mount.
+  // Toto je sync s externým stavom (URL), nie cascading render — eslint disable.
   useEffect(() => {
     try {
       const hash = window.location.hash;
       const match = hash.match(/[?&]data=([^&]+)/);
       if (!match) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setError('Chyba: chybajuce data v odkaze');
         return;
       }
       const decoded = JSON.parse(decodeURIComponent(escape(atob(match[1]))));
       if (!decoded.name || !decoded.birthDay || !decoded.birthMonth || !decoded.birthYear) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setError('Chyba: nekompletne data');
         return;
       }
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setClientData(decoded);
     } catch {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setError('Chyba: neplatny odkaz');
     }
   }, []);

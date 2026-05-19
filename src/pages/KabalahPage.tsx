@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { useStore } from '../store/useStore';
 import { GlassCard } from '../components/GlassCard';
 import { DateInput } from '../components/DateInput';
@@ -11,21 +11,22 @@ import { TreeOfLife } from '../components/TreeOfLife';
 export function KabalahPage() {
   const { profiles, activeProfileId } = useStore();
   const profile = profiles.find(p => p.id === activeProfileId);
-  const [result, setResult] = useState<KabalahResult | null>(null);
+  const [manualResult, setManualResult] = useState<KabalahResult | null>(null);
+
+  const profileResult = useMemo<KabalahResult | null>(() => {
+    if (!profile) return null;
+    const lifePath = reduceToSingle(profile.birthDay + profile.birthMonth + profile.birthYear);
+    const dayNum = reduceToSingle(profile.birthDay);
+    return calculateKabalah(lifePath, dayNum);
+  }, [profile]);
+
+  const result = manualResult ?? profileResult;
 
   const handleCalculate = (day: number, month: number, year: number) => {
     const lifePath = reduceToSingle(day + month + year);
     const dayNum = reduceToSingle(day);
-    setResult(calculateKabalah(lifePath, dayNum));
+    setManualResult(calculateKabalah(lifePath, dayNum));
   };
-
-  useEffect(() => {
-    if (profile && !result) {
-      const lifePath = reduceToSingle(profile.birthDay + profile.birthMonth + profile.birthYear);
-      const dayNum = reduceToSingle(profile.birthDay);
-      setResult(calculateKabalah(lifePath, dayNum));
-    }
-  }, [profile, result]);
 
   return (
     <div className="space-y-6">
@@ -267,7 +268,7 @@ export function KabalahPage() {
           </GlassCard>
 
           <button
-            onClick={() => setResult(null)}
+            onClick={() => setManualResult(null)}
             className="px-4 py-2 rounded-xl text-sm font-medium glass text-slate-400 hover:text-white"
           >
             Nový výpočet

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useStore } from '../store/useStore';
@@ -33,8 +33,21 @@ export function NumerologyPage() {
   const navigate = useNavigate();
   const { profiles, activeProfileId, numerologyMethod } = useStore();
   const profile = profiles.find(p => p.id === activeProfileId);
-  const [result, setResult] = useState<NumerologyResult | null>(null);
-  const [devResult, setDevResult] = useState<DevelopmentalNumerologyResult | null>(null);
+  const [manualResult, setManualResult] = useState<NumerologyResult | null>(null);
+  const [manualDevResult, setManualDevResult] = useState<DevelopmentalNumerologyResult | null>(null);
+
+  // Auto-results odvodené od profilu — useMemo namiesto setState v useEffect.
+  const profileResult = useMemo<NumerologyResult | null>(() => {
+    if (!profile) return null;
+    return calculateFullNumerology(profile.birthDay, profile.birthMonth, profile.birthYear);
+  }, [profile]);
+  const profileDevResult = useMemo<DevelopmentalNumerologyResult | null>(() => {
+    if (!profile) return null;
+    return calculateDevelopmentalNumerology(profile.birthDay, profile.birthMonth, profile.birthYear);
+  }, [profile]);
+
+  const result = manualResult ?? profileResult;
+  const devResult = manualDevResult ?? profileDevResult;
   const [nameResult, setNameResult] = useState<NameNumerologyResult | null>(null);
   const [nameInput, setNameInput] = useState('');
   const [searchParams, setSearchParams] = useSearchParams();
@@ -42,17 +55,15 @@ export function NumerologyPage() {
   const validTabs: TabId[] = ['overview', 'planes', 'vibrations', 'karmic', 'love', 'name'];
   const urlTab = searchParams.get('tab');
   const initialTab: TabId = urlTab && (validTabs as string[]).includes(urlTab) ? (urlTab as TabId) : 'overview';
-  const [activeTab, setActiveTab] = useState<TabId>(initialTab);
+  const [activeTab, setActiveTabState] = useState<TabId>(initialTab);
 
-  // Keep URL ?tab=… in sync with active tab
-  useEffect(() => {
-    const current = searchParams.get('tab');
-    if (current !== activeTab) {
-      const next = new URLSearchParams(searchParams);
-      next.set('tab', activeTab);
-      setSearchParams(next, { replace: true });
-    }
-  }, [activeTab, searchParams, setSearchParams]);
+  // Custom setter — synchronizuje URL ?tab=… s aktívnou záložkou bez setState v useEffect.
+  const setActiveTab = (tab: TabId) => {
+    setActiveTabState(tab);
+    const next = new URLSearchParams(searchParams);
+    next.set('tab', tab);
+    setSearchParams(next, { replace: true });
+  };
 
   // Cycle picker pre vibrácie – default = dnes
   const todayISO = new Date().toISOString().slice(0, 10);
@@ -67,16 +78,9 @@ export function NumerologyPage() {
   const isToday = vibDate === todayISO;
 
   const handleCalculate = (day: number, month: number, year: number) => {
-    setResult(calculateFullNumerology(day, month, year));
-    setDevResult(calculateDevelopmentalNumerology(day, month, year));
+    setManualResult(calculateFullNumerology(day, month, year));
+    setManualDevResult(calculateDevelopmentalNumerology(day, month, year));
   };
-
-  useEffect(() => {
-    if (profile && !result) {
-      setResult(calculateFullNumerology(profile.birthDay, profile.birthMonth, profile.birthYear));
-      setDevResult(calculateDevelopmentalNumerology(profile.birthDay, profile.birthMonth, profile.birthYear));
-    }
-  }, [profile, result]);
 
   const lifePathInfo = result ? lifePaths[String(result.lifePathNumber)] : null;
 
@@ -92,12 +96,9 @@ export function NumerologyPage() {
   ];
   const tabs = allTabs.filter(t => t.methods.includes(numerologyMethod));
 
-  // Ak je aktívna záložka skrytá pri zmene metódy, prepni sa na Prehľad.
-  useEffect(() => {
-    if (!tabs.find(t => t.id === activeTab)) {
-      setActiveTab('overview');
-    }
-  }, [numerologyMethod, activeTab, tabs]);
+  // Ak je aktívna záložka skrytá pri zmene metódy, použijeme 'overview'.
+  // Derivovaný tab — žiadne setState v useEffect.
+  const visibleTab: TabId = tabs.find(t => t.id === activeTab) ? activeTab : 'overview';
 
   return (
     <div className="space-y-6">
@@ -142,7 +143,7 @@ export function NumerologyPage() {
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={`px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all ${
-                  activeTab === tab.id
+                  visibleTab === tab.id
                     ? 'bg-indigo-600 text-white glow'
                     : 'glass text-slate-400 hover:text-white'
                 }`}
@@ -151,14 +152,14 @@ export function NumerologyPage() {
               </button>
             ))}
             <button
-              onClick={() => { setResult(null); setDevResult(null); }}
+              onClick={() => { setManualResult(null); setManualDevResult(null); }}
               className="px-4 py-2 rounded-xl text-sm font-medium glass text-slate-400 hover:text-white ml-auto"
             >
               Nový výpočet
             </button>
           </div>
 
-          {activeTab === 'overview' && (
+          {visibleTab === 'overview' && (
             <div className="space-y-6">
               {/* HERO STRIP — pri Charakterovej ŽČ, pri Vývojovej K3 (Životné poslanie) */}
               {numerologyMethod === 'characterological' ? (
@@ -471,7 +472,7 @@ export function NumerologyPage() {
             </div>
           )}
 
-          {activeTab === 'planes' && (
+          {visibleTab === 'planes' && (
             <div className="space-y-6">
               <GlassCard>
                 <p className="text-sm text-slate-400">
@@ -556,7 +557,7 @@ export function NumerologyPage() {
             </div>
           )}
 
-          {activeTab === 'vibrations' && (
+          {visibleTab === 'vibrations' && (
             <div className="space-y-6">
               <GlassCard>
                 <p className="text-sm text-slate-400">
@@ -816,7 +817,7 @@ export function NumerologyPage() {
             </div>
           )}
 
-          {activeTab === 'karmic' && (
+          {visibleTab === 'karmic' && (
             <div className="space-y-4">
               <GlassCard>
                 <h3 className="font-medium text-white mb-2">Karmické trojuholníky</h3>
@@ -1060,7 +1061,7 @@ export function NumerologyPage() {
             </div>
           )}
 
-          {activeTab === 'love' && (
+          {visibleTab === 'love' && (
             <div className="space-y-4">
               <GlassCard>
                 <p className="text-sm text-slate-400">
@@ -1121,7 +1122,7 @@ export function NumerologyPage() {
             </div>
           )}
 
-          {activeTab === 'name' && (
+          {visibleTab === 'name' && (
             <div className="space-y-4">
               <GlassCard>
                 <h3 className="font-medium text-white mb-3">Numerológia mena</h3>

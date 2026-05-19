@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { useStore } from '../store/useStore';
 import { GlassCard } from '../components/GlassCard';
 import { ChakraWheel } from '../components/ChakraWheel';
@@ -11,37 +11,41 @@ import { calculateAstrology } from '../engine/astrologyEngine';
 import { motion } from 'framer-motion';
 import { SkeletonChakraList } from '../components/Skeleton';
 
+function computeChakras(day: number, month: number, year: number, hour: number = 12, minute: number = 0): ChakraState[] {
+  const numerology = calculateFullNumerology(day, month, year);
+  const hd = calculateHumanDesign(day, month, year, hour, minute);
+  const astro = calculateAstrology(day, month, year, hour, minute);
+  const gridCounts = getGridCount(numerology.grid);
+  return evaluateChakras(
+    numerology.lifePathNumber,
+    gridCounts,
+    numerology.isolatedNumbers,
+    hd.definedCenters,
+    astro.dominantElement
+  );
+}
+
 export function ChakrasPage() {
   const { profiles, activeProfileId } = useStore();
   const profile = profiles.find(p => p.id === activeProfileId);
-  const [chakras, setChakras] = useState<ChakraState[] | null>(null);
+  const [manualChakras, setManualChakras] = useState<ChakraState[] | null>(null);
+
+  const profileChakras = useMemo<ChakraState[] | null>(() => {
+    if (!profile) return null;
+    return computeChakras(
+      profile.birthDay,
+      profile.birthMonth,
+      profile.birthYear,
+      profile.birthHour ?? 12,
+      profile.birthMinute ?? 0
+    );
+  }, [profile]);
+
+  const chakras = manualChakras ?? profileChakras;
 
   const handleCalculate = (day: number, month: number, year: number, hour: number = 12, minute: number = 0) => {
-    const numerology = calculateFullNumerology(day, month, year);
-    const hd = calculateHumanDesign(day, month, year, hour, minute);
-    const astro = calculateAstrology(day, month, year, hour, minute);
-    const gridCounts = getGridCount(numerology.grid);
-    const result = evaluateChakras(
-      numerology.lifePathNumber,
-      gridCounts,
-      numerology.isolatedNumbers,
-      hd.definedCenters,
-      astro.dominantElement
-    );
-    setChakras(result);
+    setManualChakras(computeChakras(day, month, year, hour, minute));
   };
-
-  useEffect(() => {
-    if (profile && !chakras) {
-      handleCalculate(
-        profile.birthDay,
-        profile.birthMonth,
-        profile.birthYear,
-        profile.birthHour ?? 12,
-        profile.birthMinute ?? 0
-      );
-    }
-  }, [profile, chakras]);
 
   return (
     <div className="space-y-6">
@@ -191,7 +195,7 @@ export function ChakrasPage() {
           </div>
 
           <button
-            onClick={() => setChakras(null)}
+            onClick={() => setManualChakras(null)}
             className="px-4 py-2 rounded-xl text-sm font-medium glass text-slate-400 hover:text-white"
           >
             Nový výpočet

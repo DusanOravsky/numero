@@ -68,9 +68,11 @@ export function PWAPrompts() {
     window.addEventListener('online', onOnline);
     window.addEventListener('offline', onOffline);
 
-    // Version check - show update prompt if version changed
+    // Version check - show update prompt if version changed.
+    // setState in effect is intentional here: sync with external state (localStorage) on mount.
     const lastVersion = localStorage.getItem('app-version');
     if (lastVersion && lastVersion !== APP_VERSION) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setShowUpdate(true);
       // pri zmene verzie tiež reset "dismissed install" – môže si znova ukázať
       localStorage.removeItem('pwa-install-dismissed');

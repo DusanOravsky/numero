@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { useStore } from '../store/useStore';
 import { GlassCard } from '../components/GlassCard';
 import { EnergyCard } from '../components/EnergyCard';
@@ -170,17 +170,26 @@ function getNodeDescription(sign: string, type: 'north' | 'south'): string {
 export function AstrologyPage() {
   const { profiles, activeProfileId } = useStore();
   const profile = profiles.find(p => p.id === activeProfileId);
-  const [result, setResult] = useState<AstrologyResult | null>(null);
+  const [manualResult, setManualResult] = useState<AstrologyResult | null>(null);
+
+  const profileResult = useMemo<AstrologyResult | null>(() => {
+    if (!profile) return null;
+    return calculateAstrology(
+      profile.birthDay,
+      profile.birthMonth,
+      profile.birthYear,
+      profile.birthHour ?? 12,
+      profile.birthMinute ?? 0,
+      profile.birthLatitude ?? 48.15,
+      profile.birthLongitude ?? 17.11
+    );
+  }, [profile]);
+
+  const result = manualResult ?? profileResult;
 
   const handleCalculate = (day: number, month: number, year: number, hour?: number, minute?: number, lat?: number, lon?: number) => {
-    setResult(calculateAstrology(day, month, year, hour ?? 12, minute ?? 0, lat ?? 48.15, lon ?? 17.11));
+    setManualResult(calculateAstrology(day, month, year, hour ?? 12, minute ?? 0, lat ?? 48.15, lon ?? 17.11));
   };
-
-  useEffect(() => {
-    if (profile && !result) {
-      setResult(calculateAstrology(profile.birthDay, profile.birthMonth, profile.birthYear, profile.birthHour ?? 12, profile.birthMinute ?? 0));
-    }
-  }, [profile, result]);
 
   return (
     <div className="space-y-6">
@@ -549,7 +558,7 @@ export function AstrologyPage() {
           })()}
 
           <button
-            onClick={() => setResult(null)}
+            onClick={() => setManualResult(null)}
             className="px-4 py-2 rounded-xl text-sm font-medium glass text-slate-400 hover:text-white"
           >
             Nový výpočet

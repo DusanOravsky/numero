@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { useStore } from '../store/useStore';
 import { GlassCard } from '../components/GlassCard';
 import { EnergyCard } from '../components/EnergyCard';
@@ -107,17 +107,18 @@ const STRATEGY_DESCRIPTIONS: Record<string, string> = {
 export function HumanDesignPage() {
   const { profiles, activeProfileId } = useStore();
   const profile = profiles.find(p => p.id === activeProfileId);
-  const [result, setResult] = useState<HumanDesignResult | null>(null);
+  const [manualResult, setManualResult] = useState<HumanDesignResult | null>(null);
+
+  const profileResult = useMemo<HumanDesignResult | null>(() => {
+    if (!profile) return null;
+    return calculateHumanDesign(profile.birthDay, profile.birthMonth, profile.birthYear, profile.birthHour ?? 12, profile.birthMinute ?? 0);
+  }, [profile]);
+
+  const result = manualResult ?? profileResult;
 
   const handleCalculate = (day: number, month: number, year: number, hour?: number, minute?: number, lat?: number, lon?: number) => {
-    setResult(calculateHumanDesign(day, month, year, hour ?? 12, minute ?? 0)); void lat; void lon;
+    setManualResult(calculateHumanDesign(day, month, year, hour ?? 12, minute ?? 0)); void lat; void lon;
   };
-
-  useEffect(() => {
-    if (profile && !result) {
-      setResult(calculateHumanDesign(profile.birthDay, profile.birthMonth, profile.birthYear, profile.birthHour ?? 12, profile.birthMinute ?? 0));
-    }
-  }, [profile, result]);
 
   const typeColors: Record<string, string> = {
     'Manifestor': 'from-red-500/20 to-rose-500/20',
@@ -416,7 +417,7 @@ export function HumanDesignPage() {
           })()}
 
           <button
-            onClick={() => setResult(null)}
+            onClick={() => setManualResult(null)}
             className="px-4 py-2 rounded-xl text-sm font-medium glass text-slate-400 hover:text-white"
           >
             Nový výpočet

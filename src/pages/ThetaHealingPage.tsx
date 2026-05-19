@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { useStore } from '../store/useStore';
 import { GlassCard } from '../components/GlassCard';
 import { DateInput } from '../components/DateInput';
@@ -11,20 +11,23 @@ import { motion } from 'framer-motion';
 export function ThetaHealingPage() {
   const { profiles, activeProfileId } = useStore();
   const profile = profiles.find(p => p.id === activeProfileId);
-  const [result, setResult] = useState<ThetaHealingResult | null>(null);
+  // Pre manuálny výpočet (DateInput bez profilu) — držíme override.
+  const [manualResult, setManualResult] = useState<ThetaHealingResult | null>(null);
   const [activeDigging, setActiveDigging] = useState<number | null>(null);
+
+  // Auto-result odvodený od profilu cez useMemo. Pri DateInput-e prepneme cez manualResult.
+  const profileResult = useMemo<ThetaHealingResult | null>(() => {
+    if (!profile) return null;
+    const lifePath = reduceToSingle(profile.birthDay + profile.birthMonth + profile.birthYear);
+    return calculateThetaHealing(lifePath);
+  }, [profile]);
+
+  const result = manualResult ?? profileResult;
 
   const handleCalculate = (day: number, month: number, year: number) => {
     const lifePath = reduceToSingle(day + month + year);
-    setResult(calculateThetaHealing(lifePath));
+    setManualResult(calculateThetaHealing(lifePath));
   };
-
-  useEffect(() => {
-    if (profile && !result) {
-      const lifePath = reduceToSingle(profile.birthDay + profile.birthMonth + profile.birthYear);
-      setResult(calculateThetaHealing(lifePath));
-    }
-  }, [profile, result]);
 
   return (
     <div className="space-y-6">
@@ -151,7 +154,7 @@ export function ThetaHealingPage() {
           </GlassCard>
 
           <button
-            onClick={() => setResult(null)}
+            onClick={() => setManualResult(null)}
             className="px-4 py-2 rounded-xl text-sm font-medium glass text-slate-400 hover:text-white"
           >
             Nový výpočet

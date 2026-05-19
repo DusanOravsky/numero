@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import { calculateFullNumerology, getGridCount } from '../engine/numerologyEngine';
@@ -34,12 +34,12 @@ export function ClientDashboard() {
   const navigate = useNavigate();
   const { clients, addReport } = useStore();
   const client = clients.find(c => c.id === id);
-  const [results, setResults] = useState<AllResults | null>(null);
   const [showPartnerSelect, setShowPartnerSelect] = useState(false);
   const [showChildSelect, setShowChildSelect] = useState(false);
 
-  useEffect(() => {
-    if (!client) return;
+  // Derivované výsledky cez useMemo — žiadne setState v useEffect.
+  const computedResults = useMemo(() => {
+    if (!client) return null;
     const { birthDay: d, birthMonth: m, birthYear: y, birthHour: h, birthMinute: min } = client;
 
     const numerology = calculateFullNumerology(d, m, y);
@@ -50,10 +50,13 @@ export function ClientDashboard() {
     const lp = numerology.lifePathNumber > 9 ? reduceToSingle(numerology.lifePathNumber) : numerology.lifePathNumber;
     const kabalah = calculateKabalah(lp, reduceToSingle(d));
     const theta = calculateThetaHealing(lp);
+    return { numerology, astrology, humanDesign, chakras, kabalah, theta };
+  }, [client]);
 
-    setResults({ numerology, astrology, humanDesign, chakras, kabalah, theta });
-
-    // Add report max once per day per client
+  // Side-effect: pridať report max raz za deň pre klienta. Toto je legitímny
+  // useEffect (zápis do externého store), nie setState.
+  useEffect(() => {
+    if (!client || !computedResults) return;
     const today = new Date().toISOString().split('T')[0];
     const reports = useStore.getState().reports;
     if (!reports.some(r => r.clientId === client.id && r.createdAt.startsWith(today))) {
@@ -63,11 +66,11 @@ export function ClientDashboard() {
         clientId: client.id,
         type: 'Kompletný výklad',
         title: `Výklad pre ${client.name}`,
-        data: { lifePathNumber: numerology.lifePathNumber, hdType: humanDesign.type },
+        data: { lifePathNumber: computedResults.numerology.lifePathNumber, hdType: computedResults.humanDesign.type },
         createdAt: new Date().toISOString(),
       });
     }
-  }, [client]);
+  }, [client, computedResults, addReport]);
 
   if (!client) {
     return (
@@ -78,9 +81,9 @@ export function ClientDashboard() {
     );
   }
 
-  if (!results) return <SkeletonClientDashboard />;
+  if (!computedResults) return <SkeletonClientDashboard />;
 
-  const { numerology, astrology, humanDesign, chakras, kabalah, theta } = results;
+  const { numerology, astrology, humanDesign, chakras, kabalah, theta } = computedResults;
 
   return (
     <div className="space-y-6">

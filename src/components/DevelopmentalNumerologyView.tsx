@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { DevelopmentalNumerologyResult } from '../engine/developmentalNumerologyEngine';
 import { developmentalMeanings, developmentalGridIntro } from '../data/developmentalMeanings';
+import { findMatchingCombinations } from '../data/developmentalCombinations';
 
 interface Props {
   result: DevelopmentalNumerologyResult;
@@ -237,6 +238,43 @@ export function DevelopmentalNumerologyView({ result, gender }: Props) {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Pozoruhodné kombinácie čísel */}
+      {(() => {
+        const matches = findMatchingCombinations(result);
+        if (matches.length === 0) return null;
+        return (
+          <div className="rounded-xl border border-indigo-200 bg-indigo-50/40 p-4">
+            <h4 className="font-medium text-slate-800 mb-1">Pozoruhodné kombinácie čísel</h4>
+            <p className="text-xs text-slate-500 mb-3">
+              Niektoré dvojice čísel v mriežke majú špecifický význam, ktorý pri jednotlivých bunkách nie je viditeľný. Tu sú tie, ktoré platia pre vás.
+            </p>
+            <div className="space-y-2">
+              {matches.map(combo => {
+                const colors =
+                  combo.tone === 'gift' ? 'bg-green-50 border-green-200' :
+                  combo.tone === 'warn' ? 'bg-amber-50 border-amber-200' :
+                  'bg-slate-50 border-slate-200';
+                const titleColor =
+                  combo.tone === 'gift' ? 'text-green-700' :
+                  combo.tone === 'warn' ? 'text-amber-700' :
+                  'text-slate-700';
+                return (
+                  <div key={combo.id} className={`p-3 rounded-lg border ${colors}`}>
+                    <p className={`text-sm font-medium ${titleColor}`}>{combo.title}</p>
+                    <p className="text-xs text-slate-700 mt-1">{combo.description}</p>
+                    {combo.recommendation && (
+                      <p className="text-xs text-slate-600 mt-1.5 italic">
+                        <strong>Odporúčanie:</strong> {combo.recommendation}
+                      </p>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })()}
 
       <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
         <p className="text-[11px] text-slate-500 italic">

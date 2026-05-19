@@ -107,12 +107,71 @@ Anthropic Claude priamo z prehliadača (header `anthropic-dangerous-direct-brows
 - `404.html` pre SPA redirect na GitHub Pages
 - **URL: https://dusanoravsky.github.io/numero/**
 
-## PWA
+## PWA — offline-first + manual-friendly update
 
-- `vite-plugin-pwa` s `autoUpdate`
-- Verzia v `src/components/PWAPrompts.tsx` (APP_VERSION konstanta) **a** v `package.json`
-- Install prompt + update popup + offline indicator
-- iOS status bar zladenie cez `theme-color` meta
+`vite-plugin-pwa` s **CacheFirst stratégiou** pre všetky resources (HTML aj
+JS/CSS). To znamená:
+
+- **App sa otvára okamžite z cache** — žiadne čakanie na sieť, ani 3s timeout.
+- **Pri GitHub Pages outage funguje appka ďalej** — všetko je cached lokálne.
+- **Žiadny `skipWaiting`/`clientsClaim`** — SW sa neaktivuje sám automaticky.
+
+### Detekcia novej verzie
+
+Pri otvorení appky sa pri prvom mount-e porovná `localStorage.app-version`
+(uložená pri minulom otvorení) vs `APP_VERSION` z čerstvo načítaného HTML.
+Ak sú rôzne → **zobrazí sa "Nová verzia" popup** (raz, idempotentne).
+
+Logika je v `src/components/PWAPrompts.tsx`:
+- `useEffect` mount → version compare → `setShowUpdate(true)`
+- `handleUpdate` → `checkForUpdate()` (online check + SW.update + reload)
+- `dismissUpdate` → sync `app-version` → popup sa znova nezobrazí
+
+### Offline-safe update helpers
+
+`src/components/PWAPrompts.tsx` exportuje:
+
+- `checkForUpdate()` — bezpečná manuálna kontrola:
+  1. HEAD ping na `index.html` s `cache: 'no-store'`
+  2. Ak server fail → `{ online: false }`, **žiadne mazanie cache**
+  3. Ak ok → SW.update() + reload
+
+- `forceUpdate()` — tvrdší fallback (unregister SW + clear caches):
+  - **Tiež má online-check** pred mazaním. Ak je GitHub offline, vráti
+    `{ online: false }` a appka zostane v aktuálnom stave.
+
+- `clearAIData()` — vymaže anthropic-api-key + chat history (pre zdieľané
+  zariadenia).
+
+### Settings → "Skontrolovať update"
+
+Manuálny trigger update flow. V `<details>` je aj "Vynútiť cache wipe"
+ako fallback keď opakovaná kontrola zlyháva.
+
+### Version bump pravidlo (SemVer)
+
+**Pri KAŽDOM user-facing release** treba bump-núť `APP_VERSION` v
+`src/components/PWAPrompts.tsx` AJ `version` v `package.json`. Auto-popup
+porovnáva tieto verzie — bez bump-u používateľ nedostane upozornenie.
+
+Stratégia podľa [SemVer](https://semver.org/):
+
+| Bump | Kedy | Príklady |
+|---|---|---|
+| **MAJOR** (X.0.0) | Veľká nová schopnosť, breaking change v store, nový subsystém | 1.5.0 → 2.0.0 (AI integrácia, B-batch features) |
+| **MINOR** (1.X.0) | Nová feature kompatibilne pridaná | 2.1.5 → 2.2.0 (PWA offline-first refactor) |
+| **PATCH** (1.5.X) | Bug fix, UI úprava, polish bez novej funkcionality | 2.0.0 → 2.0.1 (theme picker polish) |
+
+**Workflow:**
+1. Pri commitovaní viacerých zmien → urči najvyššiu úroveň zmeny.
+2. Bump obe `APP_VERSION` aj `package.json` v jednom commite.
+3. CHANGELOG.md → pridaj sekciu pre novú verziu.
+
+### iOS / Android install
+
+- `theme-color` meta pre iOS status bar zladenie
+- iOS Safari: manuálny "Add to Home Screen" hint cez `showIOSHint`
+- Android/Chrome: `beforeinstallprompt` event handler s "Nainštalovať" prompt
 
 ### Version bump pravidlo (SemVer)
 

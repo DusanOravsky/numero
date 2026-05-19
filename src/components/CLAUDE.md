@@ -10,6 +10,38 @@
 - **Framer Motion** pre vstupné animácie (`initial`, `animate`, `transition delay`).
 - **Slovenčina** v UI textoch. i18n prerušujeme cez `useTranslation()` ale väčšina textov je inline (sk-only kvôli ezoterickej špecifickosti).
 
+## Klient kontext (`useSubject` hook)
+
+Stránky Numerology, Astrology, HumanDesign, Chakras, Kabalah, Theta používajú
+**`useSubject()`** namiesto `useStore().profile`. Hook vráti:
+
+- Aktívny profil ak nie je `?client=ID` v URL
+- Klienta ak je `?client=ID` (napr. po preklikoch z `ClientDashboard`)
+
+Subject má rovnaké polia ako profile + `isClient: boolean` + `timezoneOffset`
+(odhadnutý z `birthLatitude/Longitude` cez `getTimezoneFromCoords`).
+
+Každá stránka pri `subject.isClient === true` zobrazuje:
+
+```tsx
+{subject?.isClient && (
+  <button onClick={() => navigate(`/clients/${subject.id}`)}>
+    ← Späť na klienta {subject.name}
+  </button>
+)}
+<div className="flex items-center gap-3">
+  <h1>...</h1>
+  {subject?.isClient && (
+    <span className="bg-amber-500/15 border border-amber-500/30 text-amber-700">
+      Klient: <strong>{subject.name}</strong>
+    </span>
+  )}
+</div>
+```
+
+`ClientNumerology.tsx` (zobrazené v `ClientDashboard`) má `clientId` prop —
+"Otvoriť detail →" linky pridajú `?client=ID` do navigácie.
+
 ## Method-aware UI (KRITICKÉ)
 
 Aplikácia podporuje 2 numerologické metódy. UI sa musí prispôsobiť:

@@ -226,7 +226,7 @@ export function Dashboard() {
         </div>
       </GlassCard>
 
-      {/* Integrálny súhrn profilu */}
+      {/* Integrálny súhrn profilu — v Dashboarde ukáž OBA pohľady na mriežku */}
       {profile && fullResults && (
         <ClientSummary
           clientName={profile.name}
@@ -235,6 +235,7 @@ export function Dashboard() {
           humanDesign={fullResults.humanDesign}
           kabalah={fullResults.kabalah}
           theta={fullResults.theta}
+          respectMethodPreference={false}
         />
       )}
 

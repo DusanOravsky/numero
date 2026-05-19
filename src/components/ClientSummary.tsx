@@ -24,10 +24,16 @@ interface ClientSummaryProps {
   humanDesign: HumanDesignResult;
   kabalah: KabalahResult;
   theta: ThetaHealingResult;
+  /** Ak true (default), zobrazí len pohľad pre aktuálnu zvolenú metódu.
+   *  Ak false, zobrazí oba pohľady bez ohľadu na nastavenie (Dashboard). */
+  respectMethodPreference?: boolean;
 }
 
-export function ClientSummary({ clientName, numerology, astrology, humanDesign, kabalah, theta }: ClientSummaryProps) {
-  const numerologyMethod = useStore(s => s.numerologyMethod);
+export function ClientSummary({ clientName, numerology, astrology, humanDesign, kabalah, theta, respectMethodPreference = true }: ClientSummaryProps) {
+  const storedMethod = useStore(s => s.numerologyMethod);
+  const showBoth = !respectMethodPreference;
+  const showCharacter = showBoth || storedMethod === 'characterological';
+  const showDevelopmental = showBoth || storedMethod === 'developmental';
   const lpInfo = lifePaths[String(numerology.lifePathNumber > 9 ? reduceToSingle(numerology.lifePathNumber) : numerology.lifePathNumber)];
 
   // Vývojová mriežka (Lívia / Červenák)
@@ -72,7 +78,7 @@ export function ClientSummary({ clientName, numerology, astrology, humanDesign, 
           </p>
 
           {/* Pohľad na mriežku — len pre aktívnu metódu */}
-          {numerologyMethod === 'characterological' && (
+          {showCharacter && (
             <div className="rounded-xl border border-blue-200 bg-blue-50/40 p-4 space-y-2">
               <p className="text-xs text-blue-700 font-semibold uppercase tracking-wide">
                 Charakterová mriežka (vrodené kvality)
@@ -94,7 +100,7 @@ export function ClientSummary({ clientName, numerology, astrology, humanDesign, 
             </div>
           )}
 
-          {numerologyMethod === 'developmental' && (
+          {showDevelopmental && (
             <div className="rounded-xl border border-amber-200 bg-amber-50/40 p-4 space-y-2">
               <p className="text-xs text-amber-700 font-semibold uppercase tracking-wide">
                 Vývojová mriežka (životné úlohy)

@@ -11,7 +11,7 @@ import { PartnerBodygraph } from '../components/PartnerBodygraph';
 import { findCity } from '../data/cities';
 import { motion } from 'framer-motion';
 
-type Mode = 'partner' | 'family' | 'astro';
+type Mode = 'partner' | 'family' | 'astro' | 'constellation';
 
 interface PersonInput {
   name: string;
@@ -217,6 +217,55 @@ export function RelationshipsPage() {
   const [astroPartner2, setAstroPartner2] = useState<AstroPersonInput>(emptyAstroPerson());
   const [synastryResult, setSynastryResult] = useState<SynastryResult | null>(null);
 
+  // Rodinná konštelácia
+  const [constFather, setConstFather] = useState<PersonInput>(emptyPerson());
+  const [constMother, setConstMother] = useState<PersonInput>(emptyPerson());
+  const [constChildren, setConstChildren] = useState<PersonInput[]>([emptyPerson()]);
+  const [constellationResult, setConstellationResult] = useState<{
+    partnerCompat: CompatibilityResult;
+    fatherChildren: { child: PersonInput; result: ParentChildResult }[];
+    motherChildren: { child: PersonInput; result: ParentChildResult }[];
+    siblingCompats: { child1: PersonInput; child2: PersonInput; compat: CompatibilityResult }[];
+    familyNumbers: number[];
+  } | null>(null);
+
+  const handleConstellationCalc = () => {
+    if (!isPersonValid(constFather) || !isPersonValid(constMother)) return;
+    const validKids = constChildren.filter(isPersonValid);
+    if (validKids.length === 0) return;
+
+    const fatherNum = calculateFullNumerology(parseInt(constFather.day), parseInt(constFather.month), parseInt(constFather.year));
+    const motherNum = calculateFullNumerology(parseInt(constMother.day), parseInt(constMother.month), parseInt(constMother.year));
+    const partnerCompat = calculatePartnerCompatibility(fatherNum, motherNum);
+
+    const fatherChildren = validKids.map(child => {
+      const childNum = calculateFullNumerology(parseInt(child.day), parseInt(child.month), parseInt(child.year));
+      return { child, result: calculateParentChild(fatherNum, childNum) };
+    });
+
+    const motherChildren = validKids.map(child => {
+      const childNum = calculateFullNumerology(parseInt(child.day), parseInt(child.month), parseInt(child.year));
+      return { child, result: calculateParentChild(motherNum, childNum) };
+    });
+
+    const siblingCompats: { child1: PersonInput; child2: PersonInput; compat: CompatibilityResult }[] = [];
+    for (let i = 0; i < validKids.length; i++) {
+      for (let j = i + 1; j < validKids.length; j++) {
+        const n1 = calculateFullNumerology(parseInt(validKids[i].day), parseInt(validKids[i].month), parseInt(validKids[i].year));
+        const n2 = calculateFullNumerology(parseInt(validKids[j].day), parseInt(validKids[j].month), parseInt(validKids[j].year));
+        siblingCompats.push({ child1: validKids[i], child2: validKids[j], compat: calculatePartnerCompatibility(n1, n2) });
+      }
+    }
+
+    const familyNumbers = [
+      fatherNum.lifePathNumber,
+      motherNum.lifePathNumber,
+      ...validKids.map(k => calculateFullNumerology(parseInt(k.day), parseInt(k.month), parseInt(k.year)).lifePathNumber),
+    ];
+
+    setConstellationResult({ partnerCompat, fatherChildren, motherChildren, siblingCompats, familyNumbers });
+  };
+
   const handlePartnerCalc = () => {
     if (!isPersonValid(partner1) || !isPersonValid(partner2)) return;
     const p1 = calculateFullNumerology(parseInt(partner1.day), parseInt(partner1.month), parseInt(partner1.year));
@@ -267,6 +316,10 @@ export function RelationshipsPage() {
     setAstroPartner1(emptyAstroPerson());
     setAstroPartner2(emptyAstroPerson());
     setSynastryResult(null);
+    setConstFather(emptyPerson());
+    setConstMother(emptyPerson());
+    setConstChildren([emptyPerson()]);
+    setConstellationResult(null);
   };
 
   return (
@@ -294,6 +347,12 @@ export function RelationshipsPage() {
           className={`px-4 py-2 rounded-xl text-sm font-medium ${mode === 'astro' ? 'bg-indigo-600 text-white glow' : 'glass text-slate-400'}`}
         >
           Astro kompatibilita
+        </button>
+        <button
+          onClick={() => { setMode('constellation'); reset(); }}
+          className={`px-4 py-2 rounded-xl text-sm font-medium ${mode === 'constellation' ? 'bg-indigo-600 text-white glow' : 'glass text-slate-400'}`}
+        >
+          Rodinná konštelácia
         </button>
       </div>
 
@@ -1007,6 +1066,186 @@ export function RelationshipsPage() {
               </>
             );
           })()}
+
+          <button onClick={reset} className="px-4 py-2 rounded-xl text-sm glass text-slate-400 hover:text-white">Nový výpočet</button>
+        </div>
+      )}
+
+      {/* RODINNÁ KONŠTELÁCIA — formulár */}
+      {mode === 'constellation' && !constellationResult && (
+        <div className="space-y-4">
+          <GlassCard>
+            <p className="text-sm text-slate-400 mb-4">
+              <strong className="text-white">Rodinná konštelácia</strong> — zadaj oboch rodičov a deti. Výsledok ukáže partnerský vzťah rodičov, vzťah každého rodiča ku každému dieťaťu, vzťahy medzi súrodencami a celkový rodinný energetický profil.
+            </p>
+          </GlassCard>
+
+          <GlassCard>
+            <PersonForm person={constFather} onChange={setConstFather} label="Otec" />
+          </GlassCard>
+          <GlassCard>
+            <PersonForm person={constMother} onChange={setConstMother} label="Matka" />
+          </GlassCard>
+
+          {constChildren.map((child, idx) => (
+            <GlassCard key={idx}>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm text-slate-400">Dieťa {idx + 1}</span>
+                {constChildren.length > 1 && (
+                  <button onClick={() => setConstChildren(constChildren.filter((_, i) => i !== idx))} className="text-xs text-red-400 hover:text-red-300">Odstrániť</button>
+                )}
+              </div>
+              <PersonForm person={child} onChange={(p) => { const next = [...constChildren]; next[idx] = p; setConstChildren(next); }} label="" />
+            </GlassCard>
+          ))}
+
+          <button
+            type="button"
+            onClick={() => setConstChildren([...constChildren, emptyPerson()])}
+            className="w-full py-3 rounded-xl border-2 border-dashed border-indigo-400 text-indigo-700 text-sm font-medium bg-indigo-50 hover:bg-indigo-100"
+          >
+            + Pridať ďalšie dieťa
+          </button>
+
+          <button
+            onClick={handleConstellationCalc}
+            disabled={!isPersonValid(constFather) || !isPersonValid(constMother) || !constChildren.some(isPersonValid)}
+            className="w-full py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-medium hover:from-indigo-500 hover:to-violet-500 disabled:opacity-40 disabled:cursor-not-allowed glow"
+          >
+            Vypočítať rodinnú konšteláciu
+          </button>
+        </div>
+      )}
+
+      {/* RODINNÁ KONŠTELÁCIA — výsledky */}
+      {mode === 'constellation' && constellationResult && (
+        <div className="space-y-6">
+          {/* Summary */}
+          <GlassCard>
+            <h3 className="font-medium text-white mb-3">Čo si z toho vziať</h3>
+            <div className="space-y-2 text-sm text-slate-300">
+              <p>
+                Rodinná konštelácia ukazuje <strong className="text-white">energetickú mapu celej rodiny</strong> — kto komu rozumie prirodzene, kde sú trenia a aké lekcie si navzájom prinášate.
+              </p>
+              <p>
+                <strong>Rodičovský vzťah</strong> je základ — jeho kvalita sa odráža na celej rodine.
+                Každé dieťa má <strong>inú dynamiku</strong> s otcom a s matkou — nie je to o favorizovaní, ale o tom, kto mu čo najlepšie odovzdá.
+              </p>
+            </div>
+          </GlassCard>
+
+          {/* Celkový rodinný profil */}
+          <GlassCard glow>
+            <h3 className="font-medium text-white mb-3">Rodinný energetický profil</h3>
+            <div className="flex flex-wrap gap-2 mb-3">
+              {constellationResult.familyNumbers.map((num, i) => {
+                const names = [constFather.name, constMother.name, ...constChildren.filter(isPersonValid).map(c => c.name)];
+                return (
+                  <div key={i} className="flex flex-col items-center p-2 rounded-lg bg-indigo-500/10 border border-indigo-500/20 min-w-[60px]">
+                    <span className="text-lg font-serif font-bold text-indigo-300">{num}</span>
+                    <span className="text-[10px] text-slate-400">{names[i]}</span>
+                  </div>
+                );
+              })}
+            </div>
+            {(() => {
+              const nums = constellationResult.familyNumbers;
+              const counts = new Map<number, number>();
+              nums.forEach(n => counts.set(n, (counts.get(n) || 0) + 1));
+              const repeated = [...counts.entries()].filter(([, c]) => c > 1);
+              const allDifferent = repeated.length === 0;
+              const familySum = reduceToSingle(nums.reduce((a, b) => a + b, 0));
+              return (
+                <div className="space-y-2 text-xs text-slate-300">
+                  {repeated.length > 0 && (
+                    <p>
+                      <strong className="text-amber-300">Opakujúce sa čísla:</strong>{' '}
+                      {repeated.map(([n, c]) => `${n} (${c}×)`).join(', ')} — tieto energie sú v rodine zosilnené, je to spoločná téma.
+                    </p>
+                  )}
+                  {allDifferent && (
+                    <p><strong className="text-emerald-300">Všetky čísla sú rôzne</strong> — rodina pokrýva široké spektrum energií, každý prináša niečo unikátne.</p>
+                  )}
+                  <p><strong>Rodinné číslo:</strong> {familySum} — súčet všetkých ŽČ redukovaný. Vyjadruje spoločnú tému a lekciu celej rodiny.</p>
+                </div>
+              );
+            })()}
+          </GlassCard>
+
+          {/* Partnerský vzťah rodičov */}
+          <GlassCard>
+            <h3 className="font-medium text-white mb-2">{constFather.name} & {constMother.name} — partnerský vzťah</h3>
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-rose-500 to-pink-500 flex items-center justify-center">
+                <span className="text-xl font-bold text-white">{constellationResult.partnerCompat.overallScore}%</span>
+              </div>
+              <div className="flex-1">
+                <p className="text-sm text-slate-300">{constellationResult.partnerCompat.lifePathCompatibility.description}</p>
+                {constellationResult.partnerCompat.strengths[0] && (
+                  <p className="text-xs text-emerald-300 mt-1">+ {constellationResult.partnerCompat.strengths[0]}</p>
+                )}
+                {constellationResult.partnerCompat.challenges[0] && (
+                  <p className="text-xs text-amber-300 mt-1">! {constellationResult.partnerCompat.challenges[0]}</p>
+                )}
+              </div>
+            </div>
+          </GlassCard>
+
+          {/* Otec ↔ deti */}
+          <GlassCard>
+            <h3 className="font-medium text-white mb-3">{constFather.name} ↔ deti</h3>
+            <div className="space-y-3">
+              {constellationResult.fatherChildren.map(({ child, result: r }, idx) => (
+                <div key={idx} className="p-3 rounded-xl bg-blue-500/10 border border-blue-500/20">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-medium text-white">{child.name}</span>
+                    <span className="text-sm font-bold text-blue-300">{r.compatibility}%</span>
+                  </div>
+                  <p className="text-xs text-slate-300"><strong>Rola:</strong> {r.parentRole}</p>
+                  <p className="text-xs text-slate-300 mt-1"><strong>Komunikácia:</strong> {r.communicationStyle}</p>
+                  {r.recommendations[0] && <p className="text-xs text-indigo-300 mt-1">→ {r.recommendations[0]}</p>}
+                </div>
+              ))}
+            </div>
+          </GlassCard>
+
+          {/* Matka ↔ deti */}
+          <GlassCard>
+            <h3 className="font-medium text-white mb-3">{constMother.name} ↔ deti</h3>
+            <div className="space-y-3">
+              {constellationResult.motherChildren.map(({ child, result: r }, idx) => (
+                <div key={idx} className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-medium text-white">{child.name}</span>
+                    <span className="text-sm font-bold text-purple-300">{r.compatibility}%</span>
+                  </div>
+                  <p className="text-xs text-slate-300"><strong>Rola:</strong> {r.parentRole}</p>
+                  <p className="text-xs text-slate-300 mt-1"><strong>Komunikácia:</strong> {r.communicationStyle}</p>
+                  {r.recommendations[0] && <p className="text-xs text-indigo-300 mt-1">→ {r.recommendations[0]}</p>}
+                </div>
+              ))}
+            </div>
+          </GlassCard>
+
+          {/* Súrodenci */}
+          {constellationResult.siblingCompats.length > 0 && (
+            <GlassCard>
+              <h3 className="font-medium text-white mb-3">Vzťahy medzi súrodencami</h3>
+              <div className="space-y-3">
+                {constellationResult.siblingCompats.map(({ child1, child2, compat }, idx) => (
+                  <div key={idx} className="p-3 rounded-xl glass-light">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-sm text-white">{child1.name} & {child2.name}</span>
+                      <span className="text-sm font-bold text-indigo-300">{compat.overallScore}%</span>
+                    </div>
+                    <p className="text-xs text-slate-400">{compat.lifePathCompatibility.description}</p>
+                    {compat.strengths[0] && <p className="text-xs text-emerald-300 mt-1">+ {compat.strengths[0]}</p>}
+                    {compat.challenges[0] && <p className="text-xs text-amber-300 mt-1">! {compat.challenges[0]}</p>}
+                  </div>
+                ))}
+              </div>
+            </GlassCard>
+          )}
 
           <button onClick={reset} className="px-4 py-2 rounded-xl text-sm glass text-slate-400 hover:text-white">Nový výpočet</button>
         </div>

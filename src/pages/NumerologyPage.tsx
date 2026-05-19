@@ -20,6 +20,7 @@ import planesData from '../data/planes.json';
 import { orvDescriptions, loveLanguageDescriptions, loveLanguageScoringExplanation, cosmicAgeDescriptions } from '../data/orvDescriptions';
 import { cycleVibrationDescriptions } from '../data/planetSignDescriptions';
 import { findMissingCharacterNumbers } from '../data/characterMissingNumbers';
+import { ORVLifeHistogram } from '../components/ORVLifeHistogram';
 
 const planesInfo = planesData as { full: Record<string, { description: string; gift: string; recommendation: string }>; empty: Record<string, { description: string; lesson: string; recommendation: string }> };
 
@@ -764,6 +765,15 @@ export function NumerologyPage() {
                     <span>Aktuálny rok</span>
                   </div>
                 </GlassCard>
+              )}
+
+              {/* Histogram ORV cez celý život */}
+              {profile && (
+                <ORVLifeHistogram
+                  birthDay={profile.birthDay}
+                  birthMonth={profile.birthMonth}
+                  birthYear={profile.birthYear}
+                />
               )}
             </div>
           )}

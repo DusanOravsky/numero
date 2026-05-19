@@ -8,6 +8,7 @@ import type { HumanDesignResult } from '../engine/humanDesignEngine';
 import { Bodygraph } from '../components/Bodygraph';
 import { motion } from 'framer-motion';
 import { getGeneKeysForGates } from '../data/geneKeys';
+import { HD_LINES, HD_PROFILE_PHASES } from '../data/hdLines';
 import type { GeneKey } from '../data/geneKeys';
 
 const TYPE_DESCRIPTIONS: Record<string, string> = {
@@ -191,6 +192,46 @@ export function HumanDesignPage() {
             <EnergyCard title="Definované centrá" value={result.definedCenters.length} subtitle={`z 9 centier`} color="cyan" delay={0.3} />
             <EnergyCard title="Kanály" value={result.channels.length} subtitle="aktívne kanály" color="purple" delay={0.4} />
           </div>
+
+          {/* Detailný popis 6 línií podľa profilu */}
+          {(() => {
+            const line1 = HD_LINES[result.profile.line1];
+            const line2 = HD_LINES[result.profile.line2];
+            const profileKey = `${result.profile.line1}/${result.profile.line2}`;
+            const phaseHint = HD_PROFILE_PHASES[profileKey];
+            return (
+              <GlassCard>
+                <h3 className="font-medium text-white mb-3">
+                  Profil {profileKey} — vedomá línia {result.profile.line1} ({line1?.shortLabel}) + nevedomá línia {result.profile.line2} ({line2?.shortLabel})
+                </h3>
+                {phaseHint && (
+                  <p className="text-sm text-indigo-700 mb-3 italic">{phaseHint}</p>
+                )}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {line1 && (
+                    <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30">
+                      <p className="text-xs text-amber-300 uppercase mb-1">
+                        Línia {line1.line} (vedomá) — {line1.archetype}
+                      </p>
+                      <p className="text-sm text-slate-300 mb-2">{line1.conscious}</p>
+                      <p className="text-xs text-rose-700"><strong>Tieň:</strong> {line1.shadow}</p>
+                      <p className="text-xs text-emerald-700 mt-1"><strong>Signature:</strong> {line1.signature}</p>
+                    </div>
+                  )}
+                  {line2 && (
+                    <div className="p-3 rounded-xl bg-violet-500/10 border border-violet-500/30">
+                      <p className="text-xs text-violet-300 uppercase mb-1">
+                        Línia {line2.line} (nevedomá) — {line2.archetype}
+                      </p>
+                      <p className="text-sm text-slate-300 mb-2">{line2.unconscious}</p>
+                      <p className="text-xs text-rose-700"><strong>Tieň:</strong> {line2.shadow}</p>
+                      <p className="text-xs text-emerald-700 mt-1"><strong>Signature:</strong> {line2.signature}</p>
+                    </div>
+                  )}
+                </div>
+              </GlassCard>
+            );
+          })()}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <GlassCard>

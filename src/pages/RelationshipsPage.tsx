@@ -1565,7 +1565,17 @@ export function RelationshipsPage() {
                   {allDifferent && (
                     <p><strong className="text-emerald-300">Všetky čísla sú rôzne</strong> — rodina pokrýva široké spektrum energií, každý prináša niečo unikátne.</p>
                   )}
-                  <p><strong>Rodinné číslo:</strong> {familySum} — súčet všetkých ŽČ redukovaný. Vyjadruje spoločnú tému a lekciu celej rodiny.</p>
+                  <p><strong>Rodinné číslo:</strong> {familySum} — {
+                    familySum === 1 ? 'Rodina lídrov. Spoločná lekcia: nezávislosť, iniciatíva a odvaha ísť vlastnou cestou. Každý člen sa učí stáť na vlastných nohách.' :
+                    familySum === 2 ? 'Rodina harmónie. Spoločná lekcia: spolupráca, diplomacia a vzájomná podpora. Učíte sa počúvať a vyvažovať.' :
+                    familySum === 3 ? 'Rodina tvorivosti. Spoločná lekcia: sebavyjadrenie, radosť a komunikácia. Vaším poslaním je tvoriť a zdieľať.' :
+                    familySum === 4 ? 'Rodina staviteľov. Spoločná lekcia: stabilita, zodpovednosť a budovanie trvalých hodnôt. Základ je bezpečie.' :
+                    familySum === 5 ? 'Rodina dobrodružstva. Spoločná lekcia: sloboda, zmena a rast cez nové skúsenosti. Učíte sa adaptabilite.' :
+                    familySum === 6 ? 'Rodina lásky. Spoločná lekcia: zodpovednosť, starostlivosť a bezpodmienečná láska. Domov je vaše poslanie.' :
+                    familySum === 7 ? 'Rodina hľadačov. Spoločná lekcia: duchovno, introspekcia a hľadanie pravdy. Učíte sa dôverovať vnútornej múdrosti.' :
+                    familySum === 8 ? 'Rodina hojnosti. Spoločná lekcia: manifestácia, sila a spoločné dosahovanie cieľov. Učíte sa moci a zodpovednosti.' :
+                    'Rodina služby. Spoločná lekcia: odpustenie, univerzálna láska a služba vyššiemu dobru. Učíte sa púšťať a slúžiť.'
+                  }</p>
                 </div>
               );
             })()}

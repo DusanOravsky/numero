@@ -112,6 +112,98 @@ export function ChakrasPage() {
             <ChakraWheel chakras={chakras} />
           </GlassCard>
 
+          {/* Tvoje čítanie — personalizovaný sprievodca čakrami */}
+          <GlassCard>
+            <details open>
+              <summary className="cursor-pointer hover:text-indigo-300 transition-colors">
+                <span className="font-medium text-white">Tvoje čítanie — ako pracovať s čakrami</span>
+              </summary>
+              <div className="mt-4 space-y-4">
+                <p className="text-xs text-slate-400">
+                  Čakry nie sú „zlomené" — blokáda je signál, že v danej oblasti niečo volá po pozornosti.
+                  Hyperaktivita je opačný extrém — príliš veľa energie bez usmernenia. Cieľom je rovnováha.
+                </p>
+
+                {/* Blokované čakry */}
+                {(() => {
+                  const blocked = chakras.filter(c => c.status === 'blocked');
+                  if (blocked.length === 0) return null;
+                  return (
+                    <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20">
+                      <p className="text-xs font-semibold text-rose-300 mb-2">
+                        Blokované čakry ({blocked.length}): oblasti, ktoré volajú po pozornosti
+                      </p>
+                      <p className="text-[11px] text-slate-400 mb-2">
+                        Tieto čakry majú nízke skóre — energia v nich neprúdi voľne. Nie je to „chyba" — je to smer, kam zamerať pozornosť.
+                      </p>
+                      <div className="space-y-2">
+                        {blocked.map(c => (
+                          <div key={c.chakra.number} className="pl-3 border-l-2 border-rose-500/40">
+                            <p className="text-xs text-slate-300">
+                              <strong className="text-rose-300">{c.chakra.name}</strong> ({c.score}/100) — {c.chakra.blocked}
+                            </p>
+                            {c.recommendations[0] && (
+                              <p className="text-[11px] text-slate-400 mt-0.5 italic">→ {c.recommendations[0]}</p>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })()}
+
+                {/* Hyperaktívne čakry */}
+                {(() => {
+                  const hyper = chakras.filter(c => c.status === 'hyperactive');
+                  if (hyper.length === 0) return null;
+                  return (
+                    <div className="p-3 rounded-xl bg-yellow-500/10 border border-yellow-500/20">
+                      <p className="text-xs font-semibold text-yellow-300 mb-2">
+                        Hyperaktívne čakry ({hyper.length}): príliš veľa energie bez usmernenia
+                      </p>
+                      <p className="text-[11px] text-slate-400 mb-2">
+                        Energia je tu silná — ale nemusí byť správne nasmerovaná. Pozor na „prehnanie" v týchto oblastiach.
+                      </p>
+                      <div className="space-y-2">
+                        {hyper.map(c => (
+                          <div key={c.chakra.number} className="pl-3 border-l-2 border-yellow-500/40">
+                            <p className="text-xs text-slate-300">
+                              <strong className="text-yellow-300">{c.chakra.name}</strong> ({c.score}/100) — {c.chakra.hyperactive}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })()}
+
+                {/* Vyvážené čakry */}
+                {(() => {
+                  const balanced = chakras.filter(c => c.status === 'balanced');
+                  if (balanced.length === 0) return null;
+                  return (
+                    <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
+                      <p className="text-xs font-semibold text-emerald-300 mb-1">
+                        Vyvážené čakry ({balanced.length}): {balanced.map(c => c.chakra.name).join(', ')}
+                      </p>
+                      <p className="text-[11px] text-slate-400">
+                        Tu energia prúdi zdravo. Netreba nič meniť — tieto oblasti sú tvoja opora.
+                      </p>
+                    </div>
+                  );
+                })()}
+
+                <div className="p-3 rounded-xl bg-slate-500/10 border border-slate-500/20">
+                  <p className="text-[10px] text-slate-500 uppercase mb-1">Praktický tip</p>
+                  <p className="text-xs text-slate-300">
+                    Začni od blokovaných čakier — tam je najväčší potenciál zmeny. Klikni na „Etická príčina a cnosť" pri
+                    blokovanej čakre nižšie — nájdeš tam konkrétne otázky a praktickú cestu. Jedna čakra naraz stačí.
+                  </p>
+                </div>
+              </div>
+            </details>
+          </GlassCard>
+
           <div className="space-y-4">
             {chakras.map((state, idx) => (
               <motion.div

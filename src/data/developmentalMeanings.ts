@@ -174,3 +174,42 @@ export const developmentalMeanings: Record<number, DevelopmentalCellMeaning> = {
 };
 
 export const developmentalGridIntro = `Vývojová mriežka sa líši od klasickej v tom, že do mriežky vstupujú aj 4 "zakrúžkované" pomocné čísla, ktoré ukazujú karmické cykly a životnú školu duše. Mriežka neukazuje, "kto si", ale "čo si sa prišiel naučiť". Roky 2000+ sa počítajú špeciálne (rok = 20 + zvyšok). Zdroj: kniha Lívia Mičková – Duchovná numerológia.`;
+
+export const developmentalHowToRead = {
+  title: 'Ako čítať vývojovú mriežku',
+  intro: 'Mriežka nie je „diagnóza" — je to mapa životných lekcií. Nuly nie sú nedostatky, ale úlohy, s ktorými si sa narodil. Vysoké počty nie sú automaticky dar — môžu byť aj výzva na zvládnutie.',
+  steps: [
+    {
+      label: '1. Začni od K3 — životné poslanie',
+      text: 'Tretie zakrúžkované číslo (K3) je najdôležitejšie. Je to hlavná téma, pre ktorú si sa sem prišiel. Nájdi ho v mriežke a prečítaj si jeho význam — to je tvoja "červená niť".',
+    },
+    {
+      label: '2. Pozri sa na nuly — životné úlohy',
+      text: 'Políčka bez čísla (prázdne bunky) ukazujú oblasti, kde sa máš v tomto živote naučiť niečo nové. Nie sú to slabiny — sú to lekcie. Venuj im pozornosť a buď k sebe trpezlivý.',
+    },
+    {
+      label: '3. Vysoké počty (3+) — dary aj výzvy',
+      text: 'Čísla, ktoré sa opakujú 3× a viac, ukazujú silnú energiu. Ak ju vieš nasmerovať, je to dar. Ak nie — stáva sa záťažou. Prečítaj si odporúčanie pri danom čísle.',
+    },
+    {
+      label: '4. Ego polarita — mužský/ženský princíp',
+      text: 'Počet jednotiek (párny vs. nepárny) určuje polaritu tvojho ega. Porovnaj ju s biologickým pohlavím — ak sú opačné, tvojou úlohou je vedome integrovať druhú polaritu.',
+    },
+    {
+      label: '5. Kombinácie — čo jednotlivé bunky neprezradia',
+      text: 'Niektoré dvojice čísel vytvárajú špecifické vzorce (napr. veľa trojok + dvojok = "bystrá myseľ + nepokojné telo"). Pozri sekciu Kombinácie nižšie — tam sú tvojim číslam prispôsobené postrehy.',
+    },
+  ],
+  karmicCycles: {
+    title: 'Kedy sa K1–K4 aktivujú v živote',
+    text: 'Karmické cykly nie sú naraz aktívne — zapínajú sa postupne:',
+    cycles: [
+      { label: 'K1 — Psychická stabilita', period: '0 – cca 30 rokov', desc: 'Budovanie vnútorného sebaobrazu, hľadanie identity.' },
+      { label: 'K2 — Materiálna stabilita', period: 'cca 30 – 50 rokov', desc: 'Zabezpečenie, kariéra, hmotný základ.' },
+      { label: 'K3 — Životné poslanie ★', period: 'cca 50+ rokov (ale téma rezonuje celý život)', desc: 'Hlavná životná úloha — to, prečo si tu.' },
+      { label: 'K4 — Detské sny', period: 'neskorší vek', desc: 'Návrat k pôvodným snom a radosti z detstva.' },
+    ],
+    note: 'Hranice nie sú ostré — cykly sa prekrývajú. K3 je aktívne celý život ako "pozadie", no naplno rezonuje po 50-ke.',
+  },
+  practicalTip: 'Nezačínaj od všetkého naraz. Vyber si jednu oblasť (napr. najvýraznejšiu nulu alebo K3) a venuj sa jej mesiac. Pozoruj, čo sa v živote zmení. Mriežka je kompas — nie zoznam úloh na zajtra.',
+};

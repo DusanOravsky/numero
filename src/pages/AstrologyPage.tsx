@@ -274,6 +274,84 @@ export function AstrologyPage() {
             </div>
           </GlassCard>
 
+          {/* Tvoje čítanie — personalizovaný sprievodca astrológiou */}
+          <GlassCard>
+            <details open>
+              <summary className="cursor-pointer hover:text-indigo-300 transition-colors">
+                <span className="font-medium text-white">Tvoje čítanie — ako pracovať s horoskopom</span>
+              </summary>
+              <div className="mt-4 space-y-4">
+                <p className="text-xs text-slate-400">
+                  Horoskop nie je osud — je to mapa energií, s ktorými si sa narodil. Ukazuje tvoje silné stránky, výzvy a životné témy.
+                  Nie hovorí čo „musíš" — hovorí čo máš k dispozícii.
+                </p>
+
+                {/* Slnko — podstata */}
+                <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
+                  <p className="text-xs font-semibold text-amber-300 mb-1">
+                    {result.sunSign.symbol} Tvoja podstata: Slnko v {result.sunSign.name}
+                  </p>
+                  <p className="text-xs text-slate-300">{getSunSignDescription(result.sunSign.name)}</p>
+                  <p className="text-[11px] text-slate-400 mt-1 italic">
+                    Element {result.sunSign.element} + kvalita {result.sunSign.quality.toLowerCase()} = {result.sunSign.quality === 'Kardinálny' ? 'iniciatíva a začínanie' : result.sunSign.quality === 'Fixný' ? 'vytrvalosť a stabilita' : 'adaptabilita a flexibilita'}.
+                  </p>
+                </div>
+
+                {/* Mesiac — emócie */}
+                <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20">
+                  <p className="text-xs font-semibold text-purple-300 mb-1">
+                    {result.moonSign.symbol} Tvoje emócie: Mesiac v {result.moonSign.name}
+                  </p>
+                  <p className="text-xs text-slate-300">{getMoonSignDescription(result.moonSign.name)}</p>
+                  <p className="text-[11px] text-slate-400 mt-1 italic">
+                    Fáza Mesiaca pri narodení: {result.moonPhase} — {getMoonPhaseDescription(result.moonPhase)}
+                  </p>
+                </div>
+
+                {/* Ascendent — maska */}
+                <div className="p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/20">
+                  <p className="text-xs font-semibold text-cyan-300 mb-1">
+                    {result.ascendant.symbol} Ako ťa vidia: Ascendent v {result.ascendant.name}
+                  </p>
+                  <p className="text-xs text-slate-300">{getAscendantDescription(result.ascendant.name)}</p>
+                </div>
+
+                {/* Lunárne uzly — životná cesta */}
+                <div className="p-3 rounded-xl bg-indigo-500/10 border border-indigo-500/20">
+                  <p className="text-xs font-semibold text-indigo-300 mb-1">
+                    Tvoja životná cesta: severný uzol v {result.northNode.name}
+                  </p>
+                  <p className="text-xs text-slate-300">
+                    <strong className="text-emerald-300">Kam smeruješ:</strong> {getNodeDescription(result.northNode.name, 'north')}
+                  </p>
+                  <p className="text-xs text-slate-300 mt-1">
+                    <strong className="text-rose-300">Odkiaľ ideš:</strong> {getNodeDescription(result.southNode.name, 'south')}
+                  </p>
+                  <p className="text-[11px] text-slate-400 mt-1 italic">
+                    Severný uzol = tvoja evolučná úloha. Južný uzol = tvoja komfortná zóna z minulosti.
+                  </p>
+                </div>
+
+                {/* Dominantný element + planéta */}
+                <div className="p-3 rounded-xl bg-slate-500/10 border border-slate-500/20">
+                  <p className="text-xs font-semibold text-slate-300 mb-1">
+                    Tvoja dominantná energia: {result.dominantElement} + {result.dominantPlanet}
+                  </p>
+                  <p className="text-xs text-slate-400">{getElementDescription(result.dominantElement)}</p>
+                  <p className="text-xs text-slate-400 mt-1">{getDominantPlanetDescription(result.dominantPlanet)}</p>
+                </div>
+
+                <div className="p-3 rounded-xl bg-slate-500/10 border border-slate-500/20">
+                  <p className="text-[10px] text-slate-500 uppercase mb-1">Praktický tip</p>
+                  <p className="text-xs text-slate-300">
+                    Začni od Slnka (kto si), Mesiaca (čo cítiš) a severného uzla (kam smeruješ). To sú tri najdôležitejšie body.
+                    Planéty v znameniach a aspekty sú podrobnejší kontext — vráť sa k nim neskôr.
+                  </p>
+                </div>
+              </div>
+            </details>
+          </GlassCard>
+
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <EnergyCard
               title="Slnečné znamenie"

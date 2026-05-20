@@ -76,6 +76,55 @@ export function ClientSummary({ clientName, birthDay, birthMonth, birthYear, num
       <GlassCard glow>
         <h2 className="font-serif text-xl font-bold text-indigo-600 mb-4">Integrálny súhrn osobnosti</h2>
 
+        {/* Tvoje čítanie — ako pracovať s integrálnym súhrnom */}
+        <details className="mb-5 rounded-xl border border-indigo-200 bg-white overflow-hidden">
+          <summary className="p-4 cursor-pointer hover:bg-indigo-50/50 transition-colors">
+            <span className="font-medium text-indigo-800">Ako čítať tento súhrn</span>
+            <span className="text-xs text-indigo-500 ml-2">— personalizovaný sprievodca</span>
+          </summary>
+          <div className="px-4 pb-4 space-y-3">
+            <p className="text-xs text-slate-600">
+              Integrálny súhrn kombinuje 9 systémov — ale nepotrebuješ zvládnuť všetky naraz.
+              Každý hovorí o tom istom človeku, len iným jazykom. Tu je tvoj „čítací kľúč":
+            </p>
+
+            <div className="p-3 rounded-lg bg-violet-50 border border-violet-200">
+              <p className="text-xs font-semibold text-violet-800 mb-1">1. Kto si v jadre</p>
+              <p className="text-xs text-slate-700">
+                Životné číslo <strong>{numerology.lifePathNumber}</strong> ({lpInfo?.title || ''})
+                + Enneagram typ <strong>{enneagram.coreType}</strong> ({enneagramType?.name || ''})
+                — to je tvoja hlavná téma z dvoch uhlov. Začni tu.
+              </p>
+            </div>
+
+            <div className="p-3 rounded-lg bg-indigo-50 border border-indigo-200">
+              <p className="text-xs font-semibold text-indigo-800 mb-1">2. Ako správne fungovať</p>
+              <p className="text-xs text-slate-700">
+                HD typ <strong>{humanDesign.type}</strong> + stratégia „{humanDesign.strategy.toLowerCase()}"
+                + autorita <strong>{humanDesign.authority}</strong> — toto je tvoj denný „operačný systém".
+                Keď cítiš {humanDesign.notSelfTheme.toLowerCase()}, niečo nie je pre teba.
+              </p>
+            </div>
+
+            <div className="p-3 rounded-lg bg-amber-50 border border-amber-200">
+              <p className="text-xs font-semibold text-amber-800 mb-1">3. Kam smeruješ</p>
+              <p className="text-xs text-slate-700">
+                Severný uzol v <strong>{astrology.northNode.name}</strong> (životná evolúcia)
+                + Enneagram integrácia smerom k typu <strong>{enneagram.integrationDirection}</strong> ({enneagramIntegration?.name || ''})
+                — to je tvoj smer rastu.
+              </p>
+            </div>
+
+            <div className="p-3 rounded-lg bg-slate-50 border border-slate-200">
+              <p className="text-[10px] text-slate-500 uppercase mb-1">Praktický tip</p>
+              <p className="text-xs text-slate-700">
+                Ostatné systémy (Ayurvéda, TCM, Kabala, Theta, Astrológia detaily) sú kontext a hĺbka — vráť sa k nim, keď budeš chcieť rozšíriť obraz.
+                Najprv zvládni tieto tri body — tie ti dajú 80% praktického úžitku.
+              </p>
+            </div>
+          </div>
+        </details>
+
         {/* Quick takeaway — 3 najdôležitejšie veci */}
         <div className="mb-5 p-4 rounded-xl bg-gradient-to-r from-indigo-50 to-violet-50 border border-indigo-200">
           <p className="text-xs text-indigo-700 font-semibold uppercase tracking-wide mb-3">Najdôležitejšie na prvý pohľad</p>

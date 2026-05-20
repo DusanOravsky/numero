@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { DevelopmentalNumerologyResult } from '../engine/developmentalNumerologyEngine';
-import { developmentalMeanings, developmentalGridIntro } from '../data/developmentalMeanings';
+import { developmentalMeanings, developmentalGridIntro, developmentalHowToRead } from '../data/developmentalMeanings';
 import { findMatchingCombinations } from '../data/developmentalCombinations';
 
 interface Props {
@@ -21,6 +21,21 @@ export function DevelopmentalNumerologyView({ result, gender }: Props) {
 
   const selectedMeaning = selected ? developmentalMeanings[selected] : null;
   const selectedCount = selected ? result.counts[selected] : 0;
+
+  // Personalizované dáta pre "Ako čítať" sekciu
+  const k3Value = result.circled[2]?.value;
+  // K3 môže byť dvojciferné — vezmeme jeho cifry do mriežky, téma = podľa redukcie
+  const k3Reduced = k3Value ? (k3Value <= 9 ? k3Value : String(k3Value).split('').reduce((s, d) => s + Number(d), 0)) : null;
+  const k3MeaningKey = k3Reduced ? (k3Reduced <= 9 ? k3Reduced : String(k3Reduced).split('').reduce((s, d) => s + Number(d), 0)) : null;
+  const k3Meaning = k3MeaningKey ? developmentalMeanings[k3MeaningKey] : null;
+  const zeros = Object.entries(result.counts)
+    .filter(([, count]) => count === 0)
+    .map(([num]) => ({ num: Number(num), meaning: developmentalMeanings[Number(num)] }))
+    .filter(z => z.meaning);
+  const highCounts = Object.entries(result.counts)
+    .filter(([, count]) => count >= 3)
+    .map(([num, count]) => ({ num: Number(num), count, meaning: developmentalMeanings[Number(num)] }))
+    .filter(h => h.meaning);
 
   function getCountInterpretation(num: number, count: number): string | undefined {
     const m = developmentalMeanings[num];
@@ -50,6 +65,99 @@ export function DevelopmentalNumerologyView({ result, gender }: Props) {
       <div className="p-4 rounded-xl bg-indigo-50 border border-indigo-200">
         <p className="text-xs text-indigo-700 italic">{developmentalGridIntro}</p>
       </div>
+
+      {/* Tvoje čítanie — personalizovaný sprievodca */}
+      <details className="rounded-xl border border-indigo-200 bg-white overflow-hidden" open>
+        <summary className="p-4 cursor-pointer hover:bg-indigo-50/50 transition-colors">
+          <span className="font-medium text-indigo-800">Tvoje čítanie — ako pracovať s číslami</span>
+        </summary>
+        <div className="px-4 pb-4 space-y-4">
+          <p className="text-xs text-slate-600">{developmentalHowToRead.intro}</p>
+
+          {/* K3 — hlavná téma */}
+          {k3Meaning && (
+            <div className="p-3 rounded-lg bg-violet-50 border border-violet-200">
+              <p className="text-xs font-semibold text-violet-800 mb-1">
+                Tvoje životné poslanie (K3 = {k3Value}): {k3Meaning.theme}
+              </p>
+              <p className="text-xs text-slate-700">{k3Meaning.description}</p>
+              <p className="text-xs text-slate-600 mt-2">
+                {getCountInterpretation(k3Meaning.number, result.counts[k3Meaning.number] || 0)}
+              </p>
+              {k3Meaning.recommendation && (
+                <p className="text-xs text-violet-700 mt-2 italic">{k3Meaning.recommendation}</p>
+              )}
+            </div>
+          )}
+
+          {/* Nuly — životné úlohy */}
+          {zeros.length > 0 && (
+            <div className="p-3 rounded-lg bg-rose-50 border border-rose-200">
+              <p className="text-xs font-semibold text-rose-800 mb-2">
+                Tvoje životné úlohy (prázdne bunky): {zeros.map(z => z.num).join(', ')}
+              </p>
+              <p className="text-[11px] text-slate-600 mb-2">
+                Tieto oblasti nemáš „vrodené" — prišiel si sa ich naučiť. Nie sú to slabiny, ale lekcie.
+              </p>
+              <div className="space-y-2">
+                {zeros.map(z => (
+                  <div key={z.num} className="pl-3 border-l-2 border-rose-200">
+                    <p className="text-xs font-medium text-slate-800">{z.num} — {z.meaning!.theme}</p>
+                    <p className="text-[11px] text-slate-600">{z.meaning!.byCount.none}</p>
+                    {z.meaning!.recommendation && (
+                      <p className="text-[11px] text-rose-700 mt-1 italic">{z.meaning!.recommendation}</p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Vysoké počty — dary a výzvy */}
+          {highCounts.length > 0 && (
+            <div className="p-3 rounded-lg bg-emerald-50 border border-emerald-200">
+              <p className="text-xs font-semibold text-emerald-800 mb-2">
+                Tvoje silné energie (3+×): {highCounts.map(h => `${h.num} (${h.count}×)`).join(', ')}
+              </p>
+              <p className="text-[11px] text-slate-600 mb-2">
+                Ak ich vieš nasmerovať, sú to dary. Ak nie — stávajú sa záťažou.
+              </p>
+              <div className="space-y-2">
+                {highCounts.map(h => (
+                  <div key={h.num} className="pl-3 border-l-2 border-emerald-200">
+                    <p className="text-xs font-medium text-slate-800">{h.num} — {h.meaning!.theme}</p>
+                    <p className="text-[11px] text-slate-600">{getCountInterpretation(h.num, h.count)}</p>
+                    {h.meaning!.recommendation && (
+                      <p className="text-[11px] text-emerald-700 mt-1 italic">{h.meaning!.recommendation}</p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Kedy sa cykly aktivujú */}
+          <div className="p-3 rounded-lg bg-amber-50 border border-amber-200">
+            <p className="text-xs font-semibold text-amber-800 mb-2">{developmentalHowToRead.karmicCycles.title}</p>
+            <div className="space-y-1.5">
+              {developmentalHowToRead.karmicCycles.cycles.map((cyc, i) => (
+                <div key={i} className="flex gap-2 text-xs">
+                  <span className="font-medium text-amber-700 whitespace-nowrap min-w-[180px]">
+                    {cyc.label} <span className="text-slate-400">({cyc.period})</span>
+                  </span>
+                  <span className="text-slate-600">{cyc.desc}</span>
+                </div>
+              ))}
+            </div>
+            <p className="text-[11px] text-slate-500 mt-2 italic">{developmentalHowToRead.karmicCycles.note}</p>
+          </div>
+
+          <div className="p-3 rounded-lg bg-slate-50 border border-slate-200">
+            <p className="text-[10px] text-slate-500 uppercase mb-1">Praktický tip</p>
+            <p className="text-xs text-slate-700">{developmentalHowToRead.practicalTip}</p>
+          </div>
+        </div>
+      </details>
 
       {/* Postup výpočtu */}
       <div className="p-4 rounded-xl glass-light">

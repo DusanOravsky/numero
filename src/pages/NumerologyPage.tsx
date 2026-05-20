@@ -277,6 +277,114 @@ export function NumerologyPage() {
                 ) : null}
               </GlassCard>
 
+              {/* Tvoje čítanie — personalizovaný sprievodca pre Charakterovú */}
+              {numerologyMethod === 'characterological' && result && (() => {
+                const charCounts: Record<number, number> = {};
+                for (let i = 1; i <= 9; i++) charCounts[i] = result.grid[i]?.length || 0;
+                const charZeros = Object.entries(charCounts).filter(([, c]) => c === 0).map(([n]) => Number(n));
+                const charHigh = Object.entries(charCounts).filter(([, c]) => c >= 3).map(([n, c]) => ({ num: Number(n), count: c }));
+                const NUMBER_THEMES: Record<number, string> = {
+                  1: 'Ja, ego, začiatok', 2: 'Intuícia, partnerstvo', 3: 'Kreativita, komunikácia',
+                  4: 'Stabilita, práca', 5: 'Sloboda, zmena', 6: 'Láska, rodina, domov',
+                  7: 'Duchovno, pochopenie', 8: 'Hojnosť, moc', 9: 'Múdrosť, zavŕšenie',
+                };
+                return (
+                  <GlassCard>
+                    <details open>
+                      <summary className="cursor-pointer hover:text-indigo-300 transition-colors">
+                        <span className="font-medium text-white">Tvoje čítanie — ako pracovať s mriežkou</span>
+                      </summary>
+                      <div className="mt-4 space-y-4">
+                        <p className="text-xs text-slate-400">
+                          Charakterová mriežka ukazuje tvoje vrodené kvality — čím sú „vybavené" tvoje životné energie.
+                          Čísla v mriežke nie sú „dobré" ani „zlé" — sú to tvoje nástroje. Prázdne bunky nie sú deficity, ale smery rastu.
+                        </p>
+
+                        {/* Životné číslo */}
+                        {lifePathInfo && (
+                          <div className="p-3 rounded-xl bg-violet-500/10 border border-violet-500/20">
+                            <p className="text-xs font-semibold text-violet-300 mb-1">
+                              Tvoje životné číslo {result.lifePathNumber} — „{lifePathInfo.title}"
+                            </p>
+                            <p className="text-xs text-slate-300">{lifePathInfo.description}</p>
+                            <div className="grid grid-cols-2 gap-2 mt-2">
+                              <div className="p-2 rounded-lg bg-emerald-500/10">
+                                <p className="text-[10px] text-emerald-400 uppercase">Dar</p>
+                                <p className="text-[11px] text-slate-300">{lifePathInfo.gift}</p>
+                              </div>
+                              <div className="p-2 rounded-lg bg-rose-500/10">
+                                <p className="text-[10px] text-rose-400 uppercase">Tieň</p>
+                                <p className="text-[11px] text-slate-300">{lifePathInfo.shadow}</p>
+                              </div>
+                            </div>
+                            <p className="text-[11px] text-slate-400 mt-2 italic">{lifePathInfo.recommendation}</p>
+                          </div>
+                        )}
+
+                        {/* Chýbajúce čísla */}
+                        {charZeros.length > 0 && (
+                          <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
+                            <p className="text-xs font-semibold text-amber-300 mb-2">
+                              Tvoje smery rastu (chýbajúce): {charZeros.join(', ')}
+                            </p>
+                            <p className="text-[11px] text-slate-400 mb-2">
+                              Tieto čísla nemáš v mriežke — sú to oblasti, kde sa vyvíjaš cez vedomé úsilie.
+                            </p>
+                            <div className="space-y-1.5">
+                              {charZeros.map(n => (
+                                <div key={n} className="pl-3 border-l-2 border-amber-500/30">
+                                  <p className="text-[11px] text-slate-300"><strong className="text-amber-300">{n}</strong> — {NUMBER_THEMES[n]}</p>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Silné čísla */}
+                        {charHigh.length > 0 && (
+                          <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
+                            <p className="text-xs font-semibold text-emerald-300 mb-2">
+                              Tvoje silné energie (3+×): {charHigh.map(h => `${h.num} (${h.count}×)`).join(', ')}
+                            </p>
+                            <p className="text-[11px] text-slate-400 mb-2">
+                              Tieto energie máš silne prítomné — sú to tvoje dary, ale v nadbytku aj výzvy.
+                            </p>
+                            <div className="space-y-1.5">
+                              {charHigh.map(h => (
+                                <div key={h.num} className="pl-3 border-l-2 border-emerald-500/30">
+                                  <p className="text-[11px] text-slate-300"><strong className="text-emerald-300">{h.num}</strong> — {NUMBER_THEMES[h.num]}</p>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Izolované čísla */}
+                        {result.isolatedNumbers.length > 0 && (
+                          <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20">
+                            <p className="text-xs font-semibold text-rose-300 mb-1">
+                              Izolované čísla: {result.isolatedNumbers.join(', ')}
+                            </p>
+                            <p className="text-[11px] text-slate-400">
+                              Tieto čísla sú obklopené prázdnymi bunkami — ich energia sa nemôže voľne prepájať s ostatnými.
+                              Prejavuje sa to ako vnútorné napätie alebo frustrácia v danej oblasti. Pozri detaily nižšie.
+                            </p>
+                          </div>
+                        )}
+
+                        <div className="p-3 rounded-xl bg-slate-500/10 border border-slate-500/20">
+                          <p className="text-[10px] text-slate-500 uppercase mb-1">Praktický tip</p>
+                          <p className="text-xs text-slate-300">
+                            Začni od životného čísla — to je tvoja „červená niť". Potom si pozri chýbajúce čísla (smery rastu)
+                            a izolované čísla (blokovaná energia). Klikni na mriežku vyššie pre detailný výklad každej bunky.
+                          </p>
+                        </div>
+                      </div>
+                    </details>
+                  </GlassCard>
+                );
+              })()}
+
               {/* Radar chart 9 energií (B28) — pre obe metódy, počíta sa zo zvolenej mriežky */}
               {numerologyMethod === 'characterological' && (
                 <RadarChart9

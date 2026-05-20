@@ -4,6 +4,32 @@ All notable changes to this project are documented in this file. Dates are
 in ISO 8601 (YYYY-MM-DD). The format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 2.15.0 — 2026-05-20
+
+**MINOR**: Personalizované sprievodcovia "Ako čítať" naprieč celou appkou.
+
+### Nové sekcie "Tvoje čítanie — ako pracovať s číslami/dátami"
+
+Každá hlavná stránka teraz obsahuje personalizovaný collapsible sprievodca,
+ktorý zobrazuje konkrétne hodnoty daného človeka s vysvetlením čo robiť:
+
+- **Vývojová numerológia** — K3 (životné poslanie), nuly (životné úlohy),
+  silné energie (3+×), aktivácia cyklov K1-K4 podľa veku
+- **Charakterová numerológia** — ŽČ (dar/tieň), chýbajúce čísla (smery rastu),
+  silné energie, izolované čísla
+- **Human Design** — typ + stratégia, autorita, otvorené centrá, nie-ja téma
+- **Astrológia** — Slnko/Mesiac/Asc, lunárne uzly (kam smeruješ/odkiaľ),
+  dominantný element + planéta
+- **Čakry** — blokované (čo robiť), hyperaktívne (pozor), vyvážené (opora)
+- **Integrálny súhrn** — 3-krokový čítací kľúč (kto si / ako fungovať / kam smeruješ)
+
+### Motivácia
+
+Spätná väzba od používateľov: "vidím čísla ale neviem čo s nimi ďalej".
+Sprievodcovia riešia onboarding problém bez nutnosti externej dokumentácie.
+
+---
+
 ## 2.3.0 — 2026-05-19
 
 **MINOR**: Etikoterapia + AI interpretation lenses (NLP, etikoterapia, koučing).

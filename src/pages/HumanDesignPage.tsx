@@ -204,6 +204,84 @@ export function HumanDesignPage() {
             </div>
           </GlassCard>
 
+          {/* Tvoje čítanie — personalizovaný sprievodca HD */}
+          <GlassCard>
+            <details open>
+              <summary className="cursor-pointer hover:text-indigo-300 transition-colors">
+                <span className="font-medium text-white">Tvoje čítanie — ako pracovať s Human Design</span>
+              </summary>
+              <div className="mt-4 space-y-4">
+                <p className="text-xs text-slate-400">
+                  Human Design nie je návod „ako byť". Je to mapa tvojho energetického systému — ukazuje, ako si navrhnutý fungovať, keď si v súlade sám so sebou. Nie je čo opravovať, len pochopiť.
+                </p>
+
+                {/* Hlavný typ + stratégia */}
+                <div className="p-3 rounded-xl bg-indigo-500/10 border border-indigo-500/20">
+                  <p className="text-xs font-semibold text-indigo-300 mb-1">
+                    Si {result.type} — tvoja stratégia: „{result.strategy.toLowerCase()}"
+                  </p>
+                  <p className="text-xs text-slate-300">{TYPE_DESCRIPTIONS[result.type]}</p>
+                  <p className="text-xs text-slate-400 mt-2 italic">
+                    Prakticky: {result.type === 'Generátor' || result.type === 'Manifestujúci Generátor'
+                      ? 'Čakaj na veci, na ktoré reaguješ „áno" z brucha. Neinicializuj z hlavy — nechaj život prísť k tebe.'
+                      : result.type === 'Manifestor'
+                      ? 'Konaj keď cítiš vnútorný impulz, ale informuj ľudí okolo seba predtým. Redukuje to odpor.'
+                      : result.type === 'Projektor'
+                      ? 'Kultivuj svoju múdrosť a videnie. Veľké príležitosti prídu ako pozvanie — netreba sa pretláčať.'
+                      : 'Daj si 28 dní pred veľkými rozhodnutiami. Diskutuj s ľuďmi, ktorým veríš.'}
+                  </p>
+                </div>
+
+                {/* Autorita */}
+                <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
+                  <p className="text-xs font-semibold text-emerald-300 mb-1">
+                    Tvoja autorita: {result.authority}
+                  </p>
+                  <p className="text-xs text-slate-300">{AUTHORITY_DESCRIPTIONS[result.authority]}</p>
+                </div>
+
+                {/* Otvorené centrá — kde si zraniteľný */}
+                {result.openCenters.length > 0 && (
+                  <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
+                    <p className="text-xs font-semibold text-amber-300 mb-2">
+                      Tvoje otvorené centrá ({result.openCenters.length}): kde absorbujuješ cudziu energiu
+                    </p>
+                    <p className="text-[11px] text-slate-400 mb-2">
+                      V týchto oblastiach si ovplyvniteľný okolím. Kľúčová otázka pri každom: „Je toto moja energia, alebo ju beriem od niekoho iného?"
+                    </p>
+                    <div className="space-y-1.5">
+                      {result.openCenters.map(c => (
+                        <div key={c} className="pl-3 border-l-2 border-amber-500/30">
+                          <p className="text-[11px] text-slate-300">
+                            <strong className="text-amber-300">{c}</strong> — {CENTER_THEMES[c] || ''}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Nie-ja téma */}
+                <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20">
+                  <p className="text-xs font-semibold text-rose-300 mb-1">
+                    Keď cítiš „{result.notSelfTheme.toLowerCase()}" — žiješ mimo dizajn
+                  </p>
+                  <p className="text-xs text-slate-300">
+                    Nie je to chyba ani problém. Je to navigačný signál — niečo v tvojom živote nefunguje podľa tvojho dizajnu.
+                    Vráť sa k stratégii ({result.strategy.toLowerCase()}) a autorite ({result.authority.toLowerCase()}).
+                  </p>
+                </div>
+
+                <div className="p-3 rounded-xl bg-slate-500/10 border border-slate-500/20">
+                  <p className="text-[10px] text-slate-500 uppercase mb-1">Praktický tip</p>
+                  <p className="text-xs text-slate-300">
+                    Nezačínaj od brán a kanálov — začni od stratégie a autority. To sú tvoje dva najdôležitejšie nástroje na každý deň. Všetko ostatné je kontext.
+                  </p>
+                </div>
+              </div>
+            </details>
+          </GlassCard>
+
           <GlassCard glow>
             <div className={`p-6 rounded-xl bg-gradient-to-br ${typeColors[result.type] || typeColors['Generátor']}`}>
               <p className="text-xs text-slate-400 uppercase tracking-wider">Váš typ</p>

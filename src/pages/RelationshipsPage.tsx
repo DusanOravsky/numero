@@ -558,37 +558,39 @@ export function RelationshipsPage() {
             );
           })()}
 
-          {compatibility.strengths.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {compatibility.strengths.length > 0 && (
+              <GlassCard>
+                <h3 className="font-medium text-green-300 mb-3">Silné stránky</h3>
+                {compatibility.strengths.map((s, i) => (
+                  <div key={i} className="flex items-start gap-2 mb-1"><span className="text-green-400">+</span><span className="text-xs text-slate-300">{s}</span></div>
+                ))}
+              </GlassCard>
+            )}
+
+            {compatibility.challenges.length > 0 && (
+              <GlassCard>
+                <h3 className="font-medium text-amber-300 mb-3">Výzvy</h3>
+                {compatibility.challenges.map((c, i) => (
+                  <div key={i} className="flex items-start gap-2 mb-1"><span className="text-amber-400">!</span><span className="text-xs text-slate-300">{c}</span></div>
+                ))}
+              </GlassCard>
+            )}
+
             <GlassCard>
-              <h3 className="font-medium text-white mb-3">Silné stránky</h3>
-              {compatibility.strengths.map((s, i) => (
-                <div key={i} className="flex items-start gap-2 mb-1"><span className="text-green-400">+</span><span className="text-sm text-slate-300">{s}</span></div>
+              <h3 className="font-medium text-indigo-300 mb-3">Odporúčania</h3>
+              {compatibility.recommendations.map((r, i) => (
+                <div key={i} className="flex items-start gap-2 mb-1"><span className="text-indigo-400">→</span><span className="text-xs text-slate-300">{r}</span></div>
               ))}
             </GlassCard>
-          )}
 
-          {compatibility.challenges.length > 0 && (
             <GlassCard>
-              <h3 className="font-medium text-white mb-3">Výzvy</h3>
-              {compatibility.challenges.map((c, i) => (
-                <div key={i} className="flex items-start gap-2 mb-1"><span className="text-amber-400">!</span><span className="text-sm text-slate-300">{c}</span></div>
+              <h3 className="font-medium text-rose-300 mb-3">Rituály pre pár</h3>
+              {compatibility.rituals.map((r, i) => (
+                <div key={i} className="flex items-start gap-2 mb-1"><span className="text-rose-400">♡</span><span className="text-xs text-slate-300">{r}</span></div>
               ))}
             </GlassCard>
-          )}
-
-          <GlassCard>
-            <h3 className="font-medium text-white mb-3">Odporúčania</h3>
-            {compatibility.recommendations.map((r, i) => (
-              <div key={i} className="flex items-start gap-2 mb-1"><span className="text-indigo-400">→</span><span className="text-sm text-slate-300">{r}</span></div>
-            ))}
-          </GlassCard>
-
-          <GlassCard>
-            <h3 className="font-medium text-white mb-3">Rituály pre pár</h3>
-            {compatibility.rituals.map((r, i) => (
-              <div key={i} className="flex items-start gap-2 mb-1"><span className="text-rose-400">♡</span><span className="text-sm text-slate-300">{r}</span></div>
-            ))}
-          </GlassCard>
+          </div>
 
           {/* Human Design composite comparison */}
           {(() => {

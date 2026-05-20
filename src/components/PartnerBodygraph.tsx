@@ -289,55 +289,102 @@ export function PartnerBodygraph({ result1, result2, name1, name2 }: PartnerBody
           <h4 className="text-sm font-medium text-slate-300 mb-2">Podmieňovanie – vzájomný vplyv</h4>
           <p className="text-xs text-slate-500 mb-3">Keď je vaše centrum definované a partnerove je otvorené, váš partner "absorbuje" vašu energiu v tejto oblasti. Vy ho v nej podmieňujete – ovplyvňujete, ako sa cíti, myslí alebo koná. Nie je to zlé – ale je dôležité to rozpoznať, aby partner mohol rozlíšiť čo je JEHO a čo je VAŠE.</p>
           {conditioning.p1ConditionsP2.length > 0 && (
-            <div className="mb-3 p-2 rounded-lg bg-rose-50 border border-rose-200">
-              <p className="text-xs text-rose-600 font-medium mb-1">{name1} podmieňuje {name2} v oblastiach:</p>
-              <p className="text-xs text-slate-600">{conditioning.p1ConditionsP2.join(', ')}</p>
-              <p className="text-[10px] text-slate-400 mt-1">{name2} v týchto oblastiach absorbuje energiu od {name1}. Musí rozlišovať čo je skutočne jeho/jej a čo preberá od partnera.</p>
+            <div className="mb-3 p-3 rounded-lg bg-rose-50 border border-rose-200 space-y-2">
+              <p className="text-xs text-rose-600 font-medium">{name1} podmieňuje {name2} v oblastiach:</p>
+              {conditioning.p1ConditionsP2.map(center => (
+                <div key={center} className="pl-3 border-l-2 border-rose-200">
+                  <p className="text-xs font-medium text-slate-700">{center} {CENTER_THEMES[center] ? `— ${CENTER_THEMES[center]}` : ''}</p>
+                  <p className="text-[11px] text-slate-500">
+                    {center === 'Sakrálne' ? `${name2} môže cítiť falošnú energiu a nadšenie od ${name1}. Otázka: "Je toto moja energia alebo partnerova?"` :
+                     center === 'Solárny plexus' ? `${name2} absorbuje emócie od ${name1} a zosilňuje ich. Môže si zamieňať partnerove nálady za vlastné.` :
+                     center === 'Srdce/Ego' ? `${name2} môže cítiť tlak dokazovať svoju hodnotu podľa štandardov ${name1}.` :
+                     center === 'G' ? `${name2} môže stratiť vlastný smer a identitu v prítomnosti ${name1}. Otázka: "Kam chcem JÁ, nie kam ma ťahá partner?"` :
+                     center === 'Hrdlo' ? `${name2} môže hovoriť a konať pod vplyvom ${name1} — nie vlastným hlasom.` :
+                     center === 'Ajna' ? `${name2} preberá spôsob myslenia od ${name1}. Otázka: "Je toto MÔJ názor?"` :
+                     center === 'Hlava' ? `${name2} môže byť zaplavený otázkami a inšpiráciami od ${name1} — nie vlastnými.` :
+                     center === 'Slezina' ? `${name2} môže cítiť falošný pocit bezpečia v prítomnosti ${name1}. Pozor na ignorovanie vlastnej intuície.` :
+                     center === 'Koreň' ? `${name2} môže cítiť konštantný tlak a stres od ${name1} — akoby vždy niečo "musí".` :
+                     `${name2} v tejto oblasti absorbuje energiu od ${name1}.`}
+                  </p>
+                </div>
+              ))}
             </div>
           )}
           {conditioning.p2ConditionsP1.length > 0 && (
-            <div className="p-2 rounded-lg bg-indigo-50 border border-indigo-200">
-              <p className="text-xs text-indigo-600 font-medium mb-1">{name2} podmieňuje {name1} v oblastiach:</p>
-              <p className="text-xs text-slate-600">{conditioning.p2ConditionsP1.join(', ')}</p>
-              <p className="text-[10px] text-slate-400 mt-1">{name1} v týchto oblastiach absorbuje energiu od {name2}. Musí rozlišovať čo je skutočne jeho/jej a čo preberá od partnera.</p>
+            <div className="p-3 rounded-lg bg-indigo-50 border border-indigo-200 space-y-2">
+              <p className="text-xs text-indigo-600 font-medium">{name2} podmieňuje {name1} v oblastiach:</p>
+              {conditioning.p2ConditionsP1.map(center => (
+                <div key={center} className="pl-3 border-l-2 border-indigo-200">
+                  <p className="text-xs font-medium text-slate-700">{center} {CENTER_THEMES[center] ? `— ${CENTER_THEMES[center]}` : ''}</p>
+                  <p className="text-[11px] text-slate-500">
+                    {center === 'Sakrálne' ? `${name1} môže cítiť falošnú energiu od ${name2}. Pozor na preberanie cudzieho nadšenia.` :
+                     center === 'Solárny plexus' ? `${name1} absorbuje emócie od ${name2}. Otázka: "Je to čo cítim MOJE, alebo partnerove?"` :
+                     center === 'Srdce/Ego' ? `${name1} môže cítiť tlak na výkon podľa štandardov ${name2}.` :
+                     center === 'G' ? `${name1} môže stratiť vlastný smer identity v blízkosti ${name2}.` :
+                     center === 'Hrdlo' ? `${name1} môže hovoriť pod vplyvom ${name2} — nie vlastným hlasom.` :
+                     center === 'Ajna' ? `${name1} preberá spôsob myslenia od ${name2}.` :
+                     center === 'Hlava' ? `${name1} môže byť zaplavený mentálnou energiou od ${name2}.` :
+                     center === 'Slezina' ? `${name1} môže cítiť falošné bezpečie od ${name2}. Pozor na vlastnú intuíciu.` :
+                     center === 'Koreň' ? `${name1} cíti konštantný tlak od ${name2} — potreba spomaľovať.` :
+                     `${name1} v tejto oblasti absorbuje energiu od ${name2}.`}
+                  </p>
+                </div>
+              ))}
             </div>
           )}
           {conditioning.p1ConditionsP2.length === 0 && conditioning.p2ConditionsP1.length === 0 && (
-            <p className="text-xs text-slate-400">Žiadne vzájomné podmieňovanie - oba partneri majú rovnaké definované centrá.</p>
+            <p className="text-xs text-slate-400">Žiadne vzájomné podmieňovanie — oba partneri majú rovnaké definované centrá. To je vzácne a znamená že sa navzájom energeticky "nezahlcujete".</p>
           )}
+          <p className="text-[11px] text-slate-500 mt-3 italic">
+            Podmieňovanie nie je zlé — je to spôsob, akým sa od partnera učíme. Problém nastáva len keď si myslíme, že absorbovaná energia je naša vlastná a rozhodujeme sa podľa nej.
+          </p>
         </div>
 
         {/* Spoločné Génové kľúče */}
         {channelAnalysis.electromagnetic.length > 0 && (
           <div className="p-4 rounded-xl bg-green-500/10 border border-green-500/20">
             <h4 className="text-sm font-medium text-green-600 mb-2">Spoločné Génové kľúče – transformačná cesta páru</h4>
-            <p className="text-xs text-slate-500 mb-3">Elektromagnetické kanály ukazujú, kde sa vaše energie spájajú. Génové kľúče pre tieto brány odhaľujú spoločnú cestu transformácie – tieň, ktorý spolu prekonávate, a dar, ku ktorému spoločne rastete.</p>
+            <p className="text-xs text-slate-500 mb-2">Elektromagnetické kanály ukazujú, kde sa vaše energie spájajú do jedného prúdu. Každý partner prináša jednu bránu — spolu vytvárate celistvý kanál, ktorý neexistuje bez druhého.</p>
+            <p className="text-xs text-slate-500 mb-3 italic">Génové kľúče pre tieto brány odhaľujú spoločný príbeh: aký tieň spolu transformujete, aký dar spolu vytvárate, a čo je najvyšší potenciál vášho spojenia.</p>
             {channelAnalysis.electromagnetic.map((ch, i) => {
               const gk1 = getGeneKeyByGate(ch.gates[0]);
               const gk2 = getGeneKeyByGate(ch.gates[1]);
               return (
-                <div key={i} className="p-3 rounded-lg bg-white border border-green-200 mb-2 space-y-2">
+                <div key={i} className="p-3 rounded-lg bg-white border border-green-200 mb-3 space-y-3">
                   <p className="text-sm font-medium text-slate-800">Kanál {ch.name} ({ch.gates[0]}-{ch.gates[1]})</p>
                   {gk1 && (
-                    <div className="pl-2 border-l-2 border-rose-200">
-                      <p className="text-xs text-slate-600">
+                    <div className="pl-3 border-l-2 border-rose-200 space-y-1">
+                      <p className="text-xs text-slate-700">
                         <strong>Brána {gk1.gate} ({name1})</strong>: <span className="text-red-600">{gk1.shadow}</span> → <span className="text-amber-600">{gk1.gift}</span> → <span className="text-green-600">{gk1.siddhi}</span>
                       </p>
-                      <p className="text-[10px] text-slate-400">{gk1.shadowDescription} NLP: {gk1.nlpTechnique}</p>
+                      <p className="text-[11px] text-slate-500">{gk1.shadowDescription}</p>
+                      <p className="text-[11px] text-emerald-700">Dar: {gk1.giftDescription}</p>
+                      {gk1.nlpTechnique && <p className="text-[10px] text-indigo-600">Technika: {gk1.nlpTechnique} — {gk1.nlpDescription}</p>}
                     </div>
                   )}
                   {gk2 && (
-                    <div className="pl-2 border-l-2 border-indigo-200">
-                      <p className="text-xs text-slate-600">
+                    <div className="pl-3 border-l-2 border-indigo-200 space-y-1">
+                      <p className="text-xs text-slate-700">
                         <strong>Brána {gk2.gate} ({name2})</strong>: <span className="text-red-600">{gk2.shadow}</span> → <span className="text-amber-600">{gk2.gift}</span> → <span className="text-green-600">{gk2.siddhi}</span>
                       </p>
-                      <p className="text-[10px] text-slate-400">{gk2.shadowDescription} NLP: {gk2.nlpTechnique}</p>
+                      <p className="text-[11px] text-slate-500">{gk2.shadowDescription}</p>
+                      <p className="text-[11px] text-emerald-700">Dar: {gk2.giftDescription}</p>
+                      {gk2.nlpTechnique && <p className="text-[10px] text-indigo-600">Technika: {gk2.nlpTechnique} — {gk2.nlpDescription}</p>}
                     </div>
                   )}
                   {gk1 && gk2 && (
-                    <p className="text-xs text-green-700 bg-green-50 p-2 rounded">
-                      Spoločná lekcia: {name1} transformuje "{gk1.shadow}" na "{gk1.gift}" zatiaľ čo {name2} transformuje "{gk2.shadow}" na "{gk2.gift}". Keď sa obaja posunú do daru, kanál {ch.name} sa stane zdrojom spoločnej sily.
-                    </p>
+                    <div className="p-3 rounded-lg bg-green-50 border border-green-200 space-y-2">
+                      <p className="text-xs text-green-800 font-medium">Spoločný príbeh tohto kanálu:</p>
+                      <p className="text-xs text-slate-700">
+                        Vo vzťahu sa stretnete cez spoločný tieň: {name1} prináša „{gk1.shadow.toLowerCase()}" a {name2} „{gk2.shadow.toLowerCase()}". Tieto tiene sa navzájom spúšťajú — partner je vaše zrkadlo.
+                      </p>
+                      <p className="text-xs text-slate-700">
+                        Keď obaja vedome pracujete na transformácii, kanál sa premení na spoločný dar: {name1} žije „{gk1.gift.toLowerCase()}" a {name2} „{gk2.gift.toLowerCase()}". Spolu vytvárate energiu {ch.name.toLowerCase()}.
+                      </p>
+                      <p className="text-xs text-green-700 italic">
+                        Najvyšší potenciál: {gk1.siddhi} + {gk2.siddhi} — to je to, čo váš vzťah prináša do sveta keď ste obaja v najvyššej frekvencii.
+                      </p>
+                    </div>
                   )}
                 </div>
               );

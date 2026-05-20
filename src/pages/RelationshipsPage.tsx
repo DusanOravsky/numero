@@ -965,9 +965,9 @@ export function RelationshipsPage() {
                       </div>
                       {sharedGeneKeys.length > 0 && (
                         <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20 space-y-3">
-                          <p className="text-xs text-purple-300 font-semibold uppercase">Spoločné Génové kľúče — transformačná cesta páru</p>
+                          <p className="text-xs text-purple-300 font-semibold uppercase">Spoločné Génové kľúče — transformačná cesta rodič ↔ dieťa</p>
                           <p className="text-[11px] text-slate-400">
-                            Brány aktívne u oboch odhaľujú spoločný príbeh: aký tieň spolu transformujete, aký dar spolu vytvárate.
+                            Brány aktívne u rodiča aj dieťaťa — spoločné témy, na ktorých rastete. Tieň je to čo sa vo vzťahu spúšťa, dar je to čo z toho vytvárate.
                           </p>
                           {sharedGeneKeys.map(gk => (
                             <div key={gk!.gate} className="p-2.5 rounded-lg bg-white/5 border border-purple-500/10 space-y-1.5">

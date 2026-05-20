@@ -115,6 +115,7 @@ export interface ProfileContext {
   enneagram?: EnneagramResult;
   dosha?: { primary: string; secondary: string | null };
   tcm?: { primary: string; secondary: string };
+  chineseZodiac?: { animal: string; element: string; polarity: 'Yin' | 'Yang' };
 }
 
 /**

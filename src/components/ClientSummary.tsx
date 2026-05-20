@@ -88,7 +88,7 @@ export function ClientSummary({ clientName, birthDay, birthMonth, birthYear, num
           </summary>
           <div className="px-4 pb-4 space-y-3">
             <p className="text-xs text-slate-600">
-              Integrálny súhrn kombinuje 9 systémov — ale nepotrebuješ zvládnuť všetky naraz.
+              Integrálny súhrn kombinuje 11 systémov — ale nepotrebuješ zvládnuť všetky naraz.
               Každý hovorí o tom istom človeku, len iným jazykom. Tu je tvoj „čítací kľúč":
             </p>
 

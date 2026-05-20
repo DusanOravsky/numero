@@ -193,26 +193,27 @@ export function KarmicTab({ result }: KarmicTabProps) {
           </div>
         )}
 
-        {/* Maturity + Birthday number */}
+        {/* Číslo zrelosti + Číslo dňa narodenia */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
           <div className="p-3 rounded-xl bg-indigo-500/10 border border-indigo-500/30">
             <div className="flex items-center gap-2 mb-1">
               <span className="w-9 h-9 rounded-full bg-indigo-500/30 text-indigo-100 font-bold flex items-center justify-center">{result.maturityNumber}</span>
-              <p className="text-xs text-indigo-300 uppercase font-semibold">Maturity number</p>
+              <p className="text-xs text-indigo-300 uppercase font-semibold">Číslo zrelosti</p>
             </div>
             <p className="text-xs text-slate-600">
-              ŽČ + redukcia dňa narodenia. Ukazuje, akú zrelosť a dar prinášate v druhej polovici života
-              (zvyčajne sa aktivuje okolo veku 35–40 rokov).
+              Energia, ktorá sa „zapína" okolo 35–40. roku života. Kombinácia životného čísla a dňa narodenia
+              ({result.lifePathNumber} + {result.birthdayNumber > 9 ? `redukcia(${result.birthdayNumber})` : result.birthdayNumber} = {result.maturityNumber}).
+              Ukazuje, aký dar a smerovanie pribúda s vekom — čo dozrieva v druhej polovici života.
             </p>
           </div>
           <div className="p-3 rounded-xl bg-violet-500/10 border border-violet-500/30">
             <div className="flex items-center gap-2 mb-1">
               <span className="w-9 h-9 rounded-full bg-violet-500/30 text-violet-100 font-bold flex items-center justify-center">{result.birthdayNumber}</span>
-              <p className="text-xs text-violet-300 uppercase font-semibold">Birthday number</p>
+              <p className="text-xs text-violet-300 uppercase font-semibold">Číslo dňa narodenia</p>
             </div>
             <p className="text-xs text-slate-600">
-              Konkrétny deň v mesiaci kedy ste sa narodili. Vyjadruje vrodené talenty a unikátne dary,
-              ktoré sú vám dané "darom".
+              Deň {result.birthdayNumber}. — vrodený talent, s ktorým prichádzate na svet. Na rozdiel od životného čísla
+              sa neredukuje. Je to vaša „špeciálna zručnosť" — niečo, čo vám ide prirodzene bez učenia.
             </p>
           </div>
         </div>

@@ -110,6 +110,7 @@ export function HumanDesignPage() {
   const navigate = useNavigate();
   const subject = useSubject();
   const [manualResult, setManualResult] = useState<HumanDesignResult | null>(null);
+  const [activeTab, setActiveTab] = useState<'overview' | 'genekeys'>('overview');
 
   const profileResult = useMemo<HumanDesignResult | null>(() => {
     if (!subject) return null;
@@ -169,12 +170,44 @@ export function HumanDesignPage() {
 
       {result && (
         <div className="space-y-6">
+          <div className="flex gap-2 overflow-x-auto pb-2">
+            <button
+              onClick={() => setActiveTab('overview')}
+              className={`px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all ${
+                activeTab === 'overview'
+                  ? 'bg-indigo-600 text-white glow'
+                  : 'glass text-slate-400 hover:text-white'
+              }`}
+            >
+              Prehľad
+            </button>
+            <button
+              onClick={() => setActiveTab('genekeys')}
+              className={`px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all ${
+                activeTab === 'genekeys'
+                  ? 'bg-indigo-600 text-white glow'
+                  : 'glass text-slate-400 hover:text-white'
+              }`}
+            >
+              Génové kľúče
+            </button>
+            {manualResult && (
+              <button
+                onClick={() => setManualResult(null)}
+                className="px-4 py-2 rounded-xl text-sm font-medium glass text-slate-400 hover:text-white ml-auto"
+              >
+                Nový výpočet
+              </button>
+            )}
+          </div>
+
           <GlassCard>
             <p className="text-sm text-slate-400">
               <strong className="text-white">Human Design</strong> je systém sebapoznania, ktorý kombinuje astrológiu, I-Ching, Kabalu, hinduistický systém čakier a kvantovú fyziku. Ukazuje, ako ste energeticky navrhnutí -- ako správne rozhodovať, kde máte konzistentnú energiu a kde ste otvorení vonkajším vplyvom.
             </p>
           </GlassCard>
 
+          {activeTab === 'overview' && <>
           {/* Jednoducho povedané — personalizované takeaway */}
           <GlassCard>
             <h3 className="font-medium text-white mb-3">Čo si z toho vziať</h3>
@@ -640,6 +673,9 @@ export function HumanDesignPage() {
             </GlassCard>
           )}
 
+          </>}
+
+          {activeTab === 'genekeys' && <>
           {/* GENOVE KLUCE */}
           {(() => {
             const allGates = [...new Set([
@@ -764,6 +800,8 @@ export function HumanDesignPage() {
             );
           })()}
 
+          </>}
+
           {/* AI výklad Human Design */}
           {subject && (
             <AIChat
@@ -784,15 +822,6 @@ export function HumanDesignPage() {
               initialUserMessage={`Vyhotov mi prosím detailný výklad môjho Human Designu. Som ${result.type}, profil ${result.profile.line1}/${result.profile.line2} (${result.profile.name}), autorita ${result.authority}, stratégia "${result.strategy}". Inkarnačný kríž: ${result.incarnationCross}. Definované centrá: ${result.definedCenters.join(', ')}. Otvorené: ${result.openCenters.join(', ')}. Kanály: ${result.channels.map(c => c.name).join(', ')}. Vysvetli čo to znamená pre môj život, vzťahy a rozhodovanie.`}
               storageKey={`hd-${subject.id}`}
             />
-          )}
-
-          {manualResult && (
-            <button
-              onClick={() => setManualResult(null)}
-              className="px-4 py-2 rounded-xl text-sm font-medium glass text-slate-400 hover:text-white"
-            >
-              Nový výpočet
-            </button>
           )}
         </div>
       )}

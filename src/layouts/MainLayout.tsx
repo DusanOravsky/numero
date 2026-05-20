@@ -5,6 +5,7 @@ import { useTranslation } from '../i18n/useTranslation';
 import type { TranslationKey } from '../i18n/translations';
 import { useStore } from '../store/useStore';
 import { APP_VERSION } from '../components/PWAPrompts';
+import { GlobalAIDrawer } from '../components/GlobalAIDrawer';
 
 const NAV_DEFS: { path: string; labelKey: TranslationKey; icon: string }[] = [
   { path: '/', labelKey: 'nav.dashboard', icon: '⬡' },
@@ -156,6 +157,8 @@ export function MainLayout() {
           </button>
         </div>
       </nav>
+
+      <GlobalAIDrawer />
 
       {/* Bottom sheet pre "Viac" položky */}
       <AnimatePresence>

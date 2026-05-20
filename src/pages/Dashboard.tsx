@@ -301,7 +301,7 @@ export function Dashboard() {
       {/* Detaily dňa — collapsible */}
       {orvDescriptions[odv] && dailyRituals[odv] && (
         <GlassCard delay={0.38}>
-          <details>
+          <details open>
             <summary className="cursor-pointer hover:text-indigo-300 transition-colors">
               <span className="font-medium text-white">Detail dennej energie (ODV {odv})</span>
             </summary>
@@ -387,51 +387,8 @@ export function Dashboard() {
         </GlassCard>
       </div>
 
-      {/* Quick actions */}
-      <div className="flex gap-2 flex-wrap">
-        <button onClick={() => navigate('/clients')} className="px-4 py-2 rounded-xl bg-indigo-50 border border-indigo-200 text-xs font-medium text-indigo-700 hover:bg-indigo-100 transition-colors">
-          Klienti
-        </button>
-        <button onClick={() => navigate('/clients/compare')} className="px-4 py-2 rounded-xl bg-purple-50 border border-purple-200 text-xs font-medium text-purple-700 hover:bg-purple-100 transition-colors">
-          Porovnať
-        </button>
-        <button onClick={() => navigate('/relationships')} className="px-4 py-2 rounded-xl bg-rose-50 border border-rose-200 text-xs font-medium text-rose-700 hover:bg-rose-100 transition-colors">
-          Vzťahy
-        </button>
-        <button onClick={() => navigate('/settings')} className="px-4 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-700 hover:bg-slate-100 transition-colors">
-          Nastavenia
-        </button>
-      </div>
 
-      {/* Integrálny súhrn profilu — v Dashboarde ukáž OBA pohľady na mriežku */}
-      {profile && fullResults && (
-        <ClientSummary
-          clientName={profile.name}
-          birthDay={profile.birthDay}
-          birthMonth={profile.birthMonth}
-          birthYear={profile.birthYear}
-          numerology={fullResults.numerology}
-          astrology={fullResults.astrology}
-          humanDesign={fullResults.humanDesign}
-          kabalah={fullResults.kabalah}
-          theta={fullResults.theta}
-          respectMethodPreference={false}
-        />
-      )}
-
-      {/* Export vlastného profilu */}
-      {profile && fullResults && (
-        <ClientExport
-          client={{ id: profile.id, name: profile.name, birthDay: profile.birthDay, birthMonth: profile.birthMonth, birthYear: profile.birthYear, birthHour: profile.birthHour, birthMinute: profile.birthMinute, birthPlace: profile.birthPlace }}
-          numerology={fullResults.numerology}
-          astrology={fullResults.astrology}
-          humanDesign={fullResults.humanDesign}
-          kabalah={fullResults.kabalah}
-          theta={fullResults.theta}
-        />
-      )}
-
-      {/* Astro tranzity dnes — default skryté */}
+      {/* Astro tranzity dnes */}
       {fullResults && (() => {
         const todayAstro = calculateAstrology(currentDay, currentMonth, currentYear, 12, 0);
         const signs = ['Baran', 'Býk', 'Blíženci', 'Rak', 'Lev', 'Panna', 'Váhy', 'Škorpión', 'Strelec', 'Kozorožec', 'Vodnár', 'Ryby'];
@@ -502,6 +459,34 @@ export function Dashboard() {
           </GlassCard>
         );
       })()}
+
+      {/* Integrálny súhrn profilu — v Dashboarde ukáž OBA pohľady na mriežku */}
+      {profile && fullResults && (
+        <ClientSummary
+          clientName={profile.name}
+          birthDay={profile.birthDay}
+          birthMonth={profile.birthMonth}
+          birthYear={profile.birthYear}
+          numerology={fullResults.numerology}
+          astrology={fullResults.astrology}
+          humanDesign={fullResults.humanDesign}
+          kabalah={fullResults.kabalah}
+          theta={fullResults.theta}
+          respectMethodPreference={false}
+        />
+      )}
+
+      {/* Export vlastného profilu */}
+      {profile && fullResults && (
+        <ClientExport
+          client={{ id: profile.id, name: profile.name, birthDay: profile.birthDay, birthMonth: profile.birthMonth, birthYear: profile.birthYear, birthHour: profile.birthHour, birthMinute: profile.birthMinute, birthPlace: profile.birthPlace }}
+          numerology={fullResults.numerology}
+          astrology={fullResults.astrology}
+          humanDesign={fullResults.humanDesign}
+          kabalah={fullResults.kabalah}
+          theta={fullResults.theta}
+        />
+      )}
 
       {/* AI integrálny výklad — úplne posledný */}
       {profile && fullResults && (

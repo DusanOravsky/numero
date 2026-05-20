@@ -188,6 +188,86 @@ export function NumerologyPage() {
 
           {visibleTab === 'overview' && (
             <div className="space-y-6">
+              {/* Osobný sumár — kľúčové hodnoty zo všetkých sekcií */}
+              {result && (
+                <GlassCard>
+                  <h3 className="font-medium text-white mb-3">Tvoj numerologický profil v kocke</h3>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
+                    <div className="p-2 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-center">
+                      <p className="text-[10px] text-slate-500 uppercase">Životné číslo</p>
+                      <p className="text-xl font-bold text-indigo-300">{result.lifePathNumber}</p>
+                      <p className="text-[10px] text-slate-400">{lifePathInfo?.title || ''}</p>
+                    </div>
+                    {numerologyMethod === 'developmental' && devResult && (
+                      <div className="p-2 rounded-lg bg-amber-500/10 border border-amber-500/20 text-center">
+                        <p className="text-[10px] text-slate-500 uppercase">K3 Poslanie</p>
+                        <p className="text-xl font-bold text-amber-300">{devResult.circled[2].value}</p>
+                        <p className="text-[10px] text-slate-400">životná misia</p>
+                      </div>
+                    )}
+                    <div className="p-2 rounded-lg bg-purple-500/10 border border-purple-500/20 text-center">
+                      <p className="text-[10px] text-slate-500 uppercase">ORV (rok)</p>
+                      <p className="text-xl font-bold text-purple-300">{result.orv}</p>
+                      <p className="text-[10px] text-slate-400">{orvDescriptions[result.orv]?.title || ''}</p>
+                    </div>
+                    <div className="p-2 rounded-lg bg-gold-500/10 border border-amber-500/20 text-center">
+                      <p className="text-[10px] text-slate-500 uppercase">ODV (dnes)</p>
+                      <p className="text-xl font-bold text-amber-200">{result.odv}</p>
+                      <p className="text-[10px] text-slate-400">{orvDescriptions[result.odv]?.title || ''}</p>
+                    </div>
+                    {numerologyMethod === 'characterological' && (
+                      <>
+                        <div className="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-center">
+                          <p className="text-[10px] text-slate-500 uppercase">Plné roviny</p>
+                          <p className="text-xl font-bold text-emerald-300">{result.fullPlanes.length}</p>
+                          <p className="text-[10px] text-slate-400">z 15 možných</p>
+                        </div>
+                        <div className="p-2 rounded-lg bg-rose-500/10 border border-rose-500/20 text-center">
+                          <p className="text-[10px] text-slate-500 uppercase">Chýbajúce čísla</p>
+                          <p className="text-xl font-bold text-rose-300">
+                            {(() => { const counts: Record<number, number> = {}; for (let i = 1; i <= 9; i++) counts[i] = result.grid[i]?.length || 0; return Object.values(counts).filter(c => c === 0).length; })()}
+                          </p>
+                          <p className="text-[10px] text-slate-400">smery rastu</p>
+                        </div>
+                        <div className="p-2 rounded-lg bg-rose-500/10 border border-rose-500/20 text-center">
+                          <p className="text-[10px] text-slate-500 uppercase">Izolované</p>
+                          <p className="text-xl font-bold text-rose-300">{result.isolatedNumbers.length}</p>
+                          <p className="text-[10px] text-slate-400">{result.isolatedNumbers.length > 0 ? result.isolatedNumbers.join(', ') : 'žiadne'}</p>
+                        </div>
+                      </>
+                    )}
+                    {enneagramResult && (
+                      <div className="p-2 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-center">
+                        <p className="text-[10px] text-slate-500 uppercase">Enneagram</p>
+                        <p className="text-xl font-bold text-cyan-300">{enneagramResult.coreType}</p>
+                        <p className="text-[10px] text-slate-400">typ</p>
+                      </div>
+                    )}
+                    {result.loveLanguages.length > 0 && numerologyMethod === 'characterological' && (
+                      <div className="p-2 rounded-lg bg-pink-500/10 border border-pink-500/20 text-center">
+                        <p className="text-[10px] text-slate-500 uppercase">Jazyk lásky</p>
+                        <p className="text-sm font-bold text-pink-300">{result.loveLanguages[0].language.split(' ').slice(0, 2).join(' ')}</p>
+                        <p className="text-[10px] text-slate-400">primárny</p>
+                      </div>
+                    )}
+                    {numerologyMethod === 'characterological' && (
+                      <div className="p-2 rounded-lg bg-slate-500/10 border border-slate-500/20 text-center">
+                        <p className="text-[10px] text-slate-500 uppercase">Číslo zrelosti</p>
+                        <p className="text-xl font-bold text-slate-300">{result.maturityNumber}</p>
+                        <p className="text-[10px] text-slate-400">aktív. ~35-40 r.</p>
+                      </div>
+                    )}
+                  </div>
+                  {result.karmicDebts.length > 0 && (
+                    <div className="mt-3 p-2 rounded-lg bg-red-500/10 border border-red-500/20">
+                      <p className="text-xs text-red-300">
+                        Karmické dlhy: {result.karmicDebts.map(d => `${d.number} (${d.theme})`).join(', ')}
+                      </p>
+                    </div>
+                  )}
+                </GlassCard>
+              )}
+
               {/* HERO STRIP — pri Charakterovej ŽČ, pri Vývojovej K3 (Životné poslanie) */}
               {numerologyMethod === 'characterological' ? (
                 <GlassCard glow>
@@ -407,7 +487,7 @@ export function NumerologyPage() {
 
               {numerologyMethod === 'characterological' && lifePathInfo && (
                 <GlassCard delay={0.2}>
-                  <details>
+                  <details open>
                     <summary className="cursor-pointer hover:text-indigo-300 transition-colors">
                       <span className="font-medium text-white">Detailný výklad ŽČ {result.lifePathNumber} — Lekcia a odporúčanie</span>
                     </summary>

@@ -280,7 +280,7 @@ export const QUOTES_BY_ODV: Record<number, { quote: string; author: string }[]> 
     { quote: 'Človek nie je nič iné než to, čo zo seba urobí.', author: 'Jean-Paul Sartre' },
     { quote: 'Odvaha nie je neprítomnosť strachu, ale rozhodnutie, že niečo iné je dôležitejšie.', author: 'Ambrose Redmoon' },
     { quote: 'Vždy sa zdá, že niečo je nemožné, kým sa to neurobí.', author: 'Nelson Mandela' },
-    { quote: 'Každý ráno sa znova narodíme. To, čo urobíme dnes, je to, na čom najviac záleží.', author: 'Buddha' },
+    { quote: 'Každé ráno sa znova narodíme. To, čo urobíme dnes, je to, na čom najviac záleží.', author: 'Buddha' },
     { quote: 'Poznaj sám seba.', author: 'Sokrates' },
     { quote: 'Individualita je sloboda prežívaná.', author: 'Ralph Waldo Emerson' },
     { quote: 'Žiadna veľká vec nebola nikdy dosiahnutá bez nadšenia.', author: 'Ralph Waldo Emerson' },

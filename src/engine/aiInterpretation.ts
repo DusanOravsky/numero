@@ -106,7 +106,7 @@ export interface ProfileContext {
   name: string;
   gender?: 'male' | 'female';
   birth: { day: number; month: number; year: number; hour?: number; minute?: number; place?: string };
-  numerology: NumerologyResult;
+  numerology?: NumerologyResult;
   developmental?: DevelopmentalNumerologyResult;
   astrology?: AstrologyResult;
   humanDesign?: HumanDesignResult;
@@ -133,22 +133,24 @@ export function summarizeProfile(ctx: ProfileContext): string {
   lines.push('');
 
   // Numerológia
-  lines.push('=== NUMEROLÓGIA (Charakterová mriežka, R. Steinová) ===');
-  lines.push(`Životné číslo: ${ctx.numerology.lifePathNumber} z ${ctx.numerology.lifePathFrom}${ctx.numerology.isMasterNumber ? ' (Master Number)' : ''}`);
-  lines.push(`Plné roviny: ${ctx.numerology.fullPlanes.join(', ') || 'žiadne'}`);
-  lines.push(`Prázdne roviny: ${ctx.numerology.emptyPlanes.join(', ') || 'žiadne'}`);
-  if (ctx.numerology.isolatedNumbers.length > 0)
-    lines.push(`Izolované čísla: ${ctx.numerology.isolatedNumbers.join(', ')}`);
-  lines.push(`ORV (osobná ročná vibrácia tento rok): ${ctx.numerology.orv}`);
-  lines.push(`OMV (mesačná): ${ctx.numerology.omv}, ODV (denná): ${ctx.numerology.odv}`);
-  lines.push(`VDD (vek duchovnej dospelosti): ${ctx.numerology.vdd} rokov`);
-  lines.push(`ΣT (suma tarotu): ${ctx.numerology.sigmaT} → ${ctx.numerology.age === 'aquarius' ? 'Vek Vodnára' : 'Vek Rýb'}`);
-  lines.push(`Top 3 jazyky lásky: ${ctx.numerology.loveLanguages.slice(0, 3).map(l => `${l.language} (${l.score})`).join(', ')}`);
-  if (ctx.numerology.karmicDebts && ctx.numerology.karmicDebts.length > 0) {
-    lines.push(`Karmické dlhy: ${ctx.numerology.karmicDebts.map(d => `${d.number} (${d.theme})`).join('; ')}`);
+  if (ctx.numerology) {
+    lines.push('=== NUMEROLÓGIA (Charakterová mriežka, R. Steinová) ===');
+    lines.push(`Životné číslo: ${ctx.numerology.lifePathNumber} z ${ctx.numerology.lifePathFrom}${ctx.numerology.isMasterNumber ? ' (Master Number)' : ''}`);
+    lines.push(`Plné roviny: ${ctx.numerology.fullPlanes.join(', ') || 'žiadne'}`);
+    lines.push(`Prázdne roviny: ${ctx.numerology.emptyPlanes.join(', ') || 'žiadne'}`);
+    if (ctx.numerology.isolatedNumbers.length > 0)
+      lines.push(`Izolované čísla: ${ctx.numerology.isolatedNumbers.join(', ')}`);
+    lines.push(`ORV (osobná ročná vibrácia tento rok): ${ctx.numerology.orv}`);
+    lines.push(`OMV (mesačná): ${ctx.numerology.omv}, ODV (denná): ${ctx.numerology.odv}`);
+    lines.push(`VDD (vek duchovnej dospelosti): ${ctx.numerology.vdd} rokov`);
+    lines.push(`ΣT (suma tarotu): ${ctx.numerology.sigmaT} → ${ctx.numerology.age === 'aquarius' ? 'Vek Vodnára' : 'Vek Rýb'}`);
+    lines.push(`Top 3 jazyky lásky: ${ctx.numerology.loveLanguages.slice(0, 3).map(l => `${l.language} (${l.score})`).join(', ')}`);
+    if (ctx.numerology.karmicDebts && ctx.numerology.karmicDebts.length > 0) {
+      lines.push(`Karmické dlhy: ${ctx.numerology.karmicDebts.map(d => `${d.number} (${d.theme})`).join('; ')}`);
+    }
+    lines.push(`Maturity number: ${ctx.numerology.maturityNumber}, Birthday: ${ctx.numerology.birthdayNumber}`);
+    lines.push('');
   }
-  lines.push(`Maturity number: ${ctx.numerology.maturityNumber}, Birthday: ${ctx.numerology.birthdayNumber}`);
-  lines.push('');
 
   // Vývojová
   if (ctx.developmental) {
@@ -225,6 +227,12 @@ export function summarizeProfile(ctx: ProfileContext): string {
   if (ctx.tcm) {
     lines.push('=== TCM 5 ELEMENTOV ===');
     lines.push(`Primárny element: ${ctx.tcm.primary}, sekundárny: ${ctx.tcm.secondary}`);
+    lines.push('');
+  }
+
+  if (ctx.chineseZodiac) {
+    lines.push('=== ČÍNSKY HOROSKOP ===');
+    lines.push(`Zviera: ${ctx.chineseZodiac.animal}, Element: ${ctx.chineseZodiac.element}, Polarita: ${ctx.chineseZodiac.polarity}`);
     lines.push('');
   }
 

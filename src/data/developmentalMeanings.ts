@@ -52,7 +52,7 @@ export const developmentalMeanings: Record<number, DevelopmentalCellMeaning> = {
       'Dvojka hovorí o vnútornej energii tela, bioenergii, ktorú produkujú nadobličky. Je to energia dispozícii počas života. Je vyčerpateľná – treba sa naučiť ňou hospodáriť.',
     byCount: {
       none: 'Bez dvojky – veľmi opatrne s energiou. Odporúčanie: vyhýbať sa nemocniciam, cintorínom (cudzie energie môžu vyčerpávať). Žiadny výkonový šport.',
-      one: 'Málo bioenergie – treba sa naučiť šetriť, nehosporodáriť na hrane. Múdra gazdinka aj z mála navarí.',
+      one: 'Málo bioenergie – treba sa naučiť šetriť, nehospodáriť na hrane. Múdra gazdinka aj z mála navarí.',
       two: 'Vyvážená bioenergia – primeraná vitalita.',
       three: 'Silná energia – človek potrebuje pohyb, dynamiku, inak sa energia "tlačí" do hlavy.',
       fourPlus: 'Veľmi silná energia – nemôže obsedieť, potrebuje výkonový šport, dlhé pochody, pohyb. Bez pohybu sa stáva podráždený.',
@@ -164,7 +164,7 @@ export const developmentalMeanings: Record<number, DevelopmentalCellMeaning> = {
     byCount: {
       none: 'Vysoký potenciál učiť sa narábať s peniazmi.',
       one: 'Žiť "od výplaty k výplate", zo zamestnania. Nedostávať sa do dlhov.',
-      two: 'Peniaze prichádzajú vtedy, keď sú treba. Človek nemusí mať veľa, ale neuvidí.',
+      two: 'Peniaze prichádzajú vtedy, keď sú treba. Človek nemusí mať veľa, ale núdzu nezažije.',
       three: 'Hazardéri – myslia vo veľkých číslach. Ľahko prídu, ľahko odídu.',
       fourPlus: 'Múdri vo financiách. Vedia, že na luxus si nepožičiavajú, na luxus nepoužijú posledné. Najvyššia úroveň: aktíva → pasívny príjem → luxus.',
     },

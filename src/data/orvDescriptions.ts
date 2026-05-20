@@ -85,7 +85,7 @@ export const loveLanguageDescriptions: Record<string, { description: string; exa
   'Skutky služby': {
     description: 'Pre tohto človeka sú najväčším prejavom lásky konkrétne činy – pomoc, uľahčenie povinností, praktická starostlivosť. Činy hovoria viac ako slová.',
     examples: 'Varenie, pomoc s domácnosťou, oprava niečoho, prevzatie povinností keď je partner unavený.',
-    howToShow: 'Pomáhajte bez prosby. Prevezzmite niekedy povinnosti. Robte veci, ktoré mu/jej uľahčia život.',
+    howToShow: 'Pomáhajte bez prosby. Prevezmite niekedy povinnosti. Robte veci, ktoré mu/jej uľahčia život.',
   },
   'Fyzický dotyk': {
     description: 'Tento jazyk lásky komunikuje cez telesný kontakt – objatia, držanie sa za ruky, masáž, blízkosť. Fyzická prítomnosť a dotyk sú kľúčové pre pocit bezpečia a lásky.',

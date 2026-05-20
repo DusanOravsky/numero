@@ -67,7 +67,7 @@ export const CHINESE_ANIMALS: Record<string, ChineseAnimalInfo> = {
     traits: 'Energický, nezávislý, nadšený a spoločenský. Symbol slobody a dynamiky.',
     strengths: 'Energia, optimizmus, komunikačné schopnosti, pracovitosť. Inšpiruje okolie.',
     challenges: 'Netrpezlivosť, nestálosť, egocentrizmus. Ťažko znáša rutinu a obmedzenia.',
-    compatibility: 'Najlepšia harmónia s Tigrom a Kozou. Vyhýbať sa Potkanovi.',
+    compatibility: 'Najlepšia harmónia s Tigrom a Psom. Vyhýbať sa Potkanovi.',
     advice: 'Sloboda nie je útek od záväzkov — je to voľba byť niekde celým srdcom. Spomaľ.',
   },
   'Koza': {

@@ -81,7 +81,7 @@ export const ETIKOTERAPIA_BY_CHAKRA: Record<number, EtikoterapiaChakraMap> = {
       'Ktorý detský sen som odpísal ako "neserióznu hru"?',
     ],
     practicalPath:
-      'Doprajteváhľadané "neproduktívne" radosti: tanec, kreslenie, voda. Pri pocite hanby napíš na papier "cítim sa vinný za..." a spýtaj sa: je to skutočne moja vina, alebo iba prevzaté pravidlo?',
+      'Dopraj si vyhľadané "neproduktívne" radosti: tanec, kreslenie, voda. Pri pocite hanby napíš na papier "cítim sa vinný za..." a spýtaj sa: je to skutočne moja vina, alebo iba prevzaté pravidlo?',
   },
   3: {
     chakraNumber: 3,
@@ -104,7 +104,7 @@ export const ETIKOTERAPIA_BY_CHAKRA: Record<number, EtikoterapiaChakraMap> = {
       'Čo by sa stalo keby som povedal "nie" tej osobe ktorej sa najviac bojím?',
     ],
     practicalPath:
-      'Skúsi povedať jedno čisté "nie" denne. Hnev nepotláčaj ani nevybuchni — píš ho, behaj s ním, hovor o ňom s niekým bezpečným. Pestuj si vedomé rozhodnutia: ráno si pomenuj 3 veci ktoré dnes urobíš pre seba (nie pre druhých).',
+      'Skús povedať jedno čisté "nie" denne. Hnev nepotláčaj ani nevybuchni — píš ho, behaj s ním, hovor o ňom s niekým bezpečným. Pestuj si vedomé rozhodnutia: ráno si pomenuj 3 veci ktoré dnes urobíš pre seba (nie pre druhých).',
   },
   4: {
     chakraNumber: 4,

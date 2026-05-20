@@ -97,5 +97,38 @@
     "recommendation": "Učte sa umeniu dokončovania. Nie každý koniec je strata – niektoré sú darčeky.",
     "career": ["humanitárna práca", "umenie", "učenie", "liečiteľstvo", "duchovná práca"],
     "relationships": "Ste hlboký a múdry partner. Učte sa byť prítomní tu a teraz, nie len v ideáloch."
+  },
+  "11": {
+    "title": "Intuitívny vizionár",
+    "keywords": ["intuícia", "inšpirácia", "duchovnosť", "osvietenie"],
+    "description": "Master číslo 11 je číslom duchovného osvietenia a intuície. Máte priamy prístup k vyšším úrovniam vedomia. Ste tu aby ste inšpirovali a ukazovali cestu — nie silou, ale svetlom, ktoré vyžarujete.",
+    "gift": "Mimoriadna intuícia, schopnosť inšpirovať, duchovná hĺbka, vizionárstvo",
+    "shadow": "Úzkosť, nervozita, sebadeštruktívne vzorce, neschopnosť uzemnenia, prehnaný idealizmus",
+    "lesson": "Naučiť sa uzemnenie — inšpirácia bez koreňov sa stáva úzkosťou. Vaša úloha je preniesť víziu do reality",
+    "recommendation": "Každý deň si nájdite čas na ticho — tam počujete svoju intuíciu najlepšie. Ale potom konajte — inšpirácia bez akcie je len sen.",
+    "career": ["poradenstvo", "umenie", "duchovné vedenie", "psychológia", "médiá", "inovácie"],
+    "relationships": "Ste hlboko citlivý partner s intenzívnym vnútorným životom. Potrebujete niekoho, kto rešpektuje vašu potrebu ticha a hĺbky."
+  },
+  "22": {
+    "title": "Majstrovský staviteľ",
+    "keywords": ["manifestácia", "vízia", "stavba", "zmena sveta"],
+    "description": "Master číslo 22 je najsilnejšie zo všetkých — je to vízia 11 spojená s praktickosťou 4. Ste tu aby ste stavali niečo trvalé, čo presiahne váš život. Vaše sny nie sú fantázie — sú plány.",
+    "gift": "Schopnosť premeniť veľké vízie na realitu, disciplína, praktická múdrosť, vedenie veľkých projektov",
+    "shadow": "Ohromenie z vlastného potenciálu, prokrastinácia z veľkosti úlohy, workoholizmus, kontrola",
+    "lesson": "Naučiť sa, že aj najväčšia stavba začína jednou tehlou. Nemusíte zmeniť svet naraz — stačí začať",
+    "recommendation": "Rozdeľte veľkú víziu na malé kroky. Každý deň jedna tehla. Nedovoľte veľkosti sna paralyzovať konanie.",
+    "career": ["architektúra", "podnikanie", "politika", "inžinierstvo", "vedenie organizácií", "infraštruktúra"],
+    "relationships": "Ste spoľahlivý a oddaný partner s veľkými ambíciami. Dávajte pozor aby práca nezožrala vzťah — stavajte aj dom lásky, nie len kariéry."
+  },
+  "33": {
+    "title": "Majstrovský učiteľ",
+    "keywords": ["súcit", "liečenie", "služba", "bezpodmienečná láska"],
+    "description": "Master číslo 33 je najvzácnejšie — je to energia bezpodmienečnej lásky a služby ľudstvu. Kombinuje intuíciu 11 a staviteľstvo 22 s hlbokým súcitom 6. Ste tu aby ste liečili — nie predpismi, ale prítomnosťou.",
+    "gift": "Hlboký súcit, schopnosť liečiť prítomnosťou, inšpirácia cez príklad, bezpodmienečná láska",
+    "shadow": "Martýrstvo, obetovanie sa na úkor seba, perfekcionizmus v službe, emočné vyčerpanie",
+    "lesson": "Naučiť sa, že najväčšia služba začína od seba. Nemôžete liečiť z prázdna — najprv naplňte seba",
+    "recommendation": "Služba iným je váš dar — ale nie na úkor vlastného zdravia. Každý deň niečo len pre seba. Zdravý učiteľ učí príkladom, nie obeťou.",
+    "career": ["liečiteľstvo", "učenie", "poradenstvo", "duchovné vedenie", "umenie", "humanitárna práca"],
+    "relationships": "Ste mimoriadne láskavý a oddaný partner. Ale pozor na tendenciu „zachraňovať" — partnerstvo je rovnocenné, nie projekt."
   }
 }

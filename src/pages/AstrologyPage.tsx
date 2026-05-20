@@ -84,7 +84,7 @@ function getPlanetMeaning(planet: string): string {
     'Neptún': 'Intuícia, duchovnosť',
     'Pluto': 'Transformácia, moc',
     'Lilith': 'Tieň, divoká ženskosť, tabu (Mean Black Moon)',
-    'Chiron': 'Zranený liečiteľ, najhlbšia rana → najväčší dar (~aproximovaná pozícia)',
+    'Chiron': 'Zranený liečiteľ, najhlbšia rana → najväčší dar',
   };
   return meanings[planet] || '';
 }

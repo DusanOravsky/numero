@@ -492,6 +492,13 @@ export function AstrologyPage() {
                       <p className="text-xs text-cyan-400 uppercase mb-1">Odporúčanie</p>
                       <p className="text-xs text-slate-300 italic">{animalInfo.advice}</p>
                     </div>
+
+                    <div className="p-3 rounded-xl bg-slate-500/10 border border-slate-500/20">
+                      <p className="text-xs text-slate-400">
+                        Najbližší rok {chinese.animal} {chinese.animalEmoji}: <strong className="text-white">{chinese.nextYear}</strong>
+                        <span className="text-slate-500"> (za {chinese.nextYear - new Date().getFullYear()} {chinese.nextYear - new Date().getFullYear() === 1 ? 'rok' : chinese.nextYear - new Date().getFullYear() < 5 ? 'roky' : 'rokov'})</span>
+                      </p>
+                    </div>
                   </div>
                 </GlassCard>
               );

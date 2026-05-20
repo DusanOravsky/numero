@@ -43,7 +43,7 @@ export const CHINESE_ANIMALS: Record<string, ChineseAnimalInfo> = {
     traits: 'Elegantný, diplomatický, jemný a intuitívny. Symbol mieru a harmónie.',
     strengths: 'Diplomacia, estetické cítenie, schopnosť vytvárať harmonické prostredie. Dobrý poslucháč.',
     challenges: 'Vyhýbanie sa konfliktom, nerozhodnosť, povrchnosť. Niekedy príliš opatrný.',
-    compatibility: 'Najlepšia harmónia s Kozou a Prasom. Vyhýbať sa Kohútovi.',
+    compatibility: 'Najlepšia harmónia s Kozou a Prasaťom. Vyhýbať sa Kohútovi.',
     advice: 'Konflikty nie sú vždy zlé — niekedy treba povedať pravdu priamo. Buď odvážnejší.',
   },
   'Drak': {
@@ -59,7 +59,7 @@ export const CHINESE_ANIMALS: Record<string, ChineseAnimalInfo> = {
     traits: 'Múdry, intuitívny, záhadný a sofistikovaný. Symbol hlbokého poznania a transformácie.',
     strengths: 'Hlboká intuícia, analytické myslenie, šarm, schopnosť vidieť pod povrch.',
     challenges: 'Žiarlivosť, podozrievavosť, tendencia k manipulácii. Ťažko dôveruje.',
-    compatibility: 'Najlepšia harmónia s Byvolom a Kohútom. Vyhýbať sa Prasovi.',
+    compatibility: 'Najlepšia harmónia s Byvolom a Kohútom. Vyhýbať sa Prasaťu.',
     advice: 'Dôvera nie je slabosť. Pusti kontrolu — nie všetko musíš vedieť dopredu.',
   },
   'Kôň': {
@@ -75,7 +75,7 @@ export const CHINESE_ANIMALS: Record<string, ChineseAnimalInfo> = {
     traits: 'Kreatívna, jemná, súcitná a umelecky založená. Symbol krásy a harmónie.',
     strengths: 'Kreativita, empatia, estetické cítenie, schopnosť liečiť prítomnosťou.',
     challenges: 'Nerozhodnosť, závislosť na iných, pesimizmus. Potrebuje bezpečie.',
-    compatibility: 'Najlepšia harmónia s Zajačom a Prasom. Vyhýbať sa Byvolom.',
+    compatibility: 'Najlepšia harmónia s Zajacom a Prasaťom. Vyhýbať sa Byvolovi.',
     advice: 'Tvoja citlivosť je dar, nie slabosť. Ale nauč sa stáť aj sama — bez opory iných.',
   },
   'Opica': {
@@ -107,7 +107,7 @@ export const CHINESE_ANIMALS: Record<string, ChineseAnimalInfo> = {
     traits: 'Veľkorysé, úprimné, tolerantné a pôžitkárske. Symbol hojnosti a dobrosrdečnosti.',
     strengths: 'Veľkorysosť, zmysel pre rodinu, optimizmus, schopnosť užívať si život.',
     challenges: 'Naivita, lenivosť, prehnaná dôverčivosť. Niekedy sa nechá zneužiť.',
-    compatibility: 'Najlepšia harmónia so Zajačom a Kozou. Vyhýbať sa Hadovi.',
+    compatibility: 'Najlepšia harmónia so Zajacom a Kozou. Vyhýbať sa Hadovi.',
     advice: 'Tvoja dobrota je sila — ale nauč sa rozlíšiť, kto si ju zaslúži a kto ju zneužíva.',
   },
 };

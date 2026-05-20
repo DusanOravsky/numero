@@ -205,6 +205,32 @@ function calculateSynastry(
   };
 }
 
+function getAspectMeaning(planet1: string, planet2: string, nature: string): string {
+  const key = [planet1, planet2].sort().join('-');
+  const meanings: Record<string, Record<string, string>> = {
+    'Slnko-Mesiac': { harmonic: 'Hlboké vzájomné porozumenie — identita jedného živí emócie druhého.', tense: 'Napätie medzi tým, čo chcete a čo cítite. Vyžaduje kompromis.', neutral: 'Silné prepojenie identity a emócií — intenzívny vzťah.' },
+    'Slnko-Venuša': { harmonic: 'Prirodzená náklonnosť a obdiv. Vzťah plný láskavosti.', tense: 'Rozdielne hodnoty v láske. Treba hľadať spoločný jazyk.', neutral: 'Silná príťažlivosť — jeden obdivuje druhého.' },
+    'Slnko-Mars': { harmonic: 'Vzájomné motivovanie a energia. Dobrý tím.', tense: 'Rivalizácia a konflikty ega. Motor rastu ak sa zvládne.', neutral: 'Intenzívna dynamika — buď spolupráca alebo súťaž.' },
+    'Slnko-Jupiter': { harmonic: 'Vzájomná podpora rastu a optimizmus. Vzťah rozširuje obzory.', tense: 'Prehnané očakávania. Jeden sľubuje viac než dodá.', neutral: 'Expanzívna energia — spoločne mierite vysoko.' },
+    'Slnko-Saturn': { harmonic: 'Stabilita a vzájomný rešpekt. Vzťah s hĺbkou a zodpovednosťou.', tense: 'Jeden obmedzuje druhého. Pocit povinnosti namiesto radosti.', neutral: 'Karmický vzťah — lekcie a zodpovednosť.' },
+    'Mesiac-Venuša': { harmonic: 'Emocionálna harmónia a nežnosť. Cítite sa spolu bezpečne.', tense: 'Emočné potreby narážajú na spôsob prejavovania lásky.', neutral: 'Silné citové prepojenie — hlboká intimita.' },
+    'Mesiac-Mars': { harmonic: 'Vášeň a emočná intenzita. Vzťah je živý a dynamický.', tense: 'Emócie sa menia na konflikty. Reaktívnosť.', neutral: 'Intenzívne emócie — vášeň aj búrky.' },
+    'Mesiac-Jupiter': { harmonic: 'Vzájomná starostlivosť a štedrá emočná podpora.', tense: 'Emočné prejedanie — príliš veľa sľubov.', neutral: 'Rozšírenie emočného sveta.' },
+    'Mesiac-Saturn': { harmonic: 'Emočná bezpečnosť a spoľahlivosť. Dlhodobý vzťah.', tense: 'Emočné potlačenie. Jeden sa cíti obmedzovaný.', neutral: 'Karmické emočné prepojenie — lekcie v citoch.' },
+    'Venuša-Mars': { harmonic: 'Silná fyzická a romantická príťažlivosť.', tense: 'Túžba vs. frustrácia. Intenzita ktorá môže byť aj deštruktívna.', neutral: 'Magnetická príťažlivosť — erotická iskra.' },
+    'Venuša-Jupiter': { harmonic: 'Štedrá, radostná láska. Vzájomné obohacovanie.', tense: 'Nadmerné míňanie alebo prehnaný idealizmus v láske.', neutral: 'Láska rozširuje obzory oboch.' },
+    'Venuša-Saturn': { harmonic: 'Verná, stabilná láska s hĺbkou. Vzťah na celý život.', tense: 'Láska vs. povinnosť. Chlad namiesto nežnosti.', neutral: 'Vážne a zodpovedné citové puto.' },
+    'Mars-Jupiter': { harmonic: 'Spoločné dobrodružstvá a vzájomná motivácia konať.', tense: 'Prehnané ambície alebo konflikt hodnôt v akcii.', neutral: 'Expanzívna energia — spoločne dosahujete veľa.' },
+    'Mars-Saturn': { harmonic: 'Disciplinovaná spolupráca. Spoločne prekonávate prekážky.', tense: 'Frustrácia — jeden brzdí, druhý tlačí. Mocenské hry.', neutral: 'Napätie medzi akciou a opatrnosťou.' },
+    'Jupiter-Saturn': { harmonic: 'Rovnováha expanzie a štruktúry. Múdre spoločné rozhodnutia.', tense: 'Konflikt optimizmu a realizmu. Rôzne tempo.', neutral: 'Učiteľ a žiak — vzájomná výmena múdrosti.' },
+  };
+  const pair = meanings[key];
+  if (pair) return pair[nature] || pair.neutral || '';
+  if (nature === 'harmonic') return 'Harmonický tok energie medzi týmito oblasťami vášho vzťahu.';
+  if (nature === 'tense') return 'Napätie ktoré vyžaduje vedomú prácu, ale je motorom rastu.';
+  return '';
+}
+
 function loadSavedPartners(): { p1: PersonInput; p2: PersonInput } | null {
   try {
     const raw = localStorage.getItem('relationships-partners');
@@ -1084,16 +1110,20 @@ export function RelationshipsPage() {
                                'bg-slate-50 border-slate-200';
                     const iconColor = a.nature === 'harmonic' ? 'text-green-700' :
                                       a.nature === 'tense' ? 'text-rose-700' : 'text-slate-700';
+                    const meaning = getAspectMeaning(a.planet1, a.planet2, a.nature);
                     return (
-                      <div key={i} className={`p-2 rounded-lg border ${bg} flex items-center justify-between gap-2`}>
-                        <div className="flex items-center gap-2 text-sm">
-                          <span className="text-base">{planetSymbols[a.planet1] || ''}</span>
-                          <strong className="text-slate-800">{a.planet1}</strong>
-                          <span className={`text-base ${iconColor}`}>{a.symbol}</span>
-                          <strong className="text-slate-800">{a.planet2}</strong>
-                          <span className="text-base">{planetSymbols[a.planet2] || ''}</span>
+                      <div key={i} className={`p-2 rounded-lg border ${bg}`}>
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-2 text-sm">
+                            <span className="text-base">{planetSymbols[a.planet1] || ''}</span>
+                            <strong className="text-slate-800">{a.planet1}</strong>
+                            <span className={`text-base ${iconColor}`}>{a.symbol}</span>
+                            <strong className="text-slate-800">{a.planet2}</strong>
+                            <span className="text-base">{planetSymbols[a.planet2] || ''}</span>
+                          </div>
+                          <span className="text-[10px] text-slate-500 shrink-0">orb {a.orb.toFixed(1)}°</span>
                         </div>
-                        <span className="text-[10px] text-slate-500 shrink-0">orb {a.orb.toFixed(1)}°</span>
+                        {meaning && <p className="text-[11px] text-slate-600 mt-1">{meaning}</p>}
                       </div>
                     );
                   })}

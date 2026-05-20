@@ -746,7 +746,9 @@ export function AstrologyPage() {
             );
           })()}
 
-          {/* Duplicitná sign-based transit sekcia bola odstránená v2.28+ (používame calculateTransitAspects vyššie) */}
+          {/* Duplicitná transit sekcia odstránená v2.28+ */}
+
+          {/* AI výklad astrológie — below */}
           {false && (() => {
             const today = new Date();
             const transitResult = calculateAstrology(today.getDate(), today.getMonth() + 1, today.getFullYear(), 12, 0);

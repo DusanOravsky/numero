@@ -1,5 +1,5 @@
 import type { HumanDesignResult } from '../engine/humanDesignEngine';
-import { CHANNEL_DEFINITIONS } from '../engine/humanDesignEngine';
+import { CHANNEL_DEFINITIONS, CENTER_THEMES } from '../engine/humanDesignEngine';
 import { getGeneKeyByGate } from '../data/geneKeys';
 
 interface PartnerBodygraphProps {

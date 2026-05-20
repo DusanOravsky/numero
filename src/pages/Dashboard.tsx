@@ -5,7 +5,8 @@ import { useStore } from '../store/useStore';
 import { GlassCard } from '../components/GlassCard';
 import { VibrationCard } from '../components/VibrationCard';
 import { ClientSummary } from '../components/ClientSummary';
-import { calculateFullNumerology, calculateORV, calculateOMV, calculateODV, reduceToSingle } from '../engine/numerologyEngine';
+import { calculateFullNumerology, calculateORV, calculateOMV, calculateODV, reduceToSingle, getGridCount } from '../engine/numerologyEngine';
+import { evaluateChakras } from '../engine/chakraEngine';
 import { calculateAstrology } from '../engine/astrologyEngine';
 import { calculateHumanDesign } from '../engine/humanDesignEngine';
 import { calculateDevelopmentalNumerology } from '../engine/developmentalNumerologyEngine';
@@ -79,7 +80,9 @@ export function Dashboard() {
     const enneagram = deriveEnneagramType(numerology, developmental, numerologyMethod);
     const dosha = deriveDosha(numerology, astrology, humanDesign);
     const tcm = deriveTCMElement(numerology, astrology);
-    return { numerology, developmental, astrology, humanDesign, kabalah, theta, enneagram, dosha, tcm };
+    const gridCounts = getGridCount(numerology.grid);
+    const chakras = evaluateChakras(numerology.lifePathNumber, gridCounts, numerology.isolatedNumbers, humanDesign.definedCenters, astrology.dominantElement);
+    return { numerology, developmental, astrology, humanDesign, kabalah, theta, enneagram, dosha, tcm, chakras };
   }, [profile, numerologyMethod]);
 
   const affirmations: Record<number, string> = {

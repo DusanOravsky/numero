@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import { GlassCard } from '../components/GlassCard';
+import { AIChat } from '../components/AIChat';
 import { calculateFullNumerology } from '../engine/numerologyEngine';
 import { calculateDevelopmentalNumerology } from '../engine/developmentalNumerologyEngine';
 import { calculateAstrology } from '../engine/astrologyEngine';
@@ -193,6 +194,24 @@ export function ComparePage() {
           </div>
         </GlassCard>
       )}
+
+      {/* AI výklad vzťahu — pre 2 osoby */}
+      {computed.length === 2 && (() => {
+        const a = computed[0];
+        const b = computed[1];
+        return (
+          <AIChat
+            context={{
+              name: `${a.client.name} & ${b.client.name}`,
+              birth: { day: a.client.birthDay, month: a.client.birthMonth, year: a.client.birthYear },
+              numerology: a.num,
+            }}
+            title={`✦ AI výklad vzťahu: ${a.client.name} & ${b.client.name}`}
+            initialUserMessage={`Vyhotov prosím výklad vzťahu medzi ${a.client.name} a ${b.client.name}. Údaje:\n\n${a.client.name}: ŽČ ${a.num.lifePathNumber}, ${a.astro.sunSign.name}/${a.astro.moonSign.name}/Asc ${a.astro.ascendant.name}, HD ${a.hd.type} (${a.hd.authority}), Enneagram ${a.enneagram.coreType} (${enneagramTypes[a.enneagram.coreType]?.name}).\n\n${b.client.name}: ŽČ ${b.num.lifePathNumber}, ${b.astro.sunSign.name}/${b.astro.moonSign.name}/Asc ${b.astro.ascendant.name}, HD ${b.hd.type} (${b.hd.authority}), Enneagram ${b.enneagram.coreType} (${enneagramTypes[b.enneagram.coreType]?.name}).\n\nPrepoj všetky systémy: kde sa dopĺňajú, kde je trenie, čo s tým prakticky. Píš ako vzťahový poradca.`}
+            storageKey={`compare-${a.client.id}-${b.client.id}`}
+          />
+        );
+      })()}
 
       {computed.length === 1 && (
         <GlassCard>

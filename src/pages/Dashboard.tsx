@@ -337,14 +337,26 @@ export function Dashboard() {
           {(() => {
             const t = getDailyTarot(odv);
             return (
-              <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-fuchsia-500 flex items-center justify-center text-lg shrink-0">
-                  {t.symbol}
+              <div>
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-fuchsia-500 flex items-center justify-center text-lg shrink-0">
+                    {t.symbol}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xs text-purple-300 uppercase mb-1">Tarot dňa: {t.name}</p>
+                    <p className="text-xs text-slate-400">{t.dailyAdvice}</p>
+                  </div>
                 </div>
-                <div className="min-w-0">
-                  <p className="text-xs text-purple-300 uppercase mb-1">Tarot dňa: {t.name}</p>
-                  <p className="text-xs text-slate-400">{t.dailyAdvice}</p>
-                </div>
+                <details className="mt-3">
+                  <summary className="text-[11px] text-purple-400 cursor-pointer hover:text-purple-300">
+                    Plný výklad karty {t.name}
+                  </summary>
+                  <div className="mt-2 space-y-2 text-xs">
+                    <p className="text-slate-300"><strong className="text-purple-300">Význam:</strong> {t.meaning}</p>
+                    <p className="text-slate-300"><strong className="text-rose-300">Tieň:</strong> {t.shadow}</p>
+                    <p className="text-slate-300"><strong className="text-emerald-300">Rada:</strong> {t.advice}</p>
+                  </div>
+                </details>
               </div>
             );
           })()}

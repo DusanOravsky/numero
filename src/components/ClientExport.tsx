@@ -16,7 +16,7 @@ import { getGeneKeyByGate } from '../data/geneKeys';
 import lifePathsData from '../data/lifePaths.json';
 import { useStore } from '../store/useStore';
 
-const lifePaths = lifePathsData as Record<string, { title: string; keywords: string[]; description: string; gift: string; shadow: string }>;
+const lifePaths = lifePathsData as Record<string, { title: string; keywords: string[]; description: string; gift: string; shadow: string; recommendation?: string }>;
 
 interface Client {
   id: string;

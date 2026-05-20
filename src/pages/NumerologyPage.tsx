@@ -207,7 +207,7 @@ export function NumerologyPage() {
                         </div>
                         <div className="p-2 rounded-lg bg-amber-500/10 border border-amber-500/20 text-center">
                           <p className="text-[10px] text-slate-500 uppercase">K1 · K2 · K4</p>
-                          <p className="text-lg font-bold text-amber-200">{devResult.circled[0].value} · {devResult.circled[1].value} · {devResult.circled[3].value}</p>
+                          <p className="text-lg font-bold text-amber-300">{devResult.circled[0].value} · {devResult.circled[1].value} · {devResult.circled[3].value}</p>
                           <p className="text-[10px] text-slate-400">karmické cykly</p>
                         </div>
                         <div className="p-2 rounded-lg bg-violet-500/10 border border-violet-500/20 text-center">
@@ -222,9 +222,9 @@ export function NumerologyPage() {
                       <p className="text-xl font-bold text-purple-300">{result.orv}</p>
                       <p className="text-[10px] text-slate-400">{orvDescriptions[result.orv]?.title || ''}</p>
                     </div>
-                    <div className="p-2 rounded-lg bg-gold-500/10 border border-amber-500/20 text-center">
+                    <div className="p-2 rounded-lg bg-amber-500/10 border border-amber-500/20 text-center">
                       <p className="text-[10px] text-slate-500 uppercase">ODV (dnes)</p>
-                      <p className="text-xl font-bold text-amber-200">{result.odv}</p>
+                      <p className="text-xl font-bold text-amber-300">{result.odv}</p>
                       <p className="text-[10px] text-slate-400">{orvDescriptions[result.odv]?.title || ''}</p>
                     </div>
                     {numerologyMethod === 'characterological' && (
@@ -382,7 +382,7 @@ export function NumerologyPage() {
                 };
                 return (
                   <GlassCard>
-                    <details>
+                    <details open>
                       <summary className="cursor-pointer hover:text-indigo-300 transition-colors">
                         <span className="font-medium text-white">Tvoje čítanie — ako pracovať s mriežkou</span>
                       </summary>

@@ -1,18 +1,17 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useStore } from '../store/useStore';
 import { AIChat } from './AIChat';
-import { calculateFullNumerology } from '../engine/numerologyEngine';
+import { calculateFullNumerology, reduceToSingle, getGridCount } from '../engine/numerologyEngine';
 import { calculateDevelopmentalNumerology } from '../engine/developmentalNumerologyEngine';
 import { calculateAstrology } from '../engine/astrologyEngine';
 import { calculateHumanDesign } from '../engine/humanDesignEngine';
-import { calculateKabalah, } from '../engine/kabalahEngine';
+import { calculateKabalah } from '../engine/kabalahEngine';
 import { calculateThetaHealing } from '../engine/thetaHealingEngine';
 import { deriveEnneagramType } from '../engine/enneagramEngine';
 import { deriveDosha } from '../engine/ayurvedaEngine';
 import { deriveTCMElement } from '../engine/tcmEngine';
-import { evaluateChakras, } from '../engine/chakraEngine';
-import { reduceToSingle, getGridCount } from '../engine/numerologyEngine';
+import { evaluateChakras } from '../engine/chakraEngine';
 import { hasApiKey } from '../engine/aiInterpretation';
 
 export function GlobalAIDrawer() {
@@ -20,8 +19,15 @@ export function GlobalAIDrawer() {
   const { profiles, activeProfileId, numerologyMethod } = useStore();
   const profile = profiles.find(p => p.id === activeProfileId);
 
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false); };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [open]);
+
   const context = useMemo(() => {
-    if (!profile) return null;
+    if (!profile || !open) return null;
     const numerology = calculateFullNumerology(profile.birthDay, profile.birthMonth, profile.birthYear);
     const developmental = calculateDevelopmentalNumerology(profile.birthDay, profile.birthMonth, profile.birthYear);
     const astrology = calculateAstrology(profile.birthDay, profile.birthMonth, profile.birthYear, profile.birthHour ?? 12, profile.birthMinute ?? 0);
@@ -57,7 +63,7 @@ export function GlobalAIDrawer() {
       chakras: chakras?.map(c => ({ name: c.chakra.name, status: c.status, score: c.score })),
       loveLanguages: numerology.loveLanguages.slice(0, 3),
     };
-  }, [profile, numerologyMethod]);
+  }, [profile, numerologyMethod, open]);
 
   if (!profile || !hasApiKey()) return null;
 
@@ -94,6 +100,7 @@ export function GlobalAIDrawer() {
                 <button
                   type="button"
                   onClick={() => setOpen(false)}
+                  aria-label="Zavrieť AI asistenta"
                   className="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-500"
                 >
                   ✕

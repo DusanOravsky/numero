@@ -115,7 +115,7 @@ export function ChakrasPage() {
 
           {/* Tvoje čítanie — personalizovaný sprievodca čakrami */}
           <GlassCard>
-            <details>
+            <details open>
               <summary className="cursor-pointer hover:text-indigo-300 transition-colors">
                 <span className="font-medium text-white">Tvoje čítanie — ako pracovať s čakrami</span>
               </summary>

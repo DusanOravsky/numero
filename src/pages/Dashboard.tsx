@@ -228,101 +228,51 @@ export function Dashboard() {
         </GlassCard>
       )}
 
-      {orvDescriptions[orv] && (
-        <GlassCard delay={0.35}>
-          <div className="flex items-start gap-4">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center text-xl font-serif font-bold text-white">
-              {orv}
-            </div>
-            <div className="flex-1">
-              <h3 className="font-medium text-white mb-1">Váš rok (ORV {orv}): {orvDescriptions[orv].title}</h3>
-              <p className="text-xs text-indigo-300 mb-1">{orvDescriptions[orv].theme}</p>
-              <p className="text-sm text-slate-400">{orvDescriptions[orv].advice}</p>
-            </div>
-          </div>
-        </GlassCard>
-      )}
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {orvDescriptions[omv] && (
-          <GlassCard delay={0.37}>
-            <p className="text-xs text-purple-300 font-medium mb-1">Tento mesiac (OMV {omv}): {orvDescriptions[omv].title.replace('Rok', 'Mesiac')}</p>
-            <p className="text-xs text-slate-400">{orvDescriptions[omv].theme}</p>
-          </GlassCard>
-        )}
-        {orvDescriptions[odv] && (
-          <GlassCard delay={0.39}>
-            <p className="text-xs text-amber-300 font-medium mb-1">Dnešný deň (ODV {odv}): {orvDescriptions[odv].title.replace('Rok', 'Deň')}</p>
-            <p className="text-xs text-slate-400">{orvDescriptions[odv].theme}</p>
-          </GlassCard>
-        )}
-      </div>
-
-      <GlassCard glow delay={0.4}>
-        <div className="flex items-start gap-4">
-          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center text-xl">
-            ✨
-          </div>
-          <div>
-            <h3 className="font-medium text-white mb-1">Dnešná afirmácia</h3>
-            <p className="text-slate-300 font-serif text-lg italic">
-              "{affirmations[odv] || affirmations[1]}"
-            </p>
-          </div>
+      {/* Dnešná energia — kompaktný prehľad */}
+      <GlassCard delay={0.35}>
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="font-medium text-white">Dnešná energia</h3>
+          {orvDescriptions[orv] && (
+            <span className="text-xs text-indigo-300">Rok: {orvDescriptions[orv].title}</span>
+          )}
         </div>
-      </GlassCard>
-
-      {/* DENNÝ DIGEST — "Dnes pre teba" */}
-      {fullResults && (
-        <GlassCard delay={0.42}>
-          <h3 className="font-medium text-white mb-3">Dnes pre teba</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {/* Denný rituál */}
-            {dailyRituals[odv] && (
-              <div className="p-3 rounded-xl bg-indigo-50 border border-indigo-200">
-                <p className="text-xs text-indigo-700 font-semibold mb-1">Ranný rituál (ODV {odv})</p>
-                <p className="text-xs text-slate-700">{dailyRituals[odv].morning}</p>
-              </div>
-            )}
-            {/* Enneagram tip */}
+        <p className="text-slate-300 font-serif text-lg italic mb-3">
+          "{affirmations[odv] || affirmations[1]}"
+        </p>
+        {fullResults && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {fullResults.enneagram && enneagramTypes[fullResults.enneagram.coreType] && (
-              <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200">
-                <p className="text-xs text-emerald-700 font-semibold mb-1">Enneagram typ {fullResults.enneagram.coreType}</p>
-                <p className="text-xs text-slate-700">
-                  Rast dnes: smeruj k typu {fullResults.enneagram.integrationDirection} ({enneagramTypes[fullResults.enneagram.integrationDirection]?.name}).
-                  {' '}{enneagramTypes[fullResults.enneagram.coreType].growthPath.split('.')[0]}.
-                </p>
+              <div className="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+                <p className="text-xs text-emerald-300 font-medium">Enneagram: smeruj k {enneagramTypes[fullResults.enneagram.integrationDirection]?.name}</p>
               </div>
             )}
-            {/* Etikoterapia reflexná otázka */}
             {(() => {
               const chakraIdx = odv <= 7 ? odv : odv - 7;
               const etiko = ETIKOTERAPIA_BY_CHAKRA[chakraIdx];
               if (!etiko || !etiko.reflectionQuestions.length) return null;
               const questionIdx = (currentDay + currentMonth) % etiko.reflectionQuestions.length;
               return (
-                <div className="p-3 rounded-xl bg-rose-50 border border-rose-200">
-                  <p className="text-xs text-rose-700 font-semibold mb-1">Reflexná otázka ({etiko.liberatingVirtue})</p>
-                  <p className="text-xs text-slate-700 italic">„{etiko.reflectionQuestions[questionIdx]}"</p>
+                <div className="p-2 rounded-lg bg-rose-500/10 border border-rose-500/20">
+                  <p className="text-xs text-rose-300 italic">„{etiko.reflectionQuestions[questionIdx]}"</p>
                 </div>
               );
             })()}
-            {/* Kabala denný čin */}
             {fullResults.kabalah && (
-              <div className="p-3 rounded-xl bg-violet-50 border border-violet-200">
-                <p className="text-xs text-violet-700 font-semibold mb-1">Čin v Malchut</p>
-                <p className="text-xs text-slate-700">{fullResults.kabalah.malchutAction}</p>
+              <div className="p-2 rounded-lg bg-violet-500/10 border border-violet-500/20">
+                <p className="text-xs text-violet-300">{fullResults.kabalah.malchutAction}</p>
+              </div>
+            )}
+            {dailyRituals[odv] && (
+              <div className="p-2 rounded-lg bg-indigo-500/10 border border-indigo-500/20">
+                <p className="text-xs text-indigo-300">{dailyRituals[odv].morning}</p>
               </div>
             )}
           </div>
-          {/* Večerná reflexia */}
-          {dailyRituals[odv] && (
-            <div className="mt-3 p-3 rounded-xl bg-slate-50 border border-slate-200">
-              <p className="text-xs text-slate-600"><strong>Večer sa opýtaj:</strong> {dailyRituals[odv].evening}</p>
-            </div>
-          )}
-        </GlassCard>
-      )}
+        )}
+        {dailyRituals[odv] && (
+          <p className="text-xs text-slate-500 mt-3"><strong>Večer:</strong> {dailyRituals[odv].evening}</p>
+        )}
+      </GlassCard>
 
       {/* Mantra + Quote + Tarot (B25, B26, B23) — rotujú každý deň podľa ODV */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -454,43 +404,32 @@ export function Dashboard() {
         ))}
       </div>
 
-      <GlassCard delay={0.7}>
-        <h3 className="font-medium text-white mb-2">Čo robiť dnes</h3>
-        <p className="text-xs text-slate-400 mb-3">Na základe vašej dennej vibrácie (ODV {odv})</p>
-        {orvDescriptions[odv] && (
-          <div className="space-y-2">
-            <p className="text-sm text-slate-300">{orvDescriptions[odv].advice}</p>
-            <div className="flex flex-wrap gap-1 mt-2">
-              {orvDescriptions[odv].keywords.map(k => (
-                <span key={k} className="text-xs px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-300">{k}</span>
-              ))}
+      {/* Detaily dňa — collapsible pre záujemcov */}
+      {orvDescriptions[odv] && dailyRituals[odv] && (
+        <GlassCard delay={0.7}>
+          <details>
+            <summary className="cursor-pointer hover:text-indigo-300 transition-colors">
+              <span className="font-medium text-white">Detail dennej energie (ODV {odv})</span>
+            </summary>
+            <div className="mt-3 space-y-3">
+              <p className="text-sm text-slate-300">{orvDescriptions[odv].advice}</p>
+              <div className="flex flex-wrap gap-1">
+                {orvDescriptions[odv].keywords.map(k => (
+                  <span key={k} className="text-xs px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-300">{k}</span>
+                ))}
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
+                <div className="p-2 rounded-lg bg-green-500/10 border border-green-500/20">
+                  <p className="text-xs text-green-300">Telo: {dailyRituals[odv].body}</p>
+                </div>
+                {orvDescriptions[omv] && (
+                  <div className="p-2 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                    <p className="text-xs text-purple-300">Mesiac (OMV {omv}): {orvDescriptions[omv].theme}</p>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-        )}
-      </GlassCard>
-
-      {dailyRituals[odv] && (
-        <GlassCard delay={0.8}>
-          <h3 className="font-medium text-white mb-2">Denný rituál</h3>
-          <p className="text-xs text-slate-400 mb-4">Na základe ODV ({odv}) a aktuálnej energie</p>
-          <div className="space-y-3">
-            <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
-              <p className="text-xs text-amber-400 uppercase mb-1">Ranná prax</p>
-              <p className="text-sm text-slate-300">{dailyRituals[odv].morning}</p>
-            </div>
-            <div className="p-3 rounded-xl bg-indigo-500/10 border border-indigo-500/20">
-              <p className="text-xs text-indigo-400 uppercase mb-1">Denná afirmácia</p>
-              <p className="text-sm text-slate-300 font-serif italic">"{affirmations[odv] || affirmations[1]}"</p>
-            </div>
-            <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20">
-              <p className="text-xs text-purple-400 uppercase mb-1">Večerná reflexia</p>
-              <p className="text-sm text-slate-300">{dailyRituals[odv].evening}</p>
-            </div>
-            <div className="p-3 rounded-xl bg-green-500/10 border border-green-500/20">
-              <p className="text-xs text-green-400 uppercase mb-1">Odporúčanie pre telo</p>
-              <p className="text-sm text-slate-300">{dailyRituals[odv].body}</p>
-            </div>
-          </div>
+          </details>
         </GlassCard>
       )}
 

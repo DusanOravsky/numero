@@ -98,6 +98,69 @@ export function ThetaHealingPage() {
             </div>
           </GlassCard>
 
+          {/* 4 úrovne vysvetlené */}
+          <GlassCard>
+            <h3 className="font-medium text-white mb-3">4 úrovne presvedčení</h3>
+            <p className="text-xs text-slate-400 mb-3">Presvedčenia sa ukladajú na rôznych úrovniach — každá vyžaduje iný prístup:</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="p-3 rounded-xl bg-indigo-500/10 border border-indigo-500/20">
+                <p className="text-xs text-indigo-300 font-semibold">Koreňová (Core)</p>
+                <p className="text-[11px] text-slate-400">Vznikla v tomto živote (detstvo, trauma). Najrýchlejšie sa mení — stačí uvedomenie + nové presvedčenie.</p>
+              </div>
+              <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20">
+                <p className="text-xs text-purple-300 font-semibold">Genetická</p>
+                <p className="text-[11px] text-slate-400">Zdedená po predkoch (rodová línia). Nesieš vzorce rodičov/starých rodičov. Lieči sa cez odpustenie rodu.</p>
+              </div>
+              <div className="p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/20">
+                <p className="text-xs text-cyan-300 font-semibold">Historická</p>
+                <p className="text-[11px] text-slate-400">Z minulých životov alebo kolektívnej pamäte. Prejavuje sa ako iracionálne strachy bez zjavnej príčiny.</p>
+              </div>
+              <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
+                <p className="text-xs text-amber-300 font-semibold">Duševná (Soul)</p>
+                <p className="text-[11px] text-slate-400">Najhlbšia — duševné kontrakty a dohody. Mení sa cez vedomé zrušenie starého kontraktu a vytvorenie nového.</p>
+              </div>
+            </div>
+          </GlassCard>
+
+          {/* Nahrádzajúce presvedčenia — čo namiesto starého */}
+          <GlassCard>
+            <h3 className="font-medium text-white mb-3">Tvoje nové presvedčenia</h3>
+            <p className="text-xs text-slate-400 mb-3">Ku každému limitujúcemu presvedčeniu existuje nahrádzajúce — toto je to, čím ho vedome nahradíš:</p>
+            <div className="space-y-3">
+              {result.diggingResults.map((dr, i) => (
+                <div key={i} className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
+                  <p className="text-xs text-rose-300 line-through mb-1">„{dr.rootBelief.belief}"</p>
+                  <p className="text-sm text-emerald-300 font-medium">→ „{dr.newBelief.belief}"</p>
+                  <p className="text-[11px] text-slate-400 mt-1">Afirmácia: <em>„{dr.newBelief.affirmation}"</em></p>
+                  <p className="text-[11px] text-slate-500">Pocit: {dr.newBelief.feeling}</p>
+                </div>
+              ))}
+            </div>
+          </GlassCard>
+
+          {/* Telesné prepojenie + cvičenia */}
+          <GlassCard>
+            <h3 className="font-medium text-white mb-3">Kde to telo drží</h3>
+            <p className="text-xs text-slate-400 mb-3">Každé presvedčenie sa ukladá v konkrétnej časti tela. Keď cítiš napätie v danej oblasti, môže to byť signál:</p>
+            <div className="space-y-2">
+              {result.primaryBeliefs.map((b, i) => (
+                <div key={i} className="flex items-center gap-3 p-2 rounded-lg bg-slate-500/5 border border-slate-500/10">
+                  <span className="text-xs px-2 py-1 rounded-full bg-rose-500/20 text-rose-300 shrink-0">{b.bodyArea}</span>
+                  <div className="min-w-0">
+                    <p className="text-xs text-slate-300">„{b.belief}"</p>
+                    <p className="text-[11px] text-slate-500">Emócia: {b.emotion} | Pôvod: {b.origin}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="mt-3 p-3 rounded-lg bg-indigo-500/10 border border-indigo-500/20">
+              <p className="text-xs text-indigo-300 font-medium mb-1">Praktické uvoľnenie:</p>
+              <p className="text-[11px] text-slate-300">
+                Polož ruku na miesto kde cítiš napätie. Dýchaj hlboko do tej oblasti. Povedz nahlas: „Vidím ťa. Ďakujem za ochranu. Púšťam ťa." Opakuj 3× denne, 2 minúty.
+              </p>
+            </div>
+          </GlassCard>
+
           <GlassCard glow>
             <h3 className="font-medium text-white mb-2">Limitujúce presvedčenia</h3>
             <p className="text-xs text-slate-400 mb-4">Toto sú podvedomé presvedčenia, ktoré sú typické pre vaše životné číslo. Kliknite na presvedčenie pre zobrazenie healing procesu.</p>

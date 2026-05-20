@@ -503,6 +503,8 @@ export function RelationshipsPage() {
             <div className="space-y-2 text-sm text-slate-300">
               <p>
                 Kompatibilita <strong className="text-white">{compatibility.overallScore}%</strong> neznamená „dobrý" alebo „zlý" vzťah — hovorí o tom, koľko vecí vám ide prirodzene a kde musíte vedome pracovať.
+                <strong> Silné stránky</strong> ({compatibility.strengths.length}) sú to, čo vás drží spolu bez námahy.
+                <strong> Výzvy</strong> ({compatibility.challenges.length}) sú oblasti kde rastieme spoločne.
               </p>
               <p>
                 <strong>Charakterová synastria</strong> porovnáva vaše numerologické mriežky — spoločné plné roviny sú vaša zdieľaná sila, spoločné prázdne sú slepé miesta kde ani jeden nepomôže druhému.
@@ -862,7 +864,8 @@ export function RelationshipsPage() {
             <h3 className="font-medium text-white mb-3">Tvoje čítanie — ako pracovať s rodič-dieťa výkladom</h3>
             <div className="space-y-2 text-sm text-slate-300">
               <p>
-                Každé dieťa prichádza s <strong className="text-white">vlastnou energiou</strong> — nie je kópia rodiča. <strong>Profil dieťaťa</strong> ukazuje jeho ŽČ, K3 poslanie, kozmický vek a karmické lekcie.
+                Rodič <strong className="text-white">{parent.name}</strong> a <strong className="text-white">{familyResults.length}</strong> {familyResults.length === 1 ? 'dieťa' : 'deti'}.
+                Každé dieťa prichádza s vlastnou energiou — nie je kópia rodiča. <strong>Profil dieťaťa</strong> ukazuje jeho ŽČ, K3 poslanie, kozmický vek a karmické lekcie.
               </p>
               <p>
                 <strong>Rola rodiča</strong> hovorí, čím ste pre toto konkrétne dieťa. <strong>Komunikácia</strong> ukazuje, ako s ním najlepšie hovoriť. <strong>Potreby dieťaťa</strong> sú to, čo od vás naozaj potrebuje.
@@ -1142,25 +1145,31 @@ export function RelationshipsPage() {
           <GlassCard>
             <h3 className="font-medium text-white mb-3">Tvoje čítanie — ako pracovať s astro kompatibilitou</h3>
             <div className="space-y-2 text-sm text-slate-300">
-                <p>Astro kompatibilita porovnáva <strong className="text-white">elementy</strong> vašich planét — nie znamenia samotné. Dva ľudia s rovnakým elementom (Oheň+Oheň) sa rozumejú intuitívne, ale môžu sa „spáliť". Komplementárne elementy (Oheň+Vzduch, Zem+Voda) sa dopĺňajú.</p>
+                <p>
+                  <strong className="text-white">{synastryResult.person1.name} & {synastryResult.person2.name}</strong> — celková astro kompatibilita <strong className="text-white">{synastryResult.overallScore}%</strong>.
+                  Porovnávame elementy planét — nie znamenia samotné. Komplementárne elementy (Oheň+Vzduch, Zem+Voda) sa dopĺňajú.
+                </p>
                 <div className="grid grid-cols-2 gap-2">
                   <div className="p-2 rounded-lg bg-amber-500/10">
-                    <p className="text-amber-300 font-medium">Slnko + Slnko</p>
+                    <p className="text-amber-300 font-medium">Slnko ({synastryResult.sunCompatibility.score}%)</p>
                     <p className="text-slate-400">Vedomé ja — ako si rozumiete na povrchu</p>
                   </div>
                   <div className="p-2 rounded-lg bg-purple-500/10">
-                    <p className="text-purple-300 font-medium">Mesiac + Mesiac</p>
+                    <p className="text-purple-300 font-medium">Mesiac ({synastryResult.moonCompatibility.score}%)</p>
                     <p className="text-slate-400">Emócie — ako sa cítite spolu v súkromí</p>
                   </div>
                   <div className="p-2 rounded-lg bg-rose-500/10">
-                    <p className="text-rose-300 font-medium">Venuša + Mars</p>
-                    <p className="text-slate-400">Príťažlivosť — ako sa priťahujete a dávate lásku</p>
+                    <p className="text-rose-300 font-medium">Venuša ({synastryResult.venusCompatibility.score}%)</p>
+                    <p className="text-slate-400">Láska — ako dávate a prijímáte náklonnosť</p>
                   </div>
-                  <div className="p-2 rounded-lg bg-indigo-500/10">
-                    <p className="text-indigo-300 font-medium">Celkové skóre</p>
-                    <p className="text-slate-400">Váženýpriemer zo 4 planét — orientačný, nie absolútny</p>
+                  <div className="p-2 rounded-lg bg-red-500/10">
+                    <p className="text-red-300 font-medium">Mars ({synastryResult.marsCompatibility.score}%)</p>
+                    <p className="text-slate-400">Energia — ako konáte a riešite konflikty</p>
                   </div>
                 </div>
+                <p>
+                  <strong>Synastrické aspekty</strong> ukazujú presné uhly medzi planétami — harmonické (podpora) vs napäťové (rast). <strong>Davison chart</strong> je „tretia osoba" — vzťah ako bytosť. <strong>Composite</strong> je symbolická štruktúra vzťahu.
+                </p>
                 <p className="italic text-slate-500">Nízke skóre neznamená „nevhodný pár" — znamená „vyžaduje vedomú prácu". Najlepšie vzťahy často nie sú najľahšie.</p>
             </div>
           </GlassCard>
@@ -1506,25 +1515,20 @@ export function RelationshipsPage() {
             <h3 className="font-medium text-white mb-3">Tvoje čítanie — ako pracovať s rodinnou konšteláciou</h3>
             <div className="space-y-2 text-sm text-slate-300">
               <p>
-                Rodinná konštelácia ukazuje <strong className="text-white">energetickú mapu celej rodiny</strong> — kto komu rozumie prirodzene, kde sú trenia a aké lekcie si navzájom prinášate.
+                Rodina <strong className="text-white">{constFather.name} & {constMother.name}</strong> + <strong className="text-white">{constChildren.filter(isPersonValid).length}</strong> {constChildren.filter(isPersonValid).length === 1 ? 'dieťa' : 'deti'}.
+                Partnerský vzťah rodičov (<strong className="text-white">{constellationResult.partnerCompat.overallScore}%</strong>) je základ — jeho kvalita sa odráža na celej rodine.
               </p>
               <p>
-                <strong>Rodičovský vzťah</strong> je základ — jeho kvalita sa odráža na celej rodine. <strong>Charakterová synastria</strong> porovnáva numerologické mriežky rodičov, <strong>vývojová</strong> ich karmické cykly a polaritu ega. <strong>HD bodygraph</strong> ukazuje kde sa energeticky dopĺňajú a podmieňujú.
+                <strong>Charakterová synastria</strong> porovnáva mriežky rodičov, <strong>vývojová</strong> ich K1-K4 a polaritu ega. <strong>HD bodygraph</strong> ukazuje elektromagnetické kanály (príťažlivosť), kompromisné (spoločná energia) a podmieňovanie.
               </p>
               <p>
-                <strong>ŽČ dieťaťa</strong> ukazuje jeho životnú tému. <strong>K3</strong> je jeho poslanie. <strong>Kozmický vek</strong> (Vodnár/Ryby) hovorí o generačnom nastavení — deti vo Veku Vodnára (po r. 2000) majú iné vnímanie sveta než rodičia vo Veku Rýb.
+                Pri každom dieťati: <strong>ŽČ + K3</strong> (poslanie), <strong>kozmický vek</strong> (generačné nastavenie), <strong>HD typ + centrá</strong> (kde rodič podmieňuje, kde dieťa učí), <strong>Génové kľúče</strong> (spoločné transformačné témy s praktickou technikou).
               </p>
               <p>
-                <strong>HD centrá</strong> pri každom dieťati ukazujú kde rodič podmieňuje (dieťa absorbuje energiu) a kde dieťa učí rodiča. <strong>Génové kľúče</strong> sú spoločné transformačné témy — tieň je čo sa spúšťa, dar je čo z toho vytvárate, technika je praktický nástroj.
-              </p>
-              <p>
-                <strong>Medzi súrodencami:</strong> rovnaké ŽČ = porozumenie aj rivalita. Rôzne = dopĺňanie. HD centrá ukazujú kto koho podmieňuje. Gene Keys odhaľujú spoločné lekcie.
-              </p>
-              <p>
-                <strong>Rodinné číslo</strong> (súčet všetkých ŽČ) hovorí o spoločnej téme celej rodiny — čo ste tu spolu dosiahnuť.
+                <strong>Medzi súrodencami:</strong> kompatibilita, HD centrá (kto koho podmieňuje), Gene Keys (spoločné lekcie). Rodinné číslo <strong className="text-white">{reduceToSingle(constellationResult.familyNumbers.reduce((a, b) => a + b, 0))}</strong> je spoločná téma celej rodiny.
               </p>
               <p className="text-xs text-slate-500 italic">
-                Nízka kompatibilita nie je problém — je to signál, že toto dieťa vás učí niečo nové. Najväčší rast je tam, kde je najväčšie trenie.
+                Nízka kompatibilita nie je problém — je to signál učenia. Najväčší rast je tam, kde je najväčšie trenie.
               </p>
             </div>
           </GlassCard>

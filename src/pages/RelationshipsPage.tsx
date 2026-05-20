@@ -205,13 +205,28 @@ function calculateSynastry(
   };
 }
 
+function loadSavedPartners(): { p1: PersonInput; p2: PersonInput } | null {
+  try {
+    const raw = localStorage.getItem('relationships-partners');
+    return raw ? JSON.parse(raw) : null;
+  } catch { return null; }
+}
+
 export function RelationshipsPage() {
+  const saved = loadSavedPartners();
   const [mode, setMode] = useState<Mode>('partner');
-  const [partner1, setPartner1] = useState<PersonInput>(emptyPerson());
-  const [partner2, setPartner2] = useState<PersonInput>(emptyPerson());
+  const [partner1, setPartner1] = useState<PersonInput>(saved?.p1 || emptyPerson());
+  const [partner2, setPartner2] = useState<PersonInput>(saved?.p2 || emptyPerson());
   const [parent, setParent] = useState<PersonInput>(emptyPerson());
   const [children, setChildren] = useState<PersonInput[]>([emptyPerson()]);
-  const [compatibility, setCompatibility] = useState<CompatibilityResult | null>(null);
+  const [compatibility, setCompatibility] = useState<CompatibilityResult | null>(() => {
+    if (saved?.p1 && saved?.p2 && isPersonValid(saved.p1) && isPersonValid(saved.p2)) {
+      const p1 = calculateFullNumerology(parseInt(saved.p1.day), parseInt(saved.p1.month), parseInt(saved.p1.year));
+      const p2 = calculateFullNumerology(parseInt(saved.p2.day), parseInt(saved.p2.month), parseInt(saved.p2.year));
+      return calculatePartnerCompatibility(p1, p2);
+    }
+    return null;
+  });
   const [familyResults, setFamilyResults] = useState<{ child: PersonInput; result: ParentChildResult }[] | null>(null);
   const [astroPartner1, setAstroPartner1] = useState<AstroPersonInput>(emptyAstroPerson());
   const [astroPartner2, setAstroPartner2] = useState<AstroPersonInput>(emptyAstroPerson());
@@ -271,6 +286,7 @@ export function RelationshipsPage() {
     const p1 = calculateFullNumerology(parseInt(partner1.day), parseInt(partner1.month), parseInt(partner1.year));
     const p2 = calculateFullNumerology(parseInt(partner2.day), parseInt(partner2.month), parseInt(partner2.year));
     setCompatibility(calculatePartnerCompatibility(p1, p2));
+    localStorage.setItem('relationships-partners', JSON.stringify({ p1: partner1, p2: partner2 }));
   };
 
   const handleAstroCalc = () => {

@@ -229,10 +229,37 @@ export function RelationshipsPage() {
     }
     return null;
   });
-  const [familyResults, setFamilyResults] = useState<{ child: PersonInput; result: ParentChildResult }[] | null>(null);
+  const [familyResults, setFamilyResults] = useState<{ child: PersonInput; result: ParentChildResult }[] | null>(() => {
+    if (savedFamily?.parent && isPersonValid(savedFamily.parent) && savedFamily.children?.length) {
+      const validChildren = savedFamily.children.filter(isPersonValid);
+      if (validChildren.length === 0) return null;
+      const parentNum = calculateFullNumerology(parseInt(savedFamily.parent.day), parseInt(savedFamily.parent.month), parseInt(savedFamily.parent.year));
+      return validChildren.map((child: PersonInput) => {
+        const childNum = calculateFullNumerology(parseInt(child.day), parseInt(child.month), parseInt(child.year));
+        return { child, result: calculateParentChild(parentNum, childNum) };
+      });
+    }
+    return null;
+  });
   const [astroPartner1, setAstroPartner1] = useState<AstroPersonInput>(savedAstro?.p1 || emptyAstroPerson());
   const [astroPartner2, setAstroPartner2] = useState<AstroPersonInput>(savedAstro?.p2 || emptyAstroPerson());
-  const [synastryResult, setSynastryResult] = useState<SynastryResult | null>(null);
+  const [synastryResult, setSynastryResult] = useState<SynastryResult | null>(() => {
+    if (savedAstro?.p1 && savedAstro?.p2 && isAstroPersonValid(savedAstro.p1) && isAstroPersonValid(savedAstro.p2)) {
+      const city1 = findCity(savedAstro.p1.birthPlace);
+      const city2 = findCity(savedAstro.p2.birthPlace);
+      return calculateSynastry(
+        savedAstro.p1.name,
+        parseInt(savedAstro.p1.day), parseInt(savedAstro.p1.month), parseInt(savedAstro.p1.year),
+        savedAstro.p1.hour ? parseInt(savedAstro.p1.hour) : 12,
+        city1?.lat || 48.15, city1?.lon || 17.11,
+        savedAstro.p2.name,
+        parseInt(savedAstro.p2.day), parseInt(savedAstro.p2.month), parseInt(savedAstro.p2.year),
+        savedAstro.p2.hour ? parseInt(savedAstro.p2.hour) : 12,
+        city2?.lat || 48.15, city2?.lon || 17.11
+      );
+    }
+    return null;
+  });
 
   // Rodinná konštelácia
   const [constFather, setConstFather] = useState<PersonInput>(emptyPerson());

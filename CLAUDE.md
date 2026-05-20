@@ -1,6 +1,6 @@
 # Integrálna mapa bytia (Número)
 
-Offline-first PWA pre numerológiu, astrológiu, Human Design, etikoterapiu, kabalu, Theta Healing, Enneagram, Ayurvédu, TCM a sebarozvoj. **v2.26.0**
+Offline-first PWA pre numerológiu, astrológiu, Human Design, etikoterapiu, kabalu, Theta Healing, Enneagram, Ayurvédu, TCM a sebarozvoj. **v2.35.0**
 
 > 📁 **Nested CLAUDE.md súbory:**
 > - `src/engine/CLAUDE.md` — engine pravidlá, numerológia/astrológia/HD matematika
@@ -90,10 +90,11 @@ Anthropic Claude priamo z prehliadača (header `anthropic-dangerous-direct-brows
 - Settings → "✦ AI integrácia (Claude)" — input + Test + Save
 - Modely: Haiku 4.5 / Sonnet 4.6 (default) / Opus 4.7
 - **max_tokens**: 4096 (stream chat), 3500 (summarize)
-- **ProfileContext**: 10 systémov (numerológia, astrológia, HD, čakry, kabala, theta, enneagram, dosha, tcm, čínsky horoskop). `numerology` je optional (AstrologyPage ho neposiela).
+- **ProfileContext**: 11 systémov (numerológia, astrológia, HD, čakry, kabala, theta, enneagram, dosha, tcm, čínsky horoskop, jazyky lásky).
 - **Interpretation lenses** (v2.3.0): integratívny ezoterický (default), logické úrovne (NLP/Dilts), etikoterapia (Vogeltanz/Bezděk), koučing (GROW). Volia sa v Settings, perzistované v `localStorage` pod `anthropic-lens`. Lens iba mení system prompt, žiadny vplyv na engine výpočty.
-- Triggery: Dashboard, Numerológia, Astrológia, Human Design, Čakry, Modality, Kabala, Theta Healing, Compare (vzťahy), ClientDashboard — **každá stránka má AI Chat na konci**
-- Komponent: `components/AIChat.tsx` so streaming, históriou v **IndexedDB** (migrované z localStorage v2.22.0). Offline: zobrazí posledný uložený výklad aj bez API kľúča.
+- **Globálny AI drawer** (v2.33.0): floating ✦ button v `MainLayout` → slide-out panel s `AIChat`. Dostupný z hociktorej stránky. Lazy computation (engines sa počítajú až pri otvorení). Escape na zatvorenie. Nahrádza per-page AI sekcie (odstránené v v2.34.0).
+- Ponechaný len `ClientDashboard` AI chat (špecifický kontext klienta na konzultáciu).
+- Komponent: `components/AIChat.tsx` so streaming, históriou v **IndexedDB** (migrované z localStorage v2.22.0). `components/GlobalAIDrawer.tsx` — wrapper pre globálny prístup.
 - Engine: `engine/aiInterpretation.ts` — `summarizeProfile()`, `streamChat()`, `testApiKey()`, `buildSystemPrompt()` (kombinuje base + lens-specific prompt)
 
 ## Doplnkové modality

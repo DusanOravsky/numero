@@ -63,25 +63,29 @@ Nová stránka `/modality` s 3 systémami:
 
 ## Personalizované sprievodcovia "Tvoje čítanie" (v2.15.0+)
 
-Každá hlavná stránka má collapsible `<details>` sekciu s personalizovaným výkladom
+Každá hlavná stránka má `<details open>` sekciu s personalizovaným výkladom
 pre konkrétneho človeka — nie generický návod, ale jeho konkrétne čísla/hodnoty
 s vysvetlením čo robiť. Motivácia: spätná väzba "vidím čísla ale neviem čo s nimi".
 
-AI Chat je konzistentne **posledný** na každej stránke (Dashboard, Numerológia,
-Astrológia, HD, Čakry, Modality, Kabala, Theta, Compare).
+**Všetky "Tvoje čítanie" sú default `open`** (v2.33.0+). Per-page AI Chat bol odstránený — nahradený globálnym drawer.
 
 | Stránka | Komponent / Miesto | Obsah |
 |---|---|---|
 | Vývojová numerológia | `DevelopmentalNumerologyView.tsx` (pod intro) | K3 životné poslanie, nuly = úlohy, 3+× = dary/výzvy, K1-K4 vekové obdobia |
 | Charakterová numerológia | `NumerologyPage.tsx` (overview tab, za mriežkou) | ŽČ dar/tieň, chýbajúce čísla, silné energie, izolované |
-| Human Design | `HumanDesignPage.tsx` (za "Čo si z toho vziať") | Typ + stratégia, autorita, otvorené centrá, nie-ja téma |
+| Human Design | `HumanDesignPage.tsx` (Prehľad tab) | Typ + stratégia, autorita, otvorené centrá, nie-ja téma |
 | Astrológia | `AstrologyPage.tsx` (za "Čo si z toho vziať") | Slnko/Mesiac/Asc, lunárne uzly, dominantný element |
 | Čakry | `ChakrasPage.tsx` (za ChakraWheel) | Blokované (čo robiť), hyperaktívne (pozor), vyvážené |
 | Integrálny súhrn | `ClientSummary.tsx` (pod nadpisom) | 3-krok čítací kľúč: kto si / ako fungovať / kam smeruješ |
+| Modality | `ModalityPage.tsx` | Dóša, TCM element, Bachove kvety prakticky |
+| Vzťahy — Partner | `RelationshipsPage.tsx` | Kompatibilita %, silné stránky, výzvy |
+| Vzťahy — Rodič-dieťa | `RelationshipsPage.tsx` | Rola rodiča, komunikácia, profil dieťaťa |
+| Vzťahy — Astro | `RelationshipsPage.tsx` | Elementálna harmónia, synastria |
+| Vzťahy — Konštelácia | `RelationshipsPage.tsx` | Rodinný energetický profil |
 
 Vzor implementácie:
 - Dáta sa derivujú z `result` priamo v komponente (žiadny nový engine)
-- Defaultne `open` (okrem ClientSummary kde je zatvorený lebo pod ním je Quick takeaway)
+- Vždy `<details open>` — používateľ si môže zavrieť, ale defaultne vidí
 - Texty z existujúcich `developmentalMeanings.ts`, `lifePaths.json`, inline descriptions
 - `developmentalHowToRead` exportovaný z `data/developmentalMeanings.ts` — statické texty pre karmické cykly a praktický tip
 
@@ -136,19 +140,30 @@ Tento vzor je v: `AstrologyPage`, `HumanDesignPage`, `KabalahPage`, `ThetaHealin
 
 Tieto majú `// eslint-disable-next-line react-hooks/set-state-in-effect` s vysvetlením.
 
-## AI Chat komponent (`AIChat.tsx`)
+## AI Chat komponent (`AIChat.tsx`) + Globálny drawer (`GlobalAIDrawer.tsx`)
 
 Streaming chat s Claude API:
 
-- **Persistovaná história** v `localStorage` pod kľúčom `ai-chat-{storageKey}`. Default `storageKey` = `${profile.name}-${day}-{month}-{year}`. Pre rôzne triggery dáme špecifický kľúč: `dashboard-${profileId}`, `numerology-${profileId}-${method}`, `client-${clientId}`.
+- **Persistovaná história** v **IndexedDB** pod kľúčom `ai-chat-{storageKey}`. Storage key: `global-${profileId}` (drawer), `client-${clientId}` (ClientDashboard).
 - **Streaming** cez `streamChat()` s `AbortController` pre cancel.
 - **Markdown rendering** inline (## ### nadpisy, **bold**, • bullets) bez external lib.
 - **Empty state** s CTA button "Vytvoriť AI výklad" + default úvodná správa.
 - **Token counter** v patičke + reset rozhovoru.
 
-Trigger pointy (default `initialUserMessage`):
-- Dashboard → integrálny výklad celého profilu
-- Numerology Prehľad → method-specific výklad (Charakterová alebo Vývojová)
+### Globálny AI drawer (v2.33.0+)
+
+`GlobalAIDrawer.tsx` v `MainLayout`:
+- Floating ✦ button (fixed, bottom-right). Viditeľný len ak existuje profil + API kľúč.
+- Slide-out panel (right, full height, 420px na desktop).
+- **Lazy computation** — engines sa počítajú len keď `open === true` (v `useMemo` deps).
+- Escape key na zatvorenie + backdrop click.
+- Plný `ProfileContext` (11 systémov) — rovnaký ako mal Dashboard AI predtým.
+
+**Per-page AI sekcie boli odstránené** (v2.34.0). Globálny drawer ich nahrádza.
+Výnimka: `ClientDashboard` si ponecháva vlastný `AIChat` (kontext klienta, nie vlastného profilu).
+
+Trigger pointy:
+- Globálny drawer → voľná konverzácia s plným kontextom
 - ClientDashboard → profesionálny výklad pre klienta na konzultáciu
 
 ### Interpretation lenses (v2.3.0+)

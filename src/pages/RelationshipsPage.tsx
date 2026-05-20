@@ -388,19 +388,19 @@ export function RelationshipsPage() {
   const removeChild = (idx: number) => setChildren(children.filter((_, i) => i !== idx));
 
   const reset = () => {
-    setPartner1(emptyPerson());
-    setPartner2(emptyPerson());
-    setParent(emptyPerson());
-    setChildren([emptyPerson()]);
-    setCompatibility(null);
-    setFamilyResults(null);
-    setAstroPartner1(emptyAstroPerson());
-    setAstroPartner2(emptyAstroPerson());
-    setSynastryResult(null);
-    setConstFather(emptyPerson());
-    setConstMother(emptyPerson());
-    setConstChildren([emptyPerson()]);
-    setConstellationResult(null);
+    if (mode === 'partner') {
+      setPartner1(emptyPerson()); setPartner2(emptyPerson()); setCompatibility(null);
+      localStorage.removeItem('relationships-partners');
+    } else if (mode === 'family') {
+      setParent(emptyPerson()); setChildren([emptyPerson()]); setFamilyResults(null);
+      localStorage.removeItem('relationships-family');
+    } else if (mode === 'astro') {
+      setAstroPartner1(emptyAstroPerson()); setAstroPartner2(emptyAstroPerson()); setSynastryResult(null);
+      localStorage.removeItem('relationships-astro');
+    } else if (mode === 'constellation') {
+      setConstFather(emptyPerson()); setConstMother(emptyPerson()); setConstChildren([emptyPerson()]); setConstellationResult(null);
+      localStorage.removeItem('relationships-constellation');
+    }
   };
 
   return (

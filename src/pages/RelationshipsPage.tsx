@@ -1486,6 +1486,18 @@ export function RelationshipsPage() {
             </div>
           </GlassCard>
 
+          {/* HD rodičov */}
+          {(() => {
+            const hdF = calculateHumanDesign(parseInt(constFather.day), parseInt(constFather.month), parseInt(constFather.year), constFather.hour ? parseInt(constFather.hour) : 12, constFather.minute ? parseInt(constFather.minute) : 0);
+            const hdM = calculateHumanDesign(parseInt(constMother.day), parseInt(constMother.month), parseInt(constMother.year), constMother.hour ? parseInt(constMother.hour) : 12, constMother.minute ? parseInt(constMother.minute) : 0);
+            return (
+              <GlassCard>
+                <h3 className="font-medium text-purple-300 mb-3">Human Design — rodičovský pár</h3>
+                <PartnerBodygraph result1={hdF} result2={hdM} name1={constFather.name} name2={constMother.name} />
+              </GlassCard>
+            );
+          })()}
+
           {/* Otec ↔ deti */}
           <GlassCard>
             <h3 className="font-medium text-white mb-3">{constFather.name} ↔ deti</h3>

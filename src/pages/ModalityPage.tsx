@@ -362,7 +362,7 @@ export function ModalityPage() {
               </p>
               <p className="text-slate-300">
                 <span className="text-slate-500">Chuť:</span> {primaryTCM.taste}
-                <span className="text-[11px] text-slate-500 ml-2">— jedlá s touto chuťou živia tvoj orgán</span>
+                <span className="text-[11px] text-slate-500 ml-2">— detail jedál nižšie v sekcii Potraviny</span>
               </p>
             </div>
           </div>

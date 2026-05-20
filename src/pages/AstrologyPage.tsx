@@ -13,6 +13,9 @@ import { NatalWheel } from '../components/NatalWheel';
 import { UpcomingEclipses } from '../components/UpcomingEclipses';
 import { ProgressionsView } from '../components/ProgressionsView';
 import { SolarReturnView } from '../components/SolarReturnView';
+import { calculateChineseZodiac } from '../engine/chineseZodiacEngine';
+import { CHINESE_ANIMALS, CHINESE_ELEMENTS } from '../data/chineseZodiac';
+import { AIChat } from '../components/AIChat';
 
 function getSunSignDescription(sign: string): string {
   const descriptions: Record<string, string> = {
@@ -749,6 +752,86 @@ export function AstrologyPage() {
               </GlassCard>
             );
           })()}
+
+          {/* Čínsky horoskop */}
+          {(() => {
+            const birthYear = profile?.birthYear ?? (manualResult ? new Date().getFullYear() - 30 : null);
+            if (!birthYear) return null;
+            const chinese = calculateChineseZodiac(birthYear);
+            const animalInfo = CHINESE_ANIMALS[chinese.animal];
+            const elementInfo = CHINESE_ELEMENTS[chinese.element];
+            if (!animalInfo) return null;
+            return (
+              <GlassCard>
+                <h3 className="font-medium text-white mb-3">Čínsky horoskop</h3>
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="text-5xl">{chinese.animalEmoji}</div>
+                  <div>
+                    <p className="text-lg font-serif font-bold text-white">{chinese.animal}</p>
+                    <p className="text-sm text-slate-400">
+                      {chinese.element} {chinese.elementEmoji} · {chinese.polarity} · rok {birthYear}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20">
+                    <p className="text-xs text-red-400 uppercase mb-1">Povaha {chinese.animal}</p>
+                    <p className="text-xs text-slate-300">{animalInfo.traits}</p>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
+                      <p className="text-xs text-emerald-400 uppercase mb-1">Silné stránky</p>
+                      <p className="text-xs text-slate-300">{animalInfo.strengths}</p>
+                    </div>
+                    <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
+                      <p className="text-xs text-amber-400 uppercase mb-1">Výzvy</p>
+                      <p className="text-xs text-slate-300">{animalInfo.challenges}</p>
+                    </div>
+                  </div>
+
+                  <div className="p-3 rounded-xl bg-indigo-500/10 border border-indigo-500/20">
+                    <p className="text-xs text-indigo-400 uppercase mb-1">Element: {chinese.element} {chinese.elementEmoji}</p>
+                    <p className="text-xs text-slate-300">{elementInfo?.personality}</p>
+                  </div>
+
+                  <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20">
+                    <p className="text-xs text-purple-400 uppercase mb-1">Kompatibilita</p>
+                    <p className="text-xs text-slate-300">{animalInfo.compatibility}</p>
+                  </div>
+
+                  <div className="p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/20">
+                    <p className="text-xs text-cyan-400 uppercase mb-1">Odporúčanie</p>
+                    <p className="text-xs text-slate-300 italic">{animalInfo.advice}</p>
+                  </div>
+                </div>
+              </GlassCard>
+            );
+          })()}
+
+          {/* AI výklad astrológie */}
+          {profile && (
+            <AIChat
+              context={{
+                name: profile.name,
+                gender: profile.gender,
+                birth: {
+                  day: profile.birthDay,
+                  month: profile.birthMonth,
+                  year: profile.birthYear,
+                  hour: profile.birthHour,
+                  minute: profile.birthMinute,
+                  place: profile.birthPlace,
+                },
+                astrology: result,
+                chineseZodiac: calculateChineseZodiac(profile.birthYear),
+              }}
+              title="✦ AI výklad astrológie"
+              initialUserMessage={`Vyhotov mi prosím detailný astrologický výklad. Moje Slnko je v ${result.sunSign.name}, Mesiac v ${result.moonSign.name}, Ascendent v ${result.ascendant.name}. Dominantný element: ${result.dominantElement}. V čínskom horoskope som ${calculateChineseZodiac(profile.birthYear).animal} (${calculateChineseZodiac(profile.birthYear).element}). Prepoj západnú a východnú astrológiu do jedného príbehu.`}
+              storageKey={`astrology-${profile.id}`}
+            />
+          )}
 
           {manualResult && (
             <button

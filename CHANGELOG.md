@@ -4,6 +4,26 @@ All notable changes to this project are documented in this file. Dates are
 in ISO 8601 (YYYY-MM-DD). The format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 2.16.0 — 2026-05-20
+
+**MINOR**: Čínsky horoskop + AI výklad v Astrológii.
+
+### Čínsky horoskop
+
+Nová sekcia v AstrologyPage — 12 zvierat + 5 elementov + Yin/Yang:
+- Engine: `src/engine/chineseZodiacEngine.ts`
+- Dáta: `src/data/chineseZodiac.ts` (12 zvierat s traits/strengths/challenges/compatibility/advice + 5 elementov)
+- Výpočet z roku narodenia (lunárny nový rok sa nezohľadňuje — zjednodušenie)
+- Personalizovaný výklad: povaha, silné stránky, výzvy, element, kompatibilita, odporúčanie
+
+### AI výklad v Astrológii
+
+AIChat pridaný do AstrologyPage (predtým chýbal). Prompt kombinuje
+západnú astrológiu (Slnko/Mesiac/Asc/element) s čínskym horoskopom
+do jedného integrálneho výkladu.
+
+---
+
 ## 2.15.0 — 2026-05-20
 
 **MINOR**: Personalizované sprievodcovia "Ako čítať" naprieč celou appkou.

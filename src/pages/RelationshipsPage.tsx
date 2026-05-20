@@ -948,21 +948,30 @@ export function RelationshipsPage() {
                         )}
                       </div>
                       {sharedGeneKeys.length > 0 && (
-                        <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20">
-                          <p className="text-xs text-purple-300 font-semibold uppercase mb-1">Spoločné Génové kľúče</p>
-                          <p className="text-[11px] text-slate-400 mb-2">Brány aktívne u oboch — spoločné témy transformácie vo vzťahu rodič↔dieťa.</p>
+                        <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20 space-y-3">
+                          <p className="text-xs text-purple-300 font-semibold uppercase">Spoločné Génové kľúče — transformačná cesta</p>
+                          <p className="text-[11px] text-slate-400">
+                            Brány aktívne u oboch odhaľujú spoločný príbeh: aký tieň spolu transformujete, aký dar spolu vytvárate.
+                          </p>
                           {sharedGeneKeys.map(gk => (
-                            <div key={gk!.gate} className="mb-1.5">
-                              <p className="text-[11px] text-slate-300">
-                                <strong className="text-purple-300">Brána {gk!.gate}:</strong>{' '}
-                                <span className="text-rose-300">{gk!.shadow}</span> →{' '}
-                                <span className="text-amber-300">{gk!.gift}</span> →{' '}
-                                <span className="text-emerald-300">{gk!.siddhi}</span>
+                            <div key={gk!.gate} className="p-2.5 rounded-lg bg-white/5 border border-purple-500/10 space-y-1.5">
+                              <p className="text-xs font-medium text-white">
+                                Brána {gk!.gate}: <span className="text-rose-300">{gk!.shadow}</span> → <span className="text-amber-300">{gk!.gift}</span> → <span className="text-emerald-300">{gk!.siddhi}</span>
                               </p>
+                              <p className="text-[11px] text-rose-300"><strong>Tieň:</strong> {gk!.shadowDescription}</p>
+                              <p className="text-[11px] text-amber-300"><strong>Dar:</strong> {gk!.giftDescription}</p>
+                              {gk!.nlpTechnique && (
+                                <p className="text-[11px] text-indigo-300"><strong>Technika:</strong> {gk!.nlpTechnique} — {gk!.nlpDescription}</p>
+                              )}
                             </div>
                           ))}
                           {parentSunGate === childSunGate && parentSunGate && (
-                            <p className="text-[11px] text-amber-300 mt-1">Rovnaká Slnečná brána ({parentSunGate}) — hlboké zrkadlenie životnej témy.</p>
+                            <p className="text-[11px] text-amber-300">Rovnaká Slnečná brána ({parentSunGate}) — hlboké zrkadlenie životnej témy. Rodič a dieťa zdieľajú rovnakú karmickú lekciu.</p>
+                          )}
+                          {sharedGeneKeys.length > 1 && (
+                            <p className="text-[11px] text-slate-500 italic">
+                              Spoločný príbeh: Rodič prináša skúsenosť a dieťa čerstvý pohľad na rovnaké témy. Keď obaja vedome pracujete na transformácii, vzťah sa stáva priestorom rastu pre oboch.
+                            </p>
                           )}
                         </div>
                       )}
@@ -1657,9 +1666,16 @@ export function RelationshipsPage() {
                     </p>
                   )}
                   {sharedGK.length > 0 && (
-                    <p className="text-[11px] text-purple-300">
-                      Spoločné GK: {sharedGK.map(gk => `${gk!.gate} (${gk!.shadow}→${gk!.gift})`).join(', ')}
-                    </p>
+                    <div className="space-y-1.5 mt-1">
+                      <p className="text-[11px] text-purple-300 font-semibold">Spoločné Génové kľúče:</p>
+                      {sharedGK.map(gk => (
+                        <div key={gk!.gate} className="pl-2 border-l-2 border-purple-500/30">
+                          <p className="text-[11px] text-white">Brána {gk!.gate}: <span className="text-rose-300">{gk!.shadow}</span> → <span className="text-amber-300">{gk!.gift}</span> → <span className="text-emerald-300">{gk!.siddhi}</span></p>
+                          <p className="text-[10px] text-slate-400">{gk!.shadowDescription}</p>
+                          {gk!.nlpTechnique && <p className="text-[10px] text-indigo-300">Technika: {gk!.nlpTechnique}</p>}
+                        </div>
+                      ))}
+                    </div>
                   )}
                 </div>
                 );
@@ -1702,9 +1718,16 @@ export function RelationshipsPage() {
                     </p>
                   )}
                   {sharedGK.length > 0 && (
-                    <p className="text-[11px] text-purple-300">
-                      Spoločné GK: {sharedGK.map(gk => `${gk!.gate} (${gk!.shadow}→${gk!.gift})`).join(', ')}
-                    </p>
+                    <div className="space-y-1.5 mt-1">
+                      <p className="text-[11px] text-purple-300 font-semibold">Spoločné Génové kľúče:</p>
+                      {sharedGK.map(gk => (
+                        <div key={gk!.gate} className="pl-2 border-l-2 border-purple-500/30">
+                          <p className="text-[11px] text-white">Brána {gk!.gate}: <span className="text-rose-300">{gk!.shadow}</span> → <span className="text-amber-300">{gk!.gift}</span> → <span className="text-emerald-300">{gk!.siddhi}</span></p>
+                          <p className="text-[10px] text-slate-400">{gk!.shadowDescription}</p>
+                          {gk!.nlpTechnique && <p className="text-[10px] text-indigo-300">Technika: {gk!.nlpTechnique}</p>}
+                        </div>
+                      ))}
+                    </div>
                   )}
                 </div>
                 );
@@ -1724,6 +1747,11 @@ export function RelationshipsPage() {
                   const n1 = calculateFullNumerology(parseInt(child1.day), parseInt(child1.month), parseInt(child1.year));
                   const n2 = calculateFullNumerology(parseInt(child2.day), parseInt(child2.month), parseInt(child2.year));
                   const relationshipGoal = reduceToSingle(n1.lifePathNumber + n2.lifePathNumber);
+                  const hd1 = calculateHumanDesign(parseInt(child1.day), parseInt(child1.month), parseInt(child1.year), child1.hour ? parseInt(child1.hour) : 12, child1.minute ? parseInt(child1.minute) : 0);
+                  const hd2 = calculateHumanDesign(parseInt(child2.day), parseInt(child2.month), parseInt(child2.year), child2.hour ? parseInt(child2.hour) : 12, child2.minute ? parseInt(child2.minute) : 0);
+                  const g1 = new Set([...hd1.personalityGates.map(g => g.gate), ...hd1.designGates.map(g => g.gate)]);
+                  const g2 = new Set([...hd2.personalityGates.map(g => g.gate), ...hd2.designGates.map(g => g.gate)]);
+                  const siblingGK = [...g1].filter(g => g2.has(g)).slice(0, 3).map(g => getGeneKeyByGate(g)).filter(Boolean);
                   return (
                   <div key={idx} className="p-3 rounded-xl glass-light space-y-2">
                     <div className="flex items-center justify-between">
@@ -1733,12 +1761,37 @@ export function RelationshipsPage() {
                     <p className="text-[11px] text-slate-400">
                       ŽČ {n1.lifePathNumber} + {n2.lifePathNumber} → cieľ vzťahu: <strong className="text-indigo-300">{relationshipGoal}</strong>
                       {n1.age !== n2.age && <> · <span className="text-amber-300">Rôzny kozmický vek</span> — odlišné generačné vnímanie</>}
+                      {' '}· HD: {hd1.type} & {hd2.type}
                     </p>
                     <p className="text-xs text-slate-400">{compat.lifePathCompatibility.description}</p>
                     {compat.strengths[0] && <p className="text-xs text-emerald-300">+ {compat.strengths[0]}</p>}
                     {compat.strengths[1] && <p className="text-xs text-emerald-300">+ {compat.strengths[1]}</p>}
                     {compat.challenges[0] && <p className="text-xs text-amber-300">! {compat.challenges[0]}</p>}
                     {compat.challenges[1] && <p className="text-xs text-amber-300">! {compat.challenges[1]}</p>}
+                    {(() => {
+                      const shared = hd1.definedCenters.filter(c => hd2.definedCenters.includes(c));
+                      const only1 = hd1.definedCenters.filter(c => !hd2.definedCenters.includes(c));
+                      const only2 = hd2.definedCenters.filter(c => !hd1.definedCenters.includes(c));
+                      return (shared.length > 0 || only1.length > 0 || only2.length > 0) ? (
+                        <div className="text-[11px] text-cyan-300 space-y-0.5">
+                          {shared.length > 0 && <p>HD spoločné: {shared.join(', ')}</p>}
+                          {only1.length > 0 && <p>{child1.name} podmieňuje: {only1.join(', ')}</p>}
+                          {only2.length > 0 && <p>{child2.name} podmieňuje: {only2.join(', ')}</p>}
+                        </div>
+                      ) : null;
+                    })()}
+                    {siblingGK.length > 0 && (
+                      <div className="space-y-1.5 mt-1">
+                        <p className="text-[11px] text-purple-300 font-semibold">Spoločné Génové kľúče:</p>
+                        {siblingGK.map(gk => (
+                          <div key={gk!.gate} className="pl-2 border-l-2 border-purple-500/30">
+                            <p className="text-[11px] text-white">Brána {gk!.gate}: <span className="text-rose-300">{gk!.shadow}</span> → <span className="text-amber-300">{gk!.gift}</span> → <span className="text-emerald-300">{gk!.siddhi}</span></p>
+                            <p className="text-[10px] text-slate-400">{gk!.shadowDescription}</p>
+                            {gk!.nlpTechnique && <p className="text-[10px] text-indigo-300">Technika: {gk!.nlpTechnique}</p>}
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                   );
                 })}

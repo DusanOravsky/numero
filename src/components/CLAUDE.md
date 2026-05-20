@@ -61,6 +61,27 @@ Nová stránka `/modality` s 3 systémami:
 - **TCM** — 5 elementov (Drevo/Oheň/Zem/Kov/Voda)
 - **Bachove kvety** — 17 esencií mapovaných na 7 čakier
 
+## Personalizované sprievodcovia "Tvoje čítanie" (v2.15.0)
+
+Každá hlavná stránka má collapsible `<details>` sekciu s personalizovaným výkladom
+pre konkrétneho človeka — nie generický návod, ale jeho konkrétne čísla/hodnoty
+s vysvetlením čo robiť. Motivácia: spätná väzba "vidím čísla ale neviem čo s nimi".
+
+| Stránka | Komponent / Miesto | Obsah |
+|---|---|---|
+| Vývojová numerológia | `DevelopmentalNumerologyView.tsx` (pod intro) | K3 životné poslanie, nuly = úlohy, 3+× = dary/výzvy, K1-K4 vekové obdobia |
+| Charakterová numerológia | `NumerologyPage.tsx` (overview tab, za mriežkou) | ŽČ dar/tieň, chýbajúce čísla, silné energie, izolované |
+| Human Design | `HumanDesignPage.tsx` (za "Čo si z toho vziať") | Typ + stratégia, autorita, otvorené centrá, nie-ja téma |
+| Astrológia | `AstrologyPage.tsx` (za "Čo si z toho vziať") | Slnko/Mesiac/Asc, lunárne uzly, dominantný element |
+| Čakry | `ChakrasPage.tsx` (za ChakraWheel) | Blokované (čo robiť), hyperaktívne (pozor), vyvážené |
+| Integrálny súhrn | `ClientSummary.tsx` (pod nadpisom) | 3-krok čítací kľúč: kto si / ako fungovať / kam smeruješ |
+
+Vzor implementácie:
+- Dáta sa derivujú z `result` priamo v komponente (žiadny nový engine)
+- Defaultne `open` (okrem ClientSummary kde je zatvorený lebo pod ním je Quick takeaway)
+- Texty z existujúcich `developmentalMeanings.ts`, `lifePaths.json`, inline descriptions
+- `developmentalHowToRead` exportovaný z `data/developmentalMeanings.ts` — statické texty pre karmické cykly a praktický tip
+
 ## Method-aware UI (KRITICKÉ)
 
 Aplikácia podporuje 2 numerologické metódy. UI sa musí prispôsobiť:

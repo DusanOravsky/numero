@@ -523,6 +523,8 @@ export function Dashboard() {
             enneagram: fullResults.enneagram,
             dosha: { primary: fullResults.dosha.primary, secondary: fullResults.dosha.secondary },
             tcm: fullResults.tcm,
+            chakras: fullResults.chakras?.map(c => ({ name: c.chakra.name, status: c.status, score: c.score })),
+            loveLanguages: fullResults.numerology.loveLanguages.slice(0, 3),
           }}
           title="✦ AI integrálny výklad"
           storageKey={`dashboard-${profile.id}`}

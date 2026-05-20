@@ -116,6 +116,9 @@ export interface ProfileContext {
   dosha?: { primary: string; secondary: string | null };
   tcm?: { primary: string; secondary: string };
   chineseZodiac?: { animal: string; element: string; polarity: 'Yin' | 'Yang' };
+  chakras?: Array<{ name: string; status: string; score: number }>;
+  geneKeys?: Array<{ gate: number; shadow: string; gift: string; siddhi: string }>;
+  loveLanguages?: Array<{ language: string; score: number }>;
 }
 
 /**
@@ -233,6 +236,29 @@ export function summarizeProfile(ctx: ProfileContext): string {
   if (ctx.chineseZodiac) {
     lines.push('=== ČÍNSKY HOROSKOP ===');
     lines.push(`Zviera: ${ctx.chineseZodiac.animal}, Element: ${ctx.chineseZodiac.element}, Polarita: ${ctx.chineseZodiac.polarity}`);
+    lines.push('');
+  }
+
+  if (ctx.chakras && ctx.chakras.length > 0) {
+    lines.push('=== ČAKRY (syntetizované z numerológie + HD + astro) ===');
+    const blocked = ctx.chakras.filter(c => c.status === 'blocked');
+    const hyper = ctx.chakras.filter(c => c.status === 'hyperactive');
+    if (blocked.length > 0) lines.push(`Blokované: ${blocked.map(c => `${c.name} (${c.score}/100)`).join(', ')}`);
+    if (hyper.length > 0) lines.push(`Hyperaktívne: ${hyper.map(c => `${c.name} (${c.score}/100)`).join(', ')}`);
+    lines.push('');
+  }
+
+  if (ctx.geneKeys && ctx.geneKeys.length > 0) {
+    lines.push('=== GÉNOVÉ KĽÚČE (top brány) ===');
+    ctx.geneKeys.slice(0, 4).forEach(gk => {
+      lines.push(`Brána ${gk.gate}: Tieň(${gk.shadow}) → Dar(${gk.gift}) → Siddhi(${gk.siddhi})`);
+    });
+    lines.push('');
+  }
+
+  if (ctx.loveLanguages && ctx.loveLanguages.length > 0) {
+    lines.push('=== JAZYKY LÁSKY ===');
+    lines.push(`Top 3: ${ctx.loveLanguages.slice(0, 3).map(l => `${l.language} (${l.score})`).join(', ')}`);
     lines.push('');
   }
 

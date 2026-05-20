@@ -1013,15 +1013,33 @@ export function RelationshipsPage() {
                   const n1 = calculateFullNumerology(parseInt(c1.day), parseInt(c1.month), parseInt(c1.year));
                   const n2 = calculateFullNumerology(parseInt(c2.day), parseInt(c2.month), parseInt(c2.year));
                   const compat = calculatePartnerCompatibility(n1, n2);
+                  const hd1 = calculateHumanDesign(parseInt(c1.day), parseInt(c1.month), parseInt(c1.year), c1.hour ? parseInt(c1.hour) : 12, c1.minute ? parseInt(c1.minute) : 0);
+                  const hd2 = calculateHumanDesign(parseInt(c2.day), parseInt(c2.month), parseInt(c2.year), c2.hour ? parseInt(c2.hour) : 12, c2.minute ? parseInt(c2.minute) : 0);
+                  const g1 = new Set([...hd1.personalityGates.map(g => g.gate), ...hd1.designGates.map(g => g.gate)]);
+                  const g2 = new Set([...hd2.personalityGates.map(g => g.gate), ...hd2.designGates.map(g => g.gate)]);
+                  const childGK = [...g1].filter(g => g2.has(g)).slice(0, 3).map(g => getGeneKeyByGate(g)).filter(Boolean);
                   return (
-                    <div key={`${i}-${j}`} className="p-3 rounded-xl glass-light mb-2">
+                    <div key={`${i}-${j}`} className="p-3 rounded-xl glass-light mb-2 space-y-2">
                       <div className="flex items-center justify-between">
                         <span className="text-sm text-white">{c1.name} & {c2.name}</span>
                         <span className="text-sm font-bold text-indigo-300">{compat.overallScore}%</span>
                       </div>
-                      <p className="text-xs text-slate-400 mt-1">{compat.lifePathCompatibility.description}</p>
-                      {compat.strengths.length > 0 && <p className="text-xs text-green-300 mt-1">+ {compat.strengths[0]}</p>}
-                      {compat.challenges.length > 0 && <p className="text-xs text-amber-300 mt-1">! {compat.challenges[0]}</p>}
+                      <p className="text-xs text-slate-400">{compat.lifePathCompatibility.description}</p>
+                      {compat.strengths.length > 0 && <p className="text-xs text-green-300">+ {compat.strengths[0]}</p>}
+                      {compat.challenges.length > 0 && <p className="text-xs text-amber-300">! {compat.challenges[0]}</p>}
+                      {childGK.length > 0 && (
+                        <div className="space-y-1.5 mt-1">
+                          <p className="text-[11px] text-purple-300 font-semibold">Spoločné Génové kľúče:</p>
+                          {childGK.map(gk => (
+                            <div key={gk!.gate} className="pl-2 border-l-2 border-purple-500/30 space-y-0.5">
+                              <p className="text-[11px] text-white">Brána {gk!.gate}: <span className="text-rose-300">{gk!.shadow}</span> → <span className="text-amber-300">{gk!.gift}</span> → <span className="text-emerald-300">{gk!.siddhi}</span></p>
+                              <p className="text-[10px] text-slate-400">{gk!.shadowDescription}</p>
+                              <p className="text-[10px] text-amber-300">Dar: {gk!.giftDescription}</p>
+                              {gk!.nlpTechnique && <p className="text-[10px] text-indigo-300">Prakticky: {gk!.nlpTechnique} — {gk!.nlpDescription}</p>}
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   );
                 })

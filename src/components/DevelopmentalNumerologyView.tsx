@@ -139,13 +139,13 @@ export function DevelopmentalNumerologyView({ result, gender }: Props) {
           {/* Kedy sa cykly aktivujú */}
           <div className="p-3 rounded-lg bg-amber-50 border border-amber-200">
             <p className="text-xs font-semibold text-amber-800 mb-2">{developmentalHowToRead.karmicCycles.title}</p>
-            <div className="space-y-1.5">
+            <div className="space-y-2">
               {developmentalHowToRead.karmicCycles.cycles.map((cyc, i) => (
-                <div key={i} className="flex gap-2 text-xs">
-                  <span className="font-medium text-amber-700 whitespace-nowrap min-w-[180px]">
-                    {cyc.label} <span className="text-slate-400">({cyc.period})</span>
-                  </span>
-                  <span className="text-slate-600">{cyc.desc}</span>
+                <div key={i} className="text-xs">
+                  <p className="font-medium text-amber-700">
+                    {cyc.label} <span className="text-slate-400 font-normal">({cyc.period})</span>
+                  </p>
+                  <p className="text-slate-600 mt-0.5">{cyc.desc}</p>
                 </div>
               ))}
             </div>

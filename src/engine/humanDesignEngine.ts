@@ -538,10 +538,42 @@ function _calculateHumanDesignImpl(
   const cross = `${angle} – ${baseName} (${pSunGate}/${pEarthGate} | ${dSunGate}/${dEarthGate})`;
 
   // Variable (4 šípky) — PHS, Environment, Motivation, Perspective
-  const DIGESTION_NAMES: Record<number, string> = { 1: 'Apetít (jedz keď máš hlad)', 2: 'Chuť (jedz čo chutí)', 3: 'Žízeň (pitný režim kľúčový)', 4: 'Dotyk (textúra a teplota)', 5: 'Zvuk (ticho pri jedle)', 6: 'Svetlo (podľa denného svetla)' };
-  const ENVIRONMENT_NAMES: Record<number, string> = { 1: 'Jaskyne (uzavreté, tmavé)', 2: 'Trhy (rušné, stimulujúce)', 3: 'Kuchyne (teplé, vonné)', 4: 'Hory (výška, výhľad)', 5: 'Údolia (nízko, pri vode)', 6: 'Pobrežie (otvorený horizont)' };
-  const MOTIVATION_NAMES: Record<number, string> = { 1: 'Strach (ochranný inštinkt)', 2: 'Nádej (optimistická vízia)', 3: 'Túžba (materiálna motivácia)', 4: 'Potreba (služba iným)', 5: 'Vina (zodpovednosť)', 6: 'Nevinnosť (čistá prítomnosť)' };
-  const PERSPECTIVE_NAMES: Record<number, string> = { 1: 'Prežitie (bezpečnosť)', 2: 'Možnosti (alternatívy)', 3: 'Sila (hierarchia)', 4: 'Meditácia (vnútorný pokoj)', 5: 'Súd (hodnotenie)', 6: 'Osobná (subjektívna pravda)' };
+  const DIGESTION_NAMES: Record<number, string> = { 1: 'Apetít', 2: 'Chuť', 3: 'Žízeň', 4: 'Dotyk', 5: 'Zvuk', 6: 'Svetlo' };
+  const DIGESTION_DESC: Record<number, string> = {
+    1: 'Jedz len keď máš skutočný hlad — nie podľa hodín. Tvoje telo vie kedy potrebuje palivo.',
+    2: 'Jedz to, čo ti chutí v danom momente. Nepotláčaj chute — sú to signály tela o tom čo potrebuje.',
+    3: 'Pitný režim je pre teba kľúčový. Hydratácia pred a počas jedla. Tekuté jedlá (polievky, smoothie) ti sedia.',
+    4: 'Záleží ti na textúre a teplote jedla. Niektoré jedlá „musia byť" teplé, iné studené. Počúvaj to.',
+    5: 'Potrebuješ ticho pri jedle. Bez TV, telefónu, hlučnej reštaurácie. V tichu tvoje telo lepšie strávi.',
+    6: 'Jedz podľa denného svetla — hlavné jedlo keď je svetlo (obed), večer len ľahké. Tma = oddych pre trávenie.',
+  };
+  const ENVIRONMENT_NAMES: Record<number, string> = { 1: 'Jaskyne', 2: 'Trhy', 3: 'Kuchyne', 4: 'Hory', 5: 'Údolia', 6: 'Pobrežie' };
+  const ENVIRONMENT_DESC: Record<number, string> = {
+    1: 'Najlepšie sa ti darí v uzavretých, tlmených priestoroch. Domov, kancelária s dverami, nízke osvetlenie. Príroda nie je tvoj workspace.',
+    2: 'Potrebuješ stimuláciu — kaviarne, coworkingy, živé ulice. Ruch a ľudia okolo ťa nabíjajú, nie vyčerpávajú.',
+    3: 'Teplé, vonné prostredie ťa uzemňuje. Kuchyňa, vonné sviečky, miesta kde sa varí. Vôňa je tvoj signál bezpečia.',
+    4: 'Výška a výhľad ti dávajú perspektívu. Vyššie poschodia, hory, balkón. Potrebuješ vidieť ďaleko.',
+    5: 'Nízke miesta pri vode — údolia, riečne brehy, lúky. Uzemnenie a pokoj prírody je tvoje prostredie.',
+    6: 'Otvorený horizont — pobrežie, pláne, strechy. Nič nesmie blokovať výhľad. Sloboda priestoru.',
+  };
+  const MOTIVATION_NAMES: Record<number, string> = { 1: 'Strach', 2: 'Nádej', 3: 'Túžba', 4: 'Potreba', 5: 'Vina', 6: 'Nevinnosť' };
+  const MOTIVATION_DESC: Record<number, string> = {
+    1: 'Tvoj motor je ochranný inštinkt — robíš veci aby si bol v bezpečí. Nie je to slabosť, je to inteligencia prežitia.',
+    2: 'Žiješ z nádeje a optimistickej vízie budúcnosti. Vidíš potenciál tam, kde iní vidia prekážky.',
+    3: 'Poháňa ťa túžba — po zážitkoch, materiálnom zabezpečení, naplnení. Je to energia ktorá ťa drží v pohybe.',
+    4: 'Motivuje ťa potreba — služba iným, riešenie problémov, byť užitočný. Zmysel cez príspevok.',
+    5: 'Zodpovednosť a pocit záväzku ťa poháňajú. Robíš veci pretože „treba" — ale pozor na preťaženie.',
+    6: 'Čistá prítomnosť — nepoháňa ťa nič vonkajšie. Robíš veci keď to cítiš, bez agendy. Najvzácnejšia motivácia.',
+  };
+  const PERSPECTIVE_NAMES: Record<number, string> = { 1: 'Prežitie', 2: 'Možnosti', 3: 'Sila', 4: 'Meditácia', 5: 'Súd', 6: 'Osobná' };
+  const PERSPECTIVE_DESC: Record<number, string> = {
+    1: 'Vidíš svet cez optiku bezpečnosti — čo je hrozba, čo je zdroj. Tvoja múdrosť je v rozlišovaní.',
+    2: 'Vidíš alternatívy a možnosti kde iní vidia jednu cestu. Tvoj dar: ukázať ľuďom že majú voľbu.',
+    3: 'Vnímáš hierarchie a mocenské dynamiky. Vidíš kto má moc, kto nie, a ako to ovplyvňuje situáciu.',
+    4: 'Tvoj prirodzený stav je meditačný pokoj. Vidíš jasnejšie keď sa upokojíš — nie keď analyzuješ.',
+    5: 'Hodnotíš a posudzuješ — to nie je negatívne. Tvoja múdrosť je v rozlíšení čo funguje a čo nie.',
+    6: 'Subjektívna, osobná pravda. Nemusíš byť objektívny — tvoja perspektíva JE tvoj príspevok.',
+  };
 
   const dSun = designActivations.find(a => a.planet === 'Slnko')!;
   const dNode = designActivations.find(a => a.planet === 'Severný uzol')!;
@@ -549,10 +581,10 @@ function _calculateHumanDesignImpl(
   const pNode = personalityActivations.find(a => a.planet === 'Severný uzol')!;
 
   const variable: HDVariable = {
-    digestion: { color: dSun.color, tone: dSun.tone, name: DIGESTION_NAMES[dSun.color] || `Farba ${dSun.color}`, description: `Design Slnko farba ${dSun.color}, tón ${dSun.tone}` },
-    environment: { color: dNode.color, tone: dNode.tone, name: ENVIRONMENT_NAMES[dNode.color] || `Farba ${dNode.color}`, description: `Design Sev. uzol farba ${dNode.color}, tón ${dNode.tone}` },
-    motivation: { color: pSun.color, tone: pSun.tone, name: MOTIVATION_NAMES[pSun.color] || `Farba ${pSun.color}`, description: `Personality Slnko farba ${pSun.color}, tón ${pSun.tone}` },
-    perspective: { color: pNode.color, tone: pNode.tone, name: PERSPECTIVE_NAMES[pNode.color] || `Farba ${pNode.color}`, description: `Personality Sev. uzol farba ${pNode.color}, tón ${pNode.tone}` },
+    digestion: { color: dSun.color, tone: dSun.tone, name: DIGESTION_NAMES[dSun.color] || `Farba ${dSun.color}`, description: DIGESTION_DESC[dSun.color] || '' },
+    environment: { color: dNode.color, tone: dNode.tone, name: ENVIRONMENT_NAMES[dNode.color] || `Farba ${dNode.color}`, description: ENVIRONMENT_DESC[dNode.color] || '' },
+    motivation: { color: pSun.color, tone: pSun.tone, name: MOTIVATION_NAMES[pSun.color] || `Farba ${pSun.color}`, description: MOTIVATION_DESC[pSun.color] || '' },
+    perspective: { color: pNode.color, tone: pNode.tone, name: PERSPECTIVE_NAMES[pNode.color] || `Farba ${pNode.color}`, description: PERSPECTIVE_DESC[pNode.color] || '' },
   };
 
   return {

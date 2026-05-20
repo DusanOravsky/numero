@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import { GlassCard } from '../components/GlassCard';
 import { AIChat } from '../components/AIChat';
@@ -14,9 +14,13 @@ const MAX_COMPARE = 4;
 
 export function ComparePage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { clients, profiles, activeProfileId, numerologyMethod } = useStore();
   const activeProfile = profiles.find(p => p.id === activeProfileId);
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const idsParam = searchParams.get('ids');
+  const [selectedIds, setSelectedIds] = useState<string[]>(() =>
+    idsParam ? idsParam.split(',').filter(id => clients.some(c => c.id === id)) : []
+  );
   const [includeMyProfile, setIncludeMyProfile] = useState(false);
 
   const toggle = (id: string) => {

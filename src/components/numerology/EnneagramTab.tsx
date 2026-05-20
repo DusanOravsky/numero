@@ -76,6 +76,9 @@ export function EnneagramTab({ result, enneagramResult, devResult, numerologyMet
               Stačí pozorovať — samotné uvedomenie je prvý krok zmeny.
             </p>
           </div>
+          <p className="text-[11px] text-slate-500 italic mt-2">
+            Enneagram typ je odvodený z numerologického profilu (nie z dotazníka). Pre presnejšie typovanie odporúčame RHETI alebo iEQ9 test. Ak poznáš svoj typ, môžeš ho nastaviť manuálne v profile.
+          </p>
         </div>
       </GlassCard>
 

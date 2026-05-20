@@ -521,6 +521,28 @@ export function ClientSummary({ clientName, birthDay, birthMonth, birthYear, num
               </p>
             </div>
           </div>
+
+          {/* Tvoja cesta transformácie — arc */}
+          <div className="border-t border-violet-200 pt-4 mt-4">
+            <p className="text-xs text-violet-700 font-semibold uppercase tracking-wide mb-3">Tvoja cesta transformácie</p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs text-slate-700">
+              <div className="p-3 rounded-xl bg-rose-50 border border-rose-200">
+                <p className="text-rose-700 font-semibold mb-1">Odkiaľ ideš</p>
+                <p>Enneagram stres → typ {enneagram.disintegrationDirection} ({enneagramDisintegration?.name})</p>
+                {theta.primaryBeliefs[0] && <p className="mt-1 italic">„{theta.primaryBeliefs[0].belief}"</p>}
+              </div>
+              <div className="p-3 rounded-xl bg-indigo-50 border border-indigo-200">
+                <p className="text-indigo-700 font-semibold mb-1">Kde si teraz</p>
+                <p>ŽČ {numerology.lifePathNumber} ({lpInfo?.title}), ORV {numerology.orv}</p>
+                <p className="mt-1">HD: {humanDesign.type}, stratégia „{humanDesign.strategy.toLowerCase()}"</p>
+              </div>
+              <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200">
+                <p className="text-emerald-700 font-semibold mb-1">Kam smeruješ</p>
+                <p>Enneagram rast → typ {enneagram.integrationDirection} ({enneagramIntegration?.name})</p>
+                <p className="mt-1">Sev. uzol: {astrology.northNode.name}</p>
+              </div>
+            </div>
+          </div>
         </div>
       </GlassCard>
     </motion.section>

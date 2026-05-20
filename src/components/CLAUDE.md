@@ -61,11 +61,14 @@ Nová stránka `/modality` s 3 systémami:
 - **TCM** — 5 elementov (Drevo/Oheň/Zem/Kov/Voda)
 - **Bachove kvety** — 17 esencií mapovaných na 7 čakier
 
-## Personalizované sprievodcovia "Tvoje čítanie" (v2.15.0)
+## Personalizované sprievodcovia "Tvoje čítanie" (v2.15.0+)
 
 Každá hlavná stránka má collapsible `<details>` sekciu s personalizovaným výkladom
 pre konkrétneho človeka — nie generický návod, ale jeho konkrétne čísla/hodnoty
 s vysvetlením čo robiť. Motivácia: spätná väzba "vidím čísla ale neviem čo s nimi".
+
+AI Chat je konzistentne **posledný** na každej stránke (Dashboard, Numerológia,
+Astrológia, HD, Čakry, Modality, Kabala, Theta, Compare).
 
 | Stránka | Komponent / Miesto | Obsah |
 |---|---|---|

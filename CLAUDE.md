@@ -1,6 +1,6 @@
 # Integrálna mapa bytia (Número)
 
-Offline-first PWA pre numerológiu, astrológiu, Human Design, etikoterapiu, kabalu, Theta Healing, Enneagram, Ayurvédu, TCM a sebarozvoj. **v2.18.0**
+Offline-first PWA pre numerológiu, astrológiu, Human Design, etikoterapiu, kabalu, Theta Healing, Enneagram, Ayurvédu, TCM a sebarozvoj. **v2.26.0**
 
 > 📁 **Nested CLAUDE.md súbory:**
 > - `src/engine/CLAUDE.md` — engine pravidlá, numerológia/astrológia/HD matematika
@@ -92,8 +92,8 @@ Anthropic Claude priamo z prehliadača (header `anthropic-dangerous-direct-brows
 - **max_tokens**: 4096 (stream chat), 3500 (summarize)
 - **ProfileContext**: 10 systémov (numerológia, astrológia, HD, čakry, kabala, theta, enneagram, dosha, tcm, čínsky horoskop). `numerology` je optional (AstrologyPage ho neposiela).
 - **Interpretation lenses** (v2.3.0): integratívny ezoterický (default), logické úrovne (NLP/Dilts), etikoterapia (Vogeltanz/Bezděk), koučing (GROW). Volia sa v Settings, perzistované v `localStorage` pod `anthropic-lens`. Lens iba mení system prompt, žiadny vplyv na engine výpočty.
-- Triggery: Dashboard (celý profil), Numerology Prehľad (per metóda), Astrológia (západná + čínska), ClientDashboard (per klient)
-- Komponent: `components/AIChat.tsx` so streaming, históriou per profile/klient/metóda v localStorage
+- Triggery: Dashboard, Numerológia, Astrológia, Human Design, Čakry, Modality, Kabala, Theta Healing, Compare (vzťahy), ClientDashboard — **každá stránka má AI Chat na konci**
+- Komponent: `components/AIChat.tsx` so streaming, históriou v **IndexedDB** (migrované z localStorage v2.22.0). Offline: zobrazí posledný uložený výklad aj bez API kľúča.
 - Engine: `engine/aiInterpretation.ts` — `summarizeProfile()`, `streamChat()`, `testApiKey()`, `buildSystemPrompt()` (kombinuje base + lens-specific prompt)
 
 ## Doplnkové modality

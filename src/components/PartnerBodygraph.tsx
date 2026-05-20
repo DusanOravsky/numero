@@ -239,14 +239,35 @@ export function PartnerBodygraph({ result1, result2, name1, name2 }: PartnerBody
           <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20">
             <h4 className="text-sm font-medium text-amber-300 mb-2">Elektromagnetické kanály – vzájomná príťažlivosť</h4>
             <p className="text-xs text-slate-500 mb-3">Každý z vás má jednu bránu kanála a druhý má tú druhú. Keď ste spolu, vytvárate energiu, ktorú sám nemá nikto z vás. Preto sa k sebe priťahujete – dopĺňate sa na energetickej úrovni. Tieto kanály sú najsilnejším magnetom vo vzťahu.</p>
-            {channelAnalysis.electromagnetic.map((ch, i) => (
-              <div key={i} className="p-2 rounded-lg bg-amber-50 border border-amber-200 mb-2">
+            {channelAnalysis.electromagnetic.map((ch, i) => {
+              const gk1 = getGeneKeyByGate(ch.gates[0]);
+              const gk2 = getGeneKeyByGate(ch.gates[1]);
+              return (
+              <div key={i} className="p-3 rounded-lg bg-amber-50 border border-amber-200 mb-2 space-y-2">
                 <p className="text-sm font-medium text-slate-800">{ch.name} (brány {ch.gates[0]}-{ch.gates[1]})</p>
-                <p className="text-xs text-slate-500 mt-1">
+                <p className="text-xs text-slate-500">
                   {name1} prináša bránu {ch.gates[0]}, {name2} prináša bránu {ch.gates[1]}. Spolu aktivujete energiu {ch.name} – oblasť, kde ste najsilnejší AKO PÁR.
                 </p>
+                {gk1 && (
+                  <div className="pl-2 border-l-2 border-amber-300">
+                    <p className="text-[11px] text-slate-700"><strong>Brána {ch.gates[0]}</strong> ({name1}): <span className="text-rose-600">{gk1.shadow}</span> → <span className="text-amber-600">{gk1.gift}</span> → <span className="text-emerald-600">{gk1.siddhi}</span></p>
+                    <p className="text-[10px] text-slate-500">{gk1.giftDescription}</p>
+                  </div>
+                )}
+                {gk2 && (
+                  <div className="pl-2 border-l-2 border-amber-300">
+                    <p className="text-[11px] text-slate-700"><strong>Brána {ch.gates[1]}</strong> ({name2}): <span className="text-rose-600">{gk2.shadow}</span> → <span className="text-amber-600">{gk2.gift}</span> → <span className="text-emerald-600">{gk2.siddhi}</span></p>
+                    <p className="text-[10px] text-slate-500">{gk2.giftDescription}</p>
+                  </div>
+                )}
+                {gk1 && gk2 && (
+                  <p className="text-[10px] text-amber-700 italic">
+                    Spoločný príbeh: {name1} prináša „{gk1.gift.toLowerCase()}" a {name2} „{gk2.gift.toLowerCase()}". Spolu vytvárate energiu kanálu {ch.name}.
+                  </p>
+                )}
               </div>
-            ))}
+              );
+            })}
           </div>
         )}
 
@@ -255,12 +276,18 @@ export function PartnerBodygraph({ result1, result2, name1, name2 }: PartnerBody
           <div className="p-4 rounded-xl bg-purple-500/10 border border-purple-500/20">
             <h4 className="text-sm font-medium text-purple-300 mb-2">Kompromisné kanály – spoločná energia</h4>
             <p className="text-xs text-slate-500 mb-3">Obaja máte rovnaký kompletný kanál. To znamená, že v tejto oblasti máte obe konzistentnú energiu. Môže to byť veľká sila (rozumiete si bez slov), ale aj trecie plocha (obaja chcete dominovať rovnakým spôsobom). Kľúčom je vzájomný rešpekt.</p>
-            {channelAnalysis.compromise.map((ch, i) => (
-              <div key={i} className="p-2 rounded-lg bg-purple-50 border border-purple-200 mb-2">
+            {channelAnalysis.compromise.map((ch, i) => {
+              const gk1 = getGeneKeyByGate(ch.gates[0]);
+              const gk2 = getGeneKeyByGate(ch.gates[1]);
+              return (
+              <div key={i} className="p-3 rounded-lg bg-purple-50 border border-purple-200 mb-2 space-y-1">
                 <p className="text-sm font-medium text-slate-800">{ch.name} (brány {ch.gates[0]}-{ch.gates[1]})</p>
-                <p className="text-xs text-slate-500 mt-1">Obaja máte energiu "{ch.name}" – zdieľate rovnakú silu, čo môže vytvárať harmóniu AJ súťaž.</p>
+                <p className="text-xs text-slate-500">Obaja máte energiu "{ch.name}" – zdieľate rovnakú silu, čo môže vytvárať harmóniu AJ súťaž.</p>
+                {gk1 && <p className="text-[10px] text-slate-600">Brána {ch.gates[0]}: {gk1.gift} — {gk1.giftDescription}</p>}
+                {gk2 && <p className="text-[10px] text-slate-600">Brána {ch.gates[1]}: {gk2.gift} — {gk2.giftDescription}</p>}
               </div>
-            ))}
+              );
+            })}
           </div>
         )}
 
@@ -269,18 +296,26 @@ export function PartnerBodygraph({ result1, result2, name1, name2 }: PartnerBody
           <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/20">
             <h4 className="text-sm font-medium text-rose-300 mb-2">Dominantné kanály – kto vedie v akej oblasti</h4>
             <p className="text-xs text-slate-500 mb-3">Len jeden z vás má kompletný kanál – tá osoba má v tejto oblasti konzistentnú energiu a prirodzene v nej dominuje. Partner ju v tejto oblasti nasleduje alebo sa od nej učí. Nie je to nerovnováha – je to prirodzené rozdelenie "zodpovedností" vo vzťahu.</p>
-            {channelAnalysis.dominant1.map((ch, i) => (
+            {channelAnalysis.dominant1.map((ch, i) => {
+              const gk = getGeneKeyByGate(ch.gates[0]);
+              return (
               <div key={i} className="p-2 rounded-lg bg-rose-50 border border-rose-200 mb-2">
-                <p className="text-sm text-slate-800"><strong className="text-rose-600">{name1}</strong> dominuje: {ch.name} ({ch.gates[0]}-{ch.gates[1]})</p>
-                <p className="text-xs text-slate-500">{name1} má konzistentnú energiu v oblasti "{ch.name}" a prirodzene túto oblasť vo vzťahu riadi.</p>
+                <p className="text-sm text-slate-800"><strong className="text-rose-600">{name1}</strong> vedie oblasť: {ch.name}</p>
+                <p className="text-xs text-slate-500">{name1} má v tejto oblasti stabilnú energiu — prirodzene ju vo vzťahu riadi. {name2} sa tu od neho/nej učí.</p>
+                {gk && <p className="text-[10px] text-slate-600">Dar: {gk.gift} — {gk.giftDescription}</p>}
               </div>
-            ))}
-            {channelAnalysis.dominant2.map((ch, i) => (
+              );
+            })}
+            {channelAnalysis.dominant2.map((ch, i) => {
+              const gk = getGeneKeyByGate(ch.gates[0]);
+              return (
               <div key={i} className="p-2 rounded-lg bg-indigo-50 border border-indigo-200 mb-2">
-                <p className="text-sm text-slate-800"><strong className="text-indigo-600">{name2}</strong> dominuje: {ch.name} ({ch.gates[0]}-{ch.gates[1]})</p>
-                <p className="text-xs text-slate-500">{name2} má konzistentnú energiu v oblasti "{ch.name}" a prirodzene túto oblasť vo vzťahu riadi.</p>
+                <p className="text-sm text-slate-800"><strong className="text-indigo-600">{name2}</strong> vedie oblasť: {ch.name}</p>
+                <p className="text-xs text-slate-500">{name2} má v tejto oblasti stabilnú energiu — prirodzene ju vo vzťahu riadi. {name1} sa tu od neho/nej učí.</p>
+                {gk && <p className="text-[10px] text-slate-600">Dar: {gk.gift} — {gk.giftDescription}</p>}
               </div>
-            ))}
+              );
+            })}
           </div>
         )}
 

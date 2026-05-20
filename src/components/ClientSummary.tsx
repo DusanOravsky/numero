@@ -15,6 +15,7 @@ import { DOSHA_INFO } from '../data/ayurveda';
 import { TCM_ELEMENTS } from '../data/tcm';
 import { useStore } from '../store/useStore';
 import { calculateChineseZodiac } from '../engine/chineseZodiacEngine';
+import { CHINESE_ANIMALS } from '../data/chineseZodiac';
 import { evaluateChakras } from '../engine/chakraEngine';
 import { getGridCount } from '../engine/numerologyEngine';
 import { planetInSignDescriptions } from '../data/planetSignDescriptions';
@@ -427,16 +428,16 @@ export function ClientSummary({ clientName, birthDay, birthMonth, birthYear, num
           {/* Čínsky horoskop */}
           {(() => {
             const cz = calculateChineseZodiac(year);
+            const animalInfo = CHINESE_ANIMALS[cz.animal];
             return (
               <div className="rounded-xl border border-red-200 bg-red-50/40 p-4 space-y-2">
                 <p className="text-xs text-red-700 font-semibold uppercase tracking-wide">
                   Čínsky horoskop
                 </p>
                 <p className="text-xs text-slate-700">
-                  <strong>{cz.animal}</strong> ({cz.element}, {cz.yinYang}).{' '}
-                  {cz.personality}{' '}
-                  <strong>Silné stránky:</strong> {cz.strengths.join(', ')}.{' '}
-                  <strong>Výzvy:</strong> {cz.weaknesses.join(', ')}.
+                  <strong>{cz.animal}</strong> ({cz.element}, {cz.polarity}).{' '}
+                  {animalInfo?.traits}{' '}
+                  {animalInfo && <><strong>Silné stránky:</strong> {animalInfo.strengths}. <strong>Výzvy:</strong> {animalInfo.challenges}.</>}
                 </p>
               </div>
             );

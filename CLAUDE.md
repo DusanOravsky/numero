@@ -234,12 +234,18 @@ Stratégia podľa [SemVer](https://semver.org/):
 
 ## Vzťahy a porovnania
 
+- **RelationshipsPage** — 4 módy (Partnerský výklad, Rodič a deti, Astro kompatibilita, Rodinná konštelácia)
+- **Partnerský výklad** — numerologická kompatibilita, cieľ vzťahu, HD bodygraph porovnanie (elektromagnetické + kompromisné kanály, podmieňovanie)
+- **Rodič a deti** — rola rodiča, komunikácia, profil dieťaťa (ŽČ, K3, kozmický vek, karmické dlhy, izolované), HD prekrývanie centier, spoločné Génové kľúče
+- **Astro kompatibilita** — synastria (aspekty s významami), Davison chart, Composite chart
+- **Rodinná konštelácia** — celá rodina (rodičia + deti), HD prekrývanie, rodinné číslo, súrodenecká dynamika
 - **ComparePage** — vlastný profil v porovnaní + enneagram riadky
-- **Rodinná konštelácia** mód (otec + matka + deti) vo Vzťahoch
+- Všetky módy: localStorage persistence, editing mode (✎ button), reset len pre aktívny tab
 
 ## Dashboard
 
-- **Denný digest** — ranný rituál + enneagram tip + etikoterapia otázka + kabala čin
+- **Denný digest** — jedna vec na dnes, dnešná energia, mantra + citát + tarot
+- **Integrálny súhrn osobnosti** (`ClientSummary`) — 11 systémov, personalizovaný cross-system príbeh, čínsky horoskop, čakry, jazyky lásky
 
 ## Konvencie
 

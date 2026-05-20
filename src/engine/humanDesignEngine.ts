@@ -192,6 +192,26 @@ const NAMED_CROSSES: Record<string, string> = {
   '30-29-34-20': 'Kríž Zázrakov',
 };
 
+// Left Angle varianty — kde sa LA líši od RA názvu (Jovian Archive)
+const LA_CROSS_NAME_BY_SUN: Record<number, string> = {
+  1: 'Kríž Konfrontácie', 2: 'Kríž Vzdorovania', 3: 'Kríž Želaní', 4: 'Kríž Revolúcie',
+  5: 'Kríž Oddelenia', 6: 'Kríž Roviny', 7: 'Kríž Masiek', 8: 'Kríž Neistoty',
+  9: 'Kríž Identifikácie', 10: 'Kríž Správania', 11: 'Kríž Vzdelania', 12: 'Kríž Vzdelávania',
+  13: 'Kríž Masiek', 14: 'Kríž Neistoty', 15: 'Kríž Prevencie', 16: 'Kríž Identifikácie',
+  17: 'Kríž Zasvätenia', 18: 'Kríž Zasvätenia', 19: 'Kríž Jemnosti', 20: 'Kríž Duality',
+  21: 'Kríž Snahy', 22: 'Kríž Informovania', 23: 'Kríž Zasvätenia', 24: 'Kríž Plánovania',
+  25: 'Kríž Liečenia', 26: 'Kríž Konfrontácie', 27: 'Kríž Zarovnania', 28: 'Kríž Zarovnania',
+  29: 'Kríž Priemyslu', 30: 'Kríž Priemyslu', 31: 'Kríž Zarovnania', 32: 'Kríž Zarovnania',
+  33: 'Kríž Duality', 34: 'Kríž Duality', 35: 'Kríž Oddelenia', 36: 'Kríž Roviny',
+  37: 'Kríž Revolúcie', 38: 'Kríž Zasvätenia', 39: 'Kríž Individualizmu', 40: 'Kríž Migrácie',
+  41: 'Kríž Alfa', 42: 'Kríž Omega', 43: 'Kríž Zasvätenia', 44: 'Kríž Prebudenia',
+  45: 'Kríž Konfrontácie', 46: 'Kríž Prevencie', 47: 'Kríž Informovania', 48: 'Kríž Zasvätenia',
+  49: 'Kríž Revolúcie', 50: 'Kríž Želaní', 51: 'Kríž Zasvätenia', 52: 'Kríž Požiadaviek',
+  53: 'Kríž Cyklov', 54: 'Kríž Cyklov', 55: 'Kríž Ducha', 56: 'Kríž Rozptýlenia',
+  57: 'Kríž Zasvätenia', 58: 'Kríž Požiadaviek', 59: 'Kríž Ducha', 60: 'Kríž Závratu',
+  61: 'Kríž Zasvätenia', 62: 'Kríž Zasvätenia', 63: 'Kríž Dominancie', 64: 'Kríž Dominancie',
+};
+
 // Záložné názvy podľa osobnostnej brány Slnka (pre prípad, že presná kombinácia nie je v NAMED_CROSSES)
 const CROSS_NAME_BY_SUN: Record<number, string> = {
   1: 'Kríž Sfingy', 2: 'Kríž Vodiča', 3: 'Kríž Zákonov', 4: 'Kríž Vysvetlenia',
@@ -495,7 +515,9 @@ function _calculateHumanDesignImpl(
 
   const crossKey = `${pSunGate}-${pEarthGate}-${dSunGate}-${dEarthGate}`;
   const angle = getCrossAngle(pSunLine, dSunLine);
-  const baseName = NAMED_CROSSES[crossKey] || CROSS_NAME_BY_SUN[pSunGate] || `Kríž Brány ${pSunGate}`;
+  const baseName = angle === 'Left Angle'
+    ? (LA_CROSS_NAME_BY_SUN[pSunGate] || NAMED_CROSSES[crossKey] || CROSS_NAME_BY_SUN[pSunGate] || `Kríž Brány ${pSunGate}`)
+    : (NAMED_CROSSES[crossKey] || CROSS_NAME_BY_SUN[pSunGate] || `Kríž Brány ${pSunGate}`);
   const cross = `${angle} – ${baseName} (${pSunGate}/${pEarthGate} | ${dSunGate}/${dEarthGate})`;
 
   return {

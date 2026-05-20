@@ -479,7 +479,9 @@ export function SettingsPage() {
         <div className="space-y-2 text-sm text-slate-400 mb-4">
           <p><strong className="text-slate-300">Integrálna mapa bytia</strong></p>
           <p>Verzia: {APP_VERSION}</p>
-          <p>Offline-first PWA. Všetky dáta lokálne.</p>
+          <p>© 2026 Dušan Oravský</p>
+          <p className="text-[11px] text-slate-500">Co-created with Claude Code (Anthropic)</p>
+          <p className="text-[11px] text-slate-500 mt-1">Offline-first PWA. Všetky dáta lokálne.</p>
         </div>
         <div className="space-y-2">
           <button

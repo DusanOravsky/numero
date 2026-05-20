@@ -8,6 +8,7 @@ import { calculateAstrology, calculateSynastryAspects, summarizeSynastry } from 
 import type { AstrologyResult, SynastryAspect } from '../engine/astrologyEngine';
 import { calculateHumanDesign } from '../engine/humanDesignEngine';
 import { PartnerBodygraph } from '../components/PartnerBodygraph';
+import { getGeneKeyByGate } from '../data/geneKeys';
 import { findCity } from '../data/cities';
 import { motion } from 'framer-motion';
 
@@ -846,7 +847,14 @@ export function RelationshipsPage() {
                     const sharedDefined = parentHd.definedCenters.filter(c => childHd.definedCenters.includes(c));
                     const parentOnly = parentHd.definedCenters.filter(c => !childHd.definedCenters.includes(c));
                     const childOnly = childHd.definedCenters.filter(c => !parentHd.definedCenters.includes(c));
+                    const parentSunGate = parentHd.personalityGates.find(g => g.planet === 'Slnko')?.gate;
+                    const childSunGate = childHd.personalityGates.find(g => g.planet === 'Slnko')?.gate;
+                    const parentGates = new Set([...parentHd.personalityGates.map(g => g.gate), ...parentHd.designGates.map(g => g.gate)]);
+                    const childGates = new Set([...childHd.personalityGates.map(g => g.gate), ...childHd.designGates.map(g => g.gate)]);
+                    const sharedGates = [...parentGates].filter(g => childGates.has(g));
+                    const sharedGeneKeys = sharedGates.slice(0, 3).map(g => getGeneKeyByGate(g)).filter(Boolean);
                     return (
+                      <>
                       <div className="p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/20">
                         <p className="text-xs text-cyan-300 font-semibold uppercase mb-1">Human Design — energetické prekrývanie</p>
                         <p className="text-[11px] text-slate-300 mb-2">
@@ -873,6 +881,26 @@ export function RelationshipsPage() {
                           </p>
                         )}
                       </div>
+                      {sharedGeneKeys.length > 0 && (
+                        <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20">
+                          <p className="text-xs text-purple-300 font-semibold uppercase mb-1">Spoločné Génové kľúče</p>
+                          <p className="text-[11px] text-slate-400 mb-2">Brány aktívne u oboch — spoločné témy transformácie vo vzťahu rodič↔dieťa.</p>
+                          {sharedGeneKeys.map(gk => (
+                            <div key={gk!.gate} className="mb-1.5">
+                              <p className="text-[11px] text-slate-300">
+                                <strong className="text-purple-300">Brána {gk!.gate}:</strong>{' '}
+                                <span className="text-rose-300">{gk!.shadow}</span> →{' '}
+                                <span className="text-amber-300">{gk!.gift}</span> →{' '}
+                                <span className="text-emerald-300">{gk!.siddhi}</span>
+                              </p>
+                            </div>
+                          ))}
+                          {parentSunGate === childSunGate && parentSunGate && (
+                            <p className="text-[11px] text-amber-300 mt-1">Rovnaká Slnečná brána ({parentSunGate}) — hlboké zrkadlenie životnej témy.</p>
+                          )}
+                        </div>
+                      )}
+                      </>
                     );
                   })()}
                 </div>

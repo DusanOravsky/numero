@@ -45,19 +45,27 @@ export function PWAPrompts() {
     window.addEventListener('online', onOnline);
     window.addEventListener('offline', onOffline);
 
-    // Auto-update prompt: zobrazí sa IBA raz po reálnom upgrade — keď sa
-    // localStorage.app-version (zo starej verzie) líši od aktuálne načítanej
-    // APP_VERSION. KRITICKÉ: spúšťame to AJ v standalone mode (inštalovaná
-    // PWA na ploche) — práve tam je auto-popup najpotrebnejší.
+    // Auto-update prompt: porovná lokálnu APP_VERSION s version.json na serveri.
+    // Ak sú rôzne → zobrazí popup. Toto funguje aj s CacheFirst stratégiou,
+    // lebo version.json fetchujeme s cache: 'no-store'.
     const lastVersion = localStorage.getItem('app-version');
     if (lastVersion && lastVersion !== APP_VERSION) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setShowUpdate(true);
       localStorage.removeItem('pwa-install-dismissed');
       localStorage.removeItem('pwa-ios-hint-dismissed');
-    } else if (!lastVersion) {
-      // First load — uložíme aktuálnu verziu
-      localStorage.setItem('app-version', APP_VERSION);
+    } else {
+      if (!lastVersion) localStorage.setItem('app-version', APP_VERSION);
+      // Network check — fetch version.json aby sme zistili či je nová verzia
+      fetch(`${import.meta.env.BASE_URL}version.json`, { cache: 'no-store' })
+        .then(r => r.ok ? r.json() : null)
+        .then(data => {
+          if (data?.version && data.version !== APP_VERSION) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            setShowUpdate(true);
+          }
+        })
+        .catch(() => { /* offline — ignoruj */ });
     }
 
     // Install hints — iba ak appka NIE JE už nainštalovaná

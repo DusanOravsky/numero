@@ -3,8 +3,11 @@ import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { VitePWA } from 'vite-plugin-pwa'
 import { visualizer } from 'rollup-plugin-visualizer'
+import { writeFileSync } from 'fs'
+import pkg from './package.json'
 
 const analyze = process.env.ANALYZE === '1';
+writeFileSync('public/version.json', JSON.stringify({ version: pkg.version }) + '\n');
 
 export default defineConfig({
   plugins: [
@@ -47,6 +50,11 @@ export default defineConfig({
         navigateFallback: process.env.GITHUB_ACTIONS ? '/numero/index.html' : '/index.html',
         navigateFallbackDenylist: [/^\/api\//, /^\/_/, /\.[a-z0-9]{2,5}$/i],
         runtimeCaching: [
+          {
+            // version.json — VŽDY z network (na detekciu novej verzie)
+            urlPattern: /\/version\.json$/,
+            handler: 'NetworkOnly',
+          },
           {
             // HTML / SPA navigations: CacheFirst → okamžitý load aj offline.
             // Cache sa update-uje IBA keď user manuálne spustí update.

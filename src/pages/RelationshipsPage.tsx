@@ -960,9 +960,14 @@ export function RelationshipsPage() {
                               </p>
                               <p className="text-[11px] text-rose-300"><strong>Tieň:</strong> {gk!.shadowDescription}</p>
                               <p className="text-[11px] text-amber-300"><strong>Dar:</strong> {gk!.giftDescription}</p>
-                              {gk!.nlpTechnique && (
-                                <p className="text-[11px] text-indigo-300"><strong>Technika:</strong> {gk!.nlpTechnique} — {gk!.nlpDescription}</p>
-                              )}
+                              <div className="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 mt-1">
+                                <p className="text-[10px] text-emerald-400 uppercase mb-0.5">Čo s tým prakticky</p>
+                                <p className="text-[11px] text-slate-300">
+                                  Keď vidíte vo vzťahu tieň (<em>{gk!.shadow.toLowerCase()}</em>) — nie je to chyba dieťaťa ani vaša. Je to signál.
+                                  Vedomá voľba: prejdite spolu k daru (<em>{gk!.gift.toLowerCase()}</em>).
+                                  {gk!.nlpTechnique && <> <strong>Technika:</strong> {gk!.nlpTechnique} — {gk!.nlpDescription}</>}
+                                </p>
+                              </div>
                             </div>
                           ))}
                           {parentSunGate === childSunGate && parentSunGate && (
@@ -1669,10 +1674,11 @@ export function RelationshipsPage() {
                     <div className="space-y-1.5 mt-1">
                       <p className="text-[11px] text-purple-300 font-semibold">Spoločné Génové kľúče:</p>
                       {sharedGK.map(gk => (
-                        <div key={gk!.gate} className="pl-2 border-l-2 border-purple-500/30">
+                        <div key={gk!.gate} className="pl-2 border-l-2 border-purple-500/30 space-y-0.5">
                           <p className="text-[11px] text-white">Brána {gk!.gate}: <span className="text-rose-300">{gk!.shadow}</span> → <span className="text-amber-300">{gk!.gift}</span> → <span className="text-emerald-300">{gk!.siddhi}</span></p>
                           <p className="text-[10px] text-slate-400">{gk!.shadowDescription}</p>
-                          {gk!.nlpTechnique && <p className="text-[10px] text-indigo-300">Technika: {gk!.nlpTechnique}</p>}
+                          <p className="text-[10px] text-amber-300">Dar: {gk!.giftDescription}</p>
+                          {gk!.nlpTechnique && <p className="text-[10px] text-indigo-300">Prakticky: {gk!.nlpTechnique} — {gk!.nlpDescription}</p>}
                         </div>
                       ))}
                     </div>
@@ -1721,10 +1727,11 @@ export function RelationshipsPage() {
                     <div className="space-y-1.5 mt-1">
                       <p className="text-[11px] text-purple-300 font-semibold">Spoločné Génové kľúče:</p>
                       {sharedGK.map(gk => (
-                        <div key={gk!.gate} className="pl-2 border-l-2 border-purple-500/30">
+                        <div key={gk!.gate} className="pl-2 border-l-2 border-purple-500/30 space-y-0.5">
                           <p className="text-[11px] text-white">Brána {gk!.gate}: <span className="text-rose-300">{gk!.shadow}</span> → <span className="text-amber-300">{gk!.gift}</span> → <span className="text-emerald-300">{gk!.siddhi}</span></p>
                           <p className="text-[10px] text-slate-400">{gk!.shadowDescription}</p>
-                          {gk!.nlpTechnique && <p className="text-[10px] text-indigo-300">Technika: {gk!.nlpTechnique}</p>}
+                          <p className="text-[10px] text-amber-300">Dar: {gk!.giftDescription}</p>
+                          {gk!.nlpTechnique && <p className="text-[10px] text-indigo-300">Prakticky: {gk!.nlpTechnique} — {gk!.nlpDescription}</p>}
                         </div>
                       ))}
                     </div>

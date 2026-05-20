@@ -342,21 +342,27 @@ export function ModalityPage() {
             <div className="space-y-2 text-sm">
               <p className="text-slate-300">
                 <span className="text-slate-500">Sezóna:</span> {primaryTCM.season}
+                <span className="text-[11px] text-slate-500 ml-2">— v tejto sezóne si najsilnejší, ale aj najzraniteľnejší</span>
               </p>
               <p className="text-slate-300">
                 <span className="text-slate-500">Orgán:</span> {primaryTCM.organ}
+                <span className="text-[11px] text-slate-500 ml-2">— dávaj naň pozor, reaguje na tvoje emócie</span>
               </p>
               <p className="text-slate-300">
                 <span className="text-slate-500">Emócia:</span> {primaryTCM.emotion}
+                <span className="text-[11px] text-slate-500 ml-2">— keď je nerovnováha, táto emócia sa zosilní</span>
               </p>
               <p className="text-slate-300">
                 <span className="text-slate-500">Cnosť:</span> {primaryTCM.virtue}
+                <span className="text-[11px] text-slate-500 ml-2">— toto lieči tvoj element, keď je oslabený</span>
               </p>
               <p className="text-slate-300">
                 <span className="text-slate-500">Farba:</span> {primaryTCM.color}
+                <span className="text-[11px] text-slate-500 ml-2">— obliekaj si ju, obklopuj sa ňou pre podporu</span>
               </p>
               <p className="text-slate-300">
                 <span className="text-slate-500">Chuť:</span> {primaryTCM.taste}
+                <span className="text-[11px] text-slate-500 ml-2">— jedlá s touto chuťou živia tvoj orgán</span>
               </p>
             </div>
           </div>

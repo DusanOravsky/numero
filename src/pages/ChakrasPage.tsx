@@ -300,6 +300,21 @@ export function ChakrasPage() {
                         </div>
                       )}
 
+                      {/* Ayurvéda prepojenie */}
+                      {state.status === 'blocked' && (
+                        <div className="mt-3 p-2 rounded-lg bg-amber-500/10 border border-amber-500/20">
+                          <p className="text-[11px] text-amber-300">
+                            {state.chakra.number === 1 ? 'Ayurvéda: Koreňová čakra súvisí s Vata dósou — strach a nestabilita. Uzemni sa teplom, rutinou a koreňovou zeleninou.' :
+                             state.chakra.number === 2 ? 'Ayurvéda: Sakrálna čakra súvisí s Kapha dósou — stagnácia a emocionálne bloky. Pohyb a kreativita uvoľňujú.' :
+                             state.chakra.number === 3 ? 'Ayurvéda: Solar plexus súvisí s Pitta dósou — hnev a kontrola. Chladiace jedlá a púšťanie kontroly pomáhajú.' :
+                             state.chakra.number === 4 ? 'Ayurvéda: Srdcová čakra — všetky tri dóše sa tu stretávajú. Láska a odpustenie je univerzálny liek.' :
+                             state.chakra.number === 5 ? 'Ayurvéda: Krčná čakra súvisí s Vata dósou — suchosť a nevyjadrenie. Spev, teplé nápoje, oleje na krk.' :
+                             state.chakra.number === 6 ? 'Ayurvéda: Tretie oko — Vata/Pitta. Príliš myslenia = Vata, príliš analýzy = Pitta. Meditácia a ghee.' :
+                             'Ayurvéda: Korunná čakra — presahuje dóše. Ticho, pôst, meditácia.'}
+                          </p>
+                        </div>
+                      )}
+
                       {/* Etikoterapia — etická príčina + cnosť (Vogeltanz, Bezděk) */}
                       {(() => {
                         const eth = getEtikoterapiaForChakra(state.chakra.number);

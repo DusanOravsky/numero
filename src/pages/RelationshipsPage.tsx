@@ -603,6 +603,47 @@ export function RelationshipsPage() {
             </GlassCard>
           </div>
 
+          {/* Charakterová synastria — porovnanie mriežok */}
+          {(() => {
+            const num1 = calculateFullNumerology(parseInt(partner1.day), parseInt(partner1.month), parseInt(partner1.year));
+            const num2 = calculateFullNumerology(parseInt(partner2.day), parseInt(partner2.month), parseInt(partner2.year));
+            const sharedFull = num1.fullPlanes.filter(p => num2.fullPlanes.includes(p));
+            const sharedEmpty = num1.emptyPlanes.filter(p => num2.emptyPlanes.includes(p));
+            const sharedIsolated = num1.isolatedNumbers.filter(n => num2.isolatedNumbers.includes(n));
+            return (
+              <GlassCard>
+                <h3 className="font-medium text-white mb-1">Charakterová synastria</h3>
+                <p className="text-xs text-slate-400 mb-3">Porovnanie numerologických mriežok — spoločné silné stránky, slepé miesta a napätia.</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+                  <div className="p-2 rounded-lg bg-indigo-500/10 border border-indigo-500/20">
+                    <p className="text-[11px] text-indigo-300 font-semibold">{partner1.name}: ŽČ {num1.lifePathNumber}</p>
+                    <p className="text-[11px] text-slate-400">Plné: {num1.fullPlanes.length > 0 ? num1.fullPlanes.join(', ') : 'žiadne'}</p>
+                    <p className="text-[11px] text-slate-400">Prázdne: {num1.emptyPlanes.length > 0 ? num1.emptyPlanes.join(', ') : 'žiadne'}</p>
+                  </div>
+                  <div className="p-2 rounded-lg bg-violet-500/10 border border-violet-500/20">
+                    <p className="text-[11px] text-violet-300 font-semibold">{partner2.name}: ŽČ {num2.lifePathNumber}</p>
+                    <p className="text-[11px] text-slate-400">Plné: {num2.fullPlanes.length > 0 ? num2.fullPlanes.join(', ') : 'žiadne'}</p>
+                    <p className="text-[11px] text-slate-400">Prázdne: {num2.emptyPlanes.length > 0 ? num2.emptyPlanes.join(', ') : 'žiadne'}</p>
+                  </div>
+                </div>
+                <div className="space-y-1.5">
+                  {sharedFull.length > 0 && (
+                    <p className="text-[11px] text-emerald-300">Spoločné silné roviny: <strong>{sharedFull.join(', ')}</strong> — tu si rozumiete bez slov, spoločná energia.</p>
+                  )}
+                  {sharedEmpty.length > 0 && (
+                    <p className="text-[11px] text-amber-300">Spoločné prázdne roviny: <strong>{sharedEmpty.join(', ')}</strong> — spoločné slepé miesta, nikto z vás tu nepomôže druhému.</p>
+                  )}
+                  {sharedIsolated.length > 0 && (
+                    <p className="text-[11px] text-rose-300">Spoločné izolované: <strong>{sharedIsolated.join(', ')}</strong> — spoločné napätie, môže zosilnieť vo vzťahu.</p>
+                  )}
+                  {sharedFull.length === 0 && sharedEmpty.length === 0 && sharedIsolated.length === 0 && (
+                    <p className="text-[11px] text-slate-500 italic">Veľmi odlišné mriežky — dopĺňate sa tam, kde druhý nemá energiu.</p>
+                  )}
+                </div>
+              </GlassCard>
+            );
+          })()}
+
           {/* Vývojová synastria (B20) — porovnanie K1-K4 a egoPolarity */}
           {(() => {
             const dev1 = calculateDevelopmentalNumerology(parseInt(partner1.day), parseInt(partner1.month), parseInt(partner1.year));

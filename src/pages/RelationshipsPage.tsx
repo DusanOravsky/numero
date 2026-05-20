@@ -216,7 +216,11 @@ export function RelationshipsPage() {
   const saved = loadSavedPartners();
   const savedFamily = (() => { try { const r = localStorage.getItem('relationships-family'); return r ? JSON.parse(r) : null; } catch { return null; } })();
   const savedAstro = (() => { try { const r = localStorage.getItem('relationships-astro'); return r ? JSON.parse(r) : null; } catch { return null; } })();
-  const [mode, setMode] = useState<Mode>('partner');
+  const [mode, setModeState] = useState<Mode>(() => {
+    const savedMode = localStorage.getItem('relationships-mode');
+    return (savedMode === 'partner' || savedMode === 'family' || savedMode === 'astro' || savedMode === 'constellation') ? savedMode : 'partner';
+  });
+  const setMode = (m: Mode) => { setModeState(m); localStorage.setItem('relationships-mode', m); };
   const [partner1, setPartner1] = useState<PersonInput>(saved?.p1 || emptyPerson());
   const [partner2, setPartner2] = useState<PersonInput>(saved?.p2 || emptyPerson());
   const [parent, setParent] = useState<PersonInput>(savedFamily?.parent || emptyPerson());

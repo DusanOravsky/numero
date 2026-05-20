@@ -1,12 +1,40 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { GlassCard } from '../GlassCard';
 import { EnergyCard } from '../EnergyCard';
 import { calculateNameNumerology } from '../../engine/nameNumerologyEngine';
 import type { NameNumerologyResult } from '../../engine/nameNumerologyEngine';
 
-export function NameTab() {
-  const [nameResult, setNameResult] = useState<NameNumerologyResult | null>(null);
-  const [nameInput, setNameInput] = useState('');
+interface NameTabProps {
+  defaultName?: string;
+  storageKey?: string;
+}
+
+export function NameTab({ defaultName, storageKey }: NameTabProps) {
+  const persistKey = storageKey ? `name-num-${storageKey}` : null;
+
+  const [nameInput, setNameInput] = useState(() => {
+    if (persistKey) {
+      const saved = localStorage.getItem(persistKey);
+      if (saved) return saved;
+    }
+    return defaultName || '';
+  });
+
+  const [nameResult, setNameResult] = useState<NameNumerologyResult | null>(() => {
+    if (persistKey) {
+      const saved = localStorage.getItem(persistKey);
+      if (saved) return calculateNameNumerology(saved);
+    }
+    if (defaultName) return calculateNameNumerology(defaultName);
+    return null;
+  });
+
+  // Persist meno pri zmene
+  useEffect(() => {
+    if (persistKey && nameResult) {
+      localStorage.setItem(persistKey, nameInput);
+    }
+  }, [nameInput, nameResult, persistKey]);
 
   return (
     <div className="space-y-4">

@@ -909,7 +909,7 @@ export function NumerologyPage() {
           )}
 
           {visibleTab === 'name' && (
-            <NameTab />
+            <NameTab defaultName={profile?.name} storageKey={profile?.id} />
           )}
 
           {visibleTab === 'archetype' && enneagramResult && (

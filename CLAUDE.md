@@ -1,6 +1,6 @@
 # Integrálna mapa bytia (Número)
 
-Offline-first PWA pre numerológiu, astrológiu, Human Design, etikoterapiu, kabalu, Theta Healing, Enneagram, Ayurvédu, TCM a sebarozvoj. **v2.37.0**
+Offline-first PWA pre numerológiu, astrológiu, Human Design, etikoterapiu, kabalu, Theta Healing, Enneagram, Ayurvédu, TCM a sebarozvoj. **v2.39.0**
 
 > 📁 **Nested CLAUDE.md súbory:**
 > - `src/engine/CLAUDE.md` — engine pravidlá, numerológia/astrológia/HD matematika

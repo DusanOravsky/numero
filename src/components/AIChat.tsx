@@ -8,6 +8,13 @@ import {
   type ProfileContext,
   type ChatMessage,
 } from '../engine/aiInterpretation';
+import {
+  loadChat as idbLoad,
+  saveChat as idbSave,
+  clearChat as idbClear,
+  migrateFromLocalStorage,
+  type PersistedChat,
+} from '../engine/chatStorage';
 
 interface Props {
   context: ProfileContext;
@@ -19,37 +26,8 @@ interface Props {
   storageKey?: string;
 }
 
-interface PersistedChat {
-  messages: ChatMessage[];
-  totalInputTokens: number;
-  totalOutputTokens: number;
-}
-
 const DEFAULT_INITIAL =
   'Vyhotov mi prosím integratívny duchovný výklad celej mojej osobnosti — spoj všetky systémy do jedného uceleného textu.';
-
-function loadChat(key: string): PersistedChat | null {
-  try {
-    const raw = localStorage.getItem(`ai-chat-${key}`);
-    return raw ? JSON.parse(raw) : null;
-  } catch {
-    return null;
-  }
-}
-
-function saveChat(key: string, chat: PersistedChat): void {
-  try {
-    localStorage.setItem(`ai-chat-${key}`, JSON.stringify(chat));
-  } catch {
-    // localStorage full — ignore
-  }
-}
-
-function clearChatStorage(key: string): void {
-  try {
-    localStorage.removeItem(`ai-chat-${key}`);
-  } catch { /* ignore */ }
-}
 
 /**
  * Ľahký markdown rendering — nadpisy + odseky + bullets, bez external lib.
@@ -88,38 +66,57 @@ export function AIChat({ context, title = 'AI integrálny výklad', initialUserM
   const keyAvailable = hasApiKey();
   const persistKey = storageKey || `${context.name}-${context.birth.day}-${context.birth.month}-${context.birth.year}`;
 
-  const [messages, setMessages] = useState<ChatMessage[]>(() => {
-    const persisted = loadChat(persistKey);
-    return persisted?.messages || [];
-  });
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [loading, setLoading] = useState(true);
   const [streaming, setStreaming] = useState(false);
   const [streamingText, setStreamingText] = useState('');
   const [error, setError] = useState<string>('');
-  const [tokens, setTokens] = useState({
-    input: loadChat(persistKey)?.totalInputTokens || 0,
-    output: loadChat(persistKey)?.totalOutputTokens || 0,
-  });
+  const [tokens, setTokens] = useState({ input: 0, output: 0 });
   const [userInput, setUserInput] = useState('');
   const abortRef = useRef<AbortController | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Async load z IndexedDB + migrácia z localStorage
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const migrated = migrateFromLocalStorage(persistKey);
+      if (migrated) {
+        await idbSave(persistKey, migrated);
+        if (!cancelled) {
+          setMessages(migrated.messages);
+          setTokens({ input: migrated.totalInputTokens, output: migrated.totalOutputTokens });
+        }
+      } else {
+        const persisted = await idbLoad(persistKey);
+        if (!cancelled && persisted) {
+          setMessages(persisted.messages);
+          setTokens({ input: persisted.totalInputTokens, output: persisted.totalOutputTokens });
+        }
+      }
+      if (!cancelled) setLoading(false);
+    })();
+    return () => { cancelled = true; };
+  }, [persistKey]);
 
   // Auto-scroll na koniec konverzácie
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
   }, [messages, streamingText]);
 
-  // Persist messages — len keď je posledná správa od assistant-a (nie orphan
-  // user-only správy zo zlyhaného streamu).
+  // Persist messages do IndexedDB
   useEffect(() => {
+    if (loading) return;
     if (messages.length === 0) return;
     const last = messages[messages.length - 1];
     if (last.role !== 'assistant') return;
-    saveChat(persistKey, {
+    idbSave(persistKey, {
       messages,
       totalInputTokens: tokens.input,
       totalOutputTokens: tokens.output,
     });
-  }, [messages, tokens, persistKey]);
+  }, [messages, tokens, persistKey, loading]);
 
   const sendMessage = async (content: string) => {
     if (!content.trim() || streaming) return;
@@ -182,17 +179,25 @@ export function AIChat({ context, title = 'AI integrálny výklad', initialUserM
     setStreamingText('');
     setError('');
     setTokens({ input: 0, output: 0 });
-    clearChatStorage(persistKey);
+    idbClear(persistKey);
   };
 
+  if (loading) {
+    return (
+      <GlassCard>
+        <h3 className="font-medium text-white mb-2">{title}</h3>
+        <p className="text-xs text-slate-500 animate-pulse">Načítavam históriu...</p>
+      </GlassCard>
+    );
+  }
+
   if (!keyAvailable) {
-    const cached = loadChat(persistKey);
-    if (cached && cached.messages.length > 0) {
+    if (messages.length > 0) {
       return (
         <GlassCard>
           <h3 className="font-medium text-white mb-2">{title} <span className="text-xs text-slate-500 font-normal">(uložený výklad)</span></h3>
           <div ref={scrollRef} className="max-h-[400px] overflow-y-auto space-y-3 mb-3">
-            {cached.messages.filter(m => m.role === 'assistant').map((m, i) => (
+            {messages.filter(m => m.role === 'assistant').map((m, i) => (
               <div key={i} className="p-3 rounded-xl bg-indigo-500/10 border border-indigo-500/20">
                 <p className="text-xs text-slate-300 whitespace-pre-wrap">{m.content}</p>
               </div>

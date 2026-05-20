@@ -42,6 +42,7 @@ interface ClientExportProps {
 
 export function ClientExport({ client, numerology, astrology, humanDesign, kabalah, theta }: ClientExportProps) {
   const [shareMsg, setShareMsg] = useState('');
+  const [showQR, setShowQR] = useState(false);
   const { clients } = useStore();
 
   return (
@@ -684,6 +685,41 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
         >
           {shareMsg || 'Zdieľať výklad'}
         </button>
+        <button
+          onClick={() => setShowQR(!showQR)}
+          className="px-6 py-3 rounded-xl bg-slate-600 text-white font-medium hover:bg-slate-500 transition-colors"
+        >
+          QR kód
+        </button>
+        {showQR && (() => {
+          const shareData = {
+            name: client.name,
+            birthDay: client.birthDay,
+            birthMonth: client.birthMonth,
+            birthYear: client.birthYear,
+            birthHour: client.birthHour,
+            birthMinute: client.birthMinute,
+          };
+          const json = JSON.stringify(shareData);
+          const bytes = new TextEncoder().encode(json);
+          const binary = String.fromCharCode(...bytes);
+          const encoded = btoa(binary);
+          const baseUrl = window.location.origin + window.location.pathname;
+          const shareUrl = `${baseUrl}#/shared?data=${encoded}`;
+          return (
+            <div className="mt-4 p-4 rounded-xl bg-white border border-slate-200 text-center">
+              <img
+                src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(shareUrl)}`}
+                alt="QR kód pre zdieľanie profilu"
+                className="mx-auto w-48 h-48"
+              />
+              <p className="text-xs text-slate-500 mt-2">Naskenuj pre zobrazenie profilu {client.name}</p>
+              <p className="text-[10px] text-slate-400 mt-1 break-all max-w-xs mx-auto">{shareUrl.slice(0, 80)}...</p>
+            </div>
+          );
+        })()}
+        </div>
+        <div className="flex gap-3 flex-wrap">
         <button
           onClick={() => {
             const gridNumbers: string[] = [];

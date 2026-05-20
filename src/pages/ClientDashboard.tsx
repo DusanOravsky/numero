@@ -102,6 +102,46 @@ export function ClientDashboard() {
         </div>
       </div>
 
+      {/* Časová os — história konzultácií */}
+      {(() => {
+        const reports = useStore.getState().reports.filter(r => r.clientId === client.id);
+        if (reports.length <= 1) return null;
+        return (
+          <div className="p-4 rounded-xl bg-slate-500/5 border border-slate-500/20">
+            <details>
+              <summary className="cursor-pointer hover:text-indigo-300 transition-colors">
+                <span className="font-medium text-white">Časová os ({reports.length} návštev)</span>
+              </summary>
+              <div className="mt-3 space-y-2">
+                {reports.slice(0, 20).map(r => {
+                  const d = new Date(r.createdAt);
+                  const reportMonth = d.getMonth() + 1;
+                  const reportDay = d.getDate();
+                  const reportYear = d.getFullYear();
+                  const orv = (() => {
+                    const { birthDay: bd, birthMonth: bm } = client;
+                    const yr = (reportMonth < bm || (reportMonth === bm && reportDay < bd)) ? reportYear - 1 : reportYear;
+                    const digits = `${bd}${bm}${yr}`.split('').map(Number);
+                    let sum = digits.reduce((a, b) => a + b, 0);
+                    while (sum > 9 && sum !== 11 && sum !== 22 && sum !== 33) {
+                      sum = String(sum).split('').map(Number).reduce((a, b) => a + b, 0);
+                    }
+                    return sum;
+                  })();
+                  return (
+                    <div key={r.id} className="flex items-center gap-3 text-xs">
+                      <span className="text-slate-500 whitespace-nowrap">{d.toLocaleDateString('sk-SK')}</span>
+                      <span className="w-6 h-6 rounded-full bg-indigo-500/20 text-indigo-300 font-bold flex items-center justify-center text-[10px]">{orv}</span>
+                      <span className="text-slate-400">{r.title}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </details>
+          </div>
+        );
+      })()}
+
       <ClientSummary
         clientName={client.name}
         birthDay={client.birthDay}

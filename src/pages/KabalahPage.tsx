@@ -116,9 +116,9 @@ export function KabalahPage() {
             </p>
           </GlassCard>
 
-          {/* Jednoducho povedané — takeaway pre laikov */}
+          {/* Tvoje čítanie */}
           <GlassCard glow>
-            <h3 className="font-medium text-white mb-3">Jednoducho povedané</h3>
+            <h3 className="font-medium text-white mb-3">Tvoje čítanie — ako pracovať s Kabalou</h3>
             <div className="space-y-3 text-sm text-slate-300">
               <p>
                 Predstav si Strom života ako <strong>mapu tvojej duše</strong>. Máš v nej 10 „staníc" (sefír), z ktorých každá zastupuje inú kvalitu — od čistej inšpirácie hore až po konkrétne činy dole.

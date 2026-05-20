@@ -74,18 +74,25 @@ export function ThetaHealingPage() {
             </div>
           </GlassCard>
 
-          {/* Jednoducho povedané */}
-          <GlassCard>
-            <h3 className="font-medium text-white mb-3">Čo si z toho vziať</h3>
+          {/* Tvoje čítanie */}
+          <GlassCard glow>
+            <h3 className="font-medium text-white mb-3">Tvoje čítanie — tvoje koreňové presvedčenia</h3>
             <div className="space-y-3 text-sm text-slate-300">
               <p>
-                Theta Healing ti ukazuje <strong className="text-white">podvedomé presvedčenia</strong>, ktoré ti bránia — veci, ktoré si hovoríš sám sebe bez toho, aby si si to uvedomoval. Napríklad „Nie som dosť dobrý" alebo „Nemôžem mať úspech aj lásku."
+                Theta Healing ukazuje <strong className="text-white">podvedomé presvedčenia</strong>, ktoré ti bránia — veci, ktoré si hovoríš sám sebe bez toho, aby si si to uvedomoval. Na základe tvojho životného čísla boli identifikované tieto hlavné vzorce:
               </p>
-              <p>
-                <strong>Prakticky:</strong> Nižšie nájdeš presvedčenia typické pre tvoje životné číslo. Pri každom je „kopacie" cvičenie — séria otázok, ktoré ťa dovedú ku koreňu. A potom nové presvedčenie, ktorým to staré vedome nahradíš.
-              </p>
+              <div className="space-y-2">
+                {result.primaryBeliefs.slice(0, 3).map((b, i) => (
+                  <div key={i} className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20">
+                    <p className="text-xs font-medium text-rose-300">„{b.belief}"</p>
+                    <p className="text-[11px] text-slate-400 mt-1">
+                      Úroveň: {b.level} | Emócia: {b.emotion} | Telo: {b.bodyArea}
+                    </p>
+                  </div>
+                ))}
+              </div>
               <p className="text-xs text-slate-500 italic">
-                Nie musíš pracovať so všetkými naraz. Vyber si to, pri ktorom cítiš najväčší odpor — tam je zvyčajne najväčší potenciál rastu.
+                Vyber si to, pri ktorom cítiš najväčší odpor — tam je najväčší potenciál rastu. Klikni naň nižšie pre „kopacie" cvičenie a nahrádzajúce presvedčenie.
               </p>
             </div>
           </GlassCard>

@@ -14,6 +14,9 @@ import { deriveTCMElement } from '../engine/tcmEngine';
 import { DOSHA_INFO } from '../data/ayurveda';
 import { TCM_ELEMENTS } from '../data/tcm';
 import { useStore } from '../store/useStore';
+import { calculateChineseZodiac } from '../engine/chineseZodiacEngine';
+import { evaluateChakras } from '../engine/chakraEngine';
+import { getGridCount } from '../engine/numerologyEngine';
 import { planetInSignDescriptions } from '../data/planetSignDescriptions';
 import { orvDescriptions } from '../data/orvDescriptions';
 import { getGeneKeyByGate } from '../data/geneKeys';
@@ -420,6 +423,49 @@ export function ClientSummary({ clientName, birthDay, birthMonth, birthYear, num
               </p>
             </div>
           )}
+
+          {/* Čínsky horoskop */}
+          {(() => {
+            const cz = calculateChineseZodiac(year);
+            return (
+              <div className="rounded-xl border border-red-200 bg-red-50/40 p-4 space-y-2">
+                <p className="text-xs text-red-700 font-semibold uppercase tracking-wide">
+                  Čínsky horoskop
+                </p>
+                <p className="text-xs text-slate-700">
+                  <strong>{cz.animal}</strong> ({cz.element}, {cz.yinYang}).{' '}
+                  {cz.personality}{' '}
+                  <strong>Silné stránky:</strong> {cz.strengths.join(', ')}.{' '}
+                  <strong>Výzvy:</strong> {cz.weaknesses.join(', ')}.
+                </p>
+              </div>
+            );
+          })()}
+
+          {/* Čakry */}
+          {(() => {
+            const gridCounts = getGridCount(numerology.grid);
+            const chakras = evaluateChakras(numerology.lifePathNumber, gridCounts, numerology.isolatedNumbers, humanDesign.definedCenters, astrology.dominantElement);
+            if (!chakras) return null;
+            const blocked = chakras.filter(c => c.status === 'blocked');
+            const hyperactive = chakras.filter(c => c.status === 'hyperactive');
+            if (blocked.length === 0 && hyperactive.length === 0) return null;
+            return (
+              <div className="rounded-xl border border-purple-200 bg-purple-50/40 p-4 space-y-2">
+                <p className="text-xs text-purple-700 font-semibold uppercase tracking-wide">
+                  Čakry — energetický stav
+                </p>
+                <p className="text-xs text-slate-700">
+                  {blocked.length > 0 && (
+                    <><strong>Blokované:</strong> {blocked.map(c => `${c.chakra.name} (${c.score})`).join(', ')} — oblasti kde energia neprúdi voľne, vyžadujú vedomú pozornosť. </>
+                  )}
+                  {hyperactive.length > 0 && (
+                    <><strong>Hyperaktívne:</strong> {hyperactive.map(c => `${c.chakra.name} (${c.score})`).join(', ')} — nadbytok energie, potrebné vyváženie. </>
+                  )}
+                </p>
+              </div>
+            );
+          })()}
 
           <p>
             <strong>Aktuálne obdobie:</strong> Nachádza sa v osobnom roku <strong>{numerology.orv}</strong> ({orvDescriptions[numerology.orv]?.title || ''}).

@@ -74,7 +74,7 @@ Kľúčové pravidlá:
 ### Roviny
 
 - **8 plných** (Myslenie 1-2-3, Vytrvalosť 4-5-6, Energia 7-8-9, Zručnosti 1-4-7, Vášeň 2-5-8, Empatia 3-6-9, Odhodlanie 1-5-9, Pochopenie 3-5-7)
-- **5 prázdnych** (Postreh 1-4-7, Senzitivita 2-5-8, Inšpirácia 3-6-9, Saturn 4-5-6, Oddanosť 7-8-9)
+- **7 prázdnych** (Postreh 1-4-7, Senzitivita 2-5-8, Inšpirácia 3-6-9, Saturn 4-5-6, Oddanosť 7-8-9, Rozvoj 1-5-9, Vízia 3-5-7)
 - Roviny sa rátajú **iba zo základných čísel** (date digits), nie z doplnkových.
 
 ### Karmické dlhy (B2)

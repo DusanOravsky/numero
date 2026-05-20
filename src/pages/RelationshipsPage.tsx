@@ -1633,6 +1633,9 @@ export function RelationshipsPage() {
                 const childHd = calculateHumanDesign(parseInt(child.day), parseInt(child.month), parseInt(child.year), child.hour ? parseInt(child.hour) : 12, child.minute ? parseInt(child.minute) : 0);
                 const sharedDef = fatherHd.definedCenters.filter(c => childHd.definedCenters.includes(c));
                 const fatherOnly = fatherHd.definedCenters.filter(c => !childHd.definedCenters.includes(c));
+                const fGates = new Set([...fatherHd.personalityGates.map(g => g.gate), ...fatherHd.designGates.map(g => g.gate)]);
+                const cGates = new Set([...childHd.personalityGates.map(g => g.gate), ...childHd.designGates.map(g => g.gate)]);
+                const sharedGK = [...fGates].filter(g => cGates.has(g)).slice(0, 3).map(g => getGeneKeyByGate(g)).filter(Boolean);
                 return (
                 <div key={idx} className="p-3 rounded-xl bg-blue-500/10 border border-blue-500/20 space-y-2">
                   <div className="flex items-center justify-between">
@@ -1653,6 +1656,11 @@ export function RelationshipsPage() {
                       {fatherOnly.length > 0 && <>Podmieňuje: {fatherOnly.join(', ')}.</>}
                     </p>
                   )}
+                  {sharedGK.length > 0 && (
+                    <p className="text-[11px] text-purple-300">
+                      Spoločné GK: {sharedGK.map(gk => `${gk!.gate} (${gk!.shadow}→${gk!.gift})`).join(', ')}
+                    </p>
+                  )}
                 </div>
                 );
               })}
@@ -1670,6 +1678,9 @@ export function RelationshipsPage() {
                 const childHd = calculateHumanDesign(parseInt(child.day), parseInt(child.month), parseInt(child.year), child.hour ? parseInt(child.hour) : 12, child.minute ? parseInt(child.minute) : 0);
                 const sharedDef = motherHd.definedCenters.filter(c => childHd.definedCenters.includes(c));
                 const motherOnly = motherHd.definedCenters.filter(c => !childHd.definedCenters.includes(c));
+                const mGates = new Set([...motherHd.personalityGates.map(g => g.gate), ...motherHd.designGates.map(g => g.gate)]);
+                const cGates = new Set([...childHd.personalityGates.map(g => g.gate), ...childHd.designGates.map(g => g.gate)]);
+                const sharedGK = [...mGates].filter(g => cGates.has(g)).slice(0, 3).map(g => getGeneKeyByGate(g)).filter(Boolean);
                 return (
                 <div key={idx} className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20 space-y-2">
                   <div className="flex items-center justify-between">
@@ -1688,6 +1699,11 @@ export function RelationshipsPage() {
                     <p className="text-[11px] text-cyan-300">
                       {sharedDef.length > 0 && <>HD spoločné: {sharedDef.join(', ')}. </>}
                       {motherOnly.length > 0 && <>Podmieňuje: {motherOnly.join(', ')}.</>}
+                    </p>
+                  )}
+                  {sharedGK.length > 0 && (
+                    <p className="text-[11px] text-purple-300">
+                      Spoločné GK: {sharedGK.map(gk => `${gk!.gate} (${gk!.shadow}→${gk!.gift})`).join(', ')}
                     </p>
                   )}
                 </div>

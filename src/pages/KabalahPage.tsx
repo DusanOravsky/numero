@@ -242,29 +242,31 @@ export function KabalahPage() {
             </div>
           </GlassCard>
 
-          <GlassCard>
-            <h3 className="font-medium text-white mb-3">Životné lekcie</h3>
-            <div className="space-y-2">
-              {result.lifeLessons.map((lesson, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.1 }}
-                  className="flex items-start gap-2"
-                >
-                  <span className="text-amber-400 mt-0.5">◆</span>
-                  <span className="text-sm text-slate-300">{lesson}</span>
-                </motion.div>
-              ))}
-            </div>
-          </GlassCard>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <GlassCard>
+              <h3 className="font-medium text-white mb-3">Životné lekcie</h3>
+              <div className="space-y-2">
+                {result.lifeLessons.map((lesson, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: i * 0.1 }}
+                    className="flex items-start gap-2"
+                  >
+                    <span className="text-amber-400 mt-0.5">◆</span>
+                    <span className="text-sm text-slate-300">{lesson}</span>
+                  </motion.div>
+                ))}
+              </div>
+            </GlassCard>
 
-          <GlassCard glow>
-            <h3 className="font-medium text-white mb-2">Čin v Malchut (Kráľovstvo)</h3>
-            <p className="text-xs text-slate-400 mb-3">Konkrétny krok pre dnešný deň</p>
-            <p className="text-sm text-indigo-300 font-serif">{result.malchutAction}</p>
-          </GlassCard>
+            <GlassCard glow>
+              <h3 className="font-medium text-white mb-2">Čin v Malchut (Kráľovstvo)</h3>
+              <p className="text-xs text-slate-400 mb-3">Konkrétny krok pre dnešný deň</p>
+              <p className="text-sm text-indigo-300 font-serif">{result.malchutAction}</p>
+            </GlassCard>
+          </div>
 
           {/* Ako pracovať s vašou cestou */}
           <GlassCard>

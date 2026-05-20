@@ -473,7 +473,7 @@ export function RelationshipsPage() {
           <div className="flex justify-end">
             <button
               onClick={() => setEditing(true)}
-              className="text-xs px-3 py-1.5 rounded-lg border border-indigo-300 text-indigo-700 hover:bg-indigo-50 flex items-center gap-1"
+              className="text-xs px-3 py-1.5 rounded-lg bg-indigo-600 text-white hover:bg-indigo-500 flex items-center gap-1 shadow-sm"
             >
               <span>✎</span> Upraviť údaje
             </button>
@@ -754,7 +754,7 @@ export function RelationshipsPage() {
       {mode === 'family' && familyResults && !editing && (
         <div className="space-y-6">
           <div className="flex justify-end">
-            <button onClick={() => setEditing(true)} className="text-xs px-3 py-1.5 rounded-lg border border-indigo-300 text-indigo-700 hover:bg-indigo-50 flex items-center gap-1">
+            <button onClick={() => setEditing(true)} className="text-xs px-3 py-1.5 rounded-lg bg-indigo-600 text-white hover:bg-indigo-500 flex items-center gap-1 shadow-sm">
               <span>✎</span> Upraviť údaje
             </button>
           </div>
@@ -950,7 +950,7 @@ export function RelationshipsPage() {
       {mode === 'astro' && synastryResult && !editing && (
         <div className="space-y-6">
           <div className="flex justify-end">
-            <button onClick={() => setEditing(true)} className="text-xs px-3 py-1.5 rounded-lg border border-indigo-300 text-indigo-700 hover:bg-indigo-50 flex items-center gap-1">
+            <button onClick={() => setEditing(true)} className="text-xs px-3 py-1.5 rounded-lg bg-indigo-600 text-white hover:bg-indigo-500 flex items-center gap-1 shadow-sm">
               <span>✎</span> Upraviť údaje
             </button>
           </div>

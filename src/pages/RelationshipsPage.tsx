@@ -402,9 +402,9 @@ export function RelationshipsPage() {
 
       {mode === 'partner' && compatibility && (
         <div className="space-y-6">
-          {/* Čo si z toho vziať — partnerský summary */}
+          {/* Tvoje čítanie */}
           <GlassCard>
-            <h3 className="font-medium text-white mb-3">Čo si z toho vziať</h3>
+            <h3 className="font-medium text-white mb-3">Tvoje čítanie — ako pracovať s partnerským výkladom</h3>
             <div className="space-y-2 text-sm text-slate-300">
               <p>
                 Kompatibilita <strong className="text-white">{compatibility.overallScore}%</strong> neznamená „dobrý" alebo „zlý" vzťah — hovorí o tom, koľko vecí vám ide prirodzene a kde musíte vedome pracovať.
@@ -667,9 +667,9 @@ export function RelationshipsPage() {
 
       {mode === 'family' && familyResults && (
         <div className="space-y-6">
-          {/* Čo si z toho vziať — rodič-dieťa summary */}
+          {/* Tvoje čítanie */}
           <GlassCard>
-            <h3 className="font-medium text-white mb-3">Čo si z toho vziať</h3>
+            <h3 className="font-medium text-white mb-3">Tvoje čítanie — ako pracovať s rodič-dieťa výkladom</h3>
             <div className="space-y-2 text-sm text-slate-300">
               <p>
                 Každé dieťa prichádza s <strong className="text-white">vlastnou energiou</strong> — nie je kópia rodiča. Kompatibilita ukazuje, kde si prirodzene rozumiete a kde potrebujete prispôsobiť prístup.
@@ -821,6 +821,36 @@ export function RelationshipsPage() {
 
       {mode === 'astro' && synastryResult && (
         <div className="space-y-6">
+          <GlassCard>
+            <details>
+              <summary className="cursor-pointer hover:text-indigo-300 transition-colors">
+                <span className="font-medium text-white">Tvoje čítanie — ako pracovať s astro kompatibilitou</span>
+              </summary>
+              <div className="mt-3 space-y-3 text-xs text-slate-400">
+                <p>Astro kompatibilita porovnáva <strong className="text-white">elementy</strong> vašich planét — nie znamenia samotné. Dva ľudia s rovnakým elementom (Oheň+Oheň) sa rozumejú intuitívne, ale môžu sa „spáliť". Komplementárne elementy (Oheň+Vzduch, Zem+Voda) sa dopĺňajú.</p>
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="p-2 rounded-lg bg-amber-500/10">
+                    <p className="text-amber-300 font-medium">Slnko + Slnko</p>
+                    <p className="text-slate-400">Vedomé ja — ako si rozumiete na povrchu</p>
+                  </div>
+                  <div className="p-2 rounded-lg bg-purple-500/10">
+                    <p className="text-purple-300 font-medium">Mesiac + Mesiac</p>
+                    <p className="text-slate-400">Emócie — ako sa cítite spolu v súkromí</p>
+                  </div>
+                  <div className="p-2 rounded-lg bg-rose-500/10">
+                    <p className="text-rose-300 font-medium">Venuša + Mars</p>
+                    <p className="text-slate-400">Príťažlivosť — ako sa priťahujete a dávate lásku</p>
+                  </div>
+                  <div className="p-2 rounded-lg bg-indigo-500/10">
+                    <p className="text-indigo-300 font-medium">Celkové skóre</p>
+                    <p className="text-slate-400">Váženýpriemer zo 4 planét — orientačný, nie absolútny</p>
+                  </div>
+                </div>
+                <p className="italic text-slate-500">Nízke skóre neznamená „nevhodný pár" — znamená „vyžaduje vedomú prácu". Najlepšie vzťahy často nie sú najľahšie.</p>
+              </div>
+            </details>
+          </GlassCard>
+
           <GlassCard glow>
             <div className="text-center">
               <p className="text-sm text-slate-400">{synastryResult.person1.name} & {synastryResult.person2.name}</p>

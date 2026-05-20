@@ -550,7 +550,106 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
           }}
           className="px-6 py-3 rounded-xl bg-indigo-600 text-white font-medium hover:bg-indigo-500 transition-colors"
         >
-          Exportovať PDF
+          Exportovať PDF (plný)
+        </button>
+        <button
+          onClick={() => {
+            Promise.all([
+              import('jspdf'),
+              import('../assets/fonts/robotoFont'),
+            ]).then(([{ jsPDF }, fontModule]) => {
+              const doc = new jsPDF();
+              doc.addFileToVFS('Roboto-Regular.ttf', fontModule.ROBOTO_REGULAR);
+              doc.addFileToVFS('Roboto-Bold.ttf', fontModule.ROBOTO_BOLD);
+              doc.addFont('Roboto-Regular.ttf', 'Roboto', 'normal');
+              doc.addFont('Roboto-Bold.ttf', 'Roboto', 'bold');
+
+              let y = 20;
+              const addLine = (text: string) => {
+                if (y > 270) { doc.addPage(); y = 20; }
+                doc.setFontSize(10);
+                doc.setFont('Roboto', 'normal');
+                const lines = doc.splitTextToSize(text, 180);
+                doc.text(lines, 14, y);
+                y += lines.length * 5 + 2;
+              };
+              const addBold = (text: string) => {
+                if (y > 270) { doc.addPage(); y = 20; }
+                doc.setFontSize(11);
+                doc.setFont('Roboto', 'bold');
+                doc.text(text, 14, y);
+                doc.setFont('Roboto', 'normal');
+                y += 7;
+              };
+              const addSpace = () => { y += 5; };
+
+              // Header
+              doc.setFontSize(18);
+              doc.setFont('Roboto', 'bold');
+              doc.setTextColor(79, 70, 229);
+              doc.text('Osobný výklad', 105, 30, { align: 'center' });
+              doc.setFontSize(14);
+              doc.setTextColor(0, 0, 0);
+              doc.text(client.name, 105, 40, { align: 'center' });
+              doc.setFontSize(10);
+              doc.setFont('Roboto', 'normal');
+              doc.setTextColor(120, 120, 120);
+              doc.text(`${client.birthDay}.${client.birthMonth}.${client.birthYear}`, 105, 48, { align: 'center' });
+              doc.setTextColor(0, 0, 0);
+              y = 60;
+
+              // Životné číslo
+              const lpKey = String(numerology.lifePathNumber > 9 ? reduceToSingle(numerology.lifePathNumber) : numerology.lifePathNumber);
+              const lpInfo = lifePaths[lpKey];
+              addBold(`Životné číslo ${numerology.lifePathNumber} — ${lpInfo?.title || ''}`);
+              if (lpInfo) {
+                addLine(lpInfo.description);
+                addSpace();
+                addLine(`Dar: ${lpInfo.gift}`);
+                addLine(`Tieň: ${lpInfo.shadow}`);
+                addLine(`Odporúčanie: ${lpInfo.recommendation}`);
+              }
+              addSpace();
+
+              // HD
+              addBold(`Human Design: ${humanDesign.type}`);
+              addLine(`Stratégia: „${humanDesign.strategy}" — keď cítiš „${humanDesign.notSelfTheme.toLowerCase()}", niečo nie je pre teba.`);
+              addLine(`Autorita: ${humanDesign.authority} — takto správne rozhoduješ.`);
+              addSpace();
+
+              // Astrológia
+              addBold('Astrológia');
+              addLine(`Slnko v ${astrology.sunSign.name} — tvoja podstata.`);
+              addLine(`Mesiac v ${astrology.moonSign.name} — tvoje emócie.`);
+              addLine(`Ascendent v ${astrology.ascendant.name} — ako ťa vidia iní.`);
+              addLine(`Dominantný element: ${astrology.dominantElement}.`);
+              addSpace();
+
+              // Vývojová
+              const devNum = calculateDevelopmentalNumerology(client.birthDay, client.birthMonth, client.birthYear);
+              addBold('Vývojová numerológia');
+              addLine(`K3 (životné poslanie): ${devNum.circled[2].value} — hlavná téma, pre ktorú si tu.`);
+              addLine(`Polarita ega: ${devNum.egoPolarity === 'masculine' ? 'mužské' : devNum.egoPolarity === 'feminine' ? 'ženské' : 'bez ega'}.`);
+              addSpace();
+
+              // Praktické tipy
+              addBold('Prakticky — čo s tým');
+              addLine(`1. Rozhodovanie: používaj svoju autoritu (${humanDesign.authority}).`);
+              addLine(`2. Energia: stratégia „${humanDesign.strategy.toLowerCase()}" — keď to funguje, cítiš spokojnosť.`);
+              addLine(`3. Rast: dar = ${lpInfo?.gift?.toLowerCase() || '?'}. Výzva = ${lpInfo?.shadow?.toLowerCase() || '?'}.`);
+              addSpace();
+
+              // Footer
+              doc.setFontSize(8);
+              doc.setTextColor(150, 150, 150);
+              doc.text(`Vygenerované: ${new Date().toLocaleDateString('sk-SK')} | Integrálna mapa bytia`, 105, 285, { align: 'center' });
+
+              doc.save(`vyklad-${client.name.replace(/\s+/g, '-').toLowerCase()}.pdf`);
+            });
+          }}
+          className="px-6 py-3 rounded-xl bg-emerald-600 text-white font-medium hover:bg-emerald-500 transition-colors"
+        >
+          PDF pre klienta (zjednodušený)
         </button>
         <button
           onClick={() => {

@@ -186,6 +186,24 @@ export function AIChat({ context, title = 'AI integrálny výklad', initialUserM
   };
 
   if (!keyAvailable) {
+    const cached = loadChat(persistKey);
+    if (cached && cached.messages.length > 0) {
+      return (
+        <GlassCard>
+          <h3 className="font-medium text-white mb-2">{title} <span className="text-xs text-slate-500 font-normal">(uložený výklad)</span></h3>
+          <div ref={scrollRef} className="max-h-[400px] overflow-y-auto space-y-3 mb-3">
+            {cached.messages.filter(m => m.role === 'assistant').map((m, i) => (
+              <div key={i} className="p-3 rounded-xl bg-indigo-500/10 border border-indigo-500/20">
+                <p className="text-xs text-slate-300 whitespace-pre-wrap">{m.content}</p>
+              </div>
+            ))}
+          </div>
+          <p className="text-[11px] text-slate-500 italic">
+            Offline / bez API kľúča — zobrazuje sa posledný uložený výklad. Pre nový výklad pridaj API kľúč v Nastaveniach.
+          </p>
+        </GlassCard>
+      );
+    }
     return (
       <GlassCard>
         <h3 className="font-medium text-white mb-2">{title}</h3>

@@ -1,6 +1,6 @@
 # Integrálna mapa bytia (Número)
 
-Offline-first PWA pre numerológiu, astrológiu, Human Design, etikoterapiu, kabalu, Theta Healing, Enneagram, Ayurvédu, TCM a sebarozvoj. **v2.16.0**
+Offline-first PWA pre numerológiu, astrológiu, Human Design, etikoterapiu, kabalu, Theta Healing, Enneagram, Ayurvédu, TCM a sebarozvoj. **v2.18.0**
 
 > 📁 **Nested CLAUDE.md súbory:**
 > - `src/engine/CLAUDE.md` — engine pravidlá, numerológia/astrológia/HD matematika
@@ -90,9 +90,9 @@ Anthropic Claude priamo z prehliadača (header `anthropic-dangerous-direct-brows
 - Settings → "✦ AI integrácia (Claude)" — input + Test + Save
 - Modely: Haiku 4.5 / Sonnet 4.6 (default) / Opus 4.7
 - **max_tokens**: 4096 (stream chat), 3500 (summarize)
-- **ProfileContext**: 9 systémov (numerológia, astrológia, HD, čakry, kabala, theta, enneagram, dosha, tcm)
+- **ProfileContext**: 10 systémov (numerológia, astrológia, HD, čakry, kabala, theta, enneagram, dosha, tcm, čínsky horoskop). `numerology` je optional (AstrologyPage ho neposiela).
 - **Interpretation lenses** (v2.3.0): integratívny ezoterický (default), logické úrovne (NLP/Dilts), etikoterapia (Vogeltanz/Bezděk), koučing (GROW). Volia sa v Settings, perzistované v `localStorage` pod `anthropic-lens`. Lens iba mení system prompt, žiadny vplyv na engine výpočty.
-- Triggery: Dashboard (celý profil), Numerology Prehľad (per metóda), ClientDashboard (per klient)
+- Triggery: Dashboard (celý profil), Numerology Prehľad (per metóda), Astrológia (západná + čínska), ClientDashboard (per klient)
 - Komponent: `components/AIChat.tsx` so streaming, históriou per profile/klient/metóda v localStorage
 - Engine: `engine/aiInterpretation.ts` — `summarizeProfile()`, `streamChat()`, `testApiKey()`, `buildSystemPrompt()` (kombinuje base + lens-specific prompt)
 
@@ -103,6 +103,15 @@ Anthropic Claude priamo z prehliadača (header `anthropic-dangerous-direct-brows
 - **Ayurvéda** (`src/engine/ayurvedaEngine.ts`) — 3 dóše (Vata/Pitta/Kapha) derivované z astro elementu + HD typu + ŽČ. Stránka `/modality`.
 - **TCM 5 elementov** (`src/engine/tcmEngine.ts`) — Drevo/Oheň/Zem/Kov/Voda derivované z astro + ŽČ. Stránka `/modality`.
 - **Bachove kvety** — 17 esencií mapovaných na 7 čakier. Stránka `/modality`.
+- **Čínsky horoskop** (`src/engine/chineseZodiacEngine.ts`, `src/data/chineseZodiac.ts`) — 12 zvierat + 5 elementov + Yin/Yang. Výpočet z roku narodenia. Sekcia v AstrologyPage (ľavý stĺpec pod planétami). Výklad: povaha, silné stránky, výzvy, element, kompatibilita, odporúčanie, najbližší rok zvieraťa.
+
+## PDF export
+
+- **Font: Roboto** (plná slovenská diakritika vrátane ľ, ď, ť, ň, č, š, ž)
+- Font sa lazy-loaduje (`src/assets/fonts/robotoFont.ts`) len pri kliknutí na "Exportovať PDF"
+- Komponent: `components/ClientExport.tsx`
+- **Personalizované výklady** — za každou sekciou je fialový blok "Ako čítať" s konkrétnymi hodnotami (rovnaký koncept ako v appke)
+- jsPDF 4.x s custom font registráciou cez `addFileToVFS` + `addFont`
 
 ## Performance & quality
 

@@ -26,6 +26,7 @@
 | `enneagramEngine.ts` | Enneagram typ 1-9 derivácia z ŽČ/K3, krídla, integrácia/dezintegrácia |
 | `ayurvedaEngine.ts` | Ayurvéda dóša scoring (Vata/Pitta/Kapha) z astro elementu + HD typu + ŽČ |
 | `tcmEngine.ts` | TCM 5 elementov (Drevo/Oheň/Zem/Kov/Voda) scoring z astro + ŽČ |
+| `chineseZodiacEngine.ts` | Čínsky horoskop — 12 zvierat + 5 elementov + Yin/Yang + najbližší rok |
 | `aiInterpretation.ts` | Claude API client (single-shot + streaming chat) |
 
 ## Numerológia (podľa PDF Škola NUMERO + Robin Steinová)

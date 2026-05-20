@@ -266,6 +266,8 @@ export function RelationshipsPage() {
   });
 
   // Rodinná konštelácia
+  const [editing, setEditing] = useState(false);
+
   const [constFather, setConstFather] = useState<PersonInput>(emptyPerson());
   const [constMother, setConstMother] = useState<PersonInput>(emptyPerson());
   const [constChildren, setConstChildren] = useState<PersonInput[]>([emptyPerson()]);
@@ -408,46 +410,68 @@ export function RelationshipsPage() {
       </div>
 
       {/* PARTNERSKÝ MÓD */}
-      {mode === 'partner' && !compatibility && (
+      {mode === 'partner' && (!compatibility || editing) && (
         <GlassCard>
-          <p className="text-sm text-slate-400 mb-4">
-            <strong className="text-white">Partnerský výklad</strong> porovnáva numerologické profily dvoch osôb -- životné čísla, roviny, jazyky lásky a ročné vibrácie. Výsledkom je celková kompatibilita, silné stránky a výzvy vzťahu, plus <strong className="text-rose-300">Cieľ vzťahu</strong> (súčet životných čísel = vyšší zmysel partnerstva).
-          </p>
-        </GlassCard>
-      )}
-      {mode === 'partner' && !compatibility && (
-        <GlassCard>
+          {!compatibility && (
+            <p className="text-sm text-slate-400 mb-4">
+              <strong className="text-white">Partnerský výklad</strong> porovnáva numerologické profily dvoch osôb -- životné čísla, roviny, jazyky lásky a ročné vibrácie. Výsledkom je celková kompatibilita, silné stránky a výzvy vzťahu, plus <strong className="text-rose-300">Cieľ vzťahu</strong> (súčet životných čísel = vyšší zmysel partnerstva).
+            </p>
+          )}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <PersonForm person={partner1} onChange={setPartner1} label="Partner 1" />
             <PersonForm person={partner2} onChange={setPartner2} label="Partner 2" />
           </div>
-          <button
-            onClick={handlePartnerCalc}
-            disabled={!isPersonValid(partner1) || !isPersonValid(partner2)}
-            className="w-full mt-6 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-medium hover:from-indigo-500 hover:to-violet-500 disabled:opacity-40 disabled:cursor-not-allowed glow"
-          >
-            Vypočítať kompatibilitu
-          </button>
+          <div className="flex gap-3 mt-6">
+            <button
+              onClick={() => { handlePartnerCalc(); setEditing(false); }}
+              disabled={!isPersonValid(partner1) || !isPersonValid(partner2)}
+              className="flex-1 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-medium hover:from-indigo-500 hover:to-violet-500 disabled:opacity-40 disabled:cursor-not-allowed glow"
+            >
+              {compatibility ? 'Prepočítať' : 'Vypočítať kompatibilitu'}
+            </button>
+            {editing && (
+              <button
+                onClick={() => setEditing(false)}
+                className="px-4 py-3 rounded-xl glass text-slate-400 hover:text-white"
+              >
+                Zrušiť
+              </button>
+            )}
+          </div>
         </GlassCard>
       )}
 
-      {mode === 'partner' && compatibility && (
+      {mode === 'partner' && compatibility && !editing && (
         <div className="space-y-6">
+          {/* Edit button */}
+          <div className="flex justify-end">
+            <button
+              onClick={() => setEditing(true)}
+              className="text-xs px-3 py-1.5 rounded-lg border border-indigo-300 text-indigo-700 hover:bg-indigo-50 flex items-center gap-1"
+            >
+              <span>✎</span> Upraviť údaje
+            </button>
+          </div>
+
           {/* Tvoje čítanie */}
           <GlassCard>
-            <h3 className="font-medium text-white mb-3">Tvoje čítanie — ako pracovať s partnerským výkladom</h3>
-            <div className="space-y-2 text-sm text-slate-300">
-              <p>
-                Kompatibilita <strong className="text-white">{compatibility.overallScore}%</strong> neznamená „dobrý" alebo „zlý" vzťah — hovorí o tom, koľko vecí vám ide prirodzene a kde musíte vedome pracovať.
-              </p>
-              <p>
-                <strong>Silné stránky</strong> ({compatibility.strengths.length}) sú to, čo vás drží spolu bez námahy.
-                <strong> Výzvy</strong> ({compatibility.challenges.length}) sú oblasti, kde sa musíte učiť — nie dôvod odísť, ale príležitosť rásť.
-              </p>
-              <p className="text-xs text-slate-500 italic">
-                Žiadny vzťah nie je 100% — rozdielnosti sú motor rastu. Dôležité je, či ste obaja ochotní na nich vedome pracovať.
-              </p>
-            </div>
+            <details open>
+              <summary className="cursor-pointer hover:text-indigo-300 transition-colors">
+                <span className="font-medium text-white">Tvoje čítanie — ako pracovať s partnerským výkladom</span>
+              </summary>
+              <div className="mt-3 space-y-2 text-sm text-slate-300">
+                <p>
+                  Kompatibilita <strong className="text-white">{compatibility.overallScore}%</strong> neznamená „dobrý" alebo „zlý" vzťah — hovorí o tom, koľko vecí vám ide prirodzene a kde musíte vedome pracovať.
+                </p>
+                <p>
+                  <strong>Silné stránky</strong> ({compatibility.strengths.length}) sú to, čo vás drží spolu bez námahy.
+                  <strong> Výzvy</strong> ({compatibility.challenges.length}) sú oblasti, kde sa musíte učiť — nie dôvod odísť, ale príležitosť rásť.
+                </p>
+                <p className="text-xs text-slate-500 italic">
+                  Žiadny vzťah nie je 100% — rozdielnosti sú motor rastu. Dôležité je, či ste obaja ochotní na nich vedome pracovať.
+                </p>
+              </div>
+            </details>
           </GlassCard>
 
           <GlassCard glow>
@@ -660,7 +684,7 @@ export function RelationshipsPage() {
       )}
 
       {/* RODINNÝ MÓD */}
-      {mode === 'family' && !familyResults && (
+      {mode === 'family' && (!familyResults || editing) && (
         <div className="space-y-4">
           <GlassCard>
             <PersonForm person={parent} onChange={setParent} label="Rodič" />
@@ -686,18 +710,28 @@ export function RelationshipsPage() {
             + Pridať ďalšie dieťa
           </button>
 
-          <button
-            onClick={handleFamilyCalc}
-            disabled={!isPersonValid(parent) || !children.some(isPersonValid)}
-            className="w-full py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-medium hover:from-indigo-500 hover:to-violet-500 disabled:opacity-40 disabled:cursor-not-allowed glow"
-          >
-            Vypočítať kompatibilitu
-          </button>
+          <div className="flex gap-3">
+            <button
+              onClick={() => { handleFamilyCalc(); setEditing(false); }}
+              disabled={!isPersonValid(parent) || !children.some(isPersonValid)}
+              className="flex-1 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-medium hover:from-indigo-500 hover:to-violet-500 disabled:opacity-40 disabled:cursor-not-allowed glow"
+            >
+              {familyResults ? 'Prepočítať' : 'Vypočítať kompatibilitu'}
+            </button>
+            {editing && (
+              <button onClick={() => setEditing(false)} className="px-4 py-3 rounded-xl glass text-slate-400 hover:text-white">Zrušiť</button>
+            )}
+          </div>
         </div>
       )}
 
-      {mode === 'family' && familyResults && (
+      {mode === 'family' && familyResults && !editing && (
         <div className="space-y-6">
+          <div className="flex justify-end">
+            <button onClick={() => setEditing(true)} className="text-xs px-3 py-1.5 rounded-lg border border-indigo-300 text-indigo-700 hover:bg-indigo-50 flex items-center gap-1">
+              <span>✎</span> Upraviť údaje
+            </button>
+          </div>
           {/* Tvoje čítanie */}
           <GlassCard>
             <h3 className="font-medium text-white mb-3">Tvoje čítanie — ako pracovať s rodič-dieťa výkladom</h3>
@@ -785,14 +819,16 @@ export function RelationshipsPage() {
       )}
 
       {/* ASTRO KOMPATIBILITA MÓD */}
-      {mode === 'astro' && !synastryResult && (
+      {mode === 'astro' && (!synastryResult || editing) && (
         <GlassCard>
-          <p className="text-sm text-slate-400 mb-4">
-            <strong className="text-white">Astro kompatibilita</strong> porovnáva astrologické pozície oboch partnerov -- Slnko, Mesiac, Venušu a Mars. Výsledkom je synastria založená na elementálnej harmónii a planetárnej kompatibilite.
-          </p>
+          {!synastryResult && (
+            <p className="text-sm text-slate-400 mb-4">
+              <strong className="text-white">Astro kompatibilita</strong> porovnáva astrologické pozície oboch partnerov -- Slnko, Mesiac, Venušu a Mars. Výsledkom je synastria založená na elementálnej harmónii a planetárnej kompatibilite.
+            </p>
+          )}
         </GlassCard>
       )}
-      {mode === 'astro' && !synastryResult && (
+      {mode === 'astro' && (!synastryResult || editing) && (
         <GlassCard>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-3">
@@ -840,18 +876,28 @@ export function RelationshipsPage() {
               <input type="text" placeholder="Miesto narodenia" value={astroPartner2.birthPlace} onChange={e => setAstroPartner2({ ...astroPartner2, birthPlace: e.target.value })} className="w-full px-3 py-2.5 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white text-sm focus:outline-none focus:border-indigo-500/50" />
             </div>
           </div>
-          <button
-            onClick={handleAstroCalc}
-            disabled={!isAstroPersonValid(astroPartner1) || !isAstroPersonValid(astroPartner2)}
-            className="w-full mt-6 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-medium hover:from-indigo-500 hover:to-violet-500 disabled:opacity-40 disabled:cursor-not-allowed glow"
-          >
-            Vypočítať astro kompatibilitu
-          </button>
+          <div className="flex gap-3 mt-6">
+            <button
+              onClick={() => { handleAstroCalc(); setEditing(false); }}
+              disabled={!isAstroPersonValid(astroPartner1) || !isAstroPersonValid(astroPartner2)}
+              className="flex-1 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-medium hover:from-indigo-500 hover:to-violet-500 disabled:opacity-40 disabled:cursor-not-allowed glow"
+            >
+              {synastryResult ? 'Prepočítať' : 'Vypočítať astro kompatibilitu'}
+            </button>
+            {editing && (
+              <button onClick={() => setEditing(false)} className="px-4 py-3 rounded-xl glass text-slate-400 hover:text-white">Zrušiť</button>
+            )}
+          </div>
         </GlassCard>
       )}
 
-      {mode === 'astro' && synastryResult && (
+      {mode === 'astro' && synastryResult && !editing && (
         <div className="space-y-6">
+          <div className="flex justify-end">
+            <button onClick={() => setEditing(true)} className="text-xs px-3 py-1.5 rounded-lg border border-indigo-300 text-indigo-700 hover:bg-indigo-50 flex items-center gap-1">
+              <span>✎</span> Upraviť údaje
+            </button>
+          </div>
           <GlassCard>
             <details open>
               <summary className="cursor-pointer hover:text-indigo-300 transition-colors">

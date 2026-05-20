@@ -1498,6 +1498,89 @@ export function RelationshipsPage() {
             );
           })()}
 
+          {/* Charakterová synastria rodičov */}
+          {(() => {
+            const numF = calculateFullNumerology(parseInt(constFather.day), parseInt(constFather.month), parseInt(constFather.year));
+            const numM = calculateFullNumerology(parseInt(constMother.day), parseInt(constMother.month), parseInt(constMother.year));
+            const sharedFull = numF.fullPlanes.filter(p => numM.fullPlanes.includes(p));
+            const sharedEmpty = numF.emptyPlanes.filter(p => numM.emptyPlanes.includes(p));
+            const sharedIsolated = numF.isolatedNumbers.filter(n => numM.isolatedNumbers.includes(n));
+            return (
+              <GlassCard>
+                <h3 className="font-medium text-white mb-1">Charakterová synastria rodičov</h3>
+                <p className="text-xs text-slate-400 mb-3">Porovnanie numerologických mriežok — spoločné silné stránky a oblasti rastu.</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+                  <div className="p-2 rounded-lg bg-indigo-500/10 border border-indigo-500/20">
+                    <p className="text-[11px] text-indigo-300 font-semibold">{constFather.name}: ŽČ {numF.lifePathNumber}</p>
+                    <p className="text-[11px] text-slate-400">Plné: {numF.fullPlanes.length > 0 ? numF.fullPlanes.join(', ') : 'žiadne'}</p>
+                  </div>
+                  <div className="p-2 rounded-lg bg-violet-500/10 border border-violet-500/20">
+                    <p className="text-[11px] text-violet-300 font-semibold">{constMother.name}: ŽČ {numM.lifePathNumber}</p>
+                    <p className="text-[11px] text-slate-400">Plné: {numM.fullPlanes.length > 0 ? numM.fullPlanes.join(', ') : 'žiadne'}</p>
+                  </div>
+                </div>
+                <div className="space-y-1.5">
+                  {sharedFull.length > 0 && (
+                    <p className="text-[11px] text-emerald-300">Spoločné silné roviny: <strong>{sharedFull.join(', ')}</strong> — tu si rozumiete prirodzene.</p>
+                  )}
+                  {sharedEmpty.length > 0 && (
+                    <p className="text-[11px] text-amber-300">Spoločné prázdne roviny: <strong>{sharedEmpty.join(', ')}</strong> — spoločné slepé miesta, deti ich môžu dopĺňať.</p>
+                  )}
+                  {sharedIsolated.length > 0 && (
+                    <p className="text-[11px] text-rose-300">Spoločné izolované: <strong>{sharedIsolated.join(', ')}</strong> — spoločné napätie, ktoré sa prenáša na deti.</p>
+                  )}
+                  {sharedFull.length === 0 && sharedEmpty.length === 0 && (
+                    <p className="text-[11px] text-slate-500 italic">Rôzne mriežky — rodičia sa vzájomne dopĺňajú v rôznych oblastiach.</p>
+                  )}
+                </div>
+              </GlassCard>
+            );
+          })()}
+
+          {/* Vývojová synastria rodičov */}
+          {(() => {
+            const devF = calculateDevelopmentalNumerology(parseInt(constFather.day), parseInt(constFather.month), parseInt(constFather.year));
+            const devM = calculateDevelopmentalNumerology(parseInt(constMother.day), parseInt(constMother.month), parseInt(constMother.year));
+            const k3Match = devF.circled[2].value === devM.circled[2].value;
+            const egoComplementary = (devF.egoPolarity === 'masculine' && devM.egoPolarity === 'feminine') || (devF.egoPolarity === 'feminine' && devM.egoPolarity === 'masculine');
+            const egoSame = devF.egoPolarity === devM.egoPolarity && devF.egoPolarity !== 'none';
+            return (
+              <GlassCard>
+                <h3 className="font-medium text-white mb-1">Vývojová synastria rodičov</h3>
+                <p className="text-xs text-slate-400 mb-3">Karmické cykly a polarita ega oboch rodičov.</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30">
+                    <p className="text-xs text-amber-300 uppercase mb-1">{constFather.name}</p>
+                    <p className="text-sm text-white font-mono">K1={devF.circled[0].value} · K2={devF.circled[1].value} · K3={devF.circled[2].value} · K4={devF.circled[3].value}</p>
+                    <p className="text-[11px] text-slate-400 mt-1">Ego: {devF.egoPolarity === 'masculine' ? 'mužské' : devF.egoPolarity === 'feminine' ? 'ženské' : 'žiadne'} ({devF.oneCount}× 1)</p>
+                  </div>
+                  <div className="p-3 rounded-xl bg-violet-500/10 border border-violet-500/30">
+                    <p className="text-xs text-violet-300 uppercase mb-1">{constMother.name}</p>
+                    <p className="text-sm text-white font-mono">K1={devM.circled[0].value} · K2={devM.circled[1].value} · K3={devM.circled[2].value} · K4={devM.circled[3].value}</p>
+                    <p className="text-[11px] text-slate-400 mt-1">Ego: {devM.egoPolarity === 'masculine' ? 'mužské' : devM.egoPolarity === 'feminine' ? 'ženské' : 'žiadne'} ({devM.oneCount}× 1)</p>
+                  </div>
+                </div>
+                <div className="mt-3 space-y-2">
+                  {k3Match && (
+                    <p className="text-xs text-emerald-300 p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/30">
+                      ★ K3 zhoda ({devF.circled[2].value}) — rovnaké životné poslanie. Silné karmické spojenie rodičov.
+                    </p>
+                  )}
+                  {egoComplementary && (
+                    <p className="text-xs text-rose-300 p-2 rounded-lg bg-rose-500/10 border border-rose-500/30">
+                      ☯ Doplnková polarita ega — mužský × ženský princíp. Deti zažívajú vyváženú Yin-Yang dynamiku.
+                    </p>
+                  )}
+                  {egoSame && (
+                    <p className="text-xs text-amber-300 p-2 rounded-lg bg-amber-500/10 border border-amber-500/30">
+                      ⚹ Rovnaká polarita ega — obaja rodičia pôsobia rovnakým energetickým štýlom na deti.
+                    </p>
+                  )}
+                </div>
+              </GlassCard>
+            );
+          })()}
+
           {/* Otec ↔ deti */}
           <GlassCard>
             <h3 className="font-medium text-white mb-3">{constFather.name} ↔ deti</h3>

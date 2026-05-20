@@ -353,57 +353,95 @@ export function HumanDesignPage() {
             </div>
           </GlassCard>
 
-          {/* Detailný výpis všetkých aktívnych brán — vedľa seba */}
-          <GlassCard>
-            <h3 className="font-medium text-white mb-2">Tvoje aktívne brány</h3>
-            <p className="text-xs text-slate-500 mb-4">
-              Brány sú špecifické energie vo tvojom dizajne. <strong className="text-amber-300">Personality brány</strong> (vedomé — Slnko čierne) sú to, čo si o sebe vieš. <strong className="text-violet-300">Design brány</strong> (nevedomé — Slnko červené) sú to, čo vidia iní, ale ty nie.
-            </p>
+          {/* Detailný výpis brán — zoskupené podľa dôležitosti */}
+          {(() => {
+            const LINE_NAMES: Record<number, string> = {
+              1: 'Skúmajúci', 2: 'Pustovník', 3: 'Mučeník', 4: 'Oportunista', 5: 'Heretik', 6: 'Vzor',
+            };
+            const PLANET_GROUPS = {
+              core: ['Slnko', 'Zem'],
+              karmic: ['Severný uzol', 'Južný uzol'],
+              personal: ['Mesiac', 'Merkúr', 'Venuša', 'Mars'],
+              outer: ['Jupiter', 'Saturn', 'Urán', 'Neptún', 'Pluto'],
+            };
+            const PLANET_GROUP_INFO: Record<string, { label: string; desc: string; color: string; border: string }> = {
+              core: { label: 'Jadro (Slnko + Zem)', desc: 'Tvoja hlavná životná téma — kto si a na čom stojíš. Najdôležitejšie brány.', color: 'bg-amber-500/15', border: 'border-amber-500/30' },
+              karmic: { label: 'Karmické (Uzly)', desc: 'Odkiaľ prichádzaš (Juh) a kam smeruješ (Sever). Životná evolúcia.', color: 'bg-indigo-500/10', border: 'border-indigo-500/20' },
+              personal: { label: 'Osobné planéty', desc: 'Emócie, myslenie, láska, akcia — denná energia.', color: 'bg-slate-500/10', border: 'border-slate-500/20' },
+              outer: { label: 'Generačné planéty', desc: 'Zdieľané s rovesníkmi — dlhodobé témy a kolektívne vzorce.', color: 'bg-slate-500/5', border: 'border-slate-500/10' },
+            };
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Personality gates — ľavý stĺpec */}
-              {result.personalityGates.length > 0 && (
-                <div>
-                  <p className="text-xs text-amber-400 uppercase font-semibold mb-2">Vedomé (Personality)</p>
+            const renderGate = (g: { gate: number; line: number; planet: string }, side: 'p' | 'd') => (
+              <div key={`${side}-${g.gate}-${g.planet}`} className="flex items-start gap-2">
+                <span className={`w-6 h-6 rounded-full font-bold text-[10px] flex items-center justify-center shrink-0 ${side === 'p' ? 'bg-amber-500/30 text-amber-200' : 'bg-violet-500/30 text-violet-200'}`}>{g.gate}</span>
+                <div className="min-w-0">
+                  <p className="text-xs text-white">
+                    <strong>{g.gate}.{g.line}</strong> <span className="text-slate-500">({LINE_NAMES[g.line] || `L${g.line}`})</span>
+                    <span className={`ml-2 text-[10px] ${side === 'p' ? 'text-amber-400' : 'text-violet-400'}`}>{g.planet}</span>
+                  </p>
+                  {GATE_DESCRIPTIONS[g.gate] && (
+                    <p className="text-[11px] text-slate-400">{GATE_DESCRIPTIONS[g.gate]}</p>
+                  )}
+                </div>
+              </div>
+            );
+
+            const allGates = [
+              ...result.personalityGates.map(g => ({ ...g, side: 'p' as const })),
+              ...result.designGates.map(g => ({ ...g, side: 'd' as const })),
+            ];
+
+            return (
+              <GlassCard>
+                <h3 className="font-medium text-white mb-2">Tvoje aktívne brány</h3>
+                <p className="text-xs text-slate-500 mb-2">
+                  Brány sú špecifické energie. <span className="text-amber-300">Vedomé</span> = vieš o nich.
+                  <span className="text-violet-300 ml-1">Nevedomé</span> = vidia ich iní, ty nie.
+                  Číslo za bodkou je línia (1=skúmajúci, 2=pustovník, 3=mučeník, 4=oportunista, 5=heretik, 6=vzor).
+                </p>
+
+                {/* Core — vždy otvorené */}
+                <div className={`p-3 rounded-xl ${PLANET_GROUP_INFO.core.color} border ${PLANET_GROUP_INFO.core.border} mb-3`}>
+                  <p className="text-xs text-amber-400 font-semibold mb-1">{PLANET_GROUP_INFO.core.label}</p>
+                  <p className="text-[11px] text-slate-400 mb-2">{PLANET_GROUP_INFO.core.desc}</p>
                   <div className="space-y-2">
-                    {result.personalityGates.map(g => (
-                      <div key={`p-${g.gate}-${g.planet}`} className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="w-7 h-7 rounded-full bg-amber-500/30 text-amber-200 font-bold text-xs flex items-center justify-center">{g.gate}</span>
-                          <span className="text-sm text-white font-medium">Brána {g.gate}.{g.line}</span>
-                          <span className="text-xs text-slate-400 ml-auto">{g.planet}</span>
-                        </div>
-                        {GATE_DESCRIPTIONS[g.gate] && (
-                          <p className="text-xs text-slate-300">{GATE_DESCRIPTIONS[g.gate]}</p>
-                        )}
-                      </div>
-                    ))}
+                    {allGates.filter(g => PLANET_GROUPS.core.includes(g.planet)).map(g => renderGate(g, g.side))}
                   </div>
                 </div>
-              )}
 
-              {/* Design gates — pravý stĺpec */}
-              {result.designGates.length > 0 && (
-                <div>
-                  <p className="text-xs text-violet-400 uppercase font-semibold mb-2">Nevedomé (Design)</p>
+                {/* Karmic */}
+                <div className={`p-3 rounded-xl ${PLANET_GROUP_INFO.karmic.color} border ${PLANET_GROUP_INFO.karmic.border} mb-3`}>
+                  <p className="text-xs text-indigo-400 font-semibold mb-1">{PLANET_GROUP_INFO.karmic.label}</p>
+                  <p className="text-[11px] text-slate-400 mb-2">{PLANET_GROUP_INFO.karmic.desc}</p>
                   <div className="space-y-2">
-                    {result.designGates.map(g => (
-                      <div key={`d-${g.gate}-${g.planet}`} className="p-3 rounded-xl bg-violet-500/10 border border-violet-500/20">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="w-7 h-7 rounded-full bg-violet-500/30 text-violet-200 font-bold text-xs flex items-center justify-center">{g.gate}</span>
-                          <span className="text-sm text-white font-medium">Brána {g.gate}.{g.line}</span>
-                          <span className="text-xs text-slate-400 ml-auto">{g.planet}</span>
-                        </div>
-                        {GATE_DESCRIPTIONS[g.gate] && (
-                          <p className="text-xs text-slate-300">{GATE_DESCRIPTIONS[g.gate]}</p>
-                        )}
-                      </div>
-                    ))}
+                    {allGates.filter(g => PLANET_GROUPS.karmic.includes(g.planet)).map(g => renderGate(g, g.side))}
                   </div>
                 </div>
-              )}
-            </div>
-          </GlassCard>
+
+                {/* Personal — collapsible */}
+                <details className="mb-3">
+                  <summary className={`p-3 rounded-xl ${PLANET_GROUP_INFO.personal.color} border ${PLANET_GROUP_INFO.personal.border} cursor-pointer`}>
+                    <span className="text-xs text-slate-300 font-semibold">{PLANET_GROUP_INFO.personal.label}</span>
+                    <span className="text-[11px] text-slate-500 ml-2">{PLANET_GROUP_INFO.personal.desc}</span>
+                  </summary>
+                  <div className="mt-2 p-3 space-y-2">
+                    {allGates.filter(g => PLANET_GROUPS.personal.includes(g.planet)).map(g => renderGate(g, g.side))}
+                  </div>
+                </details>
+
+                {/* Outer — collapsible */}
+                <details>
+                  <summary className={`p-3 rounded-xl ${PLANET_GROUP_INFO.outer.color} border ${PLANET_GROUP_INFO.outer.border} cursor-pointer`}>
+                    <span className="text-xs text-slate-400 font-semibold">{PLANET_GROUP_INFO.outer.label}</span>
+                    <span className="text-[11px] text-slate-500 ml-2">{PLANET_GROUP_INFO.outer.desc}</span>
+                  </summary>
+                  <div className="mt-2 p-3 space-y-2">
+                    {allGates.filter(g => PLANET_GROUPS.outer.includes(g.planet)).map(g => renderGate(g, g.side))}
+                  </div>
+                </details>
+              </GlassCard>
+            );
+          })()}
 
 
           {/* Detailný popis 6 línií podľa profilu */}

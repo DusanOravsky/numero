@@ -199,11 +199,23 @@ export function NumerologyPage() {
                       <p className="text-[10px] text-slate-400">{lifePathInfo?.title || ''}</p>
                     </div>
                     {numerologyMethod === 'developmental' && devResult && (
-                      <div className="p-2 rounded-lg bg-amber-500/10 border border-amber-500/20 text-center">
-                        <p className="text-[10px] text-slate-500 uppercase">K3 Poslanie</p>
-                        <p className="text-xl font-bold text-amber-300">{devResult.circled[2].value}</p>
-                        <p className="text-[10px] text-slate-400">životná misia</p>
-                      </div>
+                      <>
+                        <div className="p-2 rounded-lg bg-amber-500/10 border border-amber-500/20 text-center">
+                          <p className="text-[10px] text-slate-500 uppercase">K3 Poslanie</p>
+                          <p className="text-xl font-bold text-amber-300">{devResult.circled[2].value}</p>
+                          <p className="text-[10px] text-slate-400">životná misia</p>
+                        </div>
+                        <div className="p-2 rounded-lg bg-amber-500/10 border border-amber-500/20 text-center">
+                          <p className="text-[10px] text-slate-500 uppercase">K1 · K2 · K4</p>
+                          <p className="text-lg font-bold text-amber-200">{devResult.circled[0].value} · {devResult.circled[1].value} · {devResult.circled[3].value}</p>
+                          <p className="text-[10px] text-slate-400">karmické cykly</p>
+                        </div>
+                        <div className="p-2 rounded-lg bg-violet-500/10 border border-violet-500/20 text-center">
+                          <p className="text-[10px] text-slate-500 uppercase">Polarita ega</p>
+                          <p className="text-sm font-bold text-violet-300">{devResult.egoPolarity === 'masculine' ? 'Mužská' : devResult.egoPolarity === 'feminine' ? 'Ženská' : 'Žiadna'}</p>
+                          <p className="text-[10px] text-slate-400">{devResult.oneCount}× jednotka</p>
+                        </div>
+                      </>
                     )}
                     <div className="p-2 rounded-lg bg-purple-500/10 border border-purple-500/20 text-center">
                       <p className="text-[10px] text-slate-500 uppercase">ORV (rok)</p>

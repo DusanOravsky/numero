@@ -148,6 +148,71 @@ export function ModalityPage() {
         </div>
       </GlassCard>
 
+      {/* Tvoje čítanie — personalizovaný sprievodca modalitami */}
+      <GlassCard>
+        <details open>
+          <summary className="cursor-pointer hover:text-indigo-300 transition-colors">
+            <span className="font-medium text-white">Tvoje čítanie — čo s tým prakticky</span>
+          </summary>
+          <div className="mt-4 space-y-4">
+            <p className="text-xs text-slate-400">
+              Tieto tri systémy sa pozerajú na tvoje telo, energiu a emócie z rôznych tradícií.
+              Neukazujú „diagnózu" — ukazujú tvoju prirodzenosť a čo potrebuješ pre rovnováhu.
+            </p>
+
+            {/* Ayurvéda — prakticky */}
+            <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
+              <p className="text-xs font-semibold text-amber-300 mb-1">
+                Tvoja dóša: {primaryDosha.name} ({primaryDosha.element})
+              </p>
+              <p className="text-xs text-slate-300">
+                {primaryDosha.mind} Typ tela: {primaryDosha.bodyType.toLowerCase()}.
+                Najsilnejšia sezóna: {primaryDosha.season.toLowerCase()}.
+              </p>
+              <p className="text-xs text-slate-400 mt-1 italic">
+                Prakticky: {primaryDosha.balanceTips[0]}
+              </p>
+            </div>
+
+            {/* TCM — prakticky */}
+            <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
+              <p className="text-xs font-semibold text-emerald-300 mb-1">
+                Tvoj TCM element: {primaryTCM.name} (orgán: {primaryTCM.organ})
+              </p>
+              <p className="text-xs text-slate-300">
+                Emócia: {primaryTCM.emotion}. Cnosť: {primaryTCM.virtue}. Sezóna: {primaryTCM.season}.
+              </p>
+              <p className="text-xs text-slate-400 mt-1 italic">
+                Prakticky: {primaryTCM.balanceTip}
+              </p>
+            </div>
+
+            {/* Bach — prakticky */}
+            <div className="p-3 rounded-xl bg-violet-500/10 border border-violet-500/20">
+              <p className="text-xs font-semibold text-violet-300 mb-1">
+                Bachove kvety: {data.blockedChakras.length === 0
+                  ? 'žiadna blokáda — nie sú odporúčané esencie'
+                  : `${recommendedFlowers.length} esencií pre ${data.blockedChakras.length} blokované čakry`}
+              </p>
+              <p className="text-xs text-slate-300">
+                {data.blockedChakras.length > 0
+                  ? `Blokované čakry (${data.blockedChakras.join(', ')}) indikujú emočné témy, pri ktorých ti môžu pomôcť kvetové esencie. Pozri detail nižšie.`
+                  : 'Tvoj energetický systém je momentálne vyvážený — gratulujeme!'}
+              </p>
+            </div>
+
+            <div className="p-3 rounded-xl bg-slate-500/10 border border-slate-500/20">
+              <p className="text-[10px] text-slate-500 uppercase mb-1">Praktický tip</p>
+              <p className="text-xs text-slate-300">
+                Začni od dóše — pochopenie svojho typu ti pomôže s jedlom, pohybom a denným rytmom.
+                TCM element ti ukáže emočnú tému a orgán na ktorý dávať pozor.
+                Bachove kvety sú jemná podpora pri konkrétnych emočných blokoch.
+              </p>
+            </div>
+          </div>
+        </details>
+      </GlassCard>
+
       {/* Ayurvéda */}
       <GlassCard delay={0.1}>
         <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">

@@ -776,7 +776,10 @@ export function RelationshipsPage() {
 
           <p className="text-sm text-slate-400">Rodič: <span className="text-white font-medium">{parent.name}</span></p>
 
-          {familyResults.map(({ child, result }, idx) => (
+          {familyResults.map(({ child, result }, idx) => {
+            const childNum = calculateFullNumerology(parseInt(child.day), parseInt(child.month), parseInt(child.year));
+            const childDev = calculateDevelopmentalNumerology(parseInt(child.day), parseInt(child.month), parseInt(child.year));
+            return (
             <motion.div key={idx} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.1 }}>
               <GlassCard>
                 <div className="flex items-center justify-between mb-4">
@@ -785,6 +788,32 @@ export function RelationshipsPage() {
                 </div>
 
                 <div className="space-y-3">
+                  {/* Profil dieťaťa — kto je */}
+                  <div className="p-3 rounded-xl bg-violet-500/10 border border-violet-500/20">
+                    <p className="text-xs text-violet-300 font-semibold uppercase mb-1">Profil dieťaťa</p>
+                    <p className="text-xs text-slate-300">
+                      <strong>ŽČ {childNum.lifePathNumber}</strong> z {childNum.lifePathFrom}.{' '}
+                      <strong>K3 (životné poslanie):</strong> {childDev.circled[2].value}.{' '}
+                      <strong>Kozmický vek:</strong> {childNum.age === 'aquarius' ? 'Vodnár — nové paradigmy, technológie, kolektívne vedomie' : 'Ryby — duchovnosť, introspekcia, tradičná múdrosť'}.{' '}
+                      <strong>Polarita ega:</strong> {childDev.egoPolarity === 'masculine' ? 'mužská (akcia, vymedovanie)' : childDev.egoPolarity === 'feminine' ? 'ženská (prijímanie, otvorenosť)' : 'neutrálna'}.
+                    </p>
+                    {childNum.karmicTriangles.length > 0 && (
+                      <p className="text-xs text-indigo-300 mt-1">
+                        <strong>Karmické cykly:</strong> {childNum.karmicTriangles.map(t => `${t.label} (${t.fromAge}–${t.toAge ?? '∞'} r., vibrácia ${t.vibration})`).join(' → ')}
+                      </p>
+                    )}
+                    {childNum.karmicDebts.length > 0 && (
+                      <p className="text-xs text-rose-300 mt-1">
+                        <strong>Karmické dlhy:</strong> {childNum.karmicDebts.map(d => `${d.number} (${d.theme})`).join(', ')} — oblasti kde dieťa nesie hlbšiu lekciu z minulosti.
+                      </p>
+                    )}
+                    {childNum.isolatedNumbers.length > 0 && (
+                      <p className="text-xs text-amber-300 mt-1">
+                        <strong>Izolované čísla:</strong> {childNum.isolatedNumbers.join(', ')} — energie kde potrebuje vašu pozornosť a podporu.
+                      </p>
+                    )}
+                  </div>
+
                   <div>
                     <p className="text-xs text-slate-400 mb-1">Rola rodiča</p>
                     <p className="text-sm text-slate-300">{result.parentRole}</p>
@@ -814,7 +843,8 @@ export function RelationshipsPage() {
                 </div>
               </GlassCard>
             </motion.div>
-          ))}
+            );
+          })}
 
           {familyResults.length > 1 && (
             <GlassCard>

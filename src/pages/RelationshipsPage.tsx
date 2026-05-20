@@ -1791,10 +1791,11 @@ export function RelationshipsPage() {
                       <div className="space-y-1.5 mt-1">
                         <p className="text-[11px] text-purple-300 font-semibold">Spoločné Génové kľúče:</p>
                         {siblingGK.map(gk => (
-                          <div key={gk!.gate} className="pl-2 border-l-2 border-purple-500/30">
+                          <div key={gk!.gate} className="pl-2 border-l-2 border-purple-500/30 space-y-0.5">
                             <p className="text-[11px] text-white">Brána {gk!.gate}: <span className="text-rose-300">{gk!.shadow}</span> → <span className="text-amber-300">{gk!.gift}</span> → <span className="text-emerald-300">{gk!.siddhi}</span></p>
                             <p className="text-[10px] text-slate-400">{gk!.shadowDescription}</p>
-                            {gk!.nlpTechnique && <p className="text-[10px] text-indigo-300">Technika: {gk!.nlpTechnique}</p>}
+                            <p className="text-[10px] text-amber-300">Dar: {gk!.giftDescription}</p>
+                            {gk!.nlpTechnique && <p className="text-[10px] text-indigo-300">Prakticky: {gk!.nlpTechnique} — {gk!.nlpDescription}</p>}
                           </div>
                         ))}
                       </div>

@@ -54,13 +54,13 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
           onClick={() => {
             Promise.all([
               import('jspdf'),
-              import('../assets/fonts/atkinsonFont'),
+              import('../assets/fonts/robotoFont'),
             ]).then(([{ jsPDF }, fontModule]) => {
               const doc = new jsPDF();
-              doc.addFileToVFS('Atkinson-Regular.ttf', fontModule.ATKINSON_REGULAR);
-              doc.addFileToVFS('Atkinson-Bold.ttf', fontModule.ATKINSON_BOLD);
-              doc.addFont('Atkinson-Regular.ttf', 'Atkinson', 'normal');
-              doc.addFont('Atkinson-Bold.ttf', 'Atkinson', 'bold');
+              doc.addFileToVFS('Roboto-Regular.ttf', fontModule.ROBOTO_REGULAR);
+              doc.addFileToVFS('Roboto-Bold.ttf', fontModule.ROBOTO_BOLD);
+              doc.addFont('Roboto-Regular.ttf', 'Roboto', 'normal');
+              doc.addFont('Roboto-Bold.ttf', 'Roboto', 'bold');
               const lpKey = String(numerology.lifePathNumber > 9 ? reduceToSingle(numerology.lifePathNumber) : numerology.lifePathNumber);
               const lpTitle = lifePaths[lpKey]?.title || '';
               const lpDesc = lifePaths[lpKey]?.description || '';
@@ -69,7 +69,7 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
 
               const addPageNumber = () => {
                 doc.setFontSize(8);
-                doc.setFont('Atkinson', 'normal');
+                doc.setFont('Roboto', 'normal');
                 doc.setTextColor(150, 150, 150);
                 doc.text(`${pageNum}`, 105, 290, { align: 'center' });
                 doc.setTextColor(0, 0, 0);
@@ -104,7 +104,7 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
                 doc.setFillColor(r, g, b);
                 doc.rect(14, y - 1, 3, 10, 'F');
                 doc.setFontSize(13);
-                doc.setFont('Atkinson', 'bold');
+                doc.setFont('Roboto', 'bold');
                 doc.setTextColor(r, g, b);
                 doc.text(`${icon ? icon + '  ' : ''}${text}`, 21, y + 6);
                 doc.setTextColor(0, 0, 0);
@@ -114,7 +114,7 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
               const addLine = (text: string) => {
                 checkPage();
                 doc.setFontSize(10);
-                doc.setFont('Atkinson', 'normal');
+                doc.setFont('Roboto', 'normal');
                 const lines = doc.splitTextToSize(text, 180);
                 doc.text(lines, 14, y);
                 y += lines.length * 5 + 2;
@@ -123,10 +123,10 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
               const addBoldLine = (text: string) => {
                 checkPage();
                 doc.setFontSize(10);
-                doc.setFont('Atkinson', 'bold');
+                doc.setFont('Roboto', 'bold');
                 const lines = doc.splitTextToSize(text, 180);
                 doc.text(lines, 14, y);
-                doc.setFont('Atkinson', 'normal');
+                doc.setFont('Roboto', 'normal');
                 y += lines.length * 5 + 2;
               };
 
@@ -155,14 +155,14 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
               doc.line(14, 280, 196, 280);
 
               doc.setFontSize(10);
-              doc.setFont('Atkinson', 'normal');
+              doc.setFont('Roboto', 'normal');
               doc.setTextColor(120, 120, 130);
               doc.text('Integralna mapa bytia', 105, 50, { align: 'center' });
               doc.setTextColor(0, 0, 0);
 
               // Hlavny nadpis s shadow efektom
               doc.setFontSize(28);
-              doc.setFont('Atkinson', 'bold');
+              doc.setFont('Roboto', 'bold');
               doc.setTextColor(79, 70, 229);
               doc.text('INTEGRALNY PROFIL', 105, 80, { align: 'center' });
               doc.setTextColor(0, 0, 0);
@@ -180,7 +180,7 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
               doc.roundedRect(45, 100, 120, 36, 3, 3, 'FD');
 
               doc.setFontSize(20);
-              doc.setFont('Atkinson', 'normal');
+              doc.setFont('Roboto', 'normal');
               doc.setTextColor(30, 27, 75);
               doc.text(client.name, 105, 116, { align: 'center' });
 
@@ -200,17 +200,17 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
               doc.setFillColor(79, 70, 229);
               doc.circle(105, 165, 15, 'F');
               doc.setFontSize(28);
-              doc.setFont('Atkinson', 'bold');
+              doc.setFont('Roboto', 'bold');
               doc.setTextColor(255, 255, 255);
               doc.text(String(lpNumber), 105, 173, { align: 'center' });
               doc.setTextColor(0, 0, 0);
 
               doc.setFontSize(11);
-              doc.setFont('Atkinson', 'normal');
+              doc.setFont('Roboto', 'normal');
               doc.setTextColor(79, 70, 229);
               doc.text(`Zivotne cislo - ${lpTitle}`, 105, 188, { align: 'center' });
               doc.setTextColor(0, 0, 0);
-              doc.setFont('Atkinson', 'normal');
+              doc.setFont('Roboto', 'normal');
 
               // Spodok titulnej strany
               doc.setFontSize(9);
@@ -263,10 +263,10 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
                   // Obsah – počet výskytov
                   if (items.length > 0) {
                     doc.setFontSize(10);
-                    doc.setFont('Atkinson', 'bold');
+                    doc.setFont('Roboto', 'bold');
                     doc.setTextColor(79, 70, 229);
                     doc.text(items.map(it => it.value).join(' '), cx + gridSize / 2 - 0.5, cy + gridSize / 2 + 2, { align: 'center' });
-                    doc.setFont('Atkinson', 'normal');
+                    doc.setFont('Roboto', 'normal');
                   }
                 });
               });
@@ -476,7 +476,7 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
               doc.line(14, y, 196, y);
               y += 8;
               doc.setFontSize(8);
-              doc.setFont('Atkinson', 'normal');
+              doc.setFont('Roboto', 'normal');
               doc.setTextColor(120, 120, 120);
               doc.text(`Vygenerovane: ${new Date().toLocaleDateString('sk-SK')} ${new Date().toLocaleTimeString('sk-SK')}`, 14, y);
               doc.text(`Integralna mapa bytia v${APP_VERSION}`, 196, y, { align: 'right' });

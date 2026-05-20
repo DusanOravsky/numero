@@ -405,34 +405,6 @@ export function NumerologyPage() {
                 />
               )}
 
-              {/* AI výklad numerológie (D1) */}
-              {profile && (
-                <AIChat
-                  context={{
-                    name: profile.name,
-                    gender: profile.gender,
-                    birth: {
-                      day: profile.birthDay,
-                      month: profile.birthMonth,
-                      year: profile.birthYear,
-                      hour: profile.birthHour,
-                      minute: profile.birthMinute,
-                      place: profile.birthPlace,
-                    },
-                    numerology: result,
-                    developmental: devResult || undefined,
-                    enneagram: enneagramResult || undefined,
-                  }}
-                  title={`✦ AI výklad numerológie (${numerologyMethod === 'characterological' ? 'Charakterová' : 'Vývojová'})`}
-                  initialUserMessage={
-                    numerologyMethod === 'characterological'
-                      ? `Vyhotov mi prosím detailný numerologický výklad podľa Charakterovej metódy (Robin Steinová). Zameraj sa na životné číslo ${result.lifePathNumber}, plné a prázdne roviny, izolované čísla a aktuálne ORV ${result.orv}.`
-                      : `Vyhotov mi prosím detailný numerologický výklad podľa Vývojovej metódy (Lívia Mičková). Zameraj sa na 4 zakrúžkované karmické čísla K1-K4${devResult ? ` (K1=${devResult.circled[0].value}, K2=${devResult.circled[1].value}, K3=${devResult.circled[2].value}, K4=${devResult.circled[3].value})` : ''} a polaritu ega.`
-                  }
-                  storageKey={`numerology-${profile.id}-${numerologyMethod}`}
-                />
-              )}
-
               {numerologyMethod === 'characterological' && lifePathInfo && (
                 <GlassCard delay={0.2}>
                   <h3 className="font-serif text-xl font-bold text-white mb-3">Výklad životného čísla {result.lifePathNumber}</h3>
@@ -632,6 +604,34 @@ export function NumerologyPage() {
                   </p>
                 </GlassCard>
               ) : null}
+
+              {/* AI výklad numerológie — posledný v overview */}
+              {profile && (
+                <AIChat
+                  context={{
+                    name: profile.name,
+                    gender: profile.gender,
+                    birth: {
+                      day: profile.birthDay,
+                      month: profile.birthMonth,
+                      year: profile.birthYear,
+                      hour: profile.birthHour,
+                      minute: profile.birthMinute,
+                      place: profile.birthPlace,
+                    },
+                    numerology: result,
+                    developmental: devResult || undefined,
+                    enneagram: enneagramResult || undefined,
+                  }}
+                  title={`✦ AI výklad numerológie (${numerologyMethod === 'characterological' ? 'Charakterová' : 'Vývojová'})`}
+                  initialUserMessage={
+                    numerologyMethod === 'characterological'
+                      ? `Vyhotov mi prosím detailný numerologický výklad podľa Charakterovej metódy (Robin Steinová). Zameraj sa na životné číslo ${result.lifePathNumber}, plné a prázdne roviny, izolované čísla a aktuálne ORV ${result.orv}.`
+                      : `Vyhotov mi prosím detailný numerologický výklad podľa Vývojovej metódy (Lívia Mičková). Zameraj sa na 4 zakrúžkované karmické čísla K1-K4${devResult ? ` (K1=${devResult.circled[0].value}, K2=${devResult.circled[1].value}, K3=${devResult.circled[2].value}, K4=${devResult.circled[3].value})` : ''} a polaritu ega.`
+                  }
+                  storageKey={`numerology-${profile.id}-${numerologyMethod}`}
+                />
+              )}
             </div>
           )}
 

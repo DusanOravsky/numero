@@ -8,6 +8,7 @@ import { calculateThetaHealing, getLevelName } from '../engine/thetaHealingEngin
 import type { ThetaHealingResult } from '../engine/thetaHealingEngine';
 import { reduceToSingle } from '../engine/numerologyEngine';
 import { motion } from 'framer-motion';
+import { AIChat } from '../components/AIChat';
 
 export function ThetaHealingPage() {
   const navigate = useNavigate();
@@ -193,6 +194,20 @@ export function ThetaHealingPage() {
               ))}
             </div>
           </GlassCard>
+
+          {/* AI výklad Theta Healing */}
+          {profile && (
+            <AIChat
+              context={{
+                name: profile.name,
+                gender: profile.gender,
+                birth: { day: profile.birthDay, month: profile.birthMonth, year: profile.birthYear },
+              }}
+              title="✦ AI výklad Theta Healing"
+              initialUserMessage={`Vyhotov mi prosím výklad mojich limitujúcich presvedčení z pohľadu Theta Healingu. Moje hlavné presvedčenia: ${result.primaryBeliefs.slice(0, 3).map(b => `"${b.belief}" (${b.level}, ${b.emotion})`).join('; ')}. Vysvetli ako tieto presvedčenia ovplyvňujú môj život a daj konkrétne kroky na ich transformáciu.`}
+              storageKey={`theta-${profile.id}`}
+            />
+          )}
 
           {manualResult && (
             <button

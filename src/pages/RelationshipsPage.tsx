@@ -758,15 +758,47 @@ export function RelationshipsPage() {
             </GlassCard>
           </div>
 
-          {/* Human Design composite comparison */}
+          {/* Human Design composite comparison + Gene Keys */}
           {(() => {
             const hd1 = calculateHumanDesign(parseInt(partner1.day), parseInt(partner1.month), parseInt(partner1.year), partner1.hour !== '' ? parseInt(partner1.hour) : 12, partner1.minute !== '' ? parseInt(partner1.minute) : 0);
             const hd2 = calculateHumanDesign(parseInt(partner2.day), parseInt(partner2.month), parseInt(partner2.year), partner2.hour !== '' ? parseInt(partner2.hour) : 12, partner2.minute !== '' ? parseInt(partner2.minute) : 0);
+            const gates1 = new Set([...hd1.personalityGates.map(g => g.gate), ...hd1.designGates.map(g => g.gate)]);
+            const gates2 = new Set([...hd2.personalityGates.map(g => g.gate), ...hd2.designGates.map(g => g.gate)]);
+            const partnerGK = [...gates1].filter(g => gates2.has(g)).slice(0, 4).map(g => getGeneKeyByGate(g)).filter(Boolean);
             return (
+              <>
               <GlassCard>
                 <h3 className="font-medium text-purple-300 mb-3">Human Design kompatibilita</h3>
                 <PartnerBodygraph result1={hd1} result2={hd2} name1={partner1.name} name2={partner2.name} />
               </GlassCard>
+              {partnerGK.length > 0 && (
+                <GlassCard>
+                  <h3 className="font-medium text-purple-300 mb-2">Spoločné Génové kľúče — transformačná cesta páru</h3>
+                  <p className="text-xs text-slate-400 mb-3">
+                    Brány aktívne u oboch partnerov odhaľujú spoločný príbeh: aký tieň spolu transformujete, aký dar spolu vytvárate, a čo je najvyšší potenciál vášho spojenia.
+                  </p>
+                  <div className="space-y-3">
+                    {partnerGK.map(gk => (
+                      <div key={gk!.gate} className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20 space-y-1.5">
+                        <p className="text-xs font-medium text-white">
+                          Brána {gk!.gate}: <span className="text-rose-300">{gk!.shadow}</span> → <span className="text-amber-300">{gk!.gift}</span> → <span className="text-emerald-300">{gk!.siddhi}</span>
+                        </p>
+                        <p className="text-[11px] text-rose-300"><strong>Tieň:</strong> {gk!.shadowDescription}</p>
+                        <p className="text-[11px] text-amber-300"><strong>Dar:</strong> {gk!.giftDescription}</p>
+                        <div className="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 mt-1">
+                          <p className="text-[10px] text-emerald-400 uppercase mb-0.5">Čo s tým prakticky</p>
+                          <p className="text-[11px] text-slate-300">
+                            Keď vidíte vo vzťahu tieň (<em>{gk!.shadow.toLowerCase()}</em>) — nie je to chyba partnera. Je to spoločné zrkadlo.
+                            Vedomá voľba: prejdite spolu k daru (<em>{gk!.gift.toLowerCase()}</em>).
+                            {gk!.nlpTechnique && <> <strong>Technika:</strong> {gk!.nlpTechnique} — {gk!.nlpDescription}</>}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </GlassCard>
+              )}
+              </>
             );
           })()}
 

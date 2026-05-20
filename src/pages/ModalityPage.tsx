@@ -399,6 +399,54 @@ export function ModalityPage() {
           <h3 className="text-sm font-semibold text-indigo-400 mb-2">Tip na harmonizáciu</h3>
           <p className="text-sm text-slate-300">{primaryTCM.balanceTip}</p>
         </div>
+
+        {/* Jedálniček */}
+        <div className="mt-4 grid md:grid-cols-2 gap-4">
+          <div className="p-3 rounded-xl bg-green-500/10 border border-green-500/20">
+            <h3 className="text-xs text-green-400 uppercase mb-2">Potraviny, ktoré ťa živia</h3>
+            <p className="text-xs text-slate-300">{primaryTCM.foods.nourishing}</p>
+          </div>
+          <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20">
+            <h3 className="text-xs text-red-400 uppercase mb-2">Potraviny, ktorým sa vyhýbaj</h3>
+            <p className="text-xs text-slate-300">{primaryTCM.foods.weakening}</p>
+          </div>
+        </div>
+
+        {/* Meridiánové hodiny */}
+        <div className="mt-4 p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/20">
+          <h3 className="text-xs text-cyan-400 uppercase mb-2">Orgánové hodiny (meridiány)</h3>
+          <p className="text-xs text-slate-300">{primaryTCM.meridianHours}</p>
+          <p className="text-xs text-slate-400 mt-1 italic">{primaryTCM.meridianNote}</p>
+        </div>
+
+        {/* Cyklus 5 elementov */}
+        <div className="mt-4 p-3 rounded-xl bg-purple-500/10 border border-purple-500/20">
+          <h3 className="text-xs text-purple-400 uppercase mb-2">Tvoje miesto v cykle 5 elementov</h3>
+          <div className="grid grid-cols-2 gap-2 text-xs text-slate-300">
+            <p><span className="text-emerald-300">Živí ťa:</span> {primaryTCM.generatedBy} → {primaryTCM.name}</p>
+            <p><span className="text-amber-300">Ty živíš:</span> {primaryTCM.name} → {primaryTCM.generates}</p>
+            <p><span className="text-rose-300">Kontroluje ťa:</span> {primaryTCM.controlledBy}</p>
+            <p><span className="text-indigo-300">Ty kontroluješ:</span> {primaryTCM.controls}</p>
+          </div>
+          <p className="text-[11px] text-slate-500 mt-2 italic">
+            Generujúci cyklus: Drevo → Oheň → Zem → Kov → Voda → Drevo. Kontrolný cyklus drží rovnováhu — bez neho by jeden element dominoval.
+          </p>
+        </div>
+
+        {/* Sezónne odporúčanie */}
+        <div className="mt-4 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
+          <h3 className="text-xs text-amber-400 uppercase mb-2">Sezónne odporúčanie ({primaryTCM.season})</h3>
+          <p className="text-xs text-slate-300">{primaryTCM.seasonalAdvice}</p>
+        </div>
+
+        {/* Cross-system prepojenie */}
+        <div className="mt-4 p-3 rounded-xl bg-indigo-500/10 border border-indigo-500/20">
+          <h3 className="text-xs text-indigo-400 uppercase mb-2">Prepojenie s čakrami</h3>
+          <p className="text-xs text-slate-300">
+            Element {primaryTCM.name} rezonuje s <strong>{primaryTCM.chakra}. čakrou</strong>.
+            Keď pracuješ na vyvážení tohto elementu (jedlo, dych, emócie), automaticky podporuješ aj túto čakru.
+          </p>
+        </div>
       </GlassCard>
 
       {/* Bach Flowers */}

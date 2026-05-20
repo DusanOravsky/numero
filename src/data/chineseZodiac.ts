@@ -34,7 +34,7 @@ export const CHINESE_ANIMALS: Record<string, ChineseAnimalInfo> = {
     animal: 'Tiger',
     traits: 'Odvážny, vášnivý, sebavedomý a magnetický. Prirodzený vodca s veľkou charizmou.',
     strengths: 'Odvaha, veľkorysosť, schopnosť inšpirovať ostatných. Chráni slabších.',
-    challenges: 'Impulzívnosť, netrpezlivosť, potreba dominovať. Môže byť aroganntný.',
+    challenges: 'Impulzívnosť, netrpezlivosť, potreba dominovať. Môže byť arogantný.',
     compatibility: 'Najlepšia harmónia s Koňom a Psom. Vyhýbať sa Opici.',
     advice: 'Tvoja sila je v službe, nie v kontrole. Počúvaj predtým, než konáš.',
   },
@@ -116,7 +116,7 @@ export const CHINESE_ELEMENTS: Record<string, ChineseElementInfo> = {
   'Kov': {
     element: 'Kov',
     description: 'Kov je energia štruktúry, disciplíny a spravodlivosti.',
-    personality: 'Rozhodný, silná vôľa, zmysel pre poriadok a pravidlá. Rezavý a jasný v komunikácii.',
+    personality: 'Rozhodný, silná vôľa, zmysel pre poriadok a pravidlá. Razantný a jasný v komunikácii.',
   },
   'Voda': {
     element: 'Voda',

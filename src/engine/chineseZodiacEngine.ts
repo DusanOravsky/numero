@@ -1,5 +1,6 @@
 export interface ChineseZodiacResult {
   animal: string;
+  animalGenitive: string;
   element: string;
   polarity: 'Yin' | 'Yang';
   animalEmoji: string;
@@ -24,6 +25,12 @@ const ELEMENT_EMOJIS: Record<string, string> = {
   'Kov': '🪙', 'Voda': '💧', 'Drevo': '🌳', 'Oheň': '🔥', 'Zem': '🏔',
 };
 
+const ANIMAL_GENITIVE: Record<string, string> = {
+  'Potkan': 'Potkana', 'Byvol': 'Byvola', 'Tiger': 'Tigra', 'Zajac': 'Zajaca',
+  'Drak': 'Draka', 'Had': 'Hada', 'Kôň': 'Koňa', 'Koza': 'Kozy',
+  'Opica': 'Opice', 'Kohút': 'Kohúta', 'Pes': 'Psa', 'Prasa': 'Prasaťa',
+};
+
 export function calculateChineseZodiac(birthYear: number): ChineseZodiacResult {
   const animalIdx = birthYear % 12;
   const elementIdx = birthYear % 10;
@@ -38,6 +45,7 @@ export function calculateChineseZodiac(birthYear: number): ChineseZodiacResult {
 
   return {
     animal,
+    animalGenitive: ANIMAL_GENITIVE[animal] || animal,
     element,
     polarity,
     animalEmoji: ANIMAL_EMOJIS[animal] || '',

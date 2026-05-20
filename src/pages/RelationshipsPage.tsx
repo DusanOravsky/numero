@@ -305,7 +305,32 @@ export function RelationshipsPage() {
     motherChildren: { child: PersonInput; result: ParentChildResult }[];
     siblingCompats: { child1: PersonInput; child2: PersonInput; compat: CompatibilityResult }[];
     familyNumbers: number[];
-  } | null>(null);
+  } | null>(() => {
+    if (!savedConst?.father || !savedConst?.mother || !isPersonValid(savedConst.father) || !isPersonValid(savedConst.mother)) return null;
+    const validKids = (savedConst.children || []).filter(isPersonValid);
+    if (validKids.length === 0) return null;
+    const fatherNum = calculateFullNumerology(parseInt(savedConst.father.day), parseInt(savedConst.father.month), parseInt(savedConst.father.year));
+    const motherNum = calculateFullNumerology(parseInt(savedConst.mother.day), parseInt(savedConst.mother.month), parseInt(savedConst.mother.year));
+    const partnerCompat = calculatePartnerCompatibility(fatherNum, motherNum);
+    const fatherChildren = validKids.map((child: PersonInput) => {
+      const childNum = calculateFullNumerology(parseInt(child.day), parseInt(child.month), parseInt(child.year));
+      return { child, result: calculateParentChild(fatherNum, childNum) };
+    });
+    const motherChildren = validKids.map((child: PersonInput) => {
+      const childNum = calculateFullNumerology(parseInt(child.day), parseInt(child.month), parseInt(child.year));
+      return { child, result: calculateParentChild(motherNum, childNum) };
+    });
+    const siblingCompats: { child1: PersonInput; child2: PersonInput; compat: CompatibilityResult }[] = [];
+    for (let i = 0; i < validKids.length; i++) {
+      for (let j = i + 1; j < validKids.length; j++) {
+        const n1 = calculateFullNumerology(parseInt(validKids[i].day), parseInt(validKids[i].month), parseInt(validKids[i].year));
+        const n2 = calculateFullNumerology(parseInt(validKids[j].day), parseInt(validKids[j].month), parseInt(validKids[j].year));
+        siblingCompats.push({ child1: validKids[i], child2: validKids[j], compat: calculatePartnerCompatibility(n1, n2) });
+      }
+    }
+    const familyNumbers = [fatherNum.lifePathNumber, motherNum.lifePathNumber, ...validKids.map((k: PersonInput) => calculateFullNumerology(parseInt(k.day), parseInt(k.month), parseInt(k.year)).lifePathNumber)];
+    return { partnerCompat, fatherChildren, motherChildren, siblingCompats, familyNumbers };
+  });
 
   const handleConstellationCalc = () => {
     if (!isPersonValid(constFather) || !isPersonValid(constMother)) return;

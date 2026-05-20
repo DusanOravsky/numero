@@ -483,23 +483,19 @@ export function RelationshipsPage() {
 
           {/* Tvoje čítanie */}
           <GlassCard>
-            <details open>
-              <summary className="cursor-pointer hover:text-indigo-300 transition-colors">
-                <span className="font-medium text-white">Tvoje čítanie — ako pracovať s partnerským výkladom</span>
-              </summary>
-              <div className="mt-3 space-y-2 text-sm text-slate-300">
-                <p>
-                  Kompatibilita <strong className="text-white">{compatibility.overallScore}%</strong> neznamená „dobrý" alebo „zlý" vzťah — hovorí o tom, koľko vecí vám ide prirodzene a kde musíte vedome pracovať.
-                </p>
-                <p>
-                  <strong>Silné stránky</strong> ({compatibility.strengths.length}) sú to, čo vás drží spolu bez námahy.
-                  <strong> Výzvy</strong> ({compatibility.challenges.length}) sú oblasti, kde sa musíte učiť — nie dôvod odísť, ale príležitosť rásť.
-                </p>
-                <p className="text-xs text-slate-500 italic">
-                  Žiadny vzťah nie je 100% — rozdielnosti sú motor rastu. Dôležité je, či ste obaja ochotní na nich vedome pracovať.
-                </p>
-              </div>
-            </details>
+            <h3 className="font-medium text-white mb-3">Tvoje čítanie — ako pracovať s partnerským výkladom</h3>
+            <div className="space-y-2 text-sm text-slate-300">
+              <p>
+                Kompatibilita <strong className="text-white">{compatibility.overallScore}%</strong> neznamená „dobrý" alebo „zlý" vzťah — hovorí o tom, koľko vecí vám ide prirodzene a kde musíte vedome pracovať.
+              </p>
+              <p>
+                <strong>Silné stránky</strong> ({compatibility.strengths.length}) sú to, čo vás drží spolu bez námahy.
+                <strong> Výzvy</strong> ({compatibility.challenges.length}) sú oblasti, kde sa musíte učiť — nie dôvod odísť, ale príležitosť rásť.
+              </p>
+              <p className="text-xs text-slate-500 italic">
+                Žiadny vzťah nie je 100% — rozdielnosti sú motor rastu. Dôležité je, či ste obaja ochotní na nich vedome pracovať.
+              </p>
+            </div>
           </GlassCard>
 
           <GlassCard glow>
@@ -957,11 +953,8 @@ export function RelationshipsPage() {
             </button>
           </div>
           <GlassCard>
-            <details open>
-              <summary className="cursor-pointer hover:text-indigo-300 transition-colors">
-                <span className="font-medium text-white">Tvoje čítanie — ako pracovať s astro kompatibilitou</span>
-              </summary>
-              <div className="mt-3 space-y-3 text-xs text-slate-400">
+            <h3 className="font-medium text-white mb-3">Tvoje čítanie — ako pracovať s astro kompatibilitou</h3>
+            <div className="space-y-3 text-xs text-slate-400">
                 <p>Astro kompatibilita porovnáva <strong className="text-white">elementy</strong> vašich planét — nie znamenia samotné. Dva ľudia s rovnakým elementom (Oheň+Oheň) sa rozumejú intuitívne, ale môžu sa „spáliť". Komplementárne elementy (Oheň+Vzduch, Zem+Voda) sa dopĺňajú.</p>
                 <div className="grid grid-cols-2 gap-2">
                   <div className="p-2 rounded-lg bg-amber-500/10">
@@ -982,8 +975,7 @@ export function RelationshipsPage() {
                   </div>
                 </div>
                 <p className="italic text-slate-500">Nízke skóre neznamená „nevhodný pár" — znamená „vyžaduje vedomú prácu". Najlepšie vzťahy často nie sú najľahšie.</p>
-              </div>
-            </details>
+            </div>
           </GlassCard>
 
           <GlassCard glow>
@@ -1323,11 +1315,8 @@ export function RelationshipsPage() {
           </div>
           {/* Tvoje čítanie */}
           <GlassCard>
-            <details open>
-              <summary className="cursor-pointer hover:text-indigo-300 transition-colors">
-                <span className="font-medium text-white">Tvoje čítanie — ako pracovať s rodinnou konšteláciou</span>
-              </summary>
-              <div className="mt-3 space-y-2 text-sm text-slate-300">
+            <h3 className="font-medium text-white mb-3">Tvoje čítanie — ako pracovať s rodinnou konšteláciou</h3>
+            <div className="space-y-2 text-sm text-slate-300">
                 <p>
                   Rodinná konštelácia ukazuje <strong className="text-white">energetickú mapu celej rodiny</strong> — kto komu rozumie prirodzene, kde sú trenia a aké lekcie si navzájom prinášate.
                 </p>
@@ -1336,13 +1325,18 @@ export function RelationshipsPage() {
                   Každé dieťa má <strong>inú dynamiku</strong> s otcom a s matkou — nie je to o favorizovaní, ale o tom, kto mu čo najlepšie odovzdá.
                 </p>
                 <p>
-                  <strong>ŽČ dieťaťa</strong> ukazuje jeho životnú tému. <strong>K3</strong> je jeho poslanie. <strong>Kozmický vek</strong> (Vodnár/Ryby) hovorí o generačnom nastavení — deti vo Veku Vodnára (po r. 2000) majú iné vnímanie sveta než rodičia v Ryby.
+                  <strong>ŽČ dieťaťa</strong> ukazuje jeho životnú tému. <strong>K3</strong> je jeho poslanie. <strong>Kozmický vek</strong> (Vodnár/Ryby) hovorí o generačnom nastavení — deti vo Veku Vodnára (po r. 2000) majú iné vnímanie sveta než rodičia vo Veku Rýb.
+                </p>
+                <p>
+                  <strong>Medzi súrodencami</strong> platí: rovnaké životné číslo = silné porozumenie ale aj rivalita. Rôzne čísla = dopĺňanie sa, ale treba viac komunikácie. Karmické dlhy dieťaťa ukazujú hlbšie lekcie, pri ktorých potrebuje vašu trpezlivosť — nie opravu.
+                </p>
+                <p>
+                  <strong>Rodinné číslo</strong> (súčet všetkých ŽČ) hovorí o spoločnej téme celej rodiny — čo ste tu spolu dosiahnuť. Keď sa všetky ŽČ líšia, rodina pokrýva široké spektrum energií a každý prináša niečo unikátne.
                 </p>
                 <p className="text-xs text-slate-500 italic">
                   Nízka kompatibilita medzi rodičom a dieťaťom nie je problém — je to signál, že toto dieťa vás učí niečo, čo ste nevedeli. Najväčší rast je tam, kde je najväčšie trenie.
                 </p>
-              </div>
-            </details>
+            </div>
           </GlassCard>
 
           {/* Celkový rodinný profil */}
@@ -1458,18 +1452,32 @@ export function RelationshipsPage() {
           {constellationResult.siblingCompats.length > 0 && (
             <GlassCard>
               <h3 className="font-medium text-white mb-3">Vzťahy medzi súrodencami</h3>
+              <p className="text-xs text-slate-500 mb-3">
+                Súrodenecký vzťah je často najdlhší vzťah v živote. Dynamika medzi deťmi ovplyvňuje ich sebaobraz, sociálne zručnosti a schopnosť riešiť konflikty v dospelosti.
+              </p>
               <div className="space-y-3">
-                {constellationResult.siblingCompats.map(({ child1, child2, compat }, idx) => (
-                  <div key={idx} className="p-3 rounded-xl glass-light">
-                    <div className="flex items-center justify-between mb-1">
+                {constellationResult.siblingCompats.map(({ child1, child2, compat }, idx) => {
+                  const n1 = calculateFullNumerology(parseInt(child1.day), parseInt(child1.month), parseInt(child1.year));
+                  const n2 = calculateFullNumerology(parseInt(child2.day), parseInt(child2.month), parseInt(child2.year));
+                  const relationshipGoal = reduceToSingle(n1.lifePathNumber + n2.lifePathNumber);
+                  return (
+                  <div key={idx} className="p-3 rounded-xl glass-light space-y-2">
+                    <div className="flex items-center justify-between">
                       <span className="text-sm text-white">{child1.name} & {child2.name}</span>
                       <span className="text-sm font-bold text-indigo-300">{compat.overallScore}%</span>
                     </div>
+                    <p className="text-[11px] text-slate-400">
+                      ŽČ {n1.lifePathNumber} + {n2.lifePathNumber} → cieľ vzťahu: <strong className="text-indigo-300">{relationshipGoal}</strong>
+                      {n1.age !== n2.age && <> · <span className="text-amber-300">Rôzny kozmický vek</span> — odlišné generačné vnímanie</>}
+                    </p>
                     <p className="text-xs text-slate-400">{compat.lifePathCompatibility.description}</p>
-                    {compat.strengths[0] && <p className="text-xs text-emerald-300 mt-1">+ {compat.strengths[0]}</p>}
-                    {compat.challenges[0] && <p className="text-xs text-amber-300 mt-1">! {compat.challenges[0]}</p>}
+                    {compat.strengths[0] && <p className="text-xs text-emerald-300">+ {compat.strengths[0]}</p>}
+                    {compat.strengths[1] && <p className="text-xs text-emerald-300">+ {compat.strengths[1]}</p>}
+                    {compat.challenges[0] && <p className="text-xs text-amber-300">! {compat.challenges[0]}</p>}
+                    {compat.challenges[1] && <p className="text-xs text-amber-300">! {compat.challenges[1]}</p>}
                   </div>
-                ))}
+                  );
+                })}
               </div>
             </GlassCard>
           )}

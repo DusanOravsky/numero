@@ -43,16 +43,39 @@ export function EnneagramTab({ result, enneagramResult, devResult, numerologyMet
         </div>
       </GlassCard>
 
-      {/* Čo to znamená pre teba — zrozumiteľné vysvetlenie */}
-      <GlassCard>
-        <h3 className="font-medium text-white mb-3">Čo to pre teba znamená</h3>
-        <div className="space-y-4 text-sm text-slate-300">
+      {/* Tvoje čítanie — personalizovaný sprievodca */}
+      <GlassCard glow>
+        <h3 className="font-medium text-white mb-3">Tvoje čítanie — ako pracovať s Archetypom a Enneagramom</h3>
+        <div className="space-y-3 text-sm text-slate-300">
           <p>
-            Tvoj enneagram archetyp <strong className="text-white">{typeData.name}</strong> odhaľuje tvoju <strong className="text-emerald-300">základnú motiváciu</strong> — to, čo ťa poháňa zvnútra, aj keď si to neuvedomuješ. Nie je to o tom, čo robíš, ale <em>prečo</em> to robíš.
+            Si typ <strong className="text-white">{enneagramResult.coreType} — {typeData.name}</strong>.
+            Tvoja základná motivácia: <em>{typeData.motivation.toLowerCase()}</em>.
+            Tvoj základný strach: <em>{typeData.fear.toLowerCase()}</em>.
           </p>
-          <p>
-            Tento systém ti pomáha pochopiť vzorce, ktoré sa opakujú v tvojom živote — prečo sa v určitých situáciách správaš určitým spôsobom, a čo s tým môžeš vedome robiť.
-          </p>
+
+          <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
+            <p className="text-xs text-emerald-400 font-semibold mb-1">Tvoj smer rastu → typ {enneagramResult.integrationDirection} ({integrationData?.name})</p>
+            <p className="text-xs text-slate-300">
+              Keď si v pohode a vedome pracuješ na sebe, smeruješ sem. Toto je tvoja „vyššia verzia".
+              {typeData.growthPath.split('.')[0]}.
+            </p>
+          </div>
+
+          <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20">
+            <p className="text-xs text-rose-400 font-semibold mb-1">Tvoj stresový smer → typ {enneagramResult.disintegrationDirection} ({disintegrationData?.name})</p>
+            <p className="text-xs text-slate-300">
+              Pod tlakom nevedome skĺzneš sem. Nie je to zlyhanie — je to signál že niečo nie je OK.
+              Keď si to všimneš, môžeš sa vedome vrátiť.
+            </p>
+          </div>
+
+          <div className="p-3 rounded-xl bg-slate-500/10 border border-slate-500/20">
+            <p className="text-[10px] text-slate-500 uppercase mb-1">Praktický tip</p>
+            <p className="text-xs text-slate-300">
+              Dnes si všímaj: kedy konáš z motivácie ({typeData.motivation.split('.')[0].toLowerCase()}) a kedy zo strachu ({typeData.fear.split('.')[0].toLowerCase()}).
+              Stačí pozorovať — samotné uvedomenie je prvý krok zmeny.
+            </p>
+          </div>
         </div>
       </GlassCard>
 

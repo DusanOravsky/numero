@@ -214,11 +214,13 @@ function loadSavedPartners(): { p1: PersonInput; p2: PersonInput } | null {
 
 export function RelationshipsPage() {
   const saved = loadSavedPartners();
+  const savedFamily = (() => { try { const r = localStorage.getItem('relationships-family'); return r ? JSON.parse(r) : null; } catch { return null; } })();
+  const savedAstro = (() => { try { const r = localStorage.getItem('relationships-astro'); return r ? JSON.parse(r) : null; } catch { return null; } })();
   const [mode, setMode] = useState<Mode>('partner');
   const [partner1, setPartner1] = useState<PersonInput>(saved?.p1 || emptyPerson());
   const [partner2, setPartner2] = useState<PersonInput>(saved?.p2 || emptyPerson());
-  const [parent, setParent] = useState<PersonInput>(emptyPerson());
-  const [children, setChildren] = useState<PersonInput[]>([emptyPerson()]);
+  const [parent, setParent] = useState<PersonInput>(savedFamily?.parent || emptyPerson());
+  const [children, setChildren] = useState<PersonInput[]>(savedFamily?.children?.length ? savedFamily.children : [emptyPerson()]);
   const [compatibility, setCompatibility] = useState<CompatibilityResult | null>(() => {
     if (saved?.p1 && saved?.p2 && isPersonValid(saved.p1) && isPersonValid(saved.p2)) {
       const p1 = calculateFullNumerology(parseInt(saved.p1.day), parseInt(saved.p1.month), parseInt(saved.p1.year));
@@ -228,8 +230,8 @@ export function RelationshipsPage() {
     return null;
   });
   const [familyResults, setFamilyResults] = useState<{ child: PersonInput; result: ParentChildResult }[] | null>(null);
-  const [astroPartner1, setAstroPartner1] = useState<AstroPersonInput>(emptyAstroPerson());
-  const [astroPartner2, setAstroPartner2] = useState<AstroPersonInput>(emptyAstroPerson());
+  const [astroPartner1, setAstroPartner1] = useState<AstroPersonInput>(savedAstro?.p1 || emptyAstroPerson());
+  const [astroPartner2, setAstroPartner2] = useState<AstroPersonInput>(savedAstro?.p2 || emptyAstroPerson());
   const [synastryResult, setSynastryResult] = useState<SynastryResult | null>(null);
 
   // Rodinná konštelácia
@@ -304,6 +306,7 @@ export function RelationshipsPage() {
       city2?.lat || 48.15, city2?.lon || 17.11
     );
     setSynastryResult(result);
+    localStorage.setItem('relationships-astro', JSON.stringify({ p1: astroPartner1, p2: astroPartner2 }));
   };
 
   const handleFamilyCalc = () => {
@@ -317,6 +320,7 @@ export function RelationshipsPage() {
       return { child, result: calculateParentChild(parentNum, childNum) };
     });
     setFamilyResults(results);
+    localStorage.setItem('relationships-family', JSON.stringify({ parent, children: validChildren }));
   };
 
   const addChild = () => setChildren([...children, emptyPerson()]);

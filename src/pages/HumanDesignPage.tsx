@@ -323,6 +323,36 @@ export function HumanDesignPage() {
             </GlassCard>
           </div>
 
+          {/* Variable — 4 šípky (PHS, Environment, Motivation, Perspective) */}
+          <GlassCard>
+            <h3 className="font-medium text-white mb-3">Variable — strava, prostredie, motivácia</h3>
+            <p className="text-xs text-slate-500 mb-4">
+              4 „šípky" v tvojom HD grafe ukazujú ako tvoje telo a myseľ optimálne fungujú — aké jedlo, prostredie a spôsob myslenia ti vyhovuje.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="p-3 rounded-xl bg-green-500/10 border border-green-500/20">
+                <p className="text-xs text-green-400 uppercase mb-1">Strava (PHS Digestion)</p>
+                <p className="text-sm text-white font-medium">{result.variable.digestion.name}</p>
+                <p className="text-[11px] text-slate-400 mt-1">{result.variable.digestion.description}</p>
+              </div>
+              <div className="p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/20">
+                <p className="text-xs text-cyan-400 uppercase mb-1">Prostredie (Environment)</p>
+                <p className="text-sm text-white font-medium">{result.variable.environment.name}</p>
+                <p className="text-[11px] text-slate-400 mt-1">{result.variable.environment.description}</p>
+              </div>
+              <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
+                <p className="text-xs text-amber-400 uppercase mb-1">Motivácia (čo ťa poháňa)</p>
+                <p className="text-sm text-white font-medium">{result.variable.motivation.name}</p>
+                <p className="text-[11px] text-slate-400 mt-1">{result.variable.motivation.description}</p>
+              </div>
+              <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20">
+                <p className="text-xs text-purple-400 uppercase mb-1">Perspektíva (ako vidíš svet)</p>
+                <p className="text-sm text-white font-medium">{result.variable.perspective.name}</p>
+                <p className="text-[11px] text-slate-400 mt-1">{result.variable.perspective.description}</p>
+              </div>
+            </div>
+          </GlassCard>
+
           {/* Ako čítať bodygraph — vysvetlenie pre laikov */}
           <GlassCard>
             <h3 className="font-medium text-white mb-3">Ako čítať bodygraph</h3>
@@ -733,36 +763,6 @@ export function HumanDesignPage() {
               </>
             );
           })()}
-
-          {/* Variable — 4 šípky (PHS, Environment, Motivation, Perspective) */}
-          <GlassCard>
-            <h3 className="font-medium text-white mb-3">Variable — strava, prostredie, motivácia</h3>
-            <p className="text-xs text-slate-500 mb-4">
-              4 „šípky" v tvojom HD grafe ukazujú ako tvoje telo a myseľ optimálne fungujú — aké jedlo, prostredie a spôsob myslenia ti vyhovuje.
-            </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div className="p-3 rounded-xl bg-green-500/10 border border-green-500/20">
-                <p className="text-xs text-green-400 uppercase mb-1">Strava (PHS Digestion)</p>
-                <p className="text-sm text-white font-medium">{result.variable.digestion.name}</p>
-                <p className="text-[11px] text-slate-400 mt-1">{result.variable.digestion.description}</p>
-              </div>
-              <div className="p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/20">
-                <p className="text-xs text-cyan-400 uppercase mb-1">Prostredie (Environment)</p>
-                <p className="text-sm text-white font-medium">{result.variable.environment.name}</p>
-                <p className="text-[11px] text-slate-400 mt-1">{result.variable.environment.description}</p>
-              </div>
-              <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
-                <p className="text-xs text-amber-400 uppercase mb-1">Motivácia (čo ťa poháňa)</p>
-                <p className="text-sm text-white font-medium">{result.variable.motivation.name}</p>
-                <p className="text-[11px] text-slate-400 mt-1">{result.variable.motivation.description}</p>
-              </div>
-              <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20">
-                <p className="text-xs text-purple-400 uppercase mb-1">Perspektíva (ako vidíš svet)</p>
-                <p className="text-sm text-white font-medium">{result.variable.perspective.name}</p>
-                <p className="text-[11px] text-slate-400 mt-1">{result.variable.perspective.description}</p>
-              </div>
-            </div>
-          </GlassCard>
 
           {/* AI výklad Human Design */}
           {subject && (

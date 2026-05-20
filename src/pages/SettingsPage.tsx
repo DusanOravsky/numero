@@ -443,6 +443,38 @@ export function SettingsPage() {
       </GlassCard>
 
       <GlassCard>
+        <h3 className="font-medium text-white mb-3">Denné pripomenutie</h3>
+        <p className="text-xs text-slate-400 mb-3">
+          Pri otvorení appky zobrazí notifikáciu s dennou energiou (ODV). Funguje keď máš appku otvorenú alebo nainštalovanú na ploche.
+        </p>
+        <button
+          onClick={() => {
+            const current = localStorage.getItem('daily-notification') === 'true';
+            if (!current) {
+              Notification.requestPermission().then(perm => {
+                if (perm === 'granted') {
+                  localStorage.setItem('daily-notification', 'true');
+                  alert('Denné pripomenutie zapnuté! Pri každom otvorení appky dostaneš notifikáciu.');
+                } else {
+                  alert('Notifikácie boli zamietnuté v prehliadači. Povoľ ich v nastaveniach stránky.');
+                }
+              });
+            } else {
+              localStorage.removeItem('daily-notification');
+              alert('Denné pripomenutie vypnuté.');
+            }
+          }}
+          className={`w-full py-2.5 rounded-xl text-sm font-medium ${
+            localStorage.getItem('daily-notification') === 'true'
+              ? 'bg-emerald-600 text-white hover:bg-emerald-500'
+              : 'bg-slate-600 text-white hover:bg-slate-500'
+          }`}
+        >
+          {localStorage.getItem('daily-notification') === 'true' ? '✓ Zapnuté — vypnúť' : 'Zapnúť denné pripomenutie'}
+        </button>
+      </GlassCard>
+
+      <GlassCard>
         <h3 className="font-medium text-white mb-3">O aplikácii</h3>
         <div className="space-y-2 text-sm text-slate-400 mb-4">
           <p><strong className="text-slate-300">Integrálna mapa bytia</strong></p>

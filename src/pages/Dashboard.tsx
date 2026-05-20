@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
@@ -28,6 +28,32 @@ export function Dashboard() {
   const profile = profiles.find(p => p.id === activeProfileId);
 
   const today = new Date();
+
+  // Lokálna notifikácia — raz denne pri otvorení appky
+  useEffect(() => {
+    if (!profile) return;
+    const enabled = localStorage.getItem('daily-notification') === 'true';
+    if (!enabled) return;
+    if (Notification.permission !== 'granted') return;
+
+    const todayKey = today.toISOString().split('T')[0];
+    const lastNotif = localStorage.getItem('last-daily-notif');
+    if (lastNotif === todayKey) return;
+
+    localStorage.setItem('last-daily-notif', todayKey);
+
+    const day = today.getDate();
+    const month = today.getMonth() + 1;
+    const year = today.getFullYear();
+    const orv = calculateORV(profile.birthDay, profile.birthMonth, year, month, day);
+    const odv = calculateODV(orv, day, month);
+    const desc = orvDescriptions[odv]?.title || '';
+
+    new Notification('Integrálna mapa bytia', {
+      body: `Dnešná energia (ODV ${odv}): ${desc}`,
+      icon: `${import.meta.env.BASE_URL}icons/logo.svg`,
+    });
+  }, [profile, today]);
   const currentDay = today.getDate();
   const currentMonth = today.getMonth() + 1;
   const currentYear = today.getFullYear();

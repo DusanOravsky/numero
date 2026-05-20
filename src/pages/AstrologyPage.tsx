@@ -461,6 +461,13 @@ export function AstrologyPage() {
                     </div>
                   </div>
 
+                  {profile?.birthMonth && profile.birthMonth <= 2 && (
+                    <p className="text-[11px] text-amber-400 italic mb-3">
+                      Pozor: Čínsky nový rok začína medzi 21. januárom a 20. februárom. Ak si narodený v januári/februári,
+                      tvoje zviera môže byť z predošlého roku. Overiť presný dátum nového roka pre rok {birthYear}.
+                    </p>
+                  )}
+
                   <div className="space-y-3">
                     <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20">
                       <p className="text-xs text-red-400 uppercase mb-1">Povaha {chinese.animal}</p>

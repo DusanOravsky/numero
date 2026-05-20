@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSubject } from '../hooks/useSubject';
 import { GlassCard } from '../components/GlassCard';
+import { AIChat } from '../components/AIChat';
 import { calculateFullNumerology, getGridCount } from '../engine/numerologyEngine';
 import { calculateAstrology } from '../engine/astrologyEngine';
 import { calculateHumanDesign } from '../engine/humanDesignEngine';
@@ -441,6 +442,30 @@ export function ModalityPage() {
           Bachove kvetové esencie sú jemná energetická podpora. Nie sú náhradou za odbornú lekársku starostlivosť.
         </p>
       </GlassCard>
+
+      {/* AI výklad modalít */}
+      {profile && (
+        <AIChat
+          context={{
+            name: profile.name,
+            gender: profile.gender,
+            birth: {
+              day: profile.birthDay,
+              month: profile.birthMonth,
+              year: profile.birthYear,
+              hour: profile.birthHour,
+              minute: profile.birthMinute,
+              place: profile.birthPlace,
+            },
+            numerology: calculateFullNumerology(profile.birthDay, profile.birthMonth, profile.birthYear),
+            dosha: { primary: data.dosha.primary, secondary: data.dosha.secondary },
+            tcm: { primary: data.tcm.primary, secondary: data.tcm.secondary },
+          }}
+          title="✦ AI výklad modalít (Ayurvéda / TCM / Bach)"
+          initialUserMessage={`Vyhotov mi prosím výklad mojich modalít. Primárna dóša: ${primaryDosha.name} (${primaryDosha.element}). TCM element: ${primaryTCM.name} (orgán: ${primaryTCM.organ}, emócia: ${primaryTCM.emotion}). Blokované čakry: ${data.blockedChakras.length > 0 ? data.blockedChakras.join(', ') : 'žiadne'}. Prepoj tieto systémy do jedného príbehu a daj praktické odporúčania pre jedlo, pohyb a emočnú hygienu.`}
+          storageKey={`modality-${profile.id}`}
+        />
+      )}
     </div>
   );
 }

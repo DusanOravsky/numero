@@ -144,6 +144,29 @@ export function ComparePage() {
 
       {computed.length >= 2 && (
         <GlassCard>
+          <details open>
+            <summary className="cursor-pointer hover:text-indigo-300 transition-colors">
+              <span className="font-medium text-white">Ako čítať porovnanie</span>
+            </summary>
+            <div className="mt-3 space-y-3 mb-4">
+              <p className="text-xs text-slate-400">
+                Porovnanie ukazuje rovnaké systémy vedľa seba. Hľadaj kde sa ľudia dopĺňajú (rôzne energie = komplementarita) a kde sa zhodujú (rovnaké = rezonancia, ale aj trenie).
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <div className="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+                  <p className="text-xs text-emerald-300 font-semibold mb-0.5">Zhody (rovnaké hodnoty)</p>
+                  <p className="text-[11px] text-slate-400">Rovnaký element, typ alebo ŽČ = ľudia si rozumejú intuitívne, ale môžu mať rovnaké slepé miesta.</p>
+                </div>
+                <div className="p-2 rounded-lg bg-amber-500/10 border border-amber-500/20">
+                  <p className="text-xs text-amber-300 font-semibold mb-0.5">Rozdiely (komplementarita)</p>
+                  <p className="text-[11px] text-slate-400">Rôzne typy/elementy = dopĺňajú sa, ale vyžaduje to porozumenie. Jeden má čo druhému chýba.</p>
+                </div>
+              </div>
+              <p className="text-[11px] text-slate-500 italic">
+                Tip: Najdôležitejšie riadky sú Životné číslo, HD typ + autorita, a dominantný element. Zvyšok je kontext.
+              </p>
+            </div>
+          </details>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>

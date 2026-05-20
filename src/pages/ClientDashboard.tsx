@@ -80,6 +80,28 @@ export function ClientDashboard() {
         </div>
       </div>
 
+      {/* Quick summary — 3 najdôležitejšie veci na konzultáciu */}
+      <div className="p-4 rounded-xl bg-gradient-to-r from-indigo-500/10 to-violet-500/10 border border-indigo-500/20">
+        <p className="text-xs text-indigo-400 font-semibold uppercase tracking-wide mb-3">3 veci na konzultáciu</p>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="p-3 rounded-lg bg-white/5">
+            <p className="text-xs text-slate-500 mb-0.5">Kto je v jadre</p>
+            <p className="text-sm font-medium text-white">ŽČ {numerology.lifePathNumber} — {humanDesign.type}</p>
+            <p className="text-[11px] text-slate-400 mt-1">Stratégia: „{humanDesign.strategy.toLowerCase()}"</p>
+          </div>
+          <div className="p-3 rounded-lg bg-white/5">
+            <p className="text-xs text-slate-500 mb-0.5">Ako rozhoduje</p>
+            <p className="text-sm font-medium text-white">{humanDesign.authority}</p>
+            <p className="text-[11px] text-slate-400 mt-1">Nie-ja téma: „{humanDesign.notSelfTheme.toLowerCase()}"</p>
+          </div>
+          <div className="p-3 rounded-lg bg-white/5">
+            <p className="text-xs text-slate-500 mb-0.5">Aktuálna energia</p>
+            <p className="text-sm font-medium text-white">{astrology.sunSign.name} / {astrology.moonSign.name}</p>
+            <p className="text-[11px] text-slate-400 mt-1">Element: {astrology.dominantElement}</p>
+          </div>
+        </div>
+      </div>
+
       <ClientSummary
         clientName={client.name}
         birthDay={client.birthDay}

@@ -196,6 +196,38 @@ export function Dashboard() {
         />
       </div>
 
+      {/* JEDNA VEC NA DNES — syntetizovaná akcia zo všetkých systémov */}
+      {fullResults && orvDescriptions[odv] && (
+        <GlassCard glow delay={0.33}>
+          <div className="flex items-start gap-4">
+            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center text-2xl shrink-0">
+              🎯
+            </div>
+            <div className="flex-1">
+              <h3 className="font-medium text-white mb-1">Jedna vec na dnes</h3>
+              <p className="text-sm text-slate-300">
+                {(() => {
+                  const odvTheme = orvDescriptions[odv]?.title || '';
+                  const enneaGrowth = fullResults.enneagram
+                    ? enneagramTypes[fullResults.enneagram.integrationDirection]?.name
+                    : null;
+                  const hdStrategy = fullResults.humanDesign?.strategy?.toLowerCase() || '';
+
+                  if (odv <= 3) return `Dnes je deň ${odvTheme.toLowerCase()}. ${enneaGrowth ? `Vyskúšaj sa priblížiť k energii „${enneaGrowth}". ` : ''}Pamätaj: tvoja stratégia je „${hdStrategy}".`;
+                  if (odv <= 6) return `Energia dňa: ${odvTheme.toLowerCase()}. ${enneaGrowth ? `Smeruj k „${enneaGrowth}" — ` : ''}dnes je ideálny čas na jednu konkrétnu vec z tejto oblasti. Nemusíš veľa — stačí krok.`;
+                  return `Dnes je deň ${odvTheme.toLowerCase()}. ${enneaGrowth ? `Integračný smer „${enneaGrowth}" ti pomôže. ` : ''}Stratégia: „${hdStrategy}" — počúvaj telo, nie hlavu.`;
+                })()}
+              </p>
+              {dailyRituals[odv] && (
+                <p className="text-xs text-amber-300 mt-2 italic">
+                  Prax: {dailyRituals[odv].morning}
+                </p>
+              )}
+            </div>
+          </div>
+        </GlassCard>
+      )}
+
       {orvDescriptions[orv] && (
         <GlassCard delay={0.35}>
           <div className="flex items-start gap-4">

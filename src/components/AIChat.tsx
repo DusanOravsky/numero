@@ -238,7 +238,7 @@ export function AIChat({ context, title = 'AI integrálny výklad', initialUserM
       {messages.length === 0 && !streaming && (
         <div className="text-center py-6">
           <p className="text-sm text-slate-400 mb-4">
-            Vygeneruj uceleny duchovny vyklad spajajuci numerologiu, astrologiu, Human Design, Kabalu a Theta Healing do jedneho prirodzene napisaneho textu — a potom sa AI mozes pytat na cokolvek.
+            Vygeneruj ucelený duchovný výklad spájajúci numerológiu, astrológiu, Human Design, Kabalu a Theta Healing do jedného prirodzene napísaného textu — a potom sa AI môžeš pýtať na čokoľvek.
           </p>
           <button
             onClick={startConversation}

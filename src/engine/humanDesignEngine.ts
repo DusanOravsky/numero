@@ -9,8 +9,17 @@ export type HDNotSelfTheme = 'Hnev' | 'Frustrácia' | 'Frustrácia a hnev' | 'Ho
 export interface GateActivation {
   gate: number;
   line: number;
+  color: number;
+  tone: number;
   planet: string;
   type: 'personality' | 'design';
+}
+
+export interface HDVariable {
+  digestion: { color: number; tone: number; name: string; description: string };
+  environment: { color: number; tone: number; name: string; description: string };
+  motivation: { color: number; tone: number; name: string; description: string };
+  perspective: { color: number; tone: number; name: string; description: string };
 }
 
 export interface HDChannel {
@@ -43,6 +52,7 @@ export interface HumanDesignResult {
   incarnationCross: string;
   /** Typ definície: koľko izolovaných oblastí spojených centier máme v grafe. */
   definition: HDDefinition;
+  variable: HDVariable;
 }
 
 const GATE_ORDER: number[] = [
@@ -232,11 +242,18 @@ const CROSS_NAME_BY_SUN: Record<number, string> = {
   61: 'Kríž Tajomstva', 62: 'Kríž Detailov', 63: 'Kríž Pochybností', 64: 'Kríž Zmätku',
 };
 
-function degreeToGateLine(eclipticLongitude: number): { gate: number; line: number } {
+const COLOR_SIZE = LINE_SIZE / 6;
+const TONE_SIZE = COLOR_SIZE / 6;
+
+function degreeToGateLine(eclipticLongitude: number): { gate: number; line: number; color: number; tone: number } {
   const adjusted = ((eclipticLongitude - HD_WHEEL_START) % 360 + 360) % 360;
   const index = Math.floor(adjusted / GATE_SIZE);
   const line = Math.floor((adjusted % GATE_SIZE) / LINE_SIZE) + 1;
-  return { gate: GATE_ORDER[Math.min(index, 63)], line: Math.min(line, 6) };
+  const withinLine = (adjusted % GATE_SIZE) % LINE_SIZE;
+  const color = Math.floor(withinLine / COLOR_SIZE) + 1;
+  const withinColor = withinLine % COLOR_SIZE;
+  const tone = Math.floor(withinColor / TONE_SIZE) + 1;
+  return { gate: GATE_ORDER[Math.min(index, 63)], line: Math.min(line, 6), color: Math.min(color, 6), tone: Math.min(tone, 6) };
 }
 
 function getSunLongitude(date: Date): number {
@@ -334,8 +351,8 @@ function getActivations(date: Date, type: 'personality' | 'design'): GateActivat
       lon = getPlanetLongitude(p.body as Astronomy.Body, date);
     }
 
-    const { gate, line } = degreeToGateLine(lon);
-    activations.push({ gate, line, planet: p.name, type });
+    const { gate, line, color, tone } = degreeToGateLine(lon);
+    activations.push({ gate, line, color, tone, planet: p.name, type });
   });
 
   return activations;
@@ -520,6 +537,24 @@ function _calculateHumanDesignImpl(
     : (NAMED_CROSSES[crossKey] || CROSS_NAME_BY_SUN[pSunGate] || `Kríž Brány ${pSunGate}`);
   const cross = `${angle} – ${baseName} (${pSunGate}/${pEarthGate} | ${dSunGate}/${dEarthGate})`;
 
+  // Variable (4 šípky) — PHS, Environment, Motivation, Perspective
+  const DIGESTION_NAMES: Record<number, string> = { 1: 'Apetít (jedz keď máš hlad)', 2: 'Chuť (jedz čo chutí)', 3: 'Žízeň (pitný režim kľúčový)', 4: 'Dotyk (textúra a teplota)', 5: 'Zvuk (ticho pri jedle)', 6: 'Svetlo (podľa denného svetla)' };
+  const ENVIRONMENT_NAMES: Record<number, string> = { 1: 'Jaskyne (uzavreté, tmavé)', 2: 'Trhy (rušné, stimulujúce)', 3: 'Kuchyne (teplé, vonné)', 4: 'Hory (výška, výhľad)', 5: 'Údolia (nízko, pri vode)', 6: 'Pobrežie (otvorený horizont)' };
+  const MOTIVATION_NAMES: Record<number, string> = { 1: 'Strach (ochranný inštinkt)', 2: 'Nádej (optimistická vízia)', 3: 'Túžba (materiálna motivácia)', 4: 'Potreba (služba iným)', 5: 'Vina (zodpovednosť)', 6: 'Nevinnosť (čistá prítomnosť)' };
+  const PERSPECTIVE_NAMES: Record<number, string> = { 1: 'Prežitie (bezpečnosť)', 2: 'Možnosti (alternatívy)', 3: 'Sila (hierarchia)', 4: 'Meditácia (vnútorný pokoj)', 5: 'Súd (hodnotenie)', 6: 'Osobná (subjektívna pravda)' };
+
+  const dSun = designActivations.find(a => a.planet === 'Slnko')!;
+  const dNode = designActivations.find(a => a.planet === 'Severný uzol')!;
+  const pSun = personalityActivations.find(a => a.planet === 'Slnko')!;
+  const pNode = personalityActivations.find(a => a.planet === 'Severný uzol')!;
+
+  const variable: HDVariable = {
+    digestion: { color: dSun.color, tone: dSun.tone, name: DIGESTION_NAMES[dSun.color] || `Farba ${dSun.color}`, description: `Design Slnko farba ${dSun.color}, tón ${dSun.tone}` },
+    environment: { color: dNode.color, tone: dNode.tone, name: ENVIRONMENT_NAMES[dNode.color] || `Farba ${dNode.color}`, description: `Design Sev. uzol farba ${dNode.color}, tón ${dNode.tone}` },
+    motivation: { color: pSun.color, tone: pSun.tone, name: MOTIVATION_NAMES[pSun.color] || `Farba ${pSun.color}`, description: `Personality Slnko farba ${pSun.color}, tón ${pSun.tone}` },
+    perspective: { color: pNode.color, tone: pNode.tone, name: PERSPECTIVE_NAMES[pNode.color] || `Farba ${pNode.color}`, description: `Personality Sev. uzol farba ${pNode.color}, tón ${pNode.tone}` },
+  };
+
   return {
     type,
     authority,
@@ -534,6 +569,7 @@ function _calculateHumanDesignImpl(
     allActivatedGates: Array.from(allGates),
     incarnationCross: cross,
     definition: determineDefinition(defined, channels),
+    variable,
   };
 }
 

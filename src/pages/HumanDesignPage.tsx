@@ -10,7 +10,6 @@ import { Bodygraph } from '../components/Bodygraph';
 import { motion } from 'framer-motion';
 import { getGeneKeysForGates } from '../data/geneKeys';
 import { HD_LINES, HD_PROFILE_PHASES, HD_AUTHORITY_INFO, HD_DEFINITION_INFO } from '../data/hdLines';
-import { AIChat } from '../components/AIChat';
 import type { GeneKey } from '../data/geneKeys';
 
 const TYPE_DESCRIPTIONS: Record<string, string> = {
@@ -802,27 +801,6 @@ export function HumanDesignPage() {
 
           </>}
 
-          {/* AI výklad Human Design */}
-          {subject && (
-            <AIChat
-              context={{
-                name: subject.name,
-                gender: subject.gender,
-                birth: {
-                  day: subject.birthDay,
-                  month: subject.birthMonth,
-                  year: subject.birthYear,
-                  hour: subject.birthHour,
-                  minute: subject.birthMinute,
-                  place: subject.birthPlace,
-                },
-                humanDesign: result,
-              }}
-              title="✦ AI výklad Human Design"
-              initialUserMessage={`Vyhotov mi prosím detailný výklad môjho Human Designu. Som ${result.type}, profil ${result.profile.line1}/${result.profile.line2} (${result.profile.name}), autorita ${result.authority}, stratégia "${result.strategy}". Inkarnačný kríž: ${result.incarnationCross}. Definované centrá: ${result.definedCenters.join(', ')}. Otvorené: ${result.openCenters.join(', ')}. Kanály: ${result.channels.map(c => c.name).join(', ')}. Vysvetli čo to znamená pre môj život, vzťahy a rozhodovanie.`}
-              storageKey={`hd-${subject.id}`}
-            />
-          )}
         </div>
       )}
     </div>

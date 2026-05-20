@@ -20,7 +20,6 @@ import { deriveTCMElement } from '../engine/tcmEngine';
 import { orvDescriptions } from '../data/orvDescriptions';
 import { getDailyMantra, getDailyQuote } from '../data/mantrasAndQuotes';
 import { getDailyTarot } from '../data/tarotCards';
-import { AIChat } from '../components/AIChat';
 import { ClientExport } from '../components/ClientExport';
 
 export function Dashboard() {
@@ -488,36 +487,6 @@ export function Dashboard() {
         />
       )}
 
-      {/* AI integrálny výklad — úplne posledný */}
-      {profile && fullResults && (
-        <AIChat
-          context={{
-            name: profile.name,
-            gender: profile.gender,
-            birth: {
-              day: profile.birthDay,
-              month: profile.birthMonth,
-              year: profile.birthYear,
-              hour: profile.birthHour,
-              minute: profile.birthMinute,
-              place: profile.birthPlace,
-            },
-            numerology: fullResults.numerology,
-            developmental: fullResults.developmental,
-            astrology: fullResults.astrology,
-            humanDesign: fullResults.humanDesign,
-            kabalah: fullResults.kabalah,
-            theta: fullResults.theta,
-            enneagram: fullResults.enneagram,
-            dosha: { primary: fullResults.dosha.primary, secondary: fullResults.dosha.secondary },
-            tcm: fullResults.tcm,
-            chakras: fullResults.chakras?.map(c => ({ name: c.chakra.name, status: c.status, score: c.score })),
-            loveLanguages: fullResults.numerology.loveLanguages.slice(0, 3),
-          }}
-          title="✦ AI integrálny výklad"
-          storageKey={`dashboard-${profile.id}`}
-        />
-      )}
     </div>
   );
 }

@@ -15,7 +15,6 @@ import { ProgressionsView } from '../components/ProgressionsView';
 import { SolarReturnView } from '../components/SolarReturnView';
 import { calculateChineseZodiac } from '../engine/chineseZodiacEngine';
 import { CHINESE_ANIMALS, CHINESE_ELEMENTS } from '../data/chineseZodiac';
-import { AIChat } from '../components/AIChat';
 
 function getSunSignDescription(sign: string): string {
   const descriptions: Record<string, string> = {
@@ -746,28 +745,6 @@ export function AstrologyPage() {
             );
           })()}
 
-          {/* AI výklad astrológie */}
-          {profile && (
-            <AIChat
-              context={{
-                name: profile.name,
-                gender: profile.gender,
-                birth: {
-                  day: profile.birthDay,
-                  month: profile.birthMonth,
-                  year: profile.birthYear,
-                  hour: profile.birthHour,
-                  minute: profile.birthMinute,
-                  place: profile.birthPlace,
-                },
-                astrology: result,
-                chineseZodiac: calculateChineseZodiac(profile.birthYear),
-              }}
-              title="✦ AI výklad astrológie"
-              initialUserMessage={`Vyhotov mi prosím detailný astrologický výklad. Moje Slnko je v ${result.sunSign.name}, Mesiac v ${result.moonSign.name}, Ascendent v ${result.ascendant.name}. Dominantný element: ${result.dominantElement}. V čínskom horoskope som ${calculateChineseZodiac(profile.birthYear).animal} (${calculateChineseZodiac(profile.birthYear).element}). Prepoj západnú a východnú astrológiu do jedného príbehu.`}
-              storageKey={`astrology-${profile.id}`}
-            />
-          )}
 
           {manualResult && (
             <button

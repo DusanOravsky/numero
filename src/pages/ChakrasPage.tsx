@@ -12,7 +12,6 @@ import { calculateAstrology } from '../engine/astrologyEngine';
 import { motion } from 'framer-motion';
 import { SkeletonChakraList } from '../components/Skeleton';
 import { getEtikoterapiaForChakra } from '../data/etikoterapia';
-import { AIChat } from '../components/AIChat';
 
 function computeChakras(day: number, month: number, year: number, hour: number = 12, minute: number = 0): ChakraState[] {
   const numerology = calculateFullNumerology(day, month, year);
@@ -387,27 +386,6 @@ export function ChakrasPage() {
             ))}
           </div>
 
-          {/* AI výklad čakier */}
-          {profile && chakras && (
-            <AIChat
-              context={{
-                name: profile.name,
-                gender: profile.gender,
-                birth: {
-                  day: profile.birthDay,
-                  month: profile.birthMonth,
-                  year: profile.birthYear,
-                  hour: profile.birthHour,
-                  minute: profile.birthMinute,
-                  place: profile.birthPlace,
-                },
-                numerology: calculateFullNumerology(profile.birthDay, profile.birthMonth, profile.birthYear),
-              }}
-              title="✦ AI výklad čakier"
-              initialUserMessage={`Vyhotov mi prosím výklad stavu mojich čakier. Blokované: ${chakras.filter(c => c.status === 'blocked').map(c => c.chakra.name).join(', ') || 'žiadne'}. Hyperaktívne: ${chakras.filter(c => c.status === 'hyperactive').map(c => c.chakra.name).join(', ') || 'žiadne'}. Vyvážené: ${chakras.filter(c => c.status === 'balanced').map(c => c.chakra.name).join(', ')}. Vysvetli čo to znamená pre moje telo, emócie a vzťahy a čo robiť.`}
-              storageKey={`chakras-${profile.id}`}
-            />
-          )}
 
           {manualChakras && (
             <button

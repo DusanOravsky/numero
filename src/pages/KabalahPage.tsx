@@ -8,7 +8,6 @@ import type { KabalahResult } from '../engine/kabalahEngine';
 import { reduceToSingle } from '../engine/numerologyEngine';
 import { motion } from 'framer-motion';
 import { TreeOfLife } from '../components/TreeOfLife';
-import { AIChat } from '../components/AIChat';
 
 export function KabalahPage() {
   const navigate = useNavigate();
@@ -332,19 +331,6 @@ export function KabalahPage() {
             </div>
           </GlassCard>
 
-          {/* AI výklad Kabaly */}
-          {profile && (
-            <AIChat
-              context={{
-                name: profile.name,
-                gender: profile.gender,
-                birth: { day: profile.birthDay, month: profile.birthMonth, year: profile.birthYear },
-              }}
-              title="✦ AI výklad Kabaly"
-              initialUserMessage={`Vyhotov mi prosím výklad mojej kabalistickej cesty. Primárna sefira: ${result.primarySefira.name} (${result.primarySefira.meaning}). Dar: ${result.primarySefira.gift}. Tieň: ${result.primarySefira.shadow}. ${result.secondarySefira ? `Sekundárna sefira: ${result.secondarySefira.name} (${result.secondarySefira.meaning}).` : ''} Čin v Malchut: ${result.malchutAction}. Prepoj kabalistickú múdrosť s praktickým životom.`}
-              storageKey={`kabalah-${profile.id}`}
-            />
-          )}
 
           {manualResult && (
             <button

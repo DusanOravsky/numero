@@ -382,25 +382,25 @@ export function RelationshipsPage() {
 
       <div className="flex gap-2 flex-wrap">
         <button
-          onClick={() => { setMode('partner'); reset(); }}
+          onClick={() => setMode('partner')}
           className={`px-4 py-2 rounded-xl text-sm font-medium ${mode === 'partner' ? 'bg-indigo-600 text-white glow' : 'glass text-slate-400'}`}
         >
           Partnerský výklad
         </button>
         <button
-          onClick={() => { setMode('family'); reset(); }}
+          onClick={() => setMode('family')}
           className={`px-4 py-2 rounded-xl text-sm font-medium ${mode === 'family' ? 'bg-indigo-600 text-white glow' : 'glass text-slate-400'}`}
         >
           Rodič a deti
         </button>
         <button
-          onClick={() => { setMode('astro'); reset(); }}
+          onClick={() => setMode('astro')}
           className={`px-4 py-2 rounded-xl text-sm font-medium ${mode === 'astro' ? 'bg-indigo-600 text-white glow' : 'glass text-slate-400'}`}
         >
           Astro kompatibilita
         </button>
         <button
-          onClick={() => { setMode('constellation'); reset(); }}
+          onClick={() => setMode('constellation')}
           className={`px-4 py-2 rounded-xl text-sm font-medium ${mode === 'constellation' ? 'bg-indigo-600 text-white glow' : 'glass text-slate-400'}`}
         >
           Rodinná konštelácia

@@ -243,7 +243,7 @@ export function Dashboard() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {fullResults.enneagram && enneagramTypes[fullResults.enneagram.coreType] && (
               <div className="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
-                <p className="text-xs text-emerald-300 font-medium">Enneagram: smeruj k {enneagramTypes[fullResults.enneagram.integrationDirection]?.name}</p>
+                <p className="text-xs text-emerald-700 font-medium">Enneagram: smeruj k {enneagramTypes[fullResults.enneagram.integrationDirection]?.name}</p>
               </div>
             )}
             {(() => {
@@ -273,6 +273,35 @@ export function Dashboard() {
           <p className="text-xs text-slate-500 mt-3"><strong>Večer:</strong> {dailyRituals[odv].evening}</p>
         )}
       </GlassCard>
+
+      {/* Detaily dňa — collapsible */}
+      {orvDescriptions[odv] && dailyRituals[odv] && (
+        <GlassCard delay={0.38}>
+          <details>
+            <summary className="cursor-pointer hover:text-indigo-300 transition-colors">
+              <span className="font-medium text-white">Detail dennej energie (ODV {odv})</span>
+            </summary>
+            <div className="mt-3 space-y-3">
+              <p className="text-sm text-slate-300">{orvDescriptions[odv].advice}</p>
+              <div className="flex flex-wrap gap-1">
+                {orvDescriptions[odv].keywords.map(k => (
+                  <span key={k} className="text-xs px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-300">{k}</span>
+                ))}
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
+                <div className="p-2 rounded-lg bg-green-500/10 border border-green-500/20">
+                  <p className="text-xs text-green-300">Telo: {dailyRituals[odv].body}</p>
+                </div>
+                {orvDescriptions[omv] && (
+                  <div className="p-2 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                    <p className="text-xs text-purple-300">Mesiac (OMV {omv}): {orvDescriptions[omv].theme}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </details>
+        </GlassCard>
+      )}
 
       {/* Mantra + Quote + Tarot (B25, B26, B23) — rotujú každý deň podľa ODV */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -322,6 +351,29 @@ export function Dashboard() {
         </GlassCard>
       </div>
 
+      {/* Navigácia do sekcií */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        {[
+          { path: '/numerology', label: 'Numerológia', icon: '✦', bg: 'bg-indigo-50 hover:bg-indigo-100', border: 'border-indigo-200', iconColor: 'text-indigo-600', textColor: 'text-indigo-900' },
+          { path: '/astrology', label: 'Astrológia', icon: '☆', bg: 'bg-cyan-50 hover:bg-cyan-100', border: 'border-cyan-200', iconColor: 'text-cyan-600', textColor: 'text-cyan-900' },
+          { path: '/human-design', label: 'Human Design', icon: '◎', bg: 'bg-purple-50 hover:bg-purple-100', border: 'border-purple-200', iconColor: 'text-purple-600', textColor: 'text-purple-900' },
+          { path: '/chakras', label: 'Čakry', icon: '◈', bg: 'bg-emerald-50 hover:bg-emerald-100', border: 'border-emerald-200', iconColor: 'text-emerald-600', textColor: 'text-emerald-900' },
+          { path: '/relationships', label: 'Vzťahy', icon: '♡', bg: 'bg-rose-50 hover:bg-rose-100', border: 'border-rose-200', iconColor: 'text-rose-600', textColor: 'text-rose-900' },
+          { path: '/kabalah', label: 'Kabala', icon: '⚘', bg: 'bg-amber-50 hover:bg-amber-100', border: 'border-amber-200', iconColor: 'text-amber-600', textColor: 'text-amber-900' },
+          { path: '/theta-healing', label: 'Theta Healing', icon: '∞', bg: 'bg-teal-50 hover:bg-teal-100', border: 'border-teal-200', iconColor: 'text-teal-600', textColor: 'text-teal-900' },
+          { path: '/modality', label: 'Modality', icon: '☯', bg: 'bg-orange-50 hover:bg-orange-100', border: 'border-orange-200', iconColor: 'text-orange-600', textColor: 'text-orange-900' },
+        ].map((item) => (
+          <button
+            key={item.path}
+            onClick={() => navigate(item.path)}
+            className={`${item.bg} border ${item.border} rounded-2xl p-3 text-left hover:scale-105 transition-all shadow-sm`}
+          >
+            <span className={`text-xl ${item.iconColor}`}>{item.icon}</span>
+            <p className={`text-xs font-medium ${item.textColor} mt-1`}>{item.label}</p>
+          </button>
+        ))}
+      </div>
+
       {/* Integrálny súhrn profilu — v Dashboarde ukáž OBA pohľady na mriežku */}
       {profile && fullResults && (
         <ClientSummary
@@ -350,90 +402,7 @@ export function Dashboard() {
         />
       )}
 
-      {/* AI integrálny výklad (D1) */}
-      {profile && fullResults && (
-        <AIChat
-          context={{
-            name: profile.name,
-            gender: profile.gender,
-            birth: {
-              day: profile.birthDay,
-              month: profile.birthMonth,
-              year: profile.birthYear,
-              hour: profile.birthHour,
-              minute: profile.birthMinute,
-              place: profile.birthPlace,
-            },
-            numerology: fullResults.numerology,
-            developmental: fullResults.developmental,
-            astrology: fullResults.astrology,
-            humanDesign: fullResults.humanDesign,
-            kabalah: fullResults.kabalah,
-            theta: fullResults.theta,
-            enneagram: fullResults.enneagram,
-            dosha: { primary: fullResults.dosha.primary, secondary: fullResults.dosha.secondary },
-            tcm: fullResults.tcm,
-          }}
-          title="✦ AI integrálny výklad"
-          storageKey={`dashboard-${profile.id}`}
-        />
-      )}
-
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        {[
-          { path: '/numerology', label: 'Numerológia', icon: '✦', bg: 'bg-indigo-50 hover:bg-indigo-100', border: 'border-indigo-200', iconColor: 'text-indigo-600', textColor: 'text-indigo-900' },
-          { path: '/astrology', label: 'Astrológia', icon: '☆', bg: 'bg-cyan-50 hover:bg-cyan-100', border: 'border-cyan-200', iconColor: 'text-cyan-600', textColor: 'text-cyan-900' },
-          { path: '/human-design', label: 'Human Design', icon: '◎', bg: 'bg-purple-50 hover:bg-purple-100', border: 'border-purple-200', iconColor: 'text-purple-600', textColor: 'text-purple-900' },
-          { path: '/chakras', label: 'Čakry', icon: '◈', bg: 'bg-emerald-50 hover:bg-emerald-100', border: 'border-emerald-200', iconColor: 'text-emerald-600', textColor: 'text-emerald-900' },
-          { path: '/relationships', label: 'Vzťahy', icon: '♡', bg: 'bg-rose-50 hover:bg-rose-100', border: 'border-rose-200', iconColor: 'text-rose-600', textColor: 'text-rose-900' },
-          { path: '/kabalah', label: 'Kabala', icon: '⚘', bg: 'bg-amber-50 hover:bg-amber-100', border: 'border-amber-200', iconColor: 'text-amber-600', textColor: 'text-amber-900' },
-          { path: '/theta-healing', label: 'Theta Healing', icon: '∞', bg: 'bg-teal-50 hover:bg-teal-100', border: 'border-teal-200', iconColor: 'text-teal-600', textColor: 'text-teal-900' },
-          { path: '/settings', label: 'Nastavenia', icon: '⚙', bg: 'bg-slate-50 hover:bg-slate-100', border: 'border-slate-200', iconColor: 'text-slate-600', textColor: 'text-slate-900' },
-        ].map((item, idx) => (
-          <motion.button
-            key={item.path}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 + idx * 0.05 }}
-            onClick={() => navigate(item.path)}
-            className={`${item.bg} border ${item.border} rounded-2xl p-4 text-left hover:scale-105 transition-all shadow-sm`}
-          >
-            <span className={`text-2xl ${item.iconColor}`}>{item.icon}</span>
-            <p className={`text-sm font-medium ${item.textColor} mt-2`}>{item.label}</p>
-          </motion.button>
-        ))}
-      </div>
-
-      {/* Detaily dňa — collapsible pre záujemcov */}
-      {orvDescriptions[odv] && dailyRituals[odv] && (
-        <GlassCard delay={0.7}>
-          <details>
-            <summary className="cursor-pointer hover:text-indigo-300 transition-colors">
-              <span className="font-medium text-white">Detail dennej energie (ODV {odv})</span>
-            </summary>
-            <div className="mt-3 space-y-3">
-              <p className="text-sm text-slate-300">{orvDescriptions[odv].advice}</p>
-              <div className="flex flex-wrap gap-1">
-                {orvDescriptions[odv].keywords.map(k => (
-                  <span key={k} className="text-xs px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-300">{k}</span>
-                ))}
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
-                <div className="p-2 rounded-lg bg-green-500/10 border border-green-500/20">
-                  <p className="text-xs text-green-300">Telo: {dailyRituals[odv].body}</p>
-                </div>
-                {orvDescriptions[omv] && (
-                  <div className="p-2 rounded-lg bg-purple-500/10 border border-purple-500/20">
-                    <p className="text-xs text-purple-300">Mesiac (OMV {omv}): {orvDescriptions[omv].theme}</p>
-                  </div>
-                )}
-              </div>
-            </div>
-          </details>
-        </GlassCard>
-      )}
-
-      {/* Astro tranzity dnes – úplne na konci */}
+      {/* Astro tranzity dnes — default skryté */}
       {fullResults && (() => {
         const todayAstro = calculateAstrology(currentDay, currentMonth, currentYear, 12, 0);
         const signs = ['Baran', 'Býk', 'Blíženci', 'Rak', 'Lev', 'Panna', 'Váhy', 'Škorpión', 'Strelec', 'Kozorožec', 'Vodnár', 'Ryby'];
@@ -474,33 +443,65 @@ export function Dashboard() {
 
         return (
           <GlassCard delay={0.85}>
-            <h3 className="font-medium text-white mb-2">Astro tranzity dnes</h3>
-            <p className="text-xs text-slate-500 mb-3">
-              Hlavné aspekty pomalých tranzitných planét (Jupiter+) na váš natálny horoskop. Ovplyvňujú témy dlhodobého trvania.
-            </p>
-            <div className="space-y-2">
-              {top.map((h, i) => {
-                const aspect = aspectTypes[h.aspectKey];
-                return (
-                  <div key={i} className="p-2.5 rounded-lg bg-cyan-500/10 border border-cyan-500/20">
-                    <p className="text-xs text-slate-700">
-                      <strong className="text-cyan-700">{h.planet}</strong> v {h.transitSign}{' '}
-                      <span className="text-amber-700">{aspect.emoji} {aspect.name}</span>{' '}
-                      → natálny <strong>{h.natalPlanet}</strong> v {h.natalSign}
-                    </p>
-                    <p className="text-[11px] text-slate-500 mt-0.5 italic">
-                      {aspect.vibe}
-                    </p>
-                  </div>
-                );
-              })}
-            </div>
-            <p className="text-[10px] text-slate-400 mt-2 italic">
-              Detail všetkých tranzitov: záložka Astrológia → spodná sekcia.
-            </p>
+            <details>
+              <summary className="cursor-pointer hover:text-indigo-300 transition-colors">
+                <span className="font-medium text-white">Astro tranzity dnes ({top.length})</span>
+              </summary>
+              <div className="mt-3">
+                <p className="text-xs text-slate-500 mb-3">
+                  Hlavné aspekty pomalých tranzitných planét (Jupiter+) na váš natálny horoskop.
+                </p>
+                <div className="space-y-2">
+                  {top.map((h, i) => {
+                    const aspect = aspectTypes[h.aspectKey];
+                    return (
+                      <div key={i} className="p-2.5 rounded-lg bg-cyan-500/10 border border-cyan-500/20">
+                        <p className="text-xs text-slate-700">
+                          <strong className="text-cyan-700">{h.planet}</strong> v {h.transitSign}{' '}
+                          <span className="text-amber-700">{aspect.emoji} {aspect.name}</span>{' '}
+                          → natálny <strong>{h.natalPlanet}</strong> v {h.natalSign}
+                        </p>
+                        <p className="text-[11px] text-slate-500 mt-0.5 italic">
+                          {aspect.vibe}
+                        </p>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </details>
           </GlassCard>
         );
       })()}
+
+      {/* AI integrálny výklad — úplne posledný */}
+      {profile && fullResults && (
+        <AIChat
+          context={{
+            name: profile.name,
+            gender: profile.gender,
+            birth: {
+              day: profile.birthDay,
+              month: profile.birthMonth,
+              year: profile.birthYear,
+              hour: profile.birthHour,
+              minute: profile.birthMinute,
+              place: profile.birthPlace,
+            },
+            numerology: fullResults.numerology,
+            developmental: fullResults.developmental,
+            astrology: fullResults.astrology,
+            humanDesign: fullResults.humanDesign,
+            kabalah: fullResults.kabalah,
+            theta: fullResults.theta,
+            enneagram: fullResults.enneagram,
+            dosha: { primary: fullResults.dosha.primary, secondary: fullResults.dosha.secondary },
+            tcm: fullResults.tcm,
+          }}
+          title="✦ AI integrálny výklad"
+          storageKey={`dashboard-${profile.id}`}
+        />
+      )}
     </div>
   );
 }

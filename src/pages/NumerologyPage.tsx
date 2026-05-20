@@ -99,8 +99,8 @@ export function NumerologyPage() {
     { id: 'vibrations' as const, label: 'Vibrácie', methods: ['characterological', 'developmental'] },
     { id: 'karmic' as const, label: 'Karmické cykly', methods: ['characterological'] },
     { id: 'love' as const, label: 'Jazyky lásky', methods: ['characterological'] },
-    { id: 'name' as const, label: 'Meno', methods: ['characterological', 'developmental'] },
     { id: 'archetype' as const, label: 'Archetyp', methods: ['characterological', 'developmental'] },
+    { id: 'name' as const, label: 'Meno', methods: ['characterological', 'developmental'] },
   ];
   const tabs = allTabs.filter(t => t.methods.includes(numerologyMethod));
 

@@ -838,6 +838,43 @@ export function RelationshipsPage() {
                       <p key={i} className="text-xs text-indigo-300">→ {r}</p>
                     ))}
                   </div>
+
+                  {/* HD porovnanie rodič↔dieťa */}
+                  {(() => {
+                    const parentHd = calculateHumanDesign(parseInt(parent.day), parseInt(parent.month), parseInt(parent.year), parent.hour ? parseInt(parent.hour) : 12, parent.minute ? parseInt(parent.minute) : 0);
+                    const childHd = calculateHumanDesign(parseInt(child.day), parseInt(child.month), parseInt(child.year), child.hour ? parseInt(child.hour) : 12, child.minute ? parseInt(child.minute) : 0);
+                    const sharedDefined = parentHd.definedCenters.filter(c => childHd.definedCenters.includes(c));
+                    const parentOnly = parentHd.definedCenters.filter(c => !childHd.definedCenters.includes(c));
+                    const childOnly = childHd.definedCenters.filter(c => !parentHd.definedCenters.includes(c));
+                    return (
+                      <div className="p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/20">
+                        <p className="text-xs text-cyan-300 font-semibold uppercase mb-1">Human Design — energetické prekrývanie</p>
+                        <p className="text-[11px] text-slate-300 mb-2">
+                          <strong>Rodič:</strong> {parentHd.type} ({parentHd.authority}) · <strong>Dieťa:</strong> {childHd.type} ({childHd.authority})
+                        </p>
+                        {sharedDefined.length > 0 && (
+                          <p className="text-[11px] text-slate-400">
+                            <strong className="text-cyan-300">Spoločne definované:</strong> {sharedDefined.join(', ')} — tu si rozumiete energeticky, obe máte stabilnú energiu.
+                          </p>
+                        )}
+                        {parentOnly.length > 0 && (
+                          <p className="text-[11px] text-slate-400 mt-1">
+                            <strong className="text-rose-300">Rodič podmieňuje dieťa:</strong> {parentOnly.join(', ')} — dieťa absorbuje vašu energiu v týchto oblastiach.
+                          </p>
+                        )}
+                        {childOnly.length > 0 && (
+                          <p className="text-[11px] text-slate-400 mt-1">
+                            <strong className="text-emerald-300">Dieťa učí rodiča:</strong> {childOnly.join(', ')} — tu má dieťa energiu ktorú vy nemáte.
+                          </p>
+                        )}
+                        {parentHd.type !== childHd.type && (
+                          <p className="text-[11px] text-amber-300 mt-1">
+                            Rôzne typy ({parentHd.type} vs {childHd.type}) — rešpektujte odlišnú stratégiu dieťaťa: „{childHd.strategy.toLowerCase()}".
+                          </p>
+                        )}
+                      </div>
+                    );
+                  })()}
                 </div>
               </GlassCard>
             </motion.div>
@@ -1403,6 +1440,10 @@ export function RelationshipsPage() {
               {constellationResult.fatherChildren.map(({ child, result: r }, idx) => {
                 const cn = calculateFullNumerology(parseInt(child.day), parseInt(child.month), parseInt(child.year));
                 const cd = calculateDevelopmentalNumerology(parseInt(child.day), parseInt(child.month), parseInt(child.year));
+                const fatherHd = calculateHumanDesign(parseInt(constFather.day), parseInt(constFather.month), parseInt(constFather.year), constFather.hour ? parseInt(constFather.hour) : 12, constFather.minute ? parseInt(constFather.minute) : 0);
+                const childHd = calculateHumanDesign(parseInt(child.day), parseInt(child.month), parseInt(child.year), child.hour ? parseInt(child.hour) : 12, child.minute ? parseInt(child.minute) : 0);
+                const sharedDef = fatherHd.definedCenters.filter(c => childHd.definedCenters.includes(c));
+                const fatherOnly = fatherHd.definedCenters.filter(c => !childHd.definedCenters.includes(c));
                 return (
                 <div key={idx} className="p-3 rounded-xl bg-blue-500/10 border border-blue-500/20 space-y-2">
                   <div className="flex items-center justify-between">
@@ -1412,10 +1453,17 @@ export function RelationshipsPage() {
                   <p className="text-[11px] text-slate-400">
                     ŽČ <strong className="text-white">{cn.lifePathNumber}</strong> · K3: {cd.circled[2].value} · {cn.age === 'aquarius' ? 'Vodnár' : 'Ryby'}
                     {cn.karmicDebts.length > 0 && <> · Karm. dlh: {cn.karmicDebts.map(d => d.number).join(', ')}</>}
+                    {' '}· HD: {childHd.type}
                   </p>
                   <p className="text-xs text-slate-300"><strong>Rola:</strong> {r.parentRole}</p>
                   <p className="text-xs text-slate-300"><strong>Komunikácia:</strong> {r.communicationStyle}</p>
                   {r.recommendations[0] && <p className="text-xs text-indigo-300">→ {r.recommendations[0]}</p>}
+                  {(sharedDef.length > 0 || fatherOnly.length > 0) && (
+                    <p className="text-[11px] text-cyan-300">
+                      {sharedDef.length > 0 && <>HD spoločné: {sharedDef.join(', ')}. </>}
+                      {fatherOnly.length > 0 && <>Podmieňuje: {fatherOnly.join(', ')}.</>}
+                    </p>
+                  )}
                 </div>
                 );
               })}
@@ -1429,6 +1477,10 @@ export function RelationshipsPage() {
               {constellationResult.motherChildren.map(({ child, result: r }, idx) => {
                 const cn = calculateFullNumerology(parseInt(child.day), parseInt(child.month), parseInt(child.year));
                 const cd = calculateDevelopmentalNumerology(parseInt(child.day), parseInt(child.month), parseInt(child.year));
+                const motherHd = calculateHumanDesign(parseInt(constMother.day), parseInt(constMother.month), parseInt(constMother.year), constMother.hour ? parseInt(constMother.hour) : 12, constMother.minute ? parseInt(constMother.minute) : 0);
+                const childHd = calculateHumanDesign(parseInt(child.day), parseInt(child.month), parseInt(child.year), child.hour ? parseInt(child.hour) : 12, child.minute ? parseInt(child.minute) : 0);
+                const sharedDef = motherHd.definedCenters.filter(c => childHd.definedCenters.includes(c));
+                const motherOnly = motherHd.definedCenters.filter(c => !childHd.definedCenters.includes(c));
                 return (
                 <div key={idx} className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20 space-y-2">
                   <div className="flex items-center justify-between">
@@ -1438,10 +1490,17 @@ export function RelationshipsPage() {
                   <p className="text-[11px] text-slate-400">
                     ŽČ <strong className="text-white">{cn.lifePathNumber}</strong> · K3: {cd.circled[2].value} · {cn.age === 'aquarius' ? 'Vodnár' : 'Ryby'}
                     {cn.karmicDebts.length > 0 && <> · Karm. dlh: {cn.karmicDebts.map(d => d.number).join(', ')}</>}
+                    {' '}· HD: {childHd.type}
                   </p>
                   <p className="text-xs text-slate-300"><strong>Rola:</strong> {r.parentRole}</p>
                   <p className="text-xs text-slate-300"><strong>Komunikácia:</strong> {r.communicationStyle}</p>
                   {r.recommendations[0] && <p className="text-xs text-indigo-300">→ {r.recommendations[0]}</p>}
+                  {(sharedDef.length > 0 || motherOnly.length > 0) && (
+                    <p className="text-[11px] text-cyan-300">
+                      {sharedDef.length > 0 && <>HD spoločné: {sharedDef.join(', ')}. </>}
+                      {motherOnly.length > 0 && <>Podmieňuje: {motherOnly.join(', ')}.</>}
+                    </p>
+                  )}
                 </div>
                 );
               })}

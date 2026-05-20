@@ -151,7 +151,7 @@ export function ModalityPage() {
 
       {/* Tvoje čítanie — personalizovaný sprievodca modalitami */}
       <GlassCard>
-        <details open>
+        <details>
           <summary className="cursor-pointer hover:text-indigo-300 transition-colors">
             <span className="font-medium text-white">Tvoje čítanie — čo s tým prakticky</span>
           </summary>

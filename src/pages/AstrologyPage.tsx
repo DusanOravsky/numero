@@ -279,7 +279,7 @@ export function AstrologyPage() {
 
           {/* Tvoje čítanie — personalizovaný sprievodca astrológiou */}
           <GlassCard>
-            <details open>
+            <details>
               <summary className="cursor-pointer hover:text-indigo-300 transition-colors">
                 <span className="font-medium text-white">Tvoje čítanie — ako pracovať s horoskopom</span>
               </summary>
@@ -746,7 +746,8 @@ export function AstrologyPage() {
             );
           })()}
 
-          {(() => {
+          {/* Duplicitná sign-based transit sekcia bola odstránená v2.28+ (používame calculateTransitAspects vyššie) */}
+          {false && (() => {
             const today = new Date();
             const transitResult = calculateAstrology(today.getDate(), today.getMonth() + 1, today.getFullYear(), 12, 0);
 

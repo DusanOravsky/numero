@@ -207,7 +207,7 @@ export function HumanDesignPage() {
 
           {/* Tvoje čítanie — personalizovaný sprievodca HD */}
           <GlassCard>
-            <details open>
+            <details>
               <summary className="cursor-pointer hover:text-indigo-300 transition-colors">
                 <span className="font-medium text-white">Tvoje čítanie — ako pracovať s Human Design</span>
               </summary>

@@ -290,7 +290,7 @@ export function NumerologyPage() {
                 };
                 return (
                   <GlassCard>
-                    <details open>
+                    <details>
                       <summary className="cursor-pointer hover:text-indigo-300 transition-colors">
                         <span className="font-medium text-white">Tvoje čítanie — ako pracovať s mriežkou</span>
                       </summary>
@@ -407,29 +407,24 @@ export function NumerologyPage() {
 
               {numerologyMethod === 'characterological' && lifePathInfo && (
                 <GlassCard delay={0.2}>
-                  <h3 className="font-serif text-xl font-bold text-white mb-3">Výklad životného čísla {result.lifePathNumber}</h3>
-                  <p className="text-slate-300 mb-4">{lifePathInfo.description}</p>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="p-4 rounded-xl bg-green-500/10 border border-green-500/20">
-                      <p className="text-xs text-green-400 uppercase mb-1">Dar</p>
-                      <p className="text-sm text-slate-300">{lifePathInfo.gift}</p>
+                  <details>
+                    <summary className="cursor-pointer hover:text-indigo-300 transition-colors">
+                      <span className="font-medium text-white">Detailný výklad ŽČ {result.lifePathNumber} — Lekcia a odporúčanie</span>
+                    </summary>
+                    <div className="mt-3">
+                      <p className="text-slate-300 mb-4">{lifePathInfo.description}</p>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="p-4 rounded-xl bg-blue-500/10 border border-blue-500/20">
+                          <p className="text-xs text-blue-400 uppercase mb-1">Lekcia</p>
+                          <p className="text-sm text-slate-300">{lifePathInfo.lesson}</p>
+                        </div>
+                        <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20">
+                          <p className="text-xs text-amber-400 uppercase mb-1">Odporúčanie</p>
+                          <p className="text-sm text-slate-300">{lifePathInfo.recommendation}</p>
+                        </div>
+                      </div>
                     </div>
-                    <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20">
-                      <p className="text-xs text-red-400 uppercase mb-1">Tieň</p>
-                      <p className="text-sm text-slate-300">{lifePathInfo.shadow}</p>
-                    </div>
-                    <div className="p-4 rounded-xl bg-blue-500/10 border border-blue-500/20">
-                      <p className="text-xs text-blue-400 uppercase mb-1">Lekcia</p>
-                      <p className="text-sm text-slate-300">{lifePathInfo.lesson}</p>
-                    </div>
-                    <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20">
-                      <p className="text-xs text-amber-400 uppercase mb-1">Odporúčanie</p>
-                      <p className="text-sm text-slate-300">{lifePathInfo.recommendation}</p>
-                    </div>
-                  </div>
-                  <p className="text-[11px] text-slate-500 italic mt-3 text-center">
-                    Zdroj: Robin Steinová – Numerológia: Čísla Lásky
-                  </p>
+                  </details>
                 </GlassCard>
               )}
 

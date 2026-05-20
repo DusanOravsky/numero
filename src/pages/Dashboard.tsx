@@ -288,11 +288,6 @@ export function Dashboard() {
                 <p className="text-xs text-violet-300">{fullResults.kabalah.malchutAction}</p>
               </div>
             )}
-            {dailyRituals[odv] && (
-              <div className="p-2 rounded-lg bg-indigo-500/10 border border-indigo-500/20">
-                <p className="text-xs text-indigo-300">{dailyRituals[odv].morning}</p>
-              </div>
-            )}
           </div>
         )}
         {dailyRituals[odv] && (
@@ -389,27 +384,20 @@ export function Dashboard() {
         </GlassCard>
       </div>
 
-      {/* Navigácia do sekcií */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        {[
-          { path: '/numerology', label: 'Numerológia', icon: '✦', bg: 'bg-indigo-50 hover:bg-indigo-100', border: 'border-indigo-200', iconColor: 'text-indigo-600', textColor: 'text-indigo-900' },
-          { path: '/astrology', label: 'Astrológia', icon: '☆', bg: 'bg-cyan-50 hover:bg-cyan-100', border: 'border-cyan-200', iconColor: 'text-cyan-600', textColor: 'text-cyan-900' },
-          { path: '/human-design', label: 'Human Design', icon: '◎', bg: 'bg-purple-50 hover:bg-purple-100', border: 'border-purple-200', iconColor: 'text-purple-600', textColor: 'text-purple-900' },
-          { path: '/chakras', label: 'Čakry', icon: '◈', bg: 'bg-emerald-50 hover:bg-emerald-100', border: 'border-emerald-200', iconColor: 'text-emerald-600', textColor: 'text-emerald-900' },
-          { path: '/relationships', label: 'Vzťahy', icon: '♡', bg: 'bg-rose-50 hover:bg-rose-100', border: 'border-rose-200', iconColor: 'text-rose-600', textColor: 'text-rose-900' },
-          { path: '/kabalah', label: 'Kabala', icon: '⚘', bg: 'bg-amber-50 hover:bg-amber-100', border: 'border-amber-200', iconColor: 'text-amber-600', textColor: 'text-amber-900' },
-          { path: '/theta-healing', label: 'Theta Healing', icon: '∞', bg: 'bg-teal-50 hover:bg-teal-100', border: 'border-teal-200', iconColor: 'text-teal-600', textColor: 'text-teal-900' },
-          { path: '/modality', label: 'Modality', icon: '☯', bg: 'bg-orange-50 hover:bg-orange-100', border: 'border-orange-200', iconColor: 'text-orange-600', textColor: 'text-orange-900' },
-        ].map((item) => (
-          <button
-            key={item.path}
-            onClick={() => navigate(item.path)}
-            className={`${item.bg} border ${item.border} rounded-2xl p-3 text-left hover:scale-105 transition-all shadow-sm`}
-          >
-            <span className={`text-xl ${item.iconColor}`}>{item.icon}</span>
-            <p className={`text-xs font-medium ${item.textColor} mt-1`}>{item.label}</p>
-          </button>
-        ))}
+      {/* Quick actions */}
+      <div className="flex gap-2 flex-wrap">
+        <button onClick={() => navigate('/clients')} className="px-4 py-2 rounded-xl bg-indigo-50 border border-indigo-200 text-xs font-medium text-indigo-700 hover:bg-indigo-100 transition-colors">
+          Klienti
+        </button>
+        <button onClick={() => navigate('/clients/compare')} className="px-4 py-2 rounded-xl bg-purple-50 border border-purple-200 text-xs font-medium text-purple-700 hover:bg-purple-100 transition-colors">
+          Porovnať
+        </button>
+        <button onClick={() => navigate('/relationships')} className="px-4 py-2 rounded-xl bg-rose-50 border border-rose-200 text-xs font-medium text-rose-700 hover:bg-rose-100 transition-colors">
+          Vzťahy
+        </button>
+        <button onClick={() => navigate('/settings')} className="px-4 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-700 hover:bg-slate-100 transition-colors">
+          Nastavenia
+        </button>
       </div>
 
       {/* Integrálny súhrn profilu — v Dashboarde ukáž OBA pohľady na mriežku */}

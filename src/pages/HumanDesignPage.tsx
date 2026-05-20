@@ -400,21 +400,22 @@ export function HumanDesignPage() {
                   Číslo za bodkou je línia (1=skúmajúci, 2=pustovník, 3=mučeník, 4=oportunista, 5=heretik, 6=vzor).
                 </p>
 
-                {/* Core — vždy otvorené */}
-                <div className={`p-3 rounded-xl ${PLANET_GROUP_INFO.core.color} border ${PLANET_GROUP_INFO.core.border} mb-3`}>
-                  <p className="text-xs text-amber-400 font-semibold mb-1">{PLANET_GROUP_INFO.core.label}</p>
-                  <p className="text-[11px] text-slate-400 mb-2">{PLANET_GROUP_INFO.core.desc}</p>
-                  <div className="space-y-2">
-                    {allGates.filter(g => PLANET_GROUPS.core.includes(g.planet)).map(g => renderGate(g, g.side))}
+                {/* Core + Karmic — vedľa seba */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+                  <div className={`p-3 rounded-xl ${PLANET_GROUP_INFO.core.color} border ${PLANET_GROUP_INFO.core.border}`}>
+                    <p className="text-xs text-amber-400 font-semibold mb-1">{PLANET_GROUP_INFO.core.label}</p>
+                    <p className="text-[11px] text-slate-400 mb-2">{PLANET_GROUP_INFO.core.desc}</p>
+                    <div className="space-y-2">
+                      {allGates.filter(g => PLANET_GROUPS.core.includes(g.planet)).map(g => renderGate(g, g.side))}
+                    </div>
                   </div>
-                </div>
 
-                {/* Karmic */}
-                <div className={`p-3 rounded-xl ${PLANET_GROUP_INFO.karmic.color} border ${PLANET_GROUP_INFO.karmic.border} mb-3`}>
-                  <p className="text-xs text-indigo-400 font-semibold mb-1">{PLANET_GROUP_INFO.karmic.label}</p>
-                  <p className="text-[11px] text-slate-400 mb-2">{PLANET_GROUP_INFO.karmic.desc}</p>
-                  <div className="space-y-2">
-                    {allGates.filter(g => PLANET_GROUPS.karmic.includes(g.planet)).map(g => renderGate(g, g.side))}
+                  <div className={`p-3 rounded-xl ${PLANET_GROUP_INFO.karmic.color} border ${PLANET_GROUP_INFO.karmic.border}`}>
+                    <p className="text-xs text-indigo-400 font-semibold mb-1">{PLANET_GROUP_INFO.karmic.label}</p>
+                    <p className="text-[11px] text-slate-400 mb-2">{PLANET_GROUP_INFO.karmic.desc}</p>
+                    <div className="space-y-2">
+                      {allGates.filter(g => PLANET_GROUPS.karmic.includes(g.planet)).map(g => renderGate(g, g.side))}
+                    </div>
                   </div>
                 </div>
 

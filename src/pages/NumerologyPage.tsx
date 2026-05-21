@@ -532,6 +532,50 @@ export function NumerologyPage() {
                 />
               )}
 
+              {numerologyMethod === 'developmental' && devResult && devResult.isolatedNumbers.length > 0 && (
+                <GlassCard delay={0.3}>
+                  <h3 className="font-medium text-white mb-2">Izolované čísla</h3>
+                  <p className="text-sm text-slate-400 mb-4">Izolované čísla sú obklopené prázdnymi políčkami v mriežke. Spôsobuje to zablokovanie energie, čo sa môže prejaviť ako frustrácia, zmeny nálad, vnútorné napätie alebo agresivita.</p>
+                  <div className="space-y-4">
+                    {devResult.isolatedNumbers.map(n => {
+                      const info = isolatedInfo[String(n)];
+                      return (
+                        <div key={n} className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/20">
+                          <div className="flex items-center gap-3 mb-2">
+                            <div className="w-10 h-10 rounded-xl bg-rose-500/20 border border-rose-500/30 flex items-center justify-center text-rose-300 font-bold">
+                              {n}
+                            </div>
+                            <div>
+                              <p className="font-medium text-white">{info?.theme || `Izolované číslo ${n}`}</p>
+                              <p className="text-xs text-rose-300">{info?.type === 'nepárne' ? 'Nepárne – napätie, agresivita' : 'Párne – pasivita, utiahnutosť'}</p>
+                            </div>
+                          </div>
+                          {info && (
+                            <div className="space-y-2 mt-3">
+                              <p className="text-sm text-slate-300">{info.description}</p>
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
+                                <div className="p-2 rounded-lg bg-red-500/10">
+                                  <p className="text-xs text-red-400">Tieň</p>
+                                  <p className="text-xs text-slate-300">{info.shadow}</p>
+                                </div>
+                                <div className="p-2 rounded-lg bg-amber-500/10">
+                                  <p className="text-xs text-amber-400">Telo</p>
+                                  <p className="text-xs text-slate-300">{info.body}</p>
+                                </div>
+                              </div>
+                              <div className="p-2 rounded-lg bg-indigo-500/10 mt-2">
+                                <p className="text-xs text-indigo-400">Odporúčanie</p>
+                                <p className="text-xs text-slate-300">{info.recommendation}</p>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </GlassCard>
+              )}
+
               {numerologyMethod === 'characterological' && lifePathInfo && (
                 <GlassCard delay={0.2}>
                   <details open>

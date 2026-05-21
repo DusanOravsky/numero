@@ -1,6 +1,6 @@
 # Integrálna mapa bytia (Número)
 
-Offline-first PWA pre numerológiu, astrológiu, Human Design, etikoterapiu, kabalu, Theta Healing, Enneagram, Ayurvédu, TCM a sebarozvoj. **v2.45.0**
+Offline-first PWA pre numerológiu, astrológiu, Human Design, etikoterapiu, kabalu, Theta Healing, Enneagram, Ayurvédu, TCM a sebarozvoj. **v2.46.5**
 
 > 📁 **Nested CLAUDE.md súbory:**
 > - `src/engine/CLAUDE.md` — engine pravidlá, numerológia/astrológia/HD matematika
@@ -268,6 +268,31 @@ Floating UI prvky v `MainLayout.tsx`:
 - **AI** — API kľúč + model + lenses + denné pripomenutie
 - **Dáta** — export/import záloha
 - **O appke** — verzia + update check + cache wipe + performance metriky + diagnostika error log
+
+## SharedView (v2.46.0+)
+
+`/numero/share?data=base64(JSON)` — verejný read-only výklad pre klienta.
+
+- URL hash má **limit 4096 znakov base64** (OOM ochrana proti maliciózny long URL)
+- Payload = `{ name, birthDay, birthMonth, birthYear, birthHour?, birthMinute?, birthPlace? }` (max 7 polí)
+- **Všetko ostatné sa dopočítava** z týchto polí cez engines — žiadne pre-computed výsledky v URL
+- Sekcie: Integrálny súhrn (s Gene Keys), Numerológia (mriežka + roviny + izolované), Astrológia (Slnko/Mesiac/Asc + dominantný živel), Human Design (typ/autorita/profil + def/open centrá), Čakry (wheel), Kabala (sefiry), Theta (presvedčenia), Vývojová (K1-K4 + polarita ega), Enneagram (typ + integrácia/stres + krídlo), Ayurvéda (dóša + tip), TCM (element + organ + emócia + cnosť), Jazyky lásky (top 3)
+- Komponent: `pages/SharedView.tsx`. Strict validácia inputov (max 80 char meno, day 1-31, month 1-12, year 1900-2100, hour 0-23, minute 0-59). Pri zlých dátach → error message.
+- Vygenerovaný v `ClientExport.tsx` cez tlačidlo "Zdieľať výklad" (encode base64) alebo "QR kód" (vykreslí QR pre URL).
+
+## CSS strategy — light/dark mode (v2.46.x)
+
+App má pôvodný **dark-mode JSX** (`text-white`, `text-slate-300`, `bg-{color}-500/10`). Aktuálne defaultný **light mode** funguje cez globálne CSS overrides v `src/styles/index.css`.
+
+**Hlavné pravidlá:**
+
+1. **`.text-{color}-{300,400}` overrides** mapujú svetlé tóny na **tmavé** v light mode (čitateľné na bielom bg) a späť na svetlé v `html.dark` selektore.
+2. **Buttony s tmavým bg** (`bg-{color}-500/600/700/800/900` pre indigo/violet/purple/rose/green/emerald/amber/cyan/red/orange/blue/fuchsia/pink + slate/stone/zinc/neutral/gray) majú forcnutý biely text cez selektor `button.bg-{color}-{500-900} { color: #ffffff !important }`.
+3. **Karty s pastelovým bg** (`bg-{color}-500/10`) majú zvýšenú opacity 0.06 → 0.12-0.16 pre viditeľnosť na bielom pozadí. Bordery 0.15 → 0.30-0.40.
+
+**KRITICKÉ — wildcard trap [[feedback-css-override]]:** Selektor `[class*="bg-blue-5"]` zachytáva aj `bg-blue-50` (svetlé pastelové) aj `bg-blue-500` (tmavé saturated). Vždy použiť **presné classy** `.bg-blue-500`, `.bg-blue-600` — wildcardy lámu pastelové buttony (príklad: ProfileSetup "Muž" toggle — biely text na svetlom pozadí, neviditeľné).
+
+**Long-term refactor — TODO:** Odstrániť `.text-white !important` override úplne a manuálne prejsť ~270 výskytov v 44 súboroch (zmeniť `text-white` → `text-slate-800` na svetlých bg, ponechať na tmavých). Veľký zásah, samostatná session.
 
 ## Konvencie
 

@@ -49,7 +49,7 @@ export function ClientNumerology({ numerology, devNumerology, astrology, humanDe
           <button onClick={() => navigate('/numerology' + q)} className="text-xs text-slate-400 hover:text-indigo-600">Otvoriť detail →</button>
         </div>
         <GlassCard>
-          {/* ŽČ header — kompaktný riadok */}
+          {/* ŽČ + ORV/OMV/ODV */}
           <div className="flex items-center gap-4 flex-wrap">
             <div className="flex items-center gap-3">
               <div className="w-14 h-14 rounded-full bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center shrink-0">
@@ -76,86 +76,11 @@ export function ClientNumerology({ numerology, devNumerology, astrology, humanDe
             </div>
           </div>
 
-          {/* Roviny (len charakterová) */}
-          {numerologyMethod === 'characterological' && (numerology.fullPlanes.length > 0 || numerology.emptyPlanes.length > 0) && (
-            <div className="mt-3 pt-3 border-t border-slate-200 flex flex-wrap gap-4">
-              {numerology.fullPlanes.length > 0 && (
-                <div>
-                  <p className="text-xs text-green-600 font-medium mb-1">Plné roviny</p>
-                  {numerology.fullPlanes.map(p => <p key={p} className="text-xs text-slate-600">{p}</p>)}
-                </div>
-              )}
-              {numerology.emptyPlanes.length > 0 && (
-                <div>
-                  <p className="text-xs text-amber-600 font-medium mb-1">Prázdne roviny</p>
-                  {numerology.emptyPlanes.map(p => <p key={p} className="text-xs text-slate-600">{p}</p>)}
-                </div>
-              )}
-            </div>
-          )}
-
           {/* Mriežka */}
           <div className="mt-4 pt-4 border-t border-slate-200">
-            {numerologyMethod === 'developmental' && devNumerology ? (
-              <DevelopmentalNumerologyView result={devNumerology} gender={gender} />
-            ) : (
-              <NumerologyGrid grid={numerology.grid} />
-            )}
+            <NumerologyGrid grid={numerology.grid} />
           </div>
         </GlassCard>
-
-        {/* Izolované čísla — full width pod mriežkou */}
-        {(() => {
-          const isolated = numerologyMethod === 'developmental' && devNumerology
-            ? devNumerology.isolatedNumbers
-            : numerology.isolatedNumbers;
-          return isolated.length > 0 ? (
-            <GlassCard className="mt-4">
-              <h3 className="text-sm font-semibold text-rose-700 mb-1">Izolované čísla</h3>
-              <p className="text-xs text-slate-500 mb-3">Obklopené prázdnymi políčkami v mriežke — blokovaná energia, frustrácia alebo napätie.</p>
-              <div className="space-y-3">
-                {isolated.map(n => {
-                  const info = isolatedInfo[String(n)];
-                  return (
-                    <div key={n} className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20">
-                      <div className="flex items-center gap-2 mb-1.5">
-                        <span className="w-8 h-8 rounded-lg bg-rose-500/20 border border-rose-500/30 text-rose-700 text-sm font-bold flex items-center justify-center">{n}</span>
-                        <div>
-                          <p className="text-sm font-medium text-slate-800">{info?.theme || `Izolované číslo ${n}`}</p>
-                          <p className="text-[10px] text-rose-600">{info?.type === 'nepárne' ? 'Nepárne – napätie, agresivita' : 'Párne – pasivita, utiahnutosť'}</p>
-                        </div>
-                      </div>
-                      {info && (
-                        <>
-                          <p className="text-xs text-slate-600 mb-2">{info.description}</p>
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px]">
-                            <div className="p-2 rounded-lg bg-red-500/10">
-                              <p className="text-red-600 font-medium">Tieň</p>
-                              <p className="text-slate-600">{info.shadow}</p>
-                            </div>
-                            <div className="p-2 rounded-lg bg-amber-500/10">
-                              <p className="text-amber-600 font-medium">Telo</p>
-                              <p className="text-slate-600">{info.body}</p>
-                            </div>
-                          </div>
-                          <div className="p-2 rounded-lg bg-indigo-500/10 mt-2 text-[11px]">
-                            <p className="text-indigo-600 font-medium">Odporúčanie</p>
-                            <p className="text-slate-600">{info.recommendation}</p>
-                          </div>
-                        </>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </GlassCard>
-          ) : null;
-        })()}
-
-        {/* Jazyky lásky pre klienta */}
-        <div className="mt-4">
-          <LoveLanguagesCard numerology={numerology} title="Jazyky lásky klienta" />
-        </div>
       </motion.section>
 
       {/* ASTROLOGIA */}

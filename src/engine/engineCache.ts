@@ -9,16 +9,16 @@
 // = ~500KB v každej cache, total <1MB.
 const MAX_ENTRIES_PER_CACHE = 100;
 
+const MISS = Symbol('cache-miss');
+
 class LRUCache<V> {
   private map = new Map<string, V>();
 
-  get(key: string): V | undefined {
-    const v = this.map.get(key);
-    if (v !== undefined) {
-      // refresh recency
-      this.map.delete(key);
-      this.map.set(key, v);
-    }
+  get(key: string): V | typeof MISS {
+    if (!this.map.has(key)) return MISS;
+    const v = this.map.get(key) as V;
+    this.map.delete(key);
+    this.map.set(key, v);
     return v;
   }
 
@@ -40,7 +40,7 @@ export function memoize<Args extends unknown[], R>(
   return (...args: Args) => {
     const key = keyFn(...args);
     const hit = cache.get(key);
-    if (hit !== undefined) return hit;
+    if (hit !== MISS) return hit;
     const value = fn(...args);
     cache.set(key, value);
     return value;

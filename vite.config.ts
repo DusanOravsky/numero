@@ -4,10 +4,12 @@ import tailwindcss from '@tailwindcss/vite'
 import { VitePWA } from 'vite-plugin-pwa'
 import { visualizer } from 'rollup-plugin-visualizer'
 import { writeFileSync } from 'fs'
+import { resolve } from 'path'
 import pkg from './package.json'
 
 const analyze = process.env.ANALYZE === '1';
-writeFileSync('public/version.json', JSON.stringify({ version: pkg.version }) + '\n');
+const isBuild = process.argv.includes('build');
+if (isBuild) writeFileSync('public/version.json', JSON.stringify({ version: pkg.version }) + '\n');
 
 export default defineConfig({
   plugins: [
@@ -89,7 +91,7 @@ export default defineConfig({
   ],
   base: process.env.GITHUB_ACTIONS ? '/numero/' : '/',
   resolve: {
-    alias: { '@': '/src' }
+    alias: { '@': resolve(__dirname, 'src') }
   },
   build: {
     chunkSizeWarningLimit: 600,
@@ -102,7 +104,10 @@ export default defineConfig({
           if (id.includes('node_modules/jspdf')) {
             return 'pdf';
           }
-          if (id.includes('node_modules/react/') || id.includes('node_modules/react-dom/') || id.includes('node_modules/react-router-dom/') || id.includes('node_modules/framer-motion/') || id.includes('node_modules/zustand/')) {
+          if (id.includes('node_modules/react/') || id.includes('node_modules/react-dom/')) {
+            return 'framework';
+          }
+          if (id.includes('node_modules/react-router-dom/') || id.includes('node_modules/framer-motion/') || id.includes('node_modules/zustand/')) {
             return 'vendor';
           }
         }

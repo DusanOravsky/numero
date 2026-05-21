@@ -49,7 +49,8 @@ export function setApiKey(key: string) {
 }
 
 export function getModel(): ClaudeModel {
-  return (localStorage.getItem(ANTHROPIC_MODEL_STORAGE) as ClaudeModel) || 'claude-sonnet-4-6';
+  const v = localStorage.getItem(ANTHROPIC_MODEL_STORAGE) as ClaudeModel | null;
+  return v && CLAUDE_MODELS.some(m => m.id === v) ? v : 'claude-sonnet-4-6';
 }
 
 export function setModel(m: ClaudeModel) {
@@ -429,6 +430,7 @@ Pripomienka:
 // =====================================================================
 
 export interface ChatMessage {
+  id?: string;
   role: 'user' | 'assistant';
   content: string;
 }

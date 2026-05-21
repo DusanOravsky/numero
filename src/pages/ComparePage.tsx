@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import { GlassCard } from '../components/GlassCard';
@@ -40,7 +40,7 @@ export function ComparePage() {
     ...selected,
   ];
 
-  const computed = allPersons.map(c => {
+  const computed = useMemo(() => allPersons.map(c => {
     const num = calculateFullNumerology(c.birthDay, c.birthMonth, c.birthYear);
     const dev = calculateDevelopmentalNumerology(c.birthDay, c.birthMonth, c.birthYear);
     const lat = c.birthLatitude ?? 48.15;
@@ -50,7 +50,7 @@ export function ComparePage() {
     const hd = calculateHumanDesign(c.birthDay, c.birthMonth, c.birthYear, c.birthHour ?? 12, c.birthMinute ?? 0, tz);
     const enneagram = deriveEnneagramType(num, dev, numerologyMethod);
     return { client: c, num, dev, astro, hd, enneagram };
-  });
+  }), [allPersons, numerologyMethod]);
 
   const rows: { label: string; cells: (data: typeof computed[number]) => React.ReactNode; keyOf?: (data: typeof computed[number]) => string; highlight?: boolean }[] = [
     { label: 'Dátum', cells: d => `${d.client.birthDay}.${d.client.birthMonth}.${d.client.birthYear}` },

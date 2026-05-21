@@ -41,7 +41,7 @@ export function ChakraWheel({ chakras }: ChakraWheelProps) {
                  state.status === 'blocked' ? 'Blokovaná' : 'Hyperaktívna'}
               </span>
             </div>
-            <div className="mt-1 h-2 bg-slate-200 rounded-full overflow-hidden">
+            <div className="mt-1 h-2 bg-slate-200 rounded-full overflow-hidden" role="progressbar" aria-valuenow={state.score} aria-valuemin={0} aria-valuemax={100} aria-label={`${state.chakra.name}: ${state.score}%`}>
               <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: `${state.score}%` }}

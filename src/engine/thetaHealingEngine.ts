@@ -137,6 +137,42 @@ const BELIEF_TEMPLATES: Record<number, { beliefs: LimitingBelief[]; newBeliefs: 
       { belief: 'V novom začiatku je dar', affirmation: 'Každý koniec je bránou k novému', feeling: 'Nádej' },
     ],
   },
+  11: {
+    beliefs: [
+      { belief: 'Moje vízie sú príliš veľké pre tento svet', level: 'soul', origin: 'Duševná pamäť – nepochopenie', emotion: 'Izolácia', bodyArea: 'Tretie oko' },
+      { belief: 'Ak ukážem svoju citlivosť, zneužijú ju', level: 'core', origin: 'Detstvo – odmietnutie intuície', emotion: 'Strach', bodyArea: 'Srdce' },
+      { belief: 'Musím sa obetovať pre vyšší účel', level: 'genetic', origin: 'Rodová línia – mučeníctvo', emotion: 'Vyčerpanie', bodyArea: 'Nadobličky' },
+    ],
+    newBeliefs: [
+      { belief: 'Svet je pripravený na moje vízie', affirmation: 'Moje svetlo inšpiruje a lieči', feeling: 'Žiarenie' },
+      { belief: 'Moja citlivosť je môj superpower', affirmation: 'Zdieľam svoju intuíciu bezpečne', feeling: 'Sila v nežnosti' },
+      { belief: 'Slúžim najlepšie keď som naplnený/á', affirmation: 'Moja plnosť je služba svetu', feeling: 'Vyrovnanosť' },
+    ],
+  },
+  22: {
+    beliefs: [
+      { belief: 'Zodpovednosť ma rozdrví', level: 'core', origin: 'Detstvo – príliš veľa príliš skoro', emotion: 'Preťaženie', bodyArea: 'Ramená' },
+      { belief: 'Ak postavím niečo veľké, stratím slobodu', level: 'soul', origin: 'Duševná skúsenosť – väznenie', emotion: 'Klaustrofóbia', bodyArea: 'Hruď' },
+      { belief: 'Nie som dosť silný/á na to čo cítim že mám robiť', level: 'genetic', origin: 'Rodová línia – nedokončené diela', emotion: 'Pochybnosti', bodyArea: 'Solárny plexus' },
+    ],
+    newBeliefs: [
+      { belief: 'Staviam krok po kroku s radosťou', affirmation: 'Každý malý krok je súčasťou majstrovského diela', feeling: 'Trpezlivá sila' },
+      { belief: 'Moje dielo je moja sloboda', affirmation: 'Tvorba je môj najväčší prejav slobody', feeling: 'Tvorivá radosť' },
+      { belief: 'Mám presne tú silu ktorú potrebujem', affirmation: 'Vesmír ma vybavil na moju misiu', feeling: 'Dôvera' },
+    ],
+  },
+  33: {
+    beliefs: [
+      { belief: 'Moje utrpenie nemá zmysel', level: 'soul', origin: 'Duševná skúsenosť – kozmická bolesť', emotion: 'Bezvýznamnosť', bodyArea: 'Srdce' },
+      { belief: 'Ak budem príliš milujúci/a, ľudia to zneužijú', level: 'core', origin: 'Detstvo – zneužitie dôvery', emotion: 'Horkosť', bodyArea: 'Hruď' },
+      { belief: 'Nemôžem uzdraviť svet', level: 'genetic', origin: 'Rodová línia – bezmocnosť liečiteľov', emotion: 'Frustrácia', bodyArea: 'Ruky' },
+    ],
+    newBeliefs: [
+      { belief: 'Moja cesta transformuje bolesť v múdrosť', affirmation: 'Každá skúsenosť je dar pre moju službu', feeling: 'Hlboký zmysel' },
+      { belief: 'Moja láska má zdravé hranice', affirmation: 'Milujem múdro a chránene', feeling: 'Sila súcitu' },
+      { belief: 'Uzdravujem svet tým že uzdravím seba', affirmation: 'Moja vnútorná harmónia žiari navonok', feeling: 'Celostná radosť' },
+    ],
+  },
 };
 
 const LEVEL_NAMES: Record<BeliefLevel, string> = {

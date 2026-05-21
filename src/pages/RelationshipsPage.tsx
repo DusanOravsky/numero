@@ -875,9 +875,6 @@ export function RelationshipsPage() {
             const pTz2 = getTimezoneFromCoords(pCity2?.lat ?? 48.15, pCity2?.lon ?? 17.11);
             const hd1 = calculateHumanDesign(parseInt(partner1.day), parseInt(partner1.month), parseInt(partner1.year), partner1.hour !== '' ? parseInt(partner1.hour) : 12, partner1.minute !== '' ? parseInt(partner1.minute) : 0, pTz1);
             const hd2 = calculateHumanDesign(parseInt(partner2.day), parseInt(partner2.month), parseInt(partner2.year), partner2.hour !== '' ? parseInt(partner2.hour) : 12, partner2.minute !== '' ? parseInt(partner2.minute) : 0, pTz2);
-            const gates1 = new Set([...hd1.personalityGates.map(g => g.gate), ...hd1.designGates.map(g => g.gate)]);
-            const gates2 = new Set([...hd2.personalityGates.map(g => g.gate), ...hd2.designGates.map(g => g.gate)]);
-            const partnerGK = [...gates1].filter(g => gates2.has(g)).slice(0, 4).map(g => getGeneKeyByGate(g)).filter(Boolean);
             return (
               <>
               <GlassCard>

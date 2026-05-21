@@ -76,7 +76,7 @@ export function GlobalAIDrawer() {
         themes: interpretation.themes.slice(0, 3).map(t => t.theme),
       },
     };
-  }, [profile, numerologyMethod, open]);
+  }, [profile?.id, profile?.birthDay, profile?.birthMonth, profile?.birthYear, profile?.birthHour, profile?.birthMinute, profile?.birthLatitude, profile?.birthLongitude, profile?.name, profile?.gender, profile?.birthPlace, numerologyMethod, open]);
 
   if (!profile || !hasApiKey()) return null;
 

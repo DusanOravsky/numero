@@ -89,6 +89,11 @@ export function NumerologyGrid({ grid, highlightPlane }: NumerologyGridProps) {
                 animate={{ scale: 1 }}
                 transition={{ delay: (rowIdx * 3 + colIdx) * 0.05, type: 'spring' }}
                 onClick={() => setSelectedNum(isSelected ? null : num)}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSelectedNum(isSelected ? null : num); } }}
+                role="button"
+                tabIndex={0}
+                aria-pressed={isSelected}
+                aria-label={`Číslo ${num}: ${items.length}× — ${NUMBER_MEANINGS[num]?.theme || ''}`}
                 title={`${num} — ${NUMBER_MEANINGS[num]?.theme || ''}`}
                 className={`group relative aspect-square flex flex-col items-center justify-center rounded-xl border-2 transition-all cursor-pointer ${
                   isSelected

@@ -6,6 +6,11 @@ const DB_VERSION = 1;
 
 let dbInstance: IDBDatabase | null = null;
 let dbPromise: Promise<IDBDatabase> | null = null;
+let storageDegraded = false;
+
+export function isStorageDegraded(): boolean {
+  return storageDegraded;
+}
 
 function openDb(): Promise<IDBDatabase> {
   if (dbInstance) return Promise.resolve(dbInstance);
@@ -43,6 +48,7 @@ export const indexedDbStorage: StateStorage = {
         request.onerror = () => reject(request.error);
       });
     } catch {
+      storageDegraded = true;
       return localStorage.getItem(name);
     }
   },
@@ -57,6 +63,7 @@ export const indexedDbStorage: StateStorage = {
         request.onerror = () => reject(request.error);
       });
     } catch {
+      storageDegraded = true;
       localStorage.setItem(name, value);
     }
   },
@@ -71,6 +78,7 @@ export const indexedDbStorage: StateStorage = {
         request.onerror = () => reject(request.error);
       });
     } catch {
+      storageDegraded = true;
       localStorage.removeItem(name);
     }
   },

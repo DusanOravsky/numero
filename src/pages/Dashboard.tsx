@@ -30,7 +30,7 @@ export function Dashboard() {
   const [lastViewedId] = useState<string | null>(() => localStorage.getItem('last-viewed-client'));
   const lastClient = lastViewedId ? clients.find(c => c.id === lastViewedId) : null;
 
-  const today = useMemo(() => new Date(), []);
+  const [today] = useState(() => new Date());
   const currentDay = today.getDate();
   const currentMonth = today.getMonth() + 1;
   const currentYear = today.getFullYear();

@@ -4,6 +4,57 @@ All notable changes to this project are documented in this file. Dates are
 in ISO 8601 (YYYY-MM-DD). The format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 2.47.0 — 2026-05-21
+
+**MINOR**: Hlbkový audit a code review — 30 nálezov opravených, test coverage 81 → 209.
+
+### Opravené bugy
+- **CRITICAL:** ClientDashboard `useStore.getState().reports` počas renderu → stale data (nahradené reactive subscription)
+- **Enneagram:** K3=0 alebo negatívny K3 produkoval undefined typ → fallback na 9
+- **ComparePage:** ALL engines recalculated na každý render → `useMemo`
+- **Kabalah:** master numbers 11/22/33 boli clampnuté na 9 → korektná redukcia (11→2, 22→4, 33→6)
+- **AI model:** `getModel()` validácia proti stale localStorage hodnote
+- **Čínsky horoskop:** `approximate` flag pre roky mimo 1940-2030
+- **HD design date:** rozšírený search window pre solstice edge cases
+- **Ascendant:** latitude clamp ±66° (polárne šírky)
+
+### Kvalita a bezpečnosť
+- **CI:** `npm ci` + lint + test pred deploy; `cancel-in-progress: true`
+- **TypeScript:** `strict: true` zapnutý (0 errorov)
+- **Store:** migration try/catch s fallback na initial state
+- **IndexedDB:** `isStorageDegraded()` export pre detekciu silent fallback
+- **AIChat:** stabilné `key` (UUID namiesto index), AbortController cleanup pri unmount
+- **DateInput:** light-mode kontrast fix (biele bg namiesto slate-800)
+- **Bodygraph SVG:** `preserveAspectRatio="xMidYMid meet"` (korektné proporcie)
+
+### Accessibility
+- **NumerologyGrid:** `role="button"`, `tabIndex`, `aria-pressed`, keyboard handler
+- **ChakraWheel:** `role="progressbar"` s `aria-valuenow`
+- **Bodygraph:** `role="img"` + `aria-label`
+- **DateInput:** `aria-label` na všetkých inputoch
+
+### Performance a bundle
+- Odstránené dead dependencies: `html2canvas`, `autoprefixer`, `postcss`, `sharp`, `workbox-window`
+- Vendor chunk split: `framework` (react) + `vendor` (framer/router/zustand)
+- `vite.config`: version.json write len pri build (nie dev)
+- Path alias cez `resolve(__dirname, 'src')` (robustné)
+- `vitest.config`: pridaný `resolve.alias` pre `@/`
+- GlobalAIDrawer: stabilized useMemo deps (field-level namiesto object ref)
+
+### Nový content
+- **Theta Healing:** templates pre master numbers 11, 22, 33
+
+### Testy (+128 nových)
+- `enneagramEngine.test.ts` — oba metódy, edge cases K3=0/negatívny
+- `kabalahEngine.test.ts` — sefiry 1-9, master numbers
+- `ayurvedaEngine.test.ts` — dóša scoring, element influence
+- `tcmEngine.test.ts` — 5 elementov, LP mapping
+- `chineseZodiacEngine.test.ts` — lunárna korekcia, approximate flag
+- `compatibilityEngine.test.ts` — partner + parent-child, score ranges
+- `thetaHealingEngine.test.ts` — 1-9 + master numbers 11/22/33
+- `interpretationEngine.test.ts` — cross-system pattern matching
+- `engineCache.test.ts` — LRU, MISS sentinel, eviction
+
 ## 2.46.5 — 2026-05-21
 
 **PATCH**: Šedé buttony + slate text čitateľnosť.

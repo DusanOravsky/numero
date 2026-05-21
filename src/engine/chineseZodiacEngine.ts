@@ -6,6 +6,7 @@ export interface ChineseZodiacResult {
   animalEmoji: string;
   elementEmoji: string;
   nextYear: number;
+  approximate?: boolean;
 }
 
 const ANIMALS = [
@@ -66,6 +67,7 @@ function getChineseYear(birthYear: number, birthMonth: number, birthDay: number)
 }
 
 export function calculateChineseZodiac(birthYear: number, birthMonth?: number, birthDay?: number): ChineseZodiacResult {
+  const hasLunarCorrection = birthYear in LUNAR_NEW_YEAR;
   const effectiveYear = (birthMonth !== undefined && birthDay !== undefined)
     ? getChineseYear(birthYear, birthMonth, birthDay)
     : birthYear;
@@ -89,5 +91,6 @@ export function calculateChineseZodiac(birthYear: number, birthMonth?: number, b
     animalEmoji: ANIMAL_EMOJIS[animal] || '',
     elementEmoji: ELEMENT_EMOJIS[element] || '',
     nextYear,
+    ...((!hasLunarCorrection && birthMonth !== undefined) ? { approximate: true } : {}),
   };
 }

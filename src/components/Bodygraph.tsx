@@ -64,9 +64,9 @@ export function Bodygraph({ result }: BodygraphProps) {
   });
 
   return (
-    <div className="relative w-full max-w-sm mx-auto" style={{ aspectRatio: '3/4', minHeight: 480 }}>
+    <div className="relative w-full max-w-sm mx-auto" role="img" aria-label="Human Design bodygraph — definované a otvorené centrá s kanálmi" style={{ aspectRatio: '3/4', minHeight: 480 }}>
       {/* Channels as absolute lines using CSS */}
-      <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 300 400" preserveAspectRatio="none">
+      <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 300 400" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
         {Object.values(CHANNEL_TO_CENTERS).map(([c1, c2], i) => {
           const p1 = CENTERS[c1];
           const p2 = CENTERS[c2];

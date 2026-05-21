@@ -11,7 +11,6 @@ import type { KabalahResult } from '../engine/kabalahEngine';
 import type { ThetaHealingResult } from '../engine/thetaHealingEngine';
 import { calculatePartnerCompatibility } from '../engine/compatibilityEngine';
 import { planetInSignDescriptions, cycleVibrationDescriptions } from '../data/planetSignDescriptions';
-import { orvDescriptions } from '../data/orvDescriptions';
 import { getGeneKeyByGate } from '../data/geneKeys';
 import lifePathsData from '../data/lifePaths.json';
 import { useStore } from '../store/useStore';

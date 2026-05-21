@@ -165,9 +165,16 @@ export const SEFIROT: Sefira[] = [
   },
 ];
 
+function reduceForSefira(n: number): number {
+  if (n === 11) return 2;
+  if (n === 22) return 4;
+  if (n === 33) return 6;
+  return Math.min(n, 9);
+}
+
 export function calculateKabalah(lifePathNumber: number, dayNumber: number): KabalahResult {
-  const primaryIndex = Math.min(lifePathNumber, 9);
-  const secondaryIndex = Math.min(dayNumber, 9);
+  const primaryIndex = reduceForSefira(lifePathNumber);
+  const secondaryIndex = reduceForSefira(dayNumber);
 
   const primarySefira = SEFIROT[primaryIndex - 1] || SEFIROT[0];
   const secondarySefira = SEFIROT[secondaryIndex - 1] || SEFIROT[0];

@@ -50,9 +50,9 @@ export function DateInput({ onSubmit, showTime = false, showPlace = false, label
     <form onSubmit={handleSubmit} className="space-y-4">
       <label className="block text-sm text-slate-400">{label}</label>
       <div className="flex gap-3">
-        <input type="number" placeholder="Deň" min={1} max={31} value={day} onChange={e => setDay(e.target.value)} className="w-20 px-3 py-3 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white text-center focus:outline-none focus:border-indigo-500/50" />
-        <input type="number" placeholder="Mesiac" min={1} max={12} value={month} onChange={e => setMonth(e.target.value)} className="w-24 px-3 py-3 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white text-center focus:outline-none focus:border-indigo-500/50" />
-        <input type="number" placeholder="Rok" min={1900} max={2100} value={year} onChange={e => setYear(e.target.value)} className="w-28 px-3 py-3 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white text-center focus:outline-none focus:border-indigo-500/50" />
+        <input type="number" placeholder="Deň" aria-label="Deň narodenia" min={1} max={31} value={day} onChange={e => setDay(e.target.value)} className="w-20 px-3 py-3 rounded-xl bg-white border border-slate-300 text-slate-800 text-center focus:outline-none focus:border-indigo-400" />
+        <input type="number" placeholder="Mesiac" aria-label="Mesiac narodenia" min={1} max={12} value={month} onChange={e => setMonth(e.target.value)} className="w-24 px-3 py-3 rounded-xl bg-white border border-slate-300 text-slate-800 text-center focus:outline-none focus:border-indigo-400" />
+        <input type="number" placeholder="Rok" aria-label="Rok narodenia" min={1900} max={2100} value={year} onChange={e => setYear(e.target.value)} className="w-28 px-3 py-3 rounded-xl bg-white border border-slate-300 text-slate-800 text-center focus:outline-none focus:border-indigo-400" />
       </div>
       {showTime && (
         <div className="p-3 rounded-xl border border-slate-200 bg-slate-50 space-y-3">

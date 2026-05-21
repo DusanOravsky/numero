@@ -132,21 +132,28 @@ export const useStore = create<AppState>()(
       version: STORE_VERSION,
       storage: createJSONStorage(() => indexedDbStorage),
       migrate: (persistedState, version) => {
-        const state = persistedState as Record<string, unknown>;
-        if (version < 1) {
-          state.reports = state.reports || [];
-          state.favorites = state.favorites || [];
+        try {
+          const state = persistedState as Record<string, unknown>;
+          if (version < 1) {
+            state.reports = state.reports || [];
+            state.favorites = state.favorites || [];
+          }
+          if (version < 2) {
+            state.clients = state.clients || [];
+          }
+          if (version < 3) {
+            state.numerologyMethod = state.numerologyMethod || 'developmental';
+          }
+          if (version < 4) {
+            state.themeMode = state.themeMode || 'light';
+          }
+          return state as unknown as AppState;
+        } catch {
+          return {
+            profiles: [], activeProfileId: null, clients: [], reports: [],
+            favorites: [], language: 'sk', numerologyMethod: 'developmental', themeMode: 'light',
+          } as unknown as AppState;
         }
-        if (version < 2) {
-          state.clients = state.clients || [];
-        }
-        if (version < 3) {
-          state.numerologyMethod = state.numerologyMethod || 'developmental';
-        }
-        if (version < 4) {
-          state.themeMode = state.themeMode || 'light';
-        }
-        return state as unknown as AppState;
       },
     }
   )

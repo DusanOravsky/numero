@@ -18,7 +18,7 @@ import { getTimezoneFromCoords } from '../data/cities';
 export function ClientDashboard() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { clients, addReport } = useStore();
+  const { clients, addReport, reports } = useStore();
   const client = clients.find(c => c.id === id);
 
   useEffect(() => {
@@ -50,7 +50,6 @@ export function ClientDashboard() {
   const recordVisit = () => {
     if (!client || !computedResults) return;
     const today = new Date().toISOString().split('T')[0];
-    const reports = useStore.getState().reports;
     if (reports.some(r => r.clientId === client.id && r.createdAt.startsWith(today))) {
       alert('Návšteva pre tento deň je už zaznamenaná.');
       return;
@@ -125,16 +124,16 @@ export function ClientDashboard() {
       </div>
 
       {(() => {
-        const reports = useStore.getState().reports.filter(r => r.clientId === client.id);
-        if (reports.length === 0) return null;
+        const clientReports = reports.filter(r => r.clientId === client.id);
+        if (clientReports.length === 0) return null;
         return (
           <div className="p-4 rounded-xl bg-slate-500/5 border border-slate-500/20">
             <details>
               <summary className="cursor-pointer hover:text-indigo-300 transition-colors">
-                <span className="font-medium text-white">Časová os ({reports.length} návštev)</span>
+                <span className="font-medium text-white">Časová os ({clientReports.length} návštev)</span>
               </summary>
               <div className="mt-3 space-y-2">
-                {reports.slice(0, 20).map(r => {
+                {clientReports.slice(0, 20).map(r => {
                   const d = new Date(r.createdAt);
                   const reportMonth = d.getMonth() + 1;
                   const reportDay = d.getDate();

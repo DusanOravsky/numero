@@ -1,6 +1,6 @@
 # Integrálna mapa bytia (Número)
 
-Offline-first PWA pre numerológiu, astrológiu, Human Design, etikoterapiu, kabalu, Theta Healing, Enneagram, Ayurvédu, TCM a sebarozvoj. **v2.46.5**
+Offline-first PWA pre numerológiu, astrológiu, Human Design, etikoterapiu, kabalu, Theta Healing, Enneagram, Ayurvédu, TCM a sebarozvoj. **v2.47.0**
 
 > 📁 **Nested CLAUDE.md súbory:**
 > - `src/engine/CLAUDE.md` — engine pravidlá, numerológia/astrológia/HD matematika
@@ -302,15 +302,16 @@ App má pôvodný **dark-mode JSX** (`text-white`, `text-slate-300`, `bg-{color}
 - Miesto narodenia cez autocomplete (`data/cities.ts` s lat/lon)
 - Master numbers (11, 22, 33) sa zachovávajú v ŽČ
 - ORV sa počíta od narodenín do narodenín, nie od januára
-- TypeScript strict, eslint strict (`react-hooks/set-state-in-effect`)
+- TypeScript `strict: true`, eslint strict (`react-hooks/set-state-in-effect`)
 - Žiadne `any`, žiadne `// @ts-ignore` bez vysvetlenia
 
 ## Testovanie
 
-- **80+ unit + component testov** (`npm test`)
+- **209 unit + component testov** (`npm test`) — 17 test files
 - **4 E2E smoke testov** (`npm run test:e2e`)
 - Lock testy pre kritické hodnoty: 30.8.1979 02:40 Bratislava → HD profil 1/3, ŽČ 1 z 37, čakra root score 45
 - Component testy: PersonalYearTimeline, RadarChart9
+- Engine testy: numerology, developmental, HD, chakra, enneagram, kabalah, ayurveda, tcm, chineseZodiac, compatibility, thetaHealing, interpretation, engineCache
 - Detail Playwright config: `e2e/CLAUDE.md`
 
 ## Referenčný profil pre testovanie

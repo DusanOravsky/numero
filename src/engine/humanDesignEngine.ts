@@ -299,7 +299,7 @@ function findDesignDate(birthDate: Date): Date {
   const natalSunLon = getSunLongitude(birthDate);
   const targetLon = ((natalSunLon - 88) % 360 + 360) % 360;
 
-  // Search in wider window to ensure we find the design date
+  // Primary search: 120 days back, 60-day window
   const searchStart = Astronomy.MakeTime(new Date(birthDate.getTime() - 120 * 24 * 60 * 60 * 1000));
   const result = Astronomy.SearchSunLongitude(targetLon, searchStart, 60);
 
@@ -307,7 +307,15 @@ function findDesignDate(birthDate: Date): Date {
     return result.date;
   }
 
-  // Fallback: approximate (less accurate but won't crash)
+  // Extended search: wider window for solstice edge cases
+  const extendedStart = Astronomy.MakeTime(new Date(birthDate.getTime() - 150 * 24 * 60 * 60 * 1000));
+  const extendedResult = Astronomy.SearchSunLongitude(targetLon, extendedStart, 100);
+
+  if (extendedResult) {
+    return extendedResult.date;
+  }
+
+  // Last resort fallback: approximate
   const approxDaysPerDegree = 365.25 / 360;
   return new Date(birthDate.getTime() - Math.round(88 * approxDaysPerDegree) * 24 * 60 * 60 * 1000);
 }

@@ -91,7 +91,8 @@ export function deriveEnneagramType(
   if (method === 'developmental' && developmental !== null) {
     // Core type = K3 (životné poslanie) reduced to 1-9
     const k3Value = developmental.circled[2].value;
-    coreType = reduceToSingle(Math.abs(k3Value));
+    const reduced = k3Value === 0 ? 9 : reduceToSingle(Math.abs(k3Value));
+    coreType = reduced || 9;
   } else {
     // Core type = Life Path number reduced to 1-9
     // Master numbers: 11→2, 22→4, 33→6

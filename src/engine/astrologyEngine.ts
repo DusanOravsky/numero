@@ -112,6 +112,7 @@ function isRetrograde(body: Astronomy.Body, date: Date): boolean {
 }
 
 function calculateAscendant(date: Date, latitude: number, longitude: number): number {
+  const clampedLat = Math.max(-66, Math.min(66, latitude));
   const time = Astronomy.MakeTime(date);
   const lst = Astronomy.SiderealTime(time);
   const localST = ((lst + longitude / 15) % 24 + 24) % 24;
@@ -119,7 +120,7 @@ function calculateAscendant(date: Date, latitude: number, longitude: number): nu
   const obliquity = 23.4393;
   const oblRad = obliquity * Math.PI / 180;
   const ramcRad = RAMC * Math.PI / 180;
-  const latRad = latitude * Math.PI / 180;
+  const latRad = clampedLat * Math.PI / 180;
 
   let asc = Math.atan2(
     Math.cos(ramcRad),

@@ -13,7 +13,6 @@ import {
   saveChat as idbSave,
   clearChat as idbClear,
   migrateFromLocalStorage,
-  type PersistedChat,
 } from '../engine/chatStorage';
 
 interface Props {
@@ -97,7 +96,7 @@ export function AIChat({ context, title = 'AI integrálny výklad', initialUserM
       }
       if (!cancelled) setLoading(false);
     })();
-    return () => { cancelled = true; };
+    return () => { cancelled = true; abortRef.current?.abort(); };
   }, [persistKey]);
 
   // Auto-scroll na koniec konverzácie
@@ -124,7 +123,7 @@ export function AIChat({ context, title = 'AI integrálny výklad', initialUserM
     setStreaming(true);
     setStreamingText('');
 
-    const newMessages: ChatMessage[] = [...messages, { role: 'user', content }];
+    const newMessages: ChatMessage[] = [...messages, { id: crypto.randomUUID(), role: 'user', content }];
     setMessages(newMessages);
     setUserInput('');
 
@@ -140,7 +139,7 @@ export function AIChat({ context, title = 'AI integrálny výklad', initialUserM
           acc += chunk.delta;
           setStreamingText(acc);
         } else if (chunk.type === 'done') {
-          setMessages(prev => [...prev, { role: 'assistant', content: acc }]);
+          setMessages(prev => [...prev, { id: crypto.randomUUID(), role: 'assistant', content: acc }]);
           setStreamingText('');
           setStreaming(false);
           setTokens(prev => ({
@@ -163,7 +162,7 @@ export function AIChat({ context, title = 'AI integrálny výklad', initialUserM
   const cancelStream = () => {
     abortRef.current?.abort();
     if (streamingText) {
-      setMessages(prev => [...prev, { role: 'assistant', content: streamingText + '\n\n*(prerušené)*' }]);
+      setMessages(prev => [...prev, { id: crypto.randomUUID(), role: 'assistant', content: streamingText + '\n\n*(prerušené)*' }]);
     }
     setStreamingText('');
     setStreaming(false);
@@ -260,7 +259,7 @@ export function AIChat({ context, title = 'AI integrálny výklad', initialUserM
         >
           {messages.map((m, i) => (
             <div
-              key={i}
+              key={m.id || i}
               className={`p-3 rounded-xl border ${
                 m.role === 'user'
                   ? 'bg-indigo-500/15 border-indigo-500/30 ml-8'

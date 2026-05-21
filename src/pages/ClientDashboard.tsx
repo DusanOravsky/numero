@@ -78,7 +78,7 @@ export function ClientDashboard() {
 
   if (!computedResults) return <SkeletonClientDashboard />;
 
-  const { numerology, astrology, humanDesign, chakras, kabalah, theta } = computedResults;
+  const { numerology, devNumerology, astrology, humanDesign, chakras, kabalah, theta } = computedResults;
 
   return (
     <div className="space-y-6">
@@ -178,12 +178,14 @@ export function ClientDashboard() {
 
       <ClientNumerology
         numerology={numerology}
+        devNumerology={devNumerology}
         astrology={astrology}
         humanDesign={humanDesign}
         chakras={chakras}
         kabalah={kabalah}
         theta={theta}
         clientId={client.id}
+        gender={client.gender}
       />
 
       <ClientRelationships

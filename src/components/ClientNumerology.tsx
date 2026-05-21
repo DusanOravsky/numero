@@ -3,30 +3,36 @@ import { useNavigate } from 'react-router-dom';
 import { GlassCard } from './GlassCard';
 import { EnergyCard } from './EnergyCard';
 import { NumerologyGrid } from './NumerologyGrid';
+import { DevelopmentalNumerologyView } from './DevelopmentalNumerologyView';
 import { ChakraBody } from './ChakraBody';
 import type { NumerologyResult } from '../engine/numerologyEngine';
+import type { DevelopmentalNumerologyResult } from '../engine/developmentalNumerologyEngine';
 import type { AstrologyResult } from '../engine/astrologyEngine';
 import type { HumanDesignResult } from '../engine/humanDesignEngine';
 import type { ChakraState } from '../engine/chakraEngine';
 import type { KabalahResult } from '../engine/kabalahEngine';
 import type { ThetaHealingResult } from '../engine/thetaHealingEngine';
 import { reduceToSingle } from '../engine/numerologyEngine';
+import { useStore } from '../store/useStore';
 import lifePathsData from '../data/lifePaths.json';
 
 const lifePaths = lifePathsData as Record<string, { title: string; keywords: string[]; description: string; gift: string; shadow: string }>;
 
 interface ClientNumerologyProps {
   numerology: NumerologyResult;
+  devNumerology?: DevelopmentalNumerologyResult;
   astrology: AstrologyResult;
   humanDesign: HumanDesignResult;
   chakras: ChakraState[];
   kabalah: KabalahResult;
   theta: ThetaHealingResult;
   clientId?: string;
+  gender?: 'male' | 'female';
 }
 
-export function ClientNumerology({ numerology, astrology, humanDesign, chakras, kabalah, theta, clientId }: ClientNumerologyProps) {
+export function ClientNumerology({ numerology, devNumerology, astrology, humanDesign, chakras, kabalah, theta, clientId, gender }: ClientNumerologyProps) {
   const navigate = useNavigate();
+  const numerologyMethod = useStore(s => s.numerologyMethod);
   const q = clientId ? `?client=${clientId}` : '';
   const lpInfo = lifePaths[String(numerology.lifePathNumber)] || lifePaths[String(reduceToSingle(numerology.lifePathNumber))];
 
@@ -66,9 +72,13 @@ export function ClientNumerology({ numerology, astrology, humanDesign, chakras, 
             </div>
           </div>
 
-          {/* Mriežka */}
+          {/* Mriežka — podľa nastavenej metódy */}
           <div className="mt-4 pt-4 border-t border-slate-200">
-            <NumerologyGrid grid={numerology.grid} />
+            {numerologyMethod === 'developmental' && devNumerology ? (
+              <DevelopmentalNumerologyView result={devNumerology} gender={gender} />
+            ) : (
+              <NumerologyGrid grid={numerology.grid} />
+            )}
           </div>
         </GlassCard>
       </motion.section>

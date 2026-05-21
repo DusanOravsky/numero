@@ -8,9 +8,11 @@ interface Props {
   result: DevelopmentalNumerologyResult;
   /** Biologické pohlavie osoby — pre porovnanie s polaritou ega */
   gender?: 'male' | 'female';
+  /** Ak true, zobrazí len mriežku bez "Tvoje čítanie" */
+  compact?: boolean;
 }
 
-export function DevelopmentalNumerologyView({ result, gender }: Props) {
+export function DevelopmentalNumerologyView({ result, gender, compact }: Props) {
   const [selected, setSelected] = useState<number | null>(null);
 
   const layout = [
@@ -66,7 +68,8 @@ export function DevelopmentalNumerologyView({ result, gender }: Props) {
         <p className="text-xs text-indigo-700 italic">{developmentalGridIntro}</p>
       </div>
 
-      {/* Tvoje čítanie — personalizovaný sprievodca */}
+      {/* Tvoje čítanie — personalizovaný sprievodca (skryté v compact mode) */}
+      {!compact && (
       <details className="rounded-xl border border-indigo-200 bg-white overflow-hidden" open>
         <summary className="p-4 cursor-pointer hover:bg-indigo-50/50 transition-colors">
           <span className="font-medium text-indigo-800">Tvoje čítanie — ako pracovať s číslami</span>
@@ -158,7 +161,10 @@ export function DevelopmentalNumerologyView({ result, gender }: Props) {
           </div>
         </div>
       </details>
+      )}
 
+      {!compact && (
+      <>
       {/* Postup výpočtu */}
       <div className="p-4 rounded-xl glass-light">
         <h4 className="font-medium text-slate-800 mb-2">Postup výpočtu</h4>
@@ -389,6 +395,8 @@ export function DevelopmentalNumerologyView({ result, gender }: Props) {
           Zdroj: kniha Lívia Mičková – <strong>Duchovná numerológia</strong> (a <strong>Duchovná numerológia pre deti</strong>).
         </p>
       </div>
+      </>
+      )}
     </div>
   );
 }

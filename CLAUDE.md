@@ -1,6 +1,6 @@
 # Integrálna mapa bytia (Número)
 
-Offline-first PWA pre numerológiu, astrológiu, Human Design, etikoterapiu, kabalu, Theta Healing, Enneagram, Ayurvédu, TCM a sebarozvoj. **v2.47.2**
+Offline-first PWA pre numerológiu, astrológiu, Human Design, etikoterapiu, kabalu, Theta Healing, Enneagram, Ayurvédu, TCM a sebarozvoj. **v2.50.0**
 
 > 📁 **Nested CLAUDE.md súbory:**
 > - `src/engine/CLAUDE.md` — engine pravidlá, numerológia/astrológia/HD matematika
@@ -241,7 +241,7 @@ Rozdelený na 3 vrstvy:
 - **Detaily a inšpirácie** (`<details open>`) — Detail dennej energie, Mantra/Citát/Tarot
 - **Hlbší profil** (`<details>` default closed) — Integrálny súhrn (ClientSummary), Export PDF
 
-Plus **Posledný klient shortcut** — amber karta hneď pod headerom, naviguje na `/clients/{id}` posledne otvoreného klienta (persisted v `localStorage['last-viewed-client']` cez `ClientDashboard` mount effect).
+Plus **Posledný klient shortcut** — amber karta hneď pod headerom, naviguje na `/clients/{id}` posledne otvoreného klienta (persisted v `localStorage['last-viewed-client']` cez `ClientDashboard` mount effect). Má ✕ dismiss button (v2.50.0+).
 
 ## MainLayout chrome (v2.45.0+)
 

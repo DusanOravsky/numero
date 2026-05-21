@@ -75,7 +75,7 @@ export function ClientNumerology({ numerology, devNumerology, astrology, humanDe
           {/* Mriežka — podľa nastavenej metódy */}
           <div className="mt-4 pt-4 border-t border-slate-200">
             {numerologyMethod === 'developmental' && devNumerology ? (
-              <DevelopmentalNumerologyView result={devNumerology} gender={gender} />
+              <DevelopmentalNumerologyView result={devNumerology} gender={gender} compact />
             ) : (
               <NumerologyGrid grid={numerology.grid} />
             )}

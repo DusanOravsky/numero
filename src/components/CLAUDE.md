@@ -44,6 +44,12 @@ Každá stránka pri `subject.isClient === true` zobrazuje:
 `ClientNumerology.tsx` (zobrazené v `ClientDashboard`) má `clientId` prop —
 "Otvoriť detail →" linky pridajú `?client=ID` do navigácie.
 
+**ClientNumerology princíp (v2.50.0+):** zobrazuje len základ — ŽČ kruh, ORV/OMV/ODV,
+mriežka (method-aware: vývojová/charakterová podľa `useStore().numerologyMethod`).
+Detaily (izolované čísla, roviny, jazyky lásky, "Tvoje čítanie") sú na stránke
+`/numerology?client=ID` cez "Otvoriť detail →". Rovnaký princíp platí aj pre
+Astrológiu, HD, Čakry, Kabalu, Theta — v klient dashboarde len summary, detail cez link.
+
 ## NumerologyPage refaktor (v2.14.0)
 
 NumerologyPage bola zrefaktorovaná z ~1585 na ~1200 riadkov. Taby extrahované do `src/components/numerology/`:
@@ -77,7 +83,7 @@ s vysvetlením čo robiť. Motivácia: spätná väzba "vidím čísla ale nevie
 | Charakterová numerológia | `NumerologyPage.tsx` (overview tab, za mriežkou) | ŽČ dar/tieň, chýbajúce čísla, silné energie, izolované |
 | Human Design | `HumanDesignPage.tsx` (Prehľad tab) | Typ + stratégia, autorita, otvorené centrá, nie-ja téma |
 | Astrológia | `AstrologyPage.tsx` (za "Čo si z toho vziať") | Slnko/Mesiac/Asc, lunárne uzly, dominantný element |
-| Čakry | `ChakrasPage.tsx` (za ChakraWheel) | Blokované (čo robiť), hyperaktívne (pozor), vyvážené |
+| Čakry | `ChakrasPage.tsx` (za ChakraBody) | Blokované (čo robiť), hyperaktívne (pozor), vyvážené |
 | Integrálny súhrn | `ClientSummary.tsx` (pod nadpisom) | 3-krok čítací kľúč: kto si / ako fungovať / kam smeruješ |
 | Modality | `ModalityPage.tsx` | Dóša, TCM element, Bachove kvety prakticky |
 | Vzťahy — Partner | `RelationshipsPage.tsx` | Kompatibilita %, silné stránky, výzvy |
@@ -196,7 +202,7 @@ Lens je v `localStorage` pod `anthropic-lens`. `aiInterpretation.ts` má `buildS
 | `NatalWheel` | SVG natálne koliesko 12 sektorov + planéty (prepísaný: korektná arc math, anti-collision) |
 | `Bodygraph` | HD bodygraph s aktívnymi bránami pri každom centre |
 | `TreeOfLife` | SVG kabalistický strom 10 sefír + 22 ciest |
-| `ChakraWheel` | 7 čakier ako kruhový gradient |
+| `ChakraBody` | 7 čakier vertikálne s mantrami (LAM→AUM), progress bary, glow podľa stavu |
 | `ORVLifeHistogram` | Lifetime ORV cez 9-ročné cykly |
 | `PersonalYearTimeline` | ±5 rokov ORV chronologicky |
 | `LunarTimeline` | 15-dňový pás fáz Mesiaca |

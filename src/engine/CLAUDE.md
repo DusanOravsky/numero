@@ -120,6 +120,8 @@ egoPolarity:
   - 0× → 'none'
   - nepárny počet → 'masculine'
   - párny počet → 'feminine'
+
+isolatedNumbers: rovnaká susedská logika ako v charakterovej (v2.48.3+)
 ```
 
 ## Astrológia (`astrologyEngine.ts`)
@@ -244,6 +246,8 @@ Vyhľadávame cez `Astronomy.SearchSunLongitude` v okne 120 dní pred narodením
 `determineAuthority()` — priorita: Solárny plexus → Sakrálne → Slezina → Srdce/Ego → G → Mentálna/Environmentálna. Reflektor → Lunárna.
 
 ## Chakra engine
+
+Chakra interface má `mantra` field (v2.48.0+): LAM, VAM, RAM, YAM, HAM, OM, AUM.
 
 ```
 score = 50 (base)

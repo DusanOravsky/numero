@@ -823,9 +823,9 @@ export function RelationshipsPage() {
           <button
             type="button"
             onClick={addChild}
-            className="w-full py-3 rounded-xl border-2 border-dashed border-indigo-300 text-sm font-bold bg-indigo-50 hover:bg-indigo-100 active:bg-indigo-200" style={{ color: '#0f172a' }}
+            className="w-full py-3 rounded-xl border-2 border-dashed border-indigo-300 text-sm font-bold bg-indigo-50 hover:bg-indigo-100 active:bg-indigo-200"
           >
-            + Pridať ďalšie dieťa
+            <span style={{ color: '#0f172a' }}>+ Pridať ďalšie dieťa</span>
           </button>
 
           <div className="flex gap-3">
@@ -1499,9 +1499,9 @@ export function RelationshipsPage() {
           <button
             type="button"
             onClick={() => setConstChildren([...constChildren, emptyPerson()])}
-            className="w-full py-3 rounded-xl border-2 border-dashed border-indigo-300 text-sm font-bold bg-indigo-50 hover:bg-indigo-100 active:bg-indigo-200" style={{ color: '#0f172a' }}
+            className="w-full py-3 rounded-xl border-2 border-dashed border-indigo-300 text-sm font-bold bg-indigo-50 hover:bg-indigo-100 active:bg-indigo-200"
           >
-            + Pridať ďalšie dieťa
+            <span style={{ color: '#0f172a' }}>+ Pridať ďalšie dieťa</span>
           </button>
 
           <div className="flex gap-3">

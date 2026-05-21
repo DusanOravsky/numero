@@ -4,6 +4,13 @@ All notable changes to this project are documented in this file. Dates are
 in ISO 8601 (YYYY-MM-DD). The format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 2.46.5 — 2026-05-21
+
+**PATCH**: Šedé buttony + slate text čitateľnosť.
+
+- **`bg-slate/stone/zinc/neutral/gray-{500-900}` buttony** — pridané do CSS override pre biely text (predtým "QR kód" button mal `bg-slate-600 text-white` ale `.text-white !important` to bilo na čierny — neviditeľné na tmavej šedej).
+- **`text-slate-{300,400,500}`** — tmavšie odtiene (`#475569`, `#64748b`, `#475569`) miesto pôvodných svetlých `#a8a29e`, `#78716c`, `#44403c` — sidebar "Tmavá", "EN" toggles teraz čitateľnejšie.
+
 ## 2.46.4 — 2026-05-21
 
 **PATCH**: HOTFIX — wildcard CSS selektor ktorý lámal pastelové buttony.

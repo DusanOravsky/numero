@@ -131,9 +131,9 @@ body {
 
 /* Default text on light bg — translate dark-mode names to dark colors */
 .text-white { color: #1c1917 !important; }
-.text-slate-300 { color: #44403c !important; }
-.text-slate-400 { color: #78716c !important; }
-.text-slate-500 { color: #a8a29e !important; }
+.text-slate-300 { color: #475569 !important; }
+.text-slate-400 { color: #64748b !important; }
+.text-slate-500 { color: #475569 !important; }
 .text-indigo-300, .text-indigo-400 { color: #4f46e5 !important; }
 .text-purple-300, .text-purple-400 { color: #7c3aed !important; }
 .text-green-300, .text-green-400 { color: #15803d !important; }
@@ -165,6 +165,10 @@ body {
 .bg-fuchsia-500 .text-white, .bg-fuchsia-600 .text-white,
 .bg-blue-500 .text-white, .bg-blue-600 .text-white, .bg-blue-700 .text-white,
 .bg-pink-500 .text-white, .bg-pink-600 .text-white,
+.bg-slate-500 .text-white, .bg-slate-600 .text-white, .bg-slate-700 .text-white, .bg-slate-800 .text-white, .bg-slate-900 .text-white,
+.bg-stone-500 .text-white, .bg-stone-600 .text-white, .bg-stone-700 .text-white, .bg-stone-800 .text-white,
+.bg-zinc-500 .text-white, .bg-zinc-600 .text-white, .bg-zinc-700 .text-white, .bg-zinc-800 .text-white,
+.bg-gray-500 .text-white, .bg-gray-600 .text-white, .bg-gray-700 .text-white, .bg-gray-800 .text-white,
 [class*="bg-gradient-to"] .text-white {
   color: #ffffff !important;
 }
@@ -185,6 +189,11 @@ button.bg-orange-500, button.bg-orange-600, button.bg-orange-700,
 button.bg-blue-500, button.bg-blue-600, button.bg-blue-700,
 button.bg-fuchsia-500, button.bg-fuchsia-600, button.bg-fuchsia-700,
 button.bg-pink-500, button.bg-pink-600, button.bg-pink-700,
+button.bg-slate-500, button.bg-slate-600, button.bg-slate-700, button.bg-slate-800, button.bg-slate-900,
+button.bg-stone-500, button.bg-stone-600, button.bg-stone-700, button.bg-stone-800,
+button.bg-zinc-500, button.bg-zinc-600, button.bg-zinc-700, button.bg-zinc-800,
+button.bg-neutral-500, button.bg-neutral-600, button.bg-neutral-700, button.bg-neutral-800,
+button.bg-gray-500, button.bg-gray-600, button.bg-gray-700, button.bg-gray-800,
 button[class*="bg-gradient-to"] {
   color: #ffffff !important;
 }

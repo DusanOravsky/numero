@@ -178,14 +178,12 @@ export function ClientDashboard() {
 
       <ClientNumerology
         numerology={numerology}
-        devNumerology={devNumerology}
         astrology={astrology}
         humanDesign={humanDesign}
         chakras={chakras}
         kabalah={kabalah}
         theta={theta}
         clientId={client.id}
-        gender={client.gender}
       />
 
       <ClientRelationships

@@ -4,39 +4,29 @@ import { GlassCard } from './GlassCard';
 import { EnergyCard } from './EnergyCard';
 import { NumerologyGrid } from './NumerologyGrid';
 import { ChakraBody } from './ChakraBody';
-import { LoveLanguagesCard } from './LoveLanguagesCard';
-import { DevelopmentalNumerologyView } from './DevelopmentalNumerologyView';
 import type { NumerologyResult } from '../engine/numerologyEngine';
-import type { DevelopmentalNumerologyResult } from '../engine/developmentalNumerologyEngine';
 import type { AstrologyResult } from '../engine/astrologyEngine';
 import type { HumanDesignResult } from '../engine/humanDesignEngine';
 import type { ChakraState } from '../engine/chakraEngine';
 import type { KabalahResult } from '../engine/kabalahEngine';
 import type { ThetaHealingResult } from '../engine/thetaHealingEngine';
 import { reduceToSingle } from '../engine/numerologyEngine';
-import { useStore } from '../store/useStore';
 import lifePathsData from '../data/lifePaths.json';
-import isolatedData from '../data/isolatedNumbers.json';
 
 const lifePaths = lifePathsData as Record<string, { title: string; keywords: string[]; description: string; gift: string; shadow: string }>;
-const isolatedInfo = isolatedData as Record<string, { type: string; effect: string; description: string; theme: string; shadow: string; recommendation: string; body: string }>;
 
 interface ClientNumerologyProps {
   numerology: NumerologyResult;
-  devNumerology?: DevelopmentalNumerologyResult;
   astrology: AstrologyResult;
   humanDesign: HumanDesignResult;
   chakras: ChakraState[];
   kabalah: KabalahResult;
   theta: ThetaHealingResult;
-  /** ID klienta — ak je definované, "Otvoriť detail" linky pridajú ?client=ID */
   clientId?: string;
-  gender?: 'male' | 'female';
 }
 
-export function ClientNumerology({ numerology, devNumerology, astrology, humanDesign, chakras, kabalah, theta, clientId, gender }: ClientNumerologyProps) {
+export function ClientNumerology({ numerology, astrology, humanDesign, chakras, kabalah, theta, clientId }: ClientNumerologyProps) {
   const navigate = useNavigate();
-  const numerologyMethod = useStore(s => s.numerologyMethod);
   const q = clientId ? `?client=${clientId}` : '';
   const lpInfo = lifePaths[String(numerology.lifePathNumber)] || lifePaths[String(reduceToSingle(numerology.lifePathNumber))];
 

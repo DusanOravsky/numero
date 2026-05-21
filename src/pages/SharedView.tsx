@@ -14,6 +14,17 @@ import { calculateKabalah } from '../engine/kabalahEngine';
 import type { KabalahResult } from '../engine/kabalahEngine';
 import { calculateThetaHealing } from '../engine/thetaHealingEngine';
 import type { ThetaHealingResult } from '../engine/thetaHealingEngine';
+import { calculateDevelopmentalNumerology } from '../engine/developmentalNumerologyEngine';
+import type { DevelopmentalNumerologyResult } from '../engine/developmentalNumerologyEngine';
+import { deriveEnneagramType } from '../engine/enneagramEngine';
+import type { EnneagramResult } from '../engine/enneagramEngine';
+import { enneagramTypes } from '../data/enneagram';
+import { deriveDosha } from '../engine/ayurvedaEngine';
+import type { DoshaProfile } from '../data/ayurveda';
+import { DOSHA_INFO } from '../data/ayurveda';
+import { deriveTCMElement } from '../engine/tcmEngine';
+import type { TCMResult } from '../engine/tcmEngine';
+import { TCM_ELEMENTS } from '../data/tcm';
 import lifePathsData from '../data/lifePaths.json';
 import { orvDescriptions } from '../data/orvDescriptions';
 import { getGeneKeyByGate } from '../data/geneKeys';
@@ -36,6 +47,10 @@ interface AllResults {
   chakras: ChakraState[];
   kabalah: KabalahResult;
   theta: ThetaHealingResult;
+  developmental: DevelopmentalNumerologyResult;
+  enneagram: EnneagramResult;
+  dosha: DoshaProfile;
+  tcm: TCMResult;
 }
 
 export function SharedView() {
@@ -103,7 +118,11 @@ export function SharedView() {
     const lp = numerology.lifePathNumber > 9 ? reduceToSingle(numerology.lifePathNumber) : numerology.lifePathNumber;
     const kabalah = calculateKabalah(lp, reduceToSingle(d));
     const theta = calculateThetaHealing(lp);
-    return { numerology, astrology, humanDesign, chakras, kabalah, theta };
+    const developmental = calculateDevelopmentalNumerology(d, m, y);
+    const enneagram = deriveEnneagramType(numerology, developmental, 'characterological');
+    const dosha = deriveDosha(numerology, astrology, humanDesign);
+    const tcm = deriveTCMElement(numerology, astrology);
+    return { numerology, astrology, humanDesign, chakras, kabalah, theta, developmental, enneagram, dosha, tcm };
   }, [clientData]);
 
   if (error) {
@@ -124,7 +143,7 @@ export function SharedView() {
     );
   }
 
-  const { numerology, astrology, humanDesign, chakras, kabalah, theta } = results;
+  const { numerology, astrology, humanDesign, chakras, kabalah, theta, developmental, enneagram, dosha, tcm } = results;
   const lpInfo = lifePaths[String(numerology.lifePathNumber)] || lifePaths[String(reduceToSingle(numerology.lifePathNumber))];
 
   return (
@@ -289,6 +308,136 @@ export function SharedView() {
           ))}
         </div>
       </GlassCard>
+
+      {/* Vyvojova numerologia (K1-K4) */}
+      <GlassCard>
+        <h3 className="font-serif text-lg font-bold text-violet-700 mb-3">Vyvojova numerologia (K1-K4)</h3>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
+          <div className="p-3 rounded-xl bg-violet-50 border border-violet-200">
+            <p className="text-xs text-violet-700 font-semibold">K1 — Psychika</p>
+            <p className="text-2xl font-bold text-slate-800 mt-1">{developmental.circled[0].value}</p>
+            <p className="text-xs text-slate-500">0–{Math.round(numerology.vdd / 4)} r.</p>
+          </div>
+          <div className="p-3 rounded-xl bg-violet-50 border border-violet-200">
+            <p className="text-xs text-violet-700 font-semibold">K2 — Materialna</p>
+            <p className="text-2xl font-bold text-slate-800 mt-1">{developmental.circled[1].value}</p>
+            <p className="text-xs text-slate-500">{Math.round(numerology.vdd / 4)}–{Math.round(numerology.vdd / 2)} r.</p>
+          </div>
+          <div className="p-3 rounded-xl bg-amber-50 border border-amber-300">
+            <p className="text-xs text-amber-700 font-semibold">K3 — Poslanie ★</p>
+            <p className="text-2xl font-bold text-slate-800 mt-1">{developmental.circled[2].value}</p>
+            <p className="text-xs text-slate-500">{Math.round(numerology.vdd / 2)}–{Math.round(3 * numerology.vdd / 4)} r.</p>
+          </div>
+          <div className="p-3 rounded-xl bg-violet-50 border border-violet-200">
+            <p className="text-xs text-violet-700 font-semibold">K4 — Sny</p>
+            <p className="text-2xl font-bold text-slate-800 mt-1">{developmental.circled[3].value}</p>
+            <p className="text-xs text-slate-500">{Math.round(3 * numerology.vdd / 4)}+ r.</p>
+          </div>
+        </div>
+        <p className="text-xs text-slate-500 mt-3">
+          Polarita ega: <strong>{developmental.egoPolarity === 'masculine' ? 'muzska' : developmental.egoPolarity === 'feminine' ? 'zenska' : 'ziadna'}</strong>
+          {' '}({developmental.oneCount}× jednotka v mriezke)
+        </p>
+      </GlassCard>
+
+      {/* Enneagram */}
+      <GlassCard>
+        <h3 className="font-serif text-lg font-bold text-emerald-700 mb-3">Enneagram</h3>
+        {(() => {
+          const type = enneagramTypes[enneagram.coreType];
+          if (!type) return <p className="text-sm text-slate-500">Typ nedostupny</p>;
+          return (
+            <div className="space-y-3 text-sm">
+              <div>
+                <p className="text-xs text-slate-400">Hlavny typ</p>
+                <p className="text-xl font-bold text-slate-800">{enneagram.coreType} — {type.name}</p>
+                <p className="text-sm text-slate-600 mt-1">{type.coreDesire}</p>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="p-2 rounded-lg bg-emerald-50 border border-emerald-200">
+                  <p className="text-xs text-emerald-700 font-semibold">Integracia (rast)</p>
+                  <p className="text-sm">→ Typ {enneagram.integrationDirection} ({enneagramTypes[enneagram.integrationDirection]?.name})</p>
+                </div>
+                <div className="p-2 rounded-lg bg-rose-50 border border-rose-200">
+                  <p className="text-xs text-rose-700 font-semibold">Stres (dezintegracia)</p>
+                  <p className="text-sm">→ Typ {enneagram.disintegrationDirection} ({enneagramTypes[enneagram.disintegrationDirection]?.name})</p>
+                </div>
+              </div>
+              {enneagram.dominantWing && (
+                <p className="text-xs text-slate-500">Dominantne kridlo: <strong>{enneagram.coreType}w{enneagram.dominantWing}</strong></p>
+              )}
+            </div>
+          );
+        })()}
+      </GlassCard>
+
+      {/* Ayurveda */}
+      <GlassCard>
+        <h3 className="font-serif text-lg font-bold text-orange-700 mb-3">Ayurveda — dosa</h3>
+        {(() => {
+          const primary = DOSHA_INFO[dosha.primary];
+          const secondary = dosha.secondary ? DOSHA_INFO[dosha.secondary] : null;
+          return (
+            <div className="space-y-3 text-sm">
+              <div>
+                <p className="text-xs text-slate-400">Primarna dosa</p>
+                <p className="text-xl font-bold text-slate-800">{primary.name} ({primary.element})</p>
+                <p className="text-sm text-slate-600 mt-1">Typ tela: {primary.bodyType.toLowerCase()}. Mysl: {primary.mind.toLowerCase()}</p>
+              </div>
+              {secondary && (
+                <div>
+                  <p className="text-xs text-slate-400">Sekundarna dosa</p>
+                  <p className="text-base font-medium text-slate-700">{secondary.name} ({secondary.element})</p>
+                </div>
+              )}
+              <div className="p-2 rounded-lg bg-orange-50 border border-orange-200">
+                <p className="text-xs text-orange-700"><strong>Tip:</strong> {primary.balanceTips[0]}</p>
+              </div>
+            </div>
+          );
+        })()}
+      </GlassCard>
+
+      {/* TCM */}
+      <GlassCard>
+        <h3 className="font-serif text-lg font-bold text-emerald-700 mb-3">TCM — 5 elementov</h3>
+        {(() => {
+          const primary = TCM_ELEMENTS[tcm.primary];
+          return (
+            <div className="space-y-3 text-sm">
+              <div>
+                <p className="text-xs text-slate-400">Tvoj element</p>
+                <p className="text-xl font-bold text-slate-800">{primary.name}</p>
+              </div>
+              <div className="grid grid-cols-2 gap-3 text-xs">
+                <div><p className="text-slate-400">Organ</p><p className="text-slate-700 font-medium">{primary.organ}</p></div>
+                <div><p className="text-slate-400">Emocia</p><p className="text-slate-700 font-medium">{primary.emotion}</p></div>
+                <div><p className="text-slate-400">Cnost</p><p className="text-slate-700 font-medium">{primary.virtue}</p></div>
+                <div><p className="text-slate-400">Sezona</p><p className="text-slate-700 font-medium">{primary.season}</p></div>
+              </div>
+              <div className="p-2 rounded-lg bg-emerald-50 border border-emerald-200">
+                <p className="text-xs text-emerald-700"><strong>Tip:</strong> {primary.balanceTip}</p>
+              </div>
+            </div>
+          );
+        })()}
+      </GlassCard>
+
+      {/* Jazyky lasky */}
+      {numerology.loveLanguages.length > 0 && (
+        <GlassCard>
+          <h3 className="font-serif text-lg font-bold text-pink-700 mb-3">Jazyky lasky</h3>
+          <div className="space-y-2">
+            {numerology.loveLanguages.slice(0, 3).map((ll, i) => (
+              <div key={i} className="flex items-center gap-3 p-2 rounded-lg bg-pink-50 border border-pink-200">
+                <span className="text-xs font-bold text-pink-700 w-5">{i + 1}.</span>
+                <span className="text-sm text-slate-800 flex-1">{ll.language}</span>
+                <span className="text-xs text-slate-500">{ll.score}%</span>
+              </div>
+            ))}
+          </div>
+        </GlassCard>
+      )}
 
       <div className="text-center pt-4 pb-8">
         <p className="text-xs text-slate-400">Integralna mapa bytia | Vygenerovane: {new Date().toLocaleDateString('sk-SK')}</p>

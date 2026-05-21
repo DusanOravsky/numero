@@ -4,6 +4,19 @@ All notable changes to this project are documented in this file. Dates are
 in ISO 8601 (YYYY-MM-DD). The format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 2.46.0 — 2026-05-21
+
+**MINOR**: Zdielany vyklad — rozsireny obsah.
+
+SharedView (`/numero/share`) teraz obsahuje aj:
+- **Vyvojova numerologia** — K1/K2/K3/K4 cykly s vekovymi obdobiami + polarita ega
+- **Enneagram** — hlavny typ + integracia/stres + dominantne kridlo
+- **Ayurveda** — primarna + sekundarna dosa, telo/myslъ + balance tip
+- **TCM** — element + organ + emocia + cnost + sezonny tip
+- **Jazyky lasky** — top 3 s percentami
+
+Vsetko sa **derivuje** z existujucich 7 poli v URL hash (name + birthDate + optional time/place) — ziadne dalsie data v URL, len viac sekcii v render. Limit 4096 znakov base64 zostava.
+
 ## 2.45.3 — 2026-05-21
 
 **PATCH**:

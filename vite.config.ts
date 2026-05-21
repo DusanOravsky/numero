@@ -47,6 +47,7 @@ export default defineConfig({
         //  - Žiadny skipWaiting / clientsClaim → SW čaká kým ho user manuálne aktivuje
         //  - Update zmení iba ak user klikne "Aktualizovať" v Settings
         globPatterns: ['**/*.{js,css,html,ico,png,svg,json,webmanifest}'],
+        globIgnores: ['**/version.json'],
         cleanupOutdatedCaches: true,
         // skipWaiting/clientsClaim ZÁMERNE NEDÁVAME — chceme manuálne riadený update
         navigateFallback: process.env.GITHUB_ACTIONS ? '/numero/index.html' : '/index.html',

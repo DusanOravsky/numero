@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const APP_VERSION = '2.47.0';
+const APP_VERSION = '2.47.1';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -68,6 +68,32 @@ export function PWAPrompts() {
         .catch(() => { /* offline — ignoruj */ });
     }
 
+    // SW lifecycle detection — keď prehliadač nájde nový SW waiting na aktiváciu
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistration().then(reg => {
+        if (!reg) return;
+        // Už čaká nový SW
+        if (reg.waiting) {
+          // eslint-disable-next-line react-hooks/set-state-in-effect
+          setShowUpdate(true);
+          return;
+        }
+        // Nový SW sa inštaluje
+        reg.addEventListener('updatefound', () => {
+          const newSW = reg.installing;
+          if (!newSW) return;
+          newSW.addEventListener('statechange', () => {
+            if (newSW.state === 'installed' && navigator.serviceWorker.controller) {
+              // eslint-disable-next-line react-hooks/set-state-in-effect
+              setShowUpdate(true);
+            }
+          });
+        });
+        // Manuálny check — triggerne updatefound ak server má nový sw.js
+        reg.update().catch(() => {});
+      });
+    }
+
     // Install hints — iba ak appka NIE JE už nainštalovaná
     if (isInStandaloneMode()) {
       return () => {
@@ -121,15 +147,26 @@ export function PWAPrompts() {
   };
 
   const handleUpdate = async () => {
-    // Online check pred reloadom — ak je server offline, nerobíme nič
-    // (appka beží ďalej z cache, prompt zatvoríme).
     setShowUpdate(false);
-    localStorage.setItem('app-version', APP_VERSION);  // sync, aby sa neukázal znova
+    localStorage.setItem('app-version', APP_VERSION);
+
+    // Ak je nový SW v waiting state, aktivujeme ho cez SKIP_WAITING + reload
+    if ('serviceWorker' in navigator) {
+      const reg = await navigator.serviceWorker.getRegistration();
+      if (reg?.waiting) {
+        reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+          window.location.reload();
+        });
+        return;
+      }
+    }
+
+    // Fallback — online check + cache wipe + reload
     const result = await checkForUpdate();
     if (!result.online) {
       alert('GitHub je offline. Aplikácia beží ďalej z lokálnej cache. Skús neskôr cez Settings → Skontrolovať update.');
     }
-    // Ak online, checkForUpdate sám vykoná reload
   };
 
   const dismissUpdate = () => {

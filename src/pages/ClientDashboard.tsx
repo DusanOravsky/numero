@@ -117,8 +117,7 @@ export function ClientDashboard() {
           <h3 className="font-medium text-white">Návštevy klienta</h3>
           <button
             onClick={recordVisit}
-            className="px-3 py-1.5 rounded-lg text-xs font-medium bg-indigo-600 hover:bg-indigo-500 transition-colors"
-            style={{ color: '#ffffff' }}
+            className="px-3 py-1.5 rounded-lg text-xs font-medium bg-indigo-600 text-white hover:bg-indigo-500 transition-colors"
           >
             + Zaznamenať dnešnú návštevu
           </button>

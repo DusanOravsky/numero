@@ -4,6 +4,16 @@ All notable changes to this project are documented in this file. Dates are
 in ISO 8601 (YYYY-MM-DD). The format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 2.46.2 — 2026-05-21
+
+**PATCH**: CSS refactor (priebežný) — eliminuje časť inline `style={{ color }}` workaroundov.
+
+- **Rozšírené CSS pravidlá** v `styles/index.css`: pridané selektory pre `bg-violet-*`, `bg-emerald-*`, `bg-orange-*`, `bg-fuchsia-*`, `bg-pink-*`, `bg-blue-*` aby button selectors pokryli aj tieto farebné varianty (predtým len `bg-indigo`, `bg-rose`, `bg-green`, `bg-purple`, `bg-cyan`).
+- **Vyčistené inline workaroundy**: SettingsPage 6×, ClientDashboard 1× — buttony s `bg-indigo-600` teraz používajú `text-white` v className namiesto `style={{ color: '#ffffff' }}`.
+- **ClientPickerButton** v RelationshipsPage — viditeľný aj keď používateľ nemá profil ani klientov (predtým sa skryl, teraz ukáže fallback "Najprv si vytvor profil alebo pridaj klientov").
+
+Stále zostáva **veľký refactor** — `.text-white !important` override ostal, lebo úplné odstránenie vyžaduje audit ~270 výskytov v 44 súboroch (samostatná session).
+
 ## 2.46.1 — 2026-05-21
 
 **PATCH**: SharedView Enneagram TS fix — `coreDesire` neexistuje, použité `motivation` + `subtitle` z `EnneagramTypeData`. v2.46.0 build na GH Actions zlyhal kvôli strict tsc.

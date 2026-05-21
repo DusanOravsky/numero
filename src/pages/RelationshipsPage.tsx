@@ -55,7 +55,7 @@ function ClientPickerButton({ onPick, includeProfile = true }: { onPick: (p: Per
     return () => document.removeEventListener('mousedown', handler);
   }, [open]);
 
-  if (clients.length === 0 && !activeProfile) return null;
+  // Render aj keď nemá klientov ani profil — používateľ vidí že feature existuje
 
   return (
     <div ref={ref} className="relative">
@@ -101,8 +101,12 @@ function ClientPickerButton({ onPick, includeProfile = true }: { onPick: (p: Per
               <span className="text-[10px]" style={{ color: '#64748b' }}>{c.birthDay}.{c.birthMonth}.{c.birthYear}</span>
             </button>
           ))}
-          {clients.length === 0 && !includeProfile && (
-            <div className="px-3 py-2 text-xs text-center" style={{ color: '#64748b' }}>Žiadni klienti.</div>
+          {clients.length === 0 && (!includeProfile || !activeProfile) && (
+            <div className="px-3 py-3 text-xs text-center" style={{ color: '#64748b' }}>
+              {!activeProfile && !clients.length
+                ? 'Najprv si vytvor profil alebo pridaj klientov.'
+                : 'Žiadni klienti — pridaj ich v sekcii Klienti.'}
+            </div>
           )}
         </div>
       )}

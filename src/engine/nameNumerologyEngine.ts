@@ -176,7 +176,16 @@ const PERSONALITY_DESCRIPTIONS: Record<number, string> = {
 export function calculateNameNumerology(fullName: string): NameNumerologyResult {
   const cleanName = fullName.trim().toLowerCase();
   if (!cleanName) {
-    return { expressionNumber: 0, soulNumber: 0, personalityNumber: 0, letters: [], hiddenPassion: null, karmicLessons: [1,2,3,4,5,6,7,8,9], maturityNumber: 0, cornerstone: '', capstone: '', expressionDescription: '', soulDescription: '', personalityDescription: '', cornerstoneDescription: '', capstoneDescription: '' };
+    return {
+      fullName: '',
+      expressionNumber: 0, soulNumber: 0, personalityNumber: 0,
+      letters: [],
+      hiddenPassion: { number: 0, count: 0, description: '' },
+      karmicLessons: [1,2,3,4,5,6,7,8,9].map(n => ({ number: n, description: '' })),
+      cornerstone: null, capstone: null, firstVowel: null,
+      balanceNumber: { value: 0, initials: '', description: '' },
+      expressionDescription: '', soulDescription: '', personalityDescription: '',
+    };
   }
   const letters: { letter: string; value: number; isVowel: boolean }[] = [];
 

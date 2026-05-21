@@ -94,14 +94,14 @@ describe('deriveTCMElement — ŽČ mapovanie', () => {
 describe('deriveTCMElement — astro element vplyv', () => {
   it('Oheň → ohen +3', () => {
     const num = makeMinimalNumerology(6); // voda +2
-    const astro = { dominantElement: 'Oheň' } as Partial<AstrologyResult>;
+    const astro = { dominantElement: 'Oheň' } as unknown as AstrologyResult;
     const result = deriveTCMElement(num, astro);
     expect(result.primary).toBe('ohen');
   });
 
   it('Vzduch → kov +2, drevo +1', () => {
     const num = makeMinimalNumerology(6); // voda +2
-    const astro = { dominantElement: 'Vzduch' } as Partial<AstrologyResult>;
+    const astro = { dominantElement: 'Vzduch' } as unknown as AstrologyResult;
     const result = deriveTCMElement(num, astro);
     // kov=2, drevo=1, voda=2 → tie kov/voda
     expect(['kov', 'voda']).toContain(result.primary);
@@ -109,14 +109,14 @@ describe('deriveTCMElement — astro element vplyv', () => {
 
   it('Zem → zem +3', () => {
     const num = makeMinimalNumerology(1); // drevo +2
-    const astro = { dominantElement: 'Zem' } as Partial<AstrologyResult>;
+    const astro = { dominantElement: 'Zem' } as unknown as AstrologyResult;
     const result = deriveTCMElement(num, astro);
     expect(result.primary).toBe('zem');
   });
 
   it('Voda → voda +3', () => {
     const num = makeMinimalNumerology(1); // drevo +2
-    const astro = { dominantElement: 'Voda' } as Partial<AstrologyResult>;
+    const astro = { dominantElement: 'Voda' } as unknown as AstrologyResult;
     const result = deriveTCMElement(num, astro);
     expect(result.primary).toBe('voda');
   });

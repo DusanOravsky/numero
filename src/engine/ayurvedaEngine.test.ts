@@ -77,7 +77,7 @@ describe('deriveDosha — numerologické ŽČ mapovanie', () => {
 describe('deriveDosha — astro element vplyv', () => {
   it('Oheň element → pitta +3', () => {
     const num = makeMinimalNumerology(2); // kapha +2 from LP
-    const astro = { dominantElement: 'Oheň' } as Partial<AstrologyResult>;
+    const astro = { dominantElement: 'Oheň' } as unknown as AstrologyResult;
     const result = deriveDosha(num, astro, null);
     // pitta=3, kapha=2 → pitta wins
     expect(result.primary).toBe('pitta');
@@ -85,7 +85,7 @@ describe('deriveDosha — astro element vplyv', () => {
 
   it('Vzduch element → vata +3', () => {
     const num = makeMinimalNumerology(2); // kapha +2
-    const astro = { dominantElement: 'Vzduch' } as Partial<AstrologyResult>;
+    const astro = { dominantElement: 'Vzduch' } as unknown as AstrologyResult;
     const result = deriveDosha(num, astro, null);
     // vata=3, kapha=2 → vata wins
     expect(result.primary).toBe('vata');
@@ -93,7 +93,7 @@ describe('deriveDosha — astro element vplyv', () => {
 
   it('Zem element → kapha +2', () => {
     const num = makeMinimalNumerology(5); // vata +2
-    const astro = { dominantElement: 'Zem' } as Partial<AstrologyResult>;
+    const astro = { dominantElement: 'Zem' } as unknown as AstrologyResult;
     const result = deriveDosha(num, astro, null);
     // vata=2, kapha=2 → tie, sorted by array order. kapha is last but primary depends on score
     // Actually both equal at 2, so first in sorted order wins
@@ -104,7 +104,7 @@ describe('deriveDosha — astro element vplyv', () => {
 describe('deriveDosha — HD typ vplyv', () => {
   it('Generátor → pitta +2', () => {
     const num = makeMinimalNumerology(5); // vata +2
-    const hd = { type: 'Generátor' } as Partial<HumanDesignResult>;
+    const hd = { type: 'Generátor' } as unknown as HumanDesignResult;
     const result = deriveDosha(num, null, hd);
     // vata=2, pitta=2 → tie
     expect(['vata', 'pitta']).toContain(result.primary);
@@ -112,7 +112,7 @@ describe('deriveDosha — HD typ vplyv', () => {
 
   it('Projektor → vata +2', () => {
     const num = makeMinimalNumerology(2); // kapha +2
-    const hd = { type: 'Projektor' } as Partial<HumanDesignResult>;
+    const hd = { type: 'Projektor' } as unknown as HumanDesignResult;
     const result = deriveDosha(num, null, hd);
     // vata=2, kapha=2 → tie
     expect(['vata', 'kapha']).toContain(result.primary);
@@ -120,7 +120,7 @@ describe('deriveDosha — HD typ vplyv', () => {
 
   it('Reflektor → kapha +2', () => {
     const num = makeMinimalNumerology(1); // pitta +2
-    const hd = { type: 'Reflektor' } as Partial<HumanDesignResult>;
+    const hd = { type: 'Reflektor' } as unknown as HumanDesignResult;
     const result = deriveDosha(num, null, hd);
     // pitta=2, kapha=2 → tie
     expect(['pitta', 'kapha']).toContain(result.primary);

@@ -351,7 +351,8 @@ export function SharedView() {
               <div>
                 <p className="text-xs text-slate-400">Hlavny typ</p>
                 <p className="text-xl font-bold text-slate-800">{enneagram.coreType} — {type.name}</p>
-                <p className="text-sm text-slate-600 mt-1">{type.coreDesire}</p>
+                <p className="text-xs text-slate-500 italic mt-0.5">{type.subtitle}</p>
+                <p className="text-sm text-slate-600 mt-1"><strong>Motivacia:</strong> {type.motivation}</p>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div className="p-2 rounded-lg bg-emerald-50 border border-emerald-200">

@@ -4,6 +4,10 @@ All notable changes to this project are documented in this file. Dates are
 in ISO 8601 (YYYY-MM-DD). The format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 2.46.1 — 2026-05-21
+
+**PATCH**: SharedView Enneagram TS fix — `coreDesire` neexistuje, použité `motivation` + `subtitle` z `EnneagramTypeData`. v2.46.0 build na GH Actions zlyhal kvôli strict tsc.
+
 ## 2.46.0 — 2026-05-21
 
 **MINOR**: Zdielany vyklad — rozsireny obsah.

@@ -62,25 +62,27 @@ function ClientPickerButton({ onPick, includeProfile = true }: { onPick: (p: Per
       <button
         type="button"
         onClick={() => setOpen(o => !o)}
-        className="text-xs px-3 py-1.5 rounded-lg border border-indigo-300 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-medium flex items-center gap-1.5 transition-colors"
+        className="text-xs px-3 py-1.5 rounded-lg border border-indigo-400 bg-indigo-50 hover:bg-indigo-100 font-semibold flex items-center gap-1.5 transition-colors"
+        style={{ color: '#3730a3' }}
         aria-haspopup="listbox"
         aria-expanded={open}
       >
         <span>📋</span>
-        <span>Vybrať z klientov</span>
-        <span className={`text-[10px] transition-transform ${open ? 'rotate-180' : ''}`}>▾</span>
+        <span style={{ color: '#3730a3' }}>Vybrať z klientov</span>
+        <span style={{ color: '#3730a3' }} className={`text-[10px] transition-transform ${open ? 'rotate-180' : ''}`}>▾</span>
       </button>
       {open && (
-        <div className="absolute right-0 mt-1 w-64 max-h-72 overflow-y-auto bg-white border border-slate-200 rounded-xl shadow-xl z-30 p-1">
+        <div className="absolute right-0 mt-1 w-64 max-h-72 overflow-y-auto bg-white border border-slate-200 rounded-xl shadow-xl z-30 p-1" style={{ color: '#1e293b' }}>
           {includeProfile && activeProfile && (
             <button
               type="button"
               onClick={() => { onPick(clientToPerson(activeProfile as unknown as Client)); setOpen(false); }}
-              className="w-full text-left px-3 py-2 rounded-lg text-sm text-slate-700 hover:bg-indigo-50 flex items-center gap-2"
+              className="w-full text-left px-3 py-2 rounded-lg text-sm hover:bg-indigo-50 flex items-center gap-2"
+              style={{ color: '#1e293b' }}
             >
               <span>◉</span>
-              <span className="flex-1 truncate">{activeProfile.name}</span>
-              <span className="text-[10px] text-slate-400 uppercase">môj profil</span>
+              <span className="flex-1 truncate" style={{ color: '#1e293b' }}>{activeProfile.name}</span>
+              <span className="text-[10px] uppercase" style={{ color: '#64748b' }}>môj profil</span>
             </button>
           )}
           {clients.length > 0 && includeProfile && activeProfile && (
@@ -91,15 +93,16 @@ function ClientPickerButton({ onPick, includeProfile = true }: { onPick: (p: Per
               key={c.id}
               type="button"
               onClick={() => { onPick(clientToPerson(c)); setOpen(false); }}
-              className="w-full text-left px-3 py-2 rounded-lg text-sm text-slate-700 hover:bg-indigo-50 flex items-center gap-2"
+              className="w-full text-left px-3 py-2 rounded-lg text-sm hover:bg-indigo-50 flex items-center gap-2"
+              style={{ color: '#1e293b' }}
             >
               <span>♟</span>
-              <span className="flex-1 truncate">{c.name}</span>
-              <span className="text-[10px] text-slate-400">{c.birthDay}.{c.birthMonth}.{c.birthYear}</span>
+              <span className="flex-1 truncate" style={{ color: '#1e293b' }}>{c.name}</span>
+              <span className="text-[10px]" style={{ color: '#64748b' }}>{c.birthDay}.{c.birthMonth}.{c.birthYear}</span>
             </button>
           ))}
           {clients.length === 0 && !includeProfile && (
-            <div className="px-3 py-2 text-xs text-slate-500 text-center">Žiadni klienti.</div>
+            <div className="px-3 py-2 text-xs text-center" style={{ color: '#64748b' }}>Žiadni klienti.</div>
           )}
         </div>
       )}
@@ -581,7 +584,7 @@ export function RelationshipsPage() {
             <button
               onClick={() => { handlePartnerCalc(); setEditing(false); }}
               disabled={!isPersonValid(partner1) || !isPersonValid(partner2)}
-              className="flex-1 py-3.5 rounded-2xl font-semibold tracking-wide enabled:bg-gradient-to-r enabled:from-indigo-600 enabled:via-violet-600 enabled:to-purple-600 enabled:text-white enabled:shadow-lg enabled:shadow-indigo-500/30 enabled:hover:shadow-xl enabled:hover:shadow-indigo-500/40 enabled:hover:-translate-y-0.5 enabled:active:translate-y-0 enabled:active:scale-[0.98] disabled:bg-slate-200 disabled:text-slate-500 disabled:cursor-not-allowed transition-all duration-200 ease-out"
+              className="flex-1 py-3.5 rounded-2xl font-semibold tracking-wide enabled:bg-gradient-to-r enabled:from-indigo-600 enabled:via-violet-600 enabled:to-purple-600 enabled:text-white enabled:shadow-lg enabled:shadow-indigo-500/30 enabled:hover:shadow-xl enabled:hover:shadow-indigo-500/40 enabled:hover:-translate-y-0.5 enabled:active:translate-y-0 enabled:active:scale-[0.98] disabled:bg-slate-200 disabled:text-slate-800 disabled:cursor-not-allowed transition-all duration-200 ease-out"
             >
               {compatibility ? 'Prepočítať' : 'Vypočítať kompatibilitu'}
             </button>
@@ -933,7 +936,7 @@ export function RelationshipsPage() {
             <button
               onClick={() => { handleFamilyCalc(); setEditing(false); }}
               disabled={!isPersonValid(parent) || !children.some(isPersonValid)}
-              className="flex-1 py-3.5 rounded-2xl font-semibold tracking-wide enabled:bg-gradient-to-r enabled:from-indigo-600 enabled:via-violet-600 enabled:to-purple-600 enabled:text-white enabled:shadow-lg enabled:shadow-indigo-500/30 enabled:hover:shadow-xl enabled:hover:shadow-indigo-500/40 enabled:hover:-translate-y-0.5 enabled:active:translate-y-0 enabled:active:scale-[0.98] disabled:bg-slate-200 disabled:text-slate-500 disabled:cursor-not-allowed transition-all duration-200 ease-out"
+              className="flex-1 py-3.5 rounded-2xl font-semibold tracking-wide enabled:bg-gradient-to-r enabled:from-indigo-600 enabled:via-violet-600 enabled:to-purple-600 enabled:text-white enabled:shadow-lg enabled:shadow-indigo-500/30 enabled:hover:shadow-xl enabled:hover:shadow-indigo-500/40 enabled:hover:-translate-y-0.5 enabled:active:translate-y-0 enabled:active:scale-[0.98] disabled:bg-slate-200 disabled:text-slate-800 disabled:cursor-not-allowed transition-all duration-200 ease-out"
             >
               {familyResults ? 'Prepočítať' : 'Vypočítať kompatibilitu'}
             </button>
@@ -1247,7 +1250,7 @@ export function RelationshipsPage() {
             <button
               onClick={() => { handleAstroCalc(); setEditing(false); }}
               disabled={!isAstroPersonValid(astroPartner1) || !isAstroPersonValid(astroPartner2)}
-              className="flex-1 py-3.5 rounded-2xl font-semibold tracking-wide enabled:bg-gradient-to-r enabled:from-indigo-600 enabled:via-violet-600 enabled:to-purple-600 enabled:text-white enabled:shadow-lg enabled:shadow-indigo-500/30 enabled:hover:shadow-xl enabled:hover:shadow-indigo-500/40 enabled:hover:-translate-y-0.5 enabled:active:translate-y-0 enabled:active:scale-[0.98] disabled:bg-slate-200 disabled:text-slate-500 disabled:cursor-not-allowed transition-all duration-200 ease-out"
+              className="flex-1 py-3.5 rounded-2xl font-semibold tracking-wide enabled:bg-gradient-to-r enabled:from-indigo-600 enabled:via-violet-600 enabled:to-purple-600 enabled:text-white enabled:shadow-lg enabled:shadow-indigo-500/30 enabled:hover:shadow-xl enabled:hover:shadow-indigo-500/40 enabled:hover:-translate-y-0.5 enabled:active:translate-y-0 enabled:active:scale-[0.98] disabled:bg-slate-200 disabled:text-slate-800 disabled:cursor-not-allowed transition-all duration-200 ease-out"
             >
               {synastryResult ? 'Prepočítať' : 'Vypočítať astro kompatibilitu'}
             </button>
@@ -1627,7 +1630,7 @@ export function RelationshipsPage() {
             <button
               onClick={() => { handleConstellationCalc(); setEditing(false); }}
               disabled={!isPersonValid(constFather) || !isPersonValid(constMother) || !constChildren.some(isPersonValid)}
-              className="flex-1 py-3.5 rounded-2xl font-semibold tracking-wide enabled:bg-gradient-to-r enabled:from-indigo-600 enabled:via-violet-600 enabled:to-purple-600 enabled:text-white enabled:shadow-lg enabled:shadow-indigo-500/30 enabled:hover:shadow-xl enabled:hover:shadow-indigo-500/40 enabled:hover:-translate-y-0.5 enabled:active:translate-y-0 enabled:active:scale-[0.98] disabled:bg-slate-200 disabled:text-slate-500 disabled:cursor-not-allowed transition-all duration-200 ease-out"
+              className="flex-1 py-3.5 rounded-2xl font-semibold tracking-wide enabled:bg-gradient-to-r enabled:from-indigo-600 enabled:via-violet-600 enabled:to-purple-600 enabled:text-white enabled:shadow-lg enabled:shadow-indigo-500/30 enabled:hover:shadow-xl enabled:hover:shadow-indigo-500/40 enabled:hover:-translate-y-0.5 enabled:active:translate-y-0 enabled:active:scale-[0.98] disabled:bg-slate-200 disabled:text-slate-800 disabled:cursor-not-allowed transition-all duration-200 ease-out"
             >
               {constellationResult ? 'Prepočítať' : 'Vypočítať rodinnú konšteláciu'}
             </button>

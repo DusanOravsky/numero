@@ -209,9 +209,9 @@ export function Dashboard() {
       )}
 
       {/* ═══ MORNING BRIEF — vždy viditeľné ═══ */}
-      <div className="flex items-center gap-2 -mb-2">
-        <span className="text-xs uppercase tracking-widest text-indigo-400 font-semibold">Ranný brief</span>
-        <div className="flex-1 h-px bg-gradient-to-r from-indigo-400/30 to-transparent"></div>
+      <div className="flex items-center gap-3 pt-2">
+        <span className="text-xs uppercase tracking-widest text-indigo-500 font-semibold whitespace-nowrap">Ranný brief</span>
+        <div className="flex-1 h-px bg-gradient-to-r from-indigo-300 to-transparent"></div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -421,8 +421,8 @@ export function Dashboard() {
         </div>
       </details>
 
-      {/* ═══ HLBŠÍ PROFIL — collapsible (default closed) ═══ */}
-      <details className="group">
+      {/* ═══ HLBŠÍ PROFIL — collapsible (default open) ═══ */}
+      <details className="group" open>
         <summary className="cursor-pointer list-none flex items-center gap-2 py-2">
           <span className="text-xs uppercase tracking-widest text-violet-400 font-semibold">Hlbší profil</span>
           <div className="flex-1 h-px bg-gradient-to-r from-violet-400/30 to-transparent"></div>

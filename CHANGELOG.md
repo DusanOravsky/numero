@@ -4,6 +4,16 @@ All notable changes to this project are documented in this file. Dates are
 in ISO 8601 (YYYY-MM-DD). The format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 2.45.1 — 2026-05-21
+
+**PATCH**: Hotfix viditeľnosti dropdownov a buttonov po v2.45.0.
+
+- **SubjectPicker + ClientPicker dropdown** — text mien klientov bol neviditeľný kvôli CSS override (`text-slate-700` v dark mode mapuje na svetlú farbu). Pridaný inline `style={{ color }}` pre garantovanú čitateľnosť v oboch režimoch.
+- **"Vybrať z klientov" trigger button** — biely text na svetlo-indigo bg → tmavo-indigo (#3730a3) inline color.
+- **"Vypočítať kompatibilitu" disabled state** — `text-slate-500` bol pri svetlo-šedom pozadí takmer neviditeľný; vrátený na `text-slate-800` (čitateľný).
+- **Dashboard "Ranný brief" label** — opravená pozícia (overlapping s ORV kartou kvôli negatívnemu `-mb-2`).
+- **Dashboard "Hlbší profil"** — default `open` (predtým closed, používateľ ho mohol prehliadnuť — obsahuje Integrálny súhrn s 11 systémami).
+
 ## 2.45.0 — 2026-05-21
 
 **MINOR**: UX audit follow-up — Dashboard split, Subject picker, Settings tabs, Presentation mode, polish naprieč appkou.

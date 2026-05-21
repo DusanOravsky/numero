@@ -59,38 +59,40 @@ export function SubjectPicker() {
       <button
         type="button"
         onClick={() => setOpen(o => !o)}
-        className={`flex items-center gap-2 px-3 py-2 rounded-xl border text-sm font-medium transition-all ${
+        className={`flex items-center gap-2 px-3 py-2 rounded-xl border text-sm font-semibold transition-all ${
           isViewingClient
-            ? 'bg-amber-50 border-amber-300 text-amber-800 hover:bg-amber-100'
-            : 'bg-white border-slate-300 text-slate-700 hover:bg-slate-50'
+            ? 'bg-amber-50 border-amber-300 hover:bg-amber-100'
+            : 'bg-white border-slate-300 hover:bg-slate-50'
         }`}
+        style={{ color: isViewingClient ? '#92400e' : '#1e293b' }}
         aria-haspopup="listbox"
         aria-expanded={open}
       >
         <span className="text-base">{isViewingClient ? '♟' : '◉'}</span>
-        <span className="max-w-[12rem] truncate">{currentLabel}</span>
+        <span className="max-w-[12rem] truncate" style={{ color: isViewingClient ? '#92400e' : '#1e293b' }}>{currentLabel}</span>
         <span className={`text-xs transition-transform ${open ? 'rotate-180' : ''}`}>▾</span>
       </button>
 
       {open && (
-        <div className="absolute right-0 mt-2 w-72 max-h-96 overflow-y-auto bg-white border border-slate-200 rounded-xl shadow-xl z-50 p-1">
+        <div className="absolute right-0 mt-2 w-72 max-h-96 overflow-y-auto bg-white border border-slate-200 rounded-xl shadow-xl z-50 p-1" style={{ color: '#1e293b' }}>
           {activeProfile && (
             <button
               type="button"
               onClick={selectProfile}
               className={`w-full text-left px-3 py-2.5 rounded-lg text-sm transition-colors flex items-center gap-2 ${
-                !isViewingClient ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-slate-700 hover:bg-slate-50'
+                !isViewingClient ? 'bg-indigo-50 font-medium' : 'hover:bg-slate-50'
               }`}
+              style={{ color: !isViewingClient ? '#3730a3' : '#1e293b' }}
             >
               <span className="text-base">◉</span>
-              <span className="flex-1 truncate">{activeProfile.name}</span>
-              <span className="text-[10px] text-slate-400 uppercase">môj profil</span>
+              <span className="flex-1 truncate" style={{ color: !isViewingClient ? '#3730a3' : '#1e293b' }}>{activeProfile.name}</span>
+              <span className="text-[10px] uppercase" style={{ color: '#64748b' }}>môj profil</span>
             </button>
           )}
 
           {clients.length > 0 && (
             <>
-              <div className="px-3 py-1.5 text-[10px] uppercase tracking-wider text-slate-400 font-semibold border-t border-slate-100 mt-1 pt-2">
+              <div className="px-3 py-1.5 text-[10px] uppercase tracking-wider font-semibold border-t border-slate-100 mt-1 pt-2" style={{ color: '#64748b' }}>
                 Klienti
               </div>
               {clients.map(c => (
@@ -100,13 +102,14 @@ export function SubjectPicker() {
                   onClick={() => selectClient(c.id)}
                   className={`w-full text-left px-3 py-2.5 rounded-lg text-sm transition-colors flex items-center gap-2 ${
                     activeClient?.id === c.id
-                      ? 'bg-amber-50 text-amber-800 font-medium'
-                      : 'text-slate-700 hover:bg-slate-50'
+                      ? 'bg-amber-50 font-medium'
+                      : 'hover:bg-slate-50'
                   }`}
+                  style={{ color: activeClient?.id === c.id ? '#92400e' : '#1e293b' }}
                 >
                   <span className="text-base">♟</span>
-                  <span className="flex-1 truncate">{c.name}</span>
-                  <span className="text-[10px] text-slate-400">
+                  <span className="flex-1 truncate" style={{ color: activeClient?.id === c.id ? '#92400e' : '#1e293b' }}>{c.name}</span>
+                  <span className="text-[10px]" style={{ color: '#64748b' }}>
                     {c.birthDay}.{c.birthMonth}.{c.birthYear}
                   </span>
                 </button>
@@ -115,7 +118,7 @@ export function SubjectPicker() {
           )}
 
           {clients.length === 0 && (
-            <div className="px-3 py-3 text-xs text-slate-500 text-center">
+            <div className="px-3 py-3 text-xs text-center" style={{ color: '#64748b' }}>
               Žiadni klienti — pridaj ich v sekcii Klienti.
             </div>
           )}

@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSubject } from '../hooks/useSubject';
 import { GlassCard } from '../components/GlassCard';
-import { ChakraWheel } from '../components/ChakraWheel';
+import { ChakraBody } from '../components/ChakraBody';
 import { DateInput } from '../components/DateInput';
 import { calculateFullNumerology, getGridCount } from '../engine/numerologyEngine';
 import { evaluateChakras } from '../engine/chakraEngine';
@@ -112,7 +112,7 @@ export function ChakrasPage() {
           </GlassCard>
 
           <GlassCard glow>
-            <ChakraWheel chakras={chakras} />
+            <ChakraBody chakras={chakras} />
           </GlassCard>
 
           {/* Tvoje čítanie — personalizovaný sprievodca čakrami */}

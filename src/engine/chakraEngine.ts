@@ -6,6 +6,7 @@ export interface Chakra {
   colorHex: string;
   element: string;
   location: string;
+  mantra: string;
   themes: string[];
   balanced: string;
   blocked: string;
@@ -31,6 +32,7 @@ export const CHAKRAS: Chakra[] = [
     colorHex: '#ef4444',
     element: 'Zem',
     location: 'Báza chrbtice',
+    mantra: 'LAM',
     themes: ['Bezpečie', 'Prežitie', 'Stabilita', 'Zakorenenie'],
     balanced: 'Pocit bezpečia, stability, dôvery v život',
     blocked: 'Strach, úzkosť, nestabilita, finančné problémy',
@@ -47,6 +49,7 @@ export const CHAKRAS: Chakra[] = [
     colorHex: '#f97316',
     element: 'Voda',
     location: 'Pod pupkom',
+    mantra: 'VAM',
     themes: ['Kreativita', 'Emócie', 'Sexualita', 'Radosť'],
     balanced: 'Kreativita, zdravé vzťahy, radosť zo života',
     blocked: 'Vina, strata kreativity, emocionálna necitlivosť',
@@ -63,6 +66,7 @@ export const CHAKRAS: Chakra[] = [
     colorHex: '#eab308',
     element: 'Oheň',
     location: 'Solárny plexus',
+    mantra: 'RAM',
     themes: ['Sila vôle', 'Sebavedomie', 'Osobná moc', 'Hranice'],
     balanced: 'Sebadôvera, motivácia, zdravé hranice',
     blocked: 'Nízke sebavedomie, nerozhodnosť, obeť',
@@ -79,6 +83,7 @@ export const CHAKRAS: Chakra[] = [
     colorHex: '#22c55e',
     element: 'Vzduch',
     location: 'Stred hrudníka',
+    mantra: 'YAM',
     themes: ['Láska', 'Súcit', 'Odpustenie', 'Prijatie'],
     balanced: 'Bezpodmienečná láska, súcit, odpustenie',
     blocked: 'Uzavretosť, strach z intimity, žiarlivosť',
@@ -95,6 +100,7 @@ export const CHAKRAS: Chakra[] = [
     colorHex: '#3b82f6',
     element: 'Éter',
     location: 'Hrdlo',
+    mantra: 'HAM',
     themes: ['Komunikácia', 'Pravda', 'Sebavyjadrenie', 'Autenticita'],
     balanced: 'Jasná komunikácia, autentické vyjadrenie',
     blocked: 'Strach z vyjadrenia, klamstvo, tichosť',
@@ -111,6 +117,7 @@ export const CHAKRAS: Chakra[] = [
     colorHex: '#6366f1',
     element: 'Svetlo',
     location: 'Stred čela',
+    mantra: 'OM',
     themes: ['Intuícia', 'Vízia', 'Múdrosť', 'Vnútorné vedenie'],
     balanced: 'Jasná intuícia, vnútorné vedenie, múdrosť',
     blocked: 'Zmätenosť, nedôvera intuícii, ilúzie',
@@ -127,6 +134,7 @@ export const CHAKRAS: Chakra[] = [
     colorHex: '#a855f7',
     element: 'Myšlienka',
     location: 'Temeno hlavy',
+    mantra: 'AUM',
     themes: ['Duchovnosť', 'Prepojenie', 'Jednota', 'Osvietenie'],
     balanced: 'Duchovné prepojenie, vnútorný mier, jednota',
     blocked: 'Oddelenie od duchovna, cynizmus, prázdnota',

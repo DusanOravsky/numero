@@ -46,64 +46,64 @@ export function ClientNumerology({ numerology, devNumerology, astrology, humanDe
           <h2 className="font-serif text-xl font-bold text-indigo-300">Numerológia</h2>
           <button onClick={() => navigate('/numerology' + q)} className="text-xs text-slate-400 hover:text-white">Otvoriť detail →</button>
         </div>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          <GlassCard className="lg:col-span-1">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <GlassCard>
             <div className="text-center">
               <p className="text-xs text-slate-400">Životné číslo</p>
-              <p className="text-4xl font-serif font-bold text-white mt-1">{numerology.lifePathNumber}</p>
-              <p className="text-sm text-indigo-300">z {numerology.lifePathFrom}</p>
-              {lpInfo && <p className="text-sm text-slate-300 mt-2">{lpInfo.title}</p>}
+              <p className="text-4xl font-serif font-bold text-slate-800 mt-1">{numerology.lifePathNumber}</p>
+              <p className="text-sm text-indigo-600">z {numerology.lifePathFrom}</p>
+              {lpInfo && <p className="text-sm text-slate-500 mt-2">{lpInfo.title}</p>}
             </div>
             <div className="grid grid-cols-3 gap-2 mt-4">
               <div className="text-center p-2 rounded-lg bg-indigo-500/10" title="Osobná ročná vibrácia – energia celého roka od narodenín do narodenín">
                 <p className="text-[10px] text-slate-500">ORV (rok)</p>
-                <p className="text-lg font-bold text-white">{numerology.orv}</p>
+                <p className="text-lg font-bold text-indigo-700">{numerology.orv}</p>
               </div>
               <div className="text-center p-2 rounded-lg bg-purple-500/10" title="Osobná mesačná vibrácia – energia tohto mesiaca">
                 <p className="text-[10px] text-slate-500">OMV (mesiac)</p>
-                <p className="text-lg font-bold text-white">{numerology.omv}</p>
+                <p className="text-lg font-bold text-purple-700">{numerology.omv}</p>
               </div>
               <div className="text-center p-2 rounded-lg bg-amber-500/10">
                 <p className="text-[10px] text-slate-500">ODV (deň)</p>
-                <p className="text-lg font-bold text-white">{numerology.odv}</p>
+                <p className="text-lg font-bold text-amber-700">{numerology.odv}</p>
               </div>
             </div>
-          </GlassCard>
-          <GlassCard className="lg:col-span-1">
-            {numerologyMethod === 'developmental' && devNumerology ? (
-              <DevelopmentalNumerologyView result={devNumerology} gender={gender} />
-            ) : (
-              <NumerologyGrid grid={numerology.grid} />
-            )}
-          </GlassCard>
-          <GlassCard className="lg:col-span-1">
-            {numerologyMethod === 'characterological' && (
-              <>
-                {numerology.fullPlanes.length > 0 && (
-                  <div className="mb-3">
-                    <p className="text-xs text-green-400 mb-1">Plné roviny</p>
-                    {numerology.fullPlanes.map(p => <p key={p} className="text-xs text-slate-300">{p}</p>)}
-                  </div>
-                )}
-                {numerology.emptyPlanes.length > 0 && (
-                  <div className="mb-3">
-                    <p className="text-xs text-amber-400 mb-1">Prázdne roviny</p>
-                    {numerology.emptyPlanes.map(p => <p key={p} className="text-xs text-slate-300">{p}</p>)}
-                  </div>
-                )}
-              </>
-            )}
+            {/* Izolované čísla pod ŽČ */}
             {(() => {
               const isolated = numerologyMethod === 'developmental' && devNumerology
                 ? devNumerology.isolatedNumbers
                 : numerology.isolatedNumbers;
               return isolated.length > 0 ? (
-                <div>
-                  <p className="text-xs text-rose-400 mb-1">Izolované čísla</p>
-                  <div className="flex gap-1">{isolated.map(n => <span key={n} className="w-6 h-6 rounded bg-rose-500/20 text-rose-300 text-xs flex items-center justify-center">{n}</span>)}</div>
+                <div className="mt-4 pt-3 border-t border-slate-200">
+                  <p className="text-xs text-rose-600 font-medium mb-1.5">Izolované čísla</p>
+                  <div className="flex gap-1.5">{isolated.map(n => <span key={n} className="w-7 h-7 rounded-lg bg-rose-500/15 border border-rose-500/30 text-rose-700 text-sm font-bold flex items-center justify-center">{n}</span>)}</div>
                 </div>
               ) : null;
             })()}
+            {/* Roviny (len charakterová) */}
+            {numerologyMethod === 'characterological' && (numerology.fullPlanes.length > 0 || numerology.emptyPlanes.length > 0) && (
+              <div className="mt-4 pt-3 border-t border-slate-200">
+                {numerology.fullPlanes.length > 0 && (
+                  <div className="mb-2">
+                    <p className="text-xs text-green-600 font-medium mb-1">Plné roviny</p>
+                    {numerology.fullPlanes.map(p => <p key={p} className="text-xs text-slate-600">{p}</p>)}
+                  </div>
+                )}
+                {numerology.emptyPlanes.length > 0 && (
+                  <div>
+                    <p className="text-xs text-amber-600 font-medium mb-1">Prázdne roviny</p>
+                    {numerology.emptyPlanes.map(p => <p key={p} className="text-xs text-slate-600">{p}</p>)}
+                  </div>
+                )}
+              </div>
+            )}
+          </GlassCard>
+          <GlassCard>
+            {numerologyMethod === 'developmental' && devNumerology ? (
+              <DevelopmentalNumerologyView result={devNumerology} gender={gender} />
+            ) : (
+              <NumerologyGrid grid={numerology.grid} />
+            )}
           </GlassCard>
         </div>
 

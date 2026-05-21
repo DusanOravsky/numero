@@ -4,6 +4,17 @@ All notable changes to this project are documented in this file. Dates are
 in ISO 8601 (YYYY-MM-DD). The format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 2.46.3 — 2026-05-21
+
+**PATCH**: Pastelové karty výraznejšie + chýbajúce text overrides — naprieč celou appkou konzistentne.
+
+- **Bg opacity:** zvýšená zo 0.06 → 0.12-0.16 pre `bg-{color}-500/10` (zviditeľní karty na svetlom pozadí)
+- **Border opacity:** zvýšená z 0.15 → 0.30-0.40 pre `border-{color}-500/20`
+- **Pridané farby ktoré chýbali:** `bg-violet-500/10`, `bg-emerald-500/10`, `bg-pink-500/10`, `bg-orange-500/10`, `bg-fuchsia-500/10`, `bg-teal-500/10`, `bg-slate-500/10` + ich bordery
+- **Text overrides:** pridané `text-violet-300`, `text-emerald-300`, `text-pink-300`, `text-orange-300`, `text-fuchsia-300`, `text-blue-300` → tmavé odtiene v light mode (predtým ostávali Tailwind defaults — nečitateľné na svetlých bg)
+- **Dashboard "Meditácia v tichu" + "Enneagram smeruj k..."** texty teraz čitateľné (predtým bledé na svetlom violet/emerald bg)
+- **Princíp obnovený:** JSX používa `text-violet-300`, CSS override mapuje na #6d28d9 v light mode a na #d8b4fe v dark mode → bez inline `style` workaroundov
+
 ## 2.46.2 — 2026-05-21
 
 **PATCH**: CSS refactor (priebežný) — eliminuje časť inline `style={{ color }}` workaroundov.

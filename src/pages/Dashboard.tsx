@@ -294,7 +294,7 @@ export function Dashboard() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {fullResults.enneagram && enneagramTypes[fullResults.enneagram.coreType] && (
               <div className="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
-                <p className="text-xs text-emerald-700 font-medium">Enneagram: smeruj k {enneagramTypes[fullResults.enneagram.integrationDirection]?.name}</p>
+                <p className="text-xs text-emerald-300 font-medium">Enneagram: smeruj k {enneagramTypes[fullResults.enneagram.integrationDirection]?.name}</p>
               </div>
             )}
             {(() => {
@@ -316,7 +316,7 @@ export function Dashboard() {
           </div>
         )}
         {dailyRituals[odv] && (
-          <p className="text-xs text-slate-500 mt-3"><strong>Večer:</strong> {dailyRituals[odv].evening}</p>
+          <p className="text-xs mt-3" style={{ color: '#475569' }}><strong style={{ color: '#1e293b' }}>Večer:</strong> {dailyRituals[odv].evening}</p>
         )}
       </GlassCard>
 

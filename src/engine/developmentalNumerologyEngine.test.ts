@@ -117,7 +117,7 @@ describe('Pokrytie kombinácií pre chýbajúce čísla 1-9', () => {
         birthDay: 1, birthMonth: 1, birthYear: 1990,
         isPost2000: false, dayMonthSum: 2, yearSum: 19,
         circled: [], dateDigits: [], grid: [], counts,
-        oneCount: counts[1], egoPolarity: 'masculine' as const,
+        oneCount: counts[1], egoPolarity: 'masculine' as const, isolatedNumbers: [],
       };
       const matched = developmentalCombinations.filter(c => c.matches(fakeResult));
       const hasMissing = matched.some(c => c.id.startsWith('no-') || c.title.toLowerCase().includes('bez'));

@@ -80,7 +80,7 @@ function ClientPickerButton({ onPick, includeProfile = true }: { onPick: (p: Per
               className="w-full text-left px-3 py-2 rounded-lg text-sm hover:bg-indigo-50 flex items-center gap-2"
               style={{ color: '#1e293b' }}
             >
-              <span>◉</span>
+              <span style={{ color: '#4f46e5' }}>◉</span>
               <span className="flex-1 truncate" style={{ color: '#1e293b' }}>{activeProfile.name}</span>
               <span className="text-[10px] uppercase" style={{ color: '#64748b' }}>môj profil</span>
             </button>
@@ -96,7 +96,7 @@ function ClientPickerButton({ onPick, includeProfile = true }: { onPick: (p: Per
               className="w-full text-left px-3 py-2 rounded-lg text-sm hover:bg-indigo-50 flex items-center gap-2"
               style={{ color: '#1e293b' }}
             >
-              <span>♟</span>
+              <span style={{ color: '#d97706' }}>♟</span>
               <span className="flex-1 truncate" style={{ color: '#1e293b' }}>{c.name}</span>
               <span className="text-[10px]" style={{ color: '#64748b' }}>{c.birthDay}.{c.birthMonth}.{c.birthYear}</span>
             </button>

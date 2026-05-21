@@ -334,6 +334,47 @@ export function NumerologyPage() {
                 </GlassCard>
               ) : null}
 
+              {numerologyMethod === 'characterological' && (
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                  <VibrationCard
+                    title="VDD"
+                    value={result.vdd}
+                    subtitle="Vek duchovnej dospelosti"
+                    icon="⟡"
+                    color="purple"
+                    formula={`36 - ŽČ(${result.lifePathNumber}) = ${result.vdd}`}
+                    description="Vek duchovnej dospelosti (VDD) je okamih, kedy človek začína plniť svoje životné poslanie. Do tohto veku sa pripravuje – učí sa, zbiera skúsenosti. Po VDD nastupujú karmické cykly K1-K4."
+                  />
+                  <VibrationCard
+                    title="ODD"
+                    value={result.oddPeriod}
+                    subtitle="Obdobie duch. detstva"
+                    icon="◇"
+                    color="purple"
+                    formula={`VDD(${result.vdd}) ÷ 3 = ${result.oddPeriod}`}
+                    description={`Obdobie duchovného detstva (ODD) = ${result.oddPeriod} rokov. Duchovné detstvo trvá od narodenia do ${result.vdd} rokov a delí sa na 3 cykly po ${result.oddPeriod} rokov: 1. cyklus (0–${result.oddPeriod} r.) = vplyv matky, 2. cyklus (${result.oddPeriod}–${result.oddPeriod * 2} r.) = vplyv otca, 3. cyklus (${result.oddPeriod * 2}–${result.vdd} r.) = vplyv spoločnosti.`}
+                  />
+                  <VibrationCard
+                    title="ΣT"
+                    value={result.sigmaT}
+                    subtitle={result.age === 'aquarius' ? 'Vek Vodnára' : 'Vek Rýb'}
+                    icon="☿"
+                    color="gold"
+                    formula={`D + M + R = ${result.sigmaT}`}
+                    description="Suma tarotu (ΣT) je súčet celého dátumu narodenia bez redukcie. Určuje, či osoba patrí do Veku Rýb (< 2000, duchovná introspekcia) alebo Veku Vodnára (>= 2000, nové paradigmy a technológie)."
+                  />
+                  <VibrationCard
+                    title="Kozmický vek"
+                    value={result.sigmaT >= 2000 ? 2 : 1}
+                    subtitle={result.age === 'aquarius' ? 'Vodnár' : 'Ryby'}
+                    icon="⚛"
+                    color="indigo"
+                    formula={`ΣT = ${result.sigmaT} → ${result.age === 'aquarius' ? '≥ 2000 = Vodnár' : '< 2000 = Ryby'}`}
+                    description={result.age === 'aquarius' ? 'Vek Vodnára – nové technológie, kolektívne vedomie, inovácie. Človek je otvorený novým prístupom a má schopnosť prepájať duchovné s moderným.' : 'Vek Rýb – hlboká duchovnosť, introspekcia, tradičná múdrosť. Človek inklinuje k duchovným cestám a vnútornému hľadaniu pravdy.'}
+                  />
+                </div>
+              )}
+
               {/* MRIEŽKA — plná šírka, dosť priestoru */}
               <GlassCard>
                 <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
@@ -597,46 +638,6 @@ export function NumerologyPage() {
                 );
               })()}
 
-              {numerologyMethod === 'characterological' && (
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-                  <VibrationCard
-                    title="VDD"
-                    value={result.vdd}
-                    subtitle="Vek duchovnej dospelosti"
-                    icon="⟡"
-                    color="purple"
-                    formula={`36 - ŽČ(${result.lifePathNumber}) = ${result.vdd}`}
-                    description="Vek duchovnej dospelosti (VDD) je okamih, kedy človek začína plniť svoje životné poslanie. Do tohto veku sa pripravuje – učí sa, zbiera skúsenosti. Po VDD nastupujú karmické cykly K1-K4."
-                  />
-                  <VibrationCard
-                    title="ODD"
-                    value={result.oddPeriod}
-                    subtitle="Obdobie duch. detstva"
-                    icon="◇"
-                    color="purple"
-                    formula={`VDD(${result.vdd}) ÷ 3 = ${result.oddPeriod}`}
-                    description={`Obdobie duchovného detstva (ODD) = ${result.oddPeriod} rokov. Duchovné detstvo trvá od narodenia do ${result.vdd} rokov a delí sa na 3 cykly po ${result.oddPeriod} rokov: 1. cyklus (0–${result.oddPeriod} r.) = vplyv matky, 2. cyklus (${result.oddPeriod}–${result.oddPeriod * 2} r.) = vplyv otca, 3. cyklus (${result.oddPeriod * 2}–${result.vdd} r.) = vplyv spoločnosti.`}
-                  />
-                  <VibrationCard
-                    title="ΣT"
-                    value={result.sigmaT}
-                    subtitle={result.age === 'aquarius' ? 'Vek Vodnára' : 'Vek Rýb'}
-                    icon="☿"
-                    color="gold"
-                    formula={`D + M + R = ${result.sigmaT}`}
-                    description="Suma tarotu (ΣT) je súčet celého dátumu narodenia bez redukcie. Určuje, či osoba patrí do Veku Rýb (< 2000, duchovná introspekcia) alebo Veku Vodnára (>= 2000, nové paradigmy a technológie)."
-                  />
-                  <VibrationCard
-                    title="Kozmický vek"
-                    value={result.sigmaT >= 2000 ? 2 : 1}
-                    subtitle={result.age === 'aquarius' ? 'Vodnár' : 'Ryby'}
-                    icon="⚛"
-                    color="indigo"
-                    formula={`ΣT = ${result.sigmaT} → ${result.age === 'aquarius' ? '≥ 2000 = Vodnár' : '< 2000 = Ryby'}`}
-                    description={result.age === 'aquarius' ? 'Vek Vodnára – nové technológie, kolektívne vedomie, inovácie. Človek je otvorený novým prístupom a má schopnosť prepájať duchovné s moderným.' : 'Vek Rýb – hlboká duchovnosť, introspekcia, tradičná múdrosť. Človek inklinuje k duchovným cestám a vnútornému hľadaniu pravdy.'}
-                  />
-                </div>
-              )}
 
               {/* Vysvetlenie a porovnanie metód — pre obe je obsah iný */}
               {numerologyMethod === 'developmental' && devResult ? (

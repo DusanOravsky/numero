@@ -68,9 +68,9 @@ export function SubjectPicker() {
         aria-haspopup="listbox"
         aria-expanded={open}
       >
-        <span className="text-base">{isViewingClient ? '♟' : '◉'}</span>
+        <span style={{ color: isViewingClient ? '#d97706' : '#4f46e5' }}>{isViewingClient ? '♟' : '◉'}</span>
         <span className="max-w-[12rem] truncate" style={{ color: isViewingClient ? '#92400e' : '#1e293b' }}>{currentLabel}</span>
-        <span className={`text-xs transition-transform ${open ? 'rotate-180' : ''}`}>▾</span>
+        <span className={`text-xs transition-transform ${open ? 'rotate-180' : ''}`} style={{ color: isViewingClient ? '#92400e' : '#1e293b' }}>▾</span>
       </button>
 
       {open && (
@@ -84,7 +84,7 @@ export function SubjectPicker() {
               }`}
               style={{ color: !isViewingClient ? '#3730a3' : '#1e293b' }}
             >
-              <span className="text-base">◉</span>
+              <span style={{ color: '#4f46e5' }}>◉</span>
               <span className="flex-1 truncate" style={{ color: !isViewingClient ? '#3730a3' : '#1e293b' }}>{activeProfile.name}</span>
               <span className="text-[10px] uppercase" style={{ color: '#64748b' }}>môj profil</span>
             </button>
@@ -107,7 +107,7 @@ export function SubjectPicker() {
                   }`}
                   style={{ color: activeClient?.id === c.id ? '#92400e' : '#1e293b' }}
                 >
-                  <span className="text-base">♟</span>
+                  <span style={{ color: '#d97706' }}>♟</span>
                   <span className="flex-1 truncate" style={{ color: activeClient?.id === c.id ? '#92400e' : '#1e293b' }}>{c.name}</span>
                   <span className="text-[10px]" style={{ color: '#64748b' }}>
                     {c.birthDay}.{c.birthMonth}.{c.birthYear}

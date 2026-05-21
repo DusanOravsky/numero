@@ -4,6 +4,12 @@ All notable changes to this project are documented in this file. Dates are
 in ISO 8601 (YYYY-MM-DD). The format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 2.45.3 — 2026-05-21
+
+**PATCH**:
+- NumerologyPage Charakterová: VDD/ODD/ΣT/Kozmický vek presunuté hneď za hero strip Životného čísla (predtým hlboko v overview, často prehliadnuté).
+- SubjectPicker + ClientPicker dropdown ikonky `◉`/`♟` — inline color (#4f46e5 indigo / #d97706 amber) pre garantovanú viditeľnosť (predtým biele cez CSS override).
+
 ## 2.45.2 — 2026-05-21
 
 **PATCH**: "Vybrať z klientov" button — bg + border úplne inline (#eef2ff bg, #a5b4fc border, #3730a3 text). Tailwind utility classes nestačili kvôli CSS override eskalácii.

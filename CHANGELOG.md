@@ -4,6 +4,14 @@ All notable changes to this project are documented in this file. Dates are
 in ISO 8601 (YYYY-MM-DD). The format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 2.46.4 — 2026-05-21
+
+**PATCH**: HOTFIX — wildcard CSS selektor ktorý lámal pastelové buttony.
+
+V `index.css` boli selektory `[class*="bg-blue-5"]` ktoré zachytávali aj `bg-blue-50` (svetlé) aj `bg-blue-500` (tmavé). Tým pádom kdekoľvek bola svetlá pastelová karta s `bg-{color}-50`, vynútil sa biely text → mnohé miesta zrazu mali neviditeľný text (príklad: ProfileSetup "Muž" toggle button).
+
+Zmenené na **presné classy** `.bg-{color}-500`, `.bg-{color}-600`, `.bg-{color}-700` pre selektor ktorý forsí biely text. Svetlé `bg-{color}-50` zostane s defaultným textom.
+
 ## 2.46.3 — 2026-05-21
 
 **PATCH**: Pastelové karty výraznejšie + chýbajúce text overrides — naprieč celou appkou konzistentne.

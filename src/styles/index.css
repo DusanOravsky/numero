@@ -133,10 +133,15 @@ body {
 
 /* Fix backgrounds for light mode */
 .bg-indigo-600 { background-color: #4f46e5 !important; }
-.bg-indigo-600 .text-white, .bg-indigo-600 .text-slate-300 { color: #ffffff !important; }
-.bg-gradient-to-r.from-indigo-600 .text-white { color: #ffffff !important; }
-.bg-rose-600 .text-white { color: #ffffff !important; }
-.bg-green-600 .text-white { color: #ffffff !important; }
+.bg-indigo-600.text-white, .bg-indigo-600 .text-white, .bg-indigo-600 .text-slate-300 { color: #ffffff !important; }
+.bg-gradient-to-r.from-indigo-600.text-white, .bg-gradient-to-r.from-indigo-600 .text-white { color: #ffffff !important; }
+.bg-rose-600.text-white, .bg-rose-600 .text-white { color: #ffffff !important; }
+.bg-green-600.text-white, .bg-green-600 .text-white { color: #ffffff !important; }
+/* enabled: variant buttons */
+button.enabled\:bg-indigo-600:enabled { background-color: #4f46e5 !important; }
+button.enabled\:text-white:enabled { color: #ffffff !important; }
+button:disabled.disabled\:bg-slate-200 { background-color: #e2e8f0 !important; }
+button:disabled.disabled\:text-slate-800 { color: #1e293b !important; }
 .bg-purple-600 .text-white { color: #ffffff !important; }
 .bg-cyan-600 .text-white { color: #ffffff !important; }
 

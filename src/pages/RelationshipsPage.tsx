@@ -29,26 +29,26 @@ const emptyPerson = (): PersonInput => ({ name: '', day: '', month: '', year: ''
 function PersonForm({ person, onChange, label }: { person: PersonInput; onChange: (p: PersonInput) => void; label: string }) {
   return (
     <div className="space-y-3">
-      {label && <p className="text-sm text-slate-400 font-medium">{label}</p>}
+      {label && <p className="text-sm text-slate-700 font-medium">{label}</p>}
       <input
         type="text"
         placeholder="Meno"
         value={person.name}
         onChange={e => onChange({ ...person, name: e.target.value })}
-        className="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white focus:outline-none focus:border-indigo-500/50"
+        className="w-full px-4 py-3 rounded-xl bg-white border border-slate-300 text-slate-800 focus:outline-none focus:border-indigo-500"
       />
       <div className="flex gap-2">
-        <input type="number" placeholder="Deň" min={1} max={31} value={person.day} onChange={e => onChange({ ...person, day: e.target.value })} className="w-20 px-3 py-3 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white text-center focus:outline-none focus:border-indigo-500/50" />
-        <input type="number" placeholder="Mesiac" min={1} max={12} value={person.month} onChange={e => onChange({ ...person, month: e.target.value })} className="w-24 px-3 py-3 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white text-center focus:outline-none focus:border-indigo-500/50" />
-        <input type="number" placeholder="Rok" min={1900} max={2100} value={person.year} onChange={e => onChange({ ...person, year: e.target.value })} className="flex-1 px-3 py-3 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white text-center focus:outline-none focus:border-indigo-500/50" />
+        <input type="number" placeholder="Deň" min={1} max={31} value={person.day} onChange={e => onChange({ ...person, day: e.target.value })} className="w-20 px-3 py-3 rounded-xl bg-white border border-slate-300 text-slate-800 text-center focus:outline-none focus:border-indigo-500" />
+        <input type="number" placeholder="Mesiac" min={1} max={12} value={person.month} onChange={e => onChange({ ...person, month: e.target.value })} className="w-24 px-3 py-3 rounded-xl bg-white border border-slate-300 text-slate-800 text-center focus:outline-none focus:border-indigo-500" />
+        <input type="number" placeholder="Rok" min={1900} max={2100} value={person.year} onChange={e => onChange({ ...person, year: e.target.value })} className="flex-1 px-3 py-3 rounded-xl bg-white border border-slate-300 text-slate-800 text-center focus:outline-none focus:border-indigo-500" />
       </div>
       <div className="flex gap-2 items-center">
-        <input type="number" placeholder="Hod" min={0} max={23} value={person.hour} onChange={e => onChange({ ...person, hour: e.target.value })} className="w-16 px-2 py-2.5 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white text-center text-sm focus:outline-none focus:border-indigo-500/50" />
-        <span className="text-slate-400">:</span>
-        <input type="number" placeholder="Min" min={0} max={59} value={person.minute} onChange={e => onChange({ ...person, minute: e.target.value })} className="w-16 px-2 py-2.5 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white text-center text-sm focus:outline-none focus:border-indigo-500/50" />
-        <span className="text-[10px] text-slate-500">Čas (24h)</span>
+        <input type="number" placeholder="Hod" min={0} max={23} value={person.hour} onChange={e => onChange({ ...person, hour: e.target.value })} className="w-16 px-2 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-800 text-center text-sm focus:outline-none focus:border-indigo-500" />
+        <span className="text-slate-600 font-bold">:</span>
+        <input type="number" placeholder="Min" min={0} max={59} value={person.minute} onChange={e => onChange({ ...person, minute: e.target.value })} className="w-16 px-2 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-800 text-center text-sm focus:outline-none focus:border-indigo-500" />
+        <span className="text-[10px] text-slate-600">Čas (24h)</span>
       </div>
-      <input type="text" placeholder="Miesto narodenia" value={person.birthPlace} onChange={e => onChange({ ...person, birthPlace: e.target.value })} className="w-full px-3 py-2.5 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white text-sm focus:outline-none focus:border-indigo-500/50" />
+      <input type="text" placeholder="Miesto narodenia" value={person.birthPlace} onChange={e => onChange({ ...person, birthPlace: e.target.value })} className="w-full px-3 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-800 text-sm focus:outline-none focus:border-indigo-500" />
     </div>
   );
 }
@@ -441,8 +441,8 @@ export function RelationshipsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-serif text-3xl font-bold text-white">Vzťahy</h1>
-        <p className="text-slate-400 mt-1">Partnerská a rodinná kompatibilita</p>
+        <h1 className="font-serif text-3xl font-bold text-slate-900">Vzťahy</h1>
+        <p className="text-slate-600 mt-1">Partnerská a rodinná kompatibilita</p>
       </div>
 
       <div className="flex gap-2 flex-wrap">
@@ -476,8 +476,8 @@ export function RelationshipsPage() {
       {mode === 'partner' && (!compatibility || editing) && (
         <GlassCard>
           {!compatibility && (
-            <p className="text-sm text-slate-400 mb-4">
-              <strong className="text-white">Partnerský výklad</strong> porovnáva numerologické profily dvoch osôb -- životné čísla, roviny, jazyky lásky a ročné vibrácie. Výsledkom je celková kompatibilita, silné stránky a výzvy vzťahu, plus <strong className="text-rose-300">Cieľ vzťahu</strong> (súčet životných čísel = vyšší zmysel partnerstva).
+            <p className="text-sm text-slate-600 mb-4">
+              <strong className="text-slate-900">Partnerský výklad</strong> porovnáva numerologické profily dvoch osôb -- životné čísla, roviny, jazyky lásky a ročné vibrácie. Výsledkom je celková kompatibilita, silné stránky a výzvy vzťahu, plus <strong className="text-rose-300">Cieľ vzťahu</strong> (súčet životných čísel = vyšší zmysel partnerstva).
             </p>
           )}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -508,10 +508,10 @@ export function RelationshipsPage() {
         <div className="space-y-6">
           {/* Tvoje čítanie */}
           <GlassCard>
-            <h3 className="font-medium text-white mb-3">Tvoje čítanie — ako pracovať s partnerským výkladom</h3>
+            <h3 className="font-medium text-slate-900 mb-3">Tvoje čítanie — ako pracovať s partnerským výkladom</h3>
             <div className="space-y-2 text-sm text-slate-300">
               <p>
-                Kompatibilita <strong className="text-white">{compatibility.overallScore}%</strong> neznamená „dobrý" alebo „zlý" vzťah — hovorí o tom, koľko vecí vám ide prirodzene a kde musíte vedome pracovať.
+                Kompatibilita <strong className="text-slate-900">{compatibility.overallScore}%</strong> neznamená „dobrý" alebo „zlý" vzťah — hovorí o tom, koľko vecí vám ide prirodzene a kde musíte vedome pracovať.
                 <strong> Silné stránky</strong> ({compatibility.strengths.length}) sú to, čo vás drží spolu bez námahy.
                 <strong> Výzvy</strong> ({compatibility.challenges.length}) sú oblasti kde rastieme spoločne.
               </p>
@@ -535,7 +535,7 @@ export function RelationshipsPage() {
 
           <GlassCard glow>
             <div className="text-center">
-              <p className="text-sm text-slate-400">{partner1.name} & {partner2.name}</p>
+              <p className="text-sm text-slate-600">{partner1.name} & {partner2.name}</p>
               <div className="relative w-32 h-32 mx-auto my-4">
                 <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
                   <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(99,102,241,0.2)" strokeWidth="8" />
@@ -550,10 +550,10 @@ export function RelationshipsPage() {
                   <defs><linearGradient id="grad"><stop offset="0%" stopColor="#6366f1" /><stop offset="100%" stopColor="#a855f7" /></linearGradient></defs>
                 </svg>
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-3xl font-serif font-bold text-white">{compatibility.overallScore}%</span>
+                  <span className="text-3xl font-serif font-bold text-slate-900">{compatibility.overallScore}%</span>
                 </div>
               </div>
-              <p className="text-sm text-slate-400">Celková kompatibilita</p>
+              <p className="text-sm text-slate-600">Celková kompatibilita</p>
             </div>
           </GlassCard>
 
@@ -575,21 +575,21 @@ export function RelationshipsPage() {
             };
             return (
               <GlassCard>
-                <h3 className="font-medium text-white mb-2">Cieľ vzťahu</h3>
-                <p className="text-xs text-slate-400 mb-3">Cieľ vzťahu = súčet životných čísel oboch partnerov, redukovaný na jednociferné číslo. Ukazuje vyšší zmysel a spoločnú lekciu vášho vzťahu.</p>
+                <h3 className="font-medium text-slate-900 mb-2">Cieľ vzťahu</h3>
+                <p className="text-xs text-slate-600 mb-3">Cieľ vzťahu = súčet životných čísel oboch partnerov, redukovaný na jednociferné číslo. Ukazuje vyšší zmysel a spoločnú lekciu vášho vzťahu.</p>
                 <div className="flex items-center gap-3 mb-3">
                   <div className="flex items-center gap-2">
-                    <span className="text-sm text-slate-400">ŽČ({partner1.name}):</span>
+                    <span className="text-sm text-slate-600">ŽČ({partner1.name}):</span>
                     <span className="text-lg font-bold text-indigo-300">{p1Num.lifePathNumber}</span>
                   </div>
                   <span className="text-slate-500">+</span>
                   <div className="flex items-center gap-2">
-                    <span className="text-sm text-slate-400">ŽČ({partner2.name}):</span>
+                    <span className="text-sm text-slate-600">ŽČ({partner2.name}):</span>
                     <span className="text-lg font-bold text-indigo-300">{p2Num.lifePathNumber}</span>
                   </div>
                   <span className="text-slate-500">=</span>
                   <div className="w-10 h-10 rounded-full bg-gradient-to-br from-rose-500 to-pink-500 flex items-center justify-center">
-                    <span className="text-lg font-serif font-bold text-white">{relationshipGoal}</span>
+                    <span className="text-lg font-serif font-bold text-slate-900">{relationshipGoal}</span>
                   </div>
                 </div>
                 <p className="text-sm text-slate-300">{goalDescriptions[relationshipGoal]}</p>
@@ -600,12 +600,12 @@ export function RelationshipsPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <GlassCard>
               <h4 className="text-sm text-slate-400 mb-2">Životné čísla</h4>
-              <p className="text-lg font-medium text-white">{compatibility.lifePathCompatibility.score}%</p>
+              <p className="text-lg font-medium text-slate-800">{compatibility.lifePathCompatibility.score}%</p>
               <p className="text-sm text-slate-300 mt-1">{compatibility.lifePathCompatibility.description}</p>
             </GlassCard>
             <GlassCard>
               <h4 className="text-sm text-slate-400 mb-2">Jazyky lásky</h4>
-              <p className="text-lg font-medium text-white">{compatibility.loveLanguageMatch.score}%</p>
+              <p className="text-lg font-medium text-slate-800">{compatibility.loveLanguageMatch.score}%</p>
               {compatibility.loveLanguageMatch.matched.length > 0 && (
                 <p className="text-sm text-green-300 mt-1">Zhodné: {compatibility.loveLanguageMatch.matched.join(', ')}</p>
               )}
@@ -621,18 +621,18 @@ export function RelationshipsPage() {
             const sharedIsolated = num1.isolatedNumbers.filter(n => num2.isolatedNumbers.includes(n));
             return (
               <GlassCard>
-                <h3 className="font-medium text-white mb-1">Charakterová synastria</h3>
-                <p className="text-xs text-slate-400 mb-3">Porovnanie numerologických mriežok — spoločné silné stránky, slepé miesta a napätia.</p>
+                <h3 className="font-medium text-slate-900 mb-1">Charakterová synastria</h3>
+                <p className="text-xs text-slate-600 mb-3">Porovnanie numerologických mriežok — spoločné silné stránky, slepé miesta a napätia.</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
                   <div className="p-2 rounded-lg bg-indigo-500/10 border border-indigo-500/20">
                     <p className="text-[11px] text-indigo-300 font-semibold">{partner1.name}: ŽČ {num1.lifePathNumber}</p>
-                    <p className="text-[11px] text-slate-400">Plné: {num1.fullPlanes.length > 0 ? num1.fullPlanes.join(', ') : 'žiadne'}</p>
-                    <p className="text-[11px] text-slate-400">Prázdne: {num1.emptyPlanes.length > 0 ? num1.emptyPlanes.join(', ') : 'žiadne'}</p>
+                    <p className="text-[11px] text-slate-600">Plné: {num1.fullPlanes.length > 0 ? num1.fullPlanes.join(', ') : 'žiadne'}</p>
+                    <p className="text-[11px] text-slate-600">Prázdne: {num1.emptyPlanes.length > 0 ? num1.emptyPlanes.join(', ') : 'žiadne'}</p>
                   </div>
                   <div className="p-2 rounded-lg bg-violet-500/10 border border-violet-500/20">
                     <p className="text-[11px] text-violet-300 font-semibold">{partner2.name}: ŽČ {num2.lifePathNumber}</p>
-                    <p className="text-[11px] text-slate-400">Plné: {num2.fullPlanes.length > 0 ? num2.fullPlanes.join(', ') : 'žiadne'}</p>
-                    <p className="text-[11px] text-slate-400">Prázdne: {num2.emptyPlanes.length > 0 ? num2.emptyPlanes.join(', ') : 'žiadne'}</p>
+                    <p className="text-[11px] text-slate-600">Plné: {num2.fullPlanes.length > 0 ? num2.fullPlanes.join(', ') : 'žiadne'}</p>
+                    <p className="text-[11px] text-slate-600">Prázdne: {num2.emptyPlanes.length > 0 ? num2.emptyPlanes.join(', ') : 'žiadne'}</p>
                   </div>
                 </div>
                 <div className="space-y-1.5">
@@ -669,26 +669,26 @@ export function RelationshipsPage() {
 
             return (
               <GlassCard>
-                <h3 className="font-medium text-white mb-1">Vývojová synastria (Lívia Mičková)</h3>
-                <p className="text-xs text-slate-400 mb-3">
+                <h3 className="font-medium text-slate-900 mb-1">Vývojová synastria (Lívia Mičková)</h3>
+                <p className="text-xs text-slate-600 mb-3">
                   Porovnanie 4 zakrúžkovaných karmických čísel oboch partnerov a polarity ega — ukazuje, ako sa stretávajú vaše karmické úlohy.
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30">
-                    <p className="text-xs text-amber-300 uppercase mb-1">{partner1.name}</p>
-                    <p className="text-sm text-white font-mono">
+                    <p className="text-xs text-amber-700 uppercase mb-1">{partner1.name}</p>
+                    <p className="text-sm text-slate-800 font-mono">
                       K1={dev1.circled[0].value} · K2={dev1.circled[1].value} · K3={dev1.circled[2].value} · K4={dev1.circled[3].value}
                     </p>
-                    <p className="text-[11px] text-slate-400 mt-1">
+                    <p className="text-[11px] text-slate-600 mt-1">
                       Ego: {dev1.egoPolarity === 'masculine' ? 'mužské' : dev1.egoPolarity === 'feminine' ? 'ženské' : 'žiadne'} ({dev1.oneCount}× 1)
                     </p>
                   </div>
                   <div className="p-3 rounded-xl bg-violet-500/10 border border-violet-500/30">
-                    <p className="text-xs text-violet-300 uppercase mb-1">{partner2.name}</p>
-                    <p className="text-sm text-white font-mono">
+                    <p className="text-xs text-violet-700 uppercase mb-1">{partner2.name}</p>
+                    <p className="text-sm text-slate-800 font-mono">
                       K1={dev2.circled[0].value} · K2={dev2.circled[1].value} · K3={dev2.circled[2].value} · K4={dev2.circled[3].value}
                     </p>
-                    <p className="text-[11px] text-slate-400 mt-1">
+                    <p className="text-[11px] text-slate-600 mt-1">
                       Ego: {dev2.egoPolarity === 'masculine' ? 'mužské' : dev2.egoPolarity === 'feminine' ? 'ženské' : 'žiadne'} ({dev2.oneCount}× 1)
                     </p>
                   </div>
@@ -718,7 +718,7 @@ export function RelationshipsPage() {
                   )}
                   {egoSame && (
                     <div className="p-2 rounded-lg bg-amber-500/10 border border-amber-500/30">
-                      <p className="text-xs text-amber-300">
+                      <p className="text-xs text-amber-700">
                         ⚹ Rovnaká polarita ega — silne si rozumiete v tempe a štýle, ale možný súboj o ten istý priestor.
                       </p>
                     </div>
@@ -797,7 +797,7 @@ export function RelationshipsPage() {
             </button>
           </div>
 
-          <button onClick={reset} className="px-4 py-2 rounded-xl text-sm glass text-slate-400 hover:text-white">Nový výpočet</button>
+          <button onClick={reset} className="px-4 py-2 rounded-xl text-sm border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200 font-medium">Nový výpočet</button>
         </div>
       )}
 
@@ -811,7 +811,7 @@ export function RelationshipsPage() {
           {children.map((child, idx) => (
             <GlassCard key={idx}>
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm text-slate-400">Dieťa {idx + 1}</span>
+                <span className="text-sm text-slate-600">Dieťa {idx + 1}</span>
                 {children.length > 1 && (
                   <button onClick={() => removeChild(idx)} className="text-xs text-red-600 hover:text-red-800 font-medium">Odstrániť</button>
                 )}
@@ -823,7 +823,7 @@ export function RelationshipsPage() {
           <button
             type="button"
             onClick={addChild}
-            className="w-full py-3 rounded-xl border-2 border-dashed border-indigo-500 text-indigo-800 text-sm font-semibold bg-indigo-100 hover:bg-indigo-200 active:bg-indigo-300"
+            className="w-full py-3 rounded-xl border-2 border-dashed border-indigo-600 text-indigo-900 text-sm font-bold bg-indigo-100 hover:bg-indigo-200 active:bg-indigo-300"
           >
             + Pridať ďalšie dieťa
           </button>
@@ -847,10 +847,10 @@ export function RelationshipsPage() {
         <div className="space-y-6">
           {/* Tvoje čítanie */}
           <GlassCard>
-            <h3 className="font-medium text-white mb-3">Tvoje čítanie — ako pracovať s rodič-dieťa výkladom</h3>
+            <h3 className="font-medium text-slate-900 mb-3">Tvoje čítanie — ako pracovať s rodič-dieťa výkladom</h3>
             <div className="space-y-2 text-sm text-slate-300">
               <p>
-                Rodič <strong className="text-white">{parent.name}</strong> a <strong className="text-white">{familyResults.length}</strong> {familyResults.length === 1 ? 'dieťa' : 'deti'}.
+                Rodič <strong className="text-slate-900">{parent.name}</strong> a <strong className="text-slate-900">{familyResults.length}</strong> {familyResults.length === 1 ? 'dieťa' : 'deti'}.
                 Každé dieťa prichádza s vlastnou energiou — nie je kópia rodiča. <strong>Profil dieťaťa</strong> ukazuje jeho ŽČ, K3 poslanie, kozmický vek a karmické lekcie.
               </p>
               <p>
@@ -868,7 +868,7 @@ export function RelationshipsPage() {
             </div>
           </GlassCard>
 
-          <p className="text-sm text-slate-400">Rodič: <span className="text-white font-medium">{parent.name}</span></p>
+          <p className="text-sm text-slate-600">Rodič: <span className="text-white font-medium">{parent.name}</span></p>
 
           {familyResults.map(({ child, result }, idx) => {
             const childNum = calculateFullNumerology(parseInt(child.day), parseInt(child.month), parseInt(child.year));
@@ -877,14 +877,14 @@ export function RelationshipsPage() {
             <motion.div key={idx} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.1 }}>
               <GlassCard>
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-medium text-white">{child.name}</h3>
+                  <h3 className="font-medium text-slate-900">{child.name}</h3>
                   <span className="text-lg font-serif font-bold text-indigo-300">{result.compatibility}%</span>
                 </div>
 
                 <div className="space-y-3">
                   {/* Profil dieťaťa — kto je */}
                   <div className="p-3 rounded-xl bg-violet-500/10 border border-violet-500/20">
-                    <p className="text-xs text-violet-300 font-semibold uppercase mb-1">Profil dieťaťa</p>
+                    <p className="text-xs text-violet-700 font-semibold uppercase mb-1">Profil dieťaťa</p>
                     <p className="text-xs text-slate-300">
                       <strong>ŽČ {childNum.lifePathNumber}</strong> z {childNum.lifePathFrom}.{' '}
                       <strong>K3 (životné poslanie):</strong> {childDev.circled[2].value}.{' '}
@@ -902,34 +902,34 @@ export function RelationshipsPage() {
                       </p>
                     )}
                     {childNum.isolatedNumbers.length > 0 && (
-                      <p className="text-xs text-amber-300 mt-1">
+                      <p className="text-xs text-amber-700 mt-1">
                         <strong>Izolované čísla:</strong> {childNum.isolatedNumbers.join(', ')} — energie kde potrebuje vašu pozornosť a podporu.
                       </p>
                     )}
                   </div>
 
                   <div>
-                    <p className="text-xs text-slate-400 mb-1">Rola rodiča</p>
+                    <p className="text-xs text-slate-600 mb-1">Rola rodiča</p>
                     <p className="text-sm text-slate-300">{result.parentRole}</p>
                   </div>
                   <div>
-                    <p className="text-xs text-slate-400 mb-1">Komunikácia</p>
+                    <p className="text-xs text-slate-600 mb-1">Komunikácia</p>
                     <p className="text-sm text-slate-300">{result.communicationStyle}</p>
                   </div>
                   <div>
-                    <p className="text-xs text-slate-400 mb-1">Emocionálne potreby</p>
+                    <p className="text-xs text-slate-600 mb-1">Emocionálne potreby</p>
                     {result.emotionalNeeds.map((n, i) => (
                       <p key={i} className="text-xs text-cyan-300">• {n}</p>
                     ))}
                   </div>
                   <div>
-                    <p className="text-xs text-slate-400 mb-1">Potreby dieťaťa</p>
+                    <p className="text-xs text-slate-600 mb-1">Potreby dieťaťa</p>
                     {result.childNeeds.map((n, i) => (
                       <p key={i} className="text-xs text-purple-300">• {n}</p>
                     ))}
                   </div>
                   <div>
-                    <p className="text-xs text-slate-400 mb-1">Odporúčania</p>
+                    <p className="text-xs text-slate-600 mb-1">Odporúčania</p>
                     {result.recommendations.map((r, i) => (
                       <p key={i} className="text-xs text-indigo-300">→ {r}</p>
                     ))}
@@ -960,17 +960,17 @@ export function RelationshipsPage() {
                           <strong>Rodič:</strong> {parentHd.type} ({parentHd.authority}) · <strong>Dieťa:</strong> {childHd.type} ({childHd.authority})
                         </p>
                         {sharedDefined.length > 0 && (
-                          <p className="text-[11px] text-slate-400">
+                          <p className="text-[11px] text-slate-600">
                             <strong className="text-cyan-300">Spoločne definované:</strong> {sharedDefined.join(', ')} — tu si rozumiete energeticky, obe máte stabilnú energiu.
                           </p>
                         )}
                         {parentOnly.length > 0 && (
-                          <p className="text-[11px] text-slate-400 mt-1">
+                          <p className="text-[11px] text-slate-600 mt-1">
                             <strong className="text-rose-300">Rodič podmieňuje dieťa:</strong> {parentOnly.join(', ')} — dieťa absorbuje vašu energiu v týchto oblastiach.
                           </p>
                         )}
                         {childOnly.length > 0 && (
-                          <p className="text-[11px] text-slate-400 mt-1">
+                          <p className="text-[11px] text-slate-600 mt-1">
                             <strong className="text-emerald-300">Dieťa učí rodiča:</strong> {childOnly.join(', ')} — tu má dieťa energiu ktorú vy nemáte.
                           </p>
                         )}
@@ -983,12 +983,12 @@ export function RelationshipsPage() {
                       {sharedGeneKeys.length > 0 && (
                         <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20 space-y-3">
                           <p className="text-xs text-purple-300 font-semibold uppercase">Spoločné Génové kľúče — transformačná cesta rodič ↔ dieťa</p>
-                          <p className="text-[11px] text-slate-400">
+                          <p className="text-[11px] text-slate-600">
                             Brány aktívne u rodiča aj dieťaťa — spoločné témy, na ktorých rastete. Tieň je to čo sa vo vzťahu spúšťa, dar je to čo z toho vytvárate.
                           </p>
                           {sharedGeneKeys.map(gk => (
                             <div key={gk!.gate} className="p-2.5 rounded-lg bg-white/5 border border-purple-500/10 space-y-1.5">
-                              <p className="text-xs font-medium text-white">
+                              <p className="text-xs font-medium text-slate-800">
                                 Brána {gk!.gate}: <span className="text-rose-300">{gk!.shadow}</span> → <span className="text-amber-300">{gk!.gift}</span> → <span className="text-emerald-300">{gk!.siddhi}</span>
                               </p>
                               <p className="text-[11px] text-rose-300"><strong>Tieň:</strong> {gk!.shadowDescription}</p>
@@ -1024,7 +1024,7 @@ export function RelationshipsPage() {
 
           {familyResults.length > 1 && (
             <GlassCard>
-              <h3 className="font-medium text-white mb-3">Interakcie medzi deťmi</h3>
+              <h3 className="font-medium text-slate-900 mb-3">Interakcie medzi deťmi</h3>
               {familyResults.map(({ child: c1 }, i) =>
                 familyResults.slice(i + 1).map(({ child: c2 }, j) => {
                   const n1 = calculateFullNumerology(parseInt(c1.day), parseInt(c1.month), parseInt(c1.year));
@@ -1045,9 +1045,9 @@ export function RelationshipsPage() {
                         <span className="text-sm text-white">{c1.name} & {c2.name}</span>
                         <span className="text-sm font-bold text-indigo-300">{compat.overallScore}%</span>
                       </div>
-                      <p className="text-xs text-slate-400">{compat.lifePathCompatibility.description}</p>
+                      <p className="text-xs text-slate-600">{compat.lifePathCompatibility.description}</p>
                       {compat.strengths.length > 0 && <p className="text-xs text-green-300">+ {compat.strengths[0]}</p>}
-                      {compat.challenges.length > 0 && <p className="text-xs text-amber-300">! {compat.challenges[0]}</p>}
+                      {compat.challenges.length > 0 && <p className="text-xs text-amber-700">! {compat.challenges[0]}</p>}
                       {childGK.length > 0 && (
                         <div className="space-y-1.5 mt-1">
                           <p className="text-[11px] text-purple-300 font-semibold">Spoločné Génové kľúče:</p>
@@ -1074,7 +1074,7 @@ export function RelationshipsPage() {
             </button>
           </div>
 
-          <button onClick={reset} className="px-4 py-2 rounded-xl text-sm glass text-slate-400 hover:text-white">Nový výpočet</button>
+          <button onClick={reset} className="px-4 py-2 rounded-xl text-sm border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200 font-medium">Nový výpočet</button>
         </div>
       )}
 
@@ -1082,8 +1082,8 @@ export function RelationshipsPage() {
       {mode === 'astro' && (!synastryResult || editing) && (
         <GlassCard>
           {!synastryResult && (
-            <p className="text-sm text-slate-400 mb-4">
-              <strong className="text-white">Astro kompatibilita</strong> porovnáva astrologické pozície oboch partnerov -- Slnko, Mesiac, Venušu a Mars. Výsledkom je synastria založená na elementálnej harmónii a planetárnej kompatibilite.
+            <p className="text-sm text-slate-600 mb-4">
+              <strong className="text-slate-900">Astro kompatibilita</strong> porovnáva astrologické pozície oboch partnerov -- Slnko, Mesiac, Venušu a Mars. Výsledkom je synastria založená na elementálnej harmónii a planetárnej kompatibilite.
             </p>
           )}
         </GlassCard>
@@ -1092,7 +1092,7 @@ export function RelationshipsPage() {
         <GlassCard>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-3">
-              <p className="text-sm text-slate-400 font-medium">Partner 1</p>
+              <p className="text-sm text-slate-600 font-medium">Partner 1</p>
               <input
                 type="text"
                 placeholder="Meno"
@@ -1114,7 +1114,7 @@ export function RelationshipsPage() {
               <input type="text" placeholder="Miesto narodenia" value={astroPartner1.birthPlace} onChange={e => setAstroPartner1({ ...astroPartner1, birthPlace: e.target.value })} className="w-full px-3 py-2.5 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white text-sm focus:outline-none focus:border-indigo-500/50" />
             </div>
             <div className="space-y-3">
-              <p className="text-sm text-slate-400 font-medium">Partner 2</p>
+              <p className="text-sm text-slate-600 font-medium">Partner 2</p>
               <input
                 type="text"
                 placeholder="Meno"
@@ -1155,10 +1155,10 @@ export function RelationshipsPage() {
         <div className="space-y-6">
           {/* Tvoje čítanie */}
           <GlassCard>
-            <h3 className="font-medium text-white mb-3">Tvoje čítanie — ako pracovať s astro kompatibilitou</h3>
+            <h3 className="font-medium text-slate-900 mb-3">Tvoje čítanie — ako pracovať s astro kompatibilitou</h3>
             <div className="space-y-2 text-sm text-slate-300">
                 <p>
-                  <strong className="text-white">{synastryResult.person1.name} & {synastryResult.person2.name}</strong> — celková astro kompatibilita <strong className="text-white">{synastryResult.overallScore}%</strong>.
+                  <strong className="text-slate-900">{synastryResult.person1.name} & {synastryResult.person2.name}</strong> — celková astro kompatibilita <strong className="text-slate-900">{synastryResult.overallScore}%</strong>.
                   Porovnávame elementy planét — nie znamenia samotné. Komplementárne elementy (Oheň+Vzduch, Zem+Voda) sa dopĺňajú.
                 </p>
                 <div className="grid grid-cols-2 gap-2">
@@ -1188,7 +1188,7 @@ export function RelationshipsPage() {
 
           <GlassCard glow>
             <div className="text-center">
-              <p className="text-sm text-slate-400">{synastryResult.person1.name} & {synastryResult.person2.name}</p>
+              <p className="text-sm text-slate-600">{synastryResult.person1.name} & {synastryResult.person2.name}</p>
               <div className="relative w-32 h-32 mx-auto my-4">
                 <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
                   <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(99,102,241,0.2)" strokeWidth="8" />
@@ -1203,10 +1203,10 @@ export function RelationshipsPage() {
                   <defs><linearGradient id="astroGrad"><stop offset="0%" stopColor="#6366f1" /><stop offset="100%" stopColor="#a855f7" /></linearGradient></defs>
                 </svg>
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-3xl font-serif font-bold text-white">{synastryResult.overallScore}%</span>
+                  <span className="text-3xl font-serif font-bold text-slate-900">{synastryResult.overallScore}%</span>
                 </div>
               </div>
-              <p className="text-sm text-slate-400">Celková astro kompatibilita</p>
+              <p className="text-sm text-slate-600">Celková astro kompatibilita</p>
             </div>
           </GlassCard>
 
@@ -1216,10 +1216,10 @@ export function RelationshipsPage() {
                 <h4 className="text-sm text-slate-400">Slnko (identita)</h4>
                 <span className="text-lg font-bold text-amber-300">{synastryResult.sunCompatibility.score}%</span>
               </div>
-              <p className="text-xs text-slate-400 mb-2">
+              <p className="text-xs text-slate-600 mb-2">
                 {synastryResult.person1.name}: {synastryResult.person1.result.sunSign.symbol} {synastryResult.person1.result.sunSign.name} ({synastryResult.person1.result.sunSign.element})
               </p>
-              <p className="text-xs text-slate-400 mb-2">
+              <p className="text-xs text-slate-600 mb-2">
                 {synastryResult.person2.name}: {synastryResult.person2.result.sunSign.symbol} {synastryResult.person2.result.sunSign.name} ({synastryResult.person2.result.sunSign.element})
               </p>
               <p className="text-sm text-slate-300">{synastryResult.sunCompatibility.description}</p>
@@ -1230,10 +1230,10 @@ export function RelationshipsPage() {
                 <h4 className="text-sm text-slate-400">Mesiac (emócie)</h4>
                 <span className="text-lg font-bold text-blue-300">{synastryResult.moonCompatibility.score}%</span>
               </div>
-              <p className="text-xs text-slate-400 mb-2">
+              <p className="text-xs text-slate-600 mb-2">
                 {synastryResult.person1.name}: {synastryResult.person1.result.moonSign.symbol} {synastryResult.person1.result.moonSign.name} ({synastryResult.person1.result.moonSign.element})
               </p>
-              <p className="text-xs text-slate-400 mb-2">
+              <p className="text-xs text-slate-600 mb-2">
                 {synastryResult.person2.name}: {synastryResult.person2.result.moonSign.symbol} {synastryResult.person2.result.moonSign.name} ({synastryResult.person2.result.moonSign.element})
               </p>
               <p className="text-sm text-slate-300">{synastryResult.moonCompatibility.description}</p>
@@ -1249,8 +1249,8 @@ export function RelationshipsPage() {
                 const v2 = getPlanetByName(synastryResult.person2.result, 'Venuša');
                 return (
                   <>
-                    {v1 && <p className="text-xs text-slate-400 mb-2">{synastryResult.person1.name}: {v1.sign.symbol} {v1.sign.name} ({v1.sign.element})</p>}
-                    {v2 && <p className="text-xs text-slate-400 mb-2">{synastryResult.person2.name}: {v2.sign.symbol} {v2.sign.name} ({v2.sign.element})</p>}
+                    {v1 && <p className="text-xs text-slate-600 mb-2">{synastryResult.person1.name}: {v1.sign.symbol} {v1.sign.name} ({v1.sign.element})</p>}
+                    {v2 && <p className="text-xs text-slate-600 mb-2">{synastryResult.person2.name}: {v2.sign.symbol} {v2.sign.name} ({v2.sign.element})</p>}
                   </>
                 );
               })()}
@@ -1267,8 +1267,8 @@ export function RelationshipsPage() {
                 const m2 = getPlanetByName(synastryResult.person2.result, 'Mars');
                 return (
                   <>
-                    {m1 && <p className="text-xs text-slate-400 mb-2">{synastryResult.person1.name}: {m1.sign.symbol} {m1.sign.name} ({m1.sign.element})</p>}
-                    {m2 && <p className="text-xs text-slate-400 mb-2">{synastryResult.person2.name}: {m2.sign.symbol} {m2.sign.name} ({m2.sign.element})</p>}
+                    {m1 && <p className="text-xs text-slate-600 mb-2">{synastryResult.person1.name}: {m1.sign.symbol} {m1.sign.name} ({m1.sign.element})</p>}
+                    {m2 && <p className="text-xs text-slate-600 mb-2">{synastryResult.person2.name}: {m2.sign.symbol} {m2.sign.name} ({m2.sign.element})</p>}
                   </>
                 );
               })()}
@@ -1277,15 +1277,15 @@ export function RelationshipsPage() {
           </div>
 
           <GlassCard>
-            <h3 className="font-medium text-white mb-3">Elementálna rovnováha</h3>
+            <h3 className="font-medium text-slate-900 mb-3">Elementálna rovnováha</h3>
             <div className="flex items-center gap-4 mb-3">
               <div className="flex-1 p-3 rounded-xl bg-slate-800/50">
-                <p className="text-xs text-slate-400">{synastryResult.person1.name}</p>
-                <p className="text-sm font-medium text-white">Dominantný živel: {synastryResult.elementBalance.person1}</p>
+                <p className="text-xs text-slate-600">{synastryResult.person1.name}</p>
+                <p className="text-sm font-medium text-slate-800">Dominantný živel: {synastryResult.elementBalance.person1}</p>
               </div>
               <div className="flex-1 p-3 rounded-xl bg-slate-800/50">
-                <p className="text-xs text-slate-400">{synastryResult.person2.name}</p>
-                <p className="text-sm font-medium text-white">Dominantný živel: {synastryResult.elementBalance.person2}</p>
+                <p className="text-xs text-slate-600">{synastryResult.person2.name}</p>
+                <p className="text-sm font-medium text-slate-800">Dominantný živel: {synastryResult.elementBalance.person2}</p>
               </div>
             </div>
             <p className="text-sm text-slate-300">
@@ -1306,7 +1306,7 @@ export function RelationshipsPage() {
             };
             return (
               <GlassCard>
-                <h3 className="font-medium text-white mb-2">Synastrické aspekty (všetky planéty)</h3>
+                <h3 className="font-medium text-slate-900 mb-2">Synastrické aspekty (všetky planéty)</h3>
                 <p className="text-xs text-slate-500 mb-3">
                   Každý uhol medzi planétami partnerov tvorí aspekt – buď harmonický (trigon, sextil), napäťový (kvadratúra, opozícia) alebo neutrálny (spojenie). Orbis = odchýlka od ideálu.
                 </p>
@@ -1392,8 +1392,8 @@ export function RelationshipsPage() {
             return (
               <>
                 <GlassCard>
-                  <h3 className="font-medium text-white mb-1">Davison chart — vzťahový horoskop</h3>
-                  <p className="text-xs text-slate-400 mb-3">
+                  <h3 className="font-medium text-slate-900 mb-1">Davison chart — vzťahový horoskop</h3>
+                  <p className="text-xs text-slate-600 mb-3">
                     Reálny astrologický graf pre <strong>stredný čas a stredné miesto</strong> oboch narodení.
                     Symbolizuje "tretiu osobu" — samotný vzťah ako bytosť. Ascendent {davison.ascendant.symbol} {davison.ascendant.name}.
                   </p>
@@ -1406,7 +1406,7 @@ export function RelationshipsPage() {
                         <>
                           {sun && (
                             <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30">
-                              <p className="text-xs text-amber-300 uppercase">Slnko vzťahu</p>
+                              <p className="text-xs text-amber-700 uppercase">Slnko vzťahu</p>
                               <p className="text-sm text-white mt-1">{sun.symbol} {sun.sign.symbol} {sun.sign.name}</p>
                               <p className="text-[10px] text-slate-400">{sun.degree.toFixed(1)}° · {davison.planetHouses[sun.name] ? `${davison.planetHouses[sun.name]}. dom` : ''}</p>
                             </div>
@@ -1435,15 +1435,15 @@ export function RelationshipsPage() {
                 </GlassCard>
 
                 <GlassCard>
-                  <h3 className="font-medium text-white mb-1">Composite chart — symbolický graf vzťahu</h3>
-                  <p className="text-xs text-slate-400 mb-3">
+                  <h3 className="font-medium text-slate-900 mb-1">Composite chart — symbolický graf vzťahu</h3>
+                  <p className="text-xs text-slate-600 mb-3">
                     Pre každú planétu sa zoberie <strong>midpoint</strong> longitúd oboch partnerov (kratší oblúk).
                     Composite NIE JE skutočný horoskop — je to symbolická štruktúra vzťahu samotného.
                   </p>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                     {composite.planets.map(p => (
                       <div key={p.name} className="p-2 rounded-lg bg-violet-500/10 border border-violet-500/20">
-                        <p className="text-xs text-violet-300">{p.symbol} {p.name}</p>
+                        <p className="text-xs text-violet-700">{p.symbol} {p.name}</p>
                         <p className="text-sm text-white">{p.signSymbol} {p.signName}</p>
                         <p className="text-[10px] text-slate-400">{p.degree.toFixed(1)}°</p>
                       </div>
@@ -1464,7 +1464,7 @@ export function RelationshipsPage() {
             </button>
           </div>
 
-          <button onClick={reset} className="px-4 py-2 rounded-xl text-sm glass text-slate-400 hover:text-white">Nový výpočet</button>
+          <button onClick={reset} className="px-4 py-2 rounded-xl text-sm border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200 font-medium">Nový výpočet</button>
         </div>
       )}
 
@@ -1472,8 +1472,8 @@ export function RelationshipsPage() {
       {mode === 'constellation' && (!constellationResult || editing) && (
         <div className="space-y-4">
           <GlassCard>
-            <p className="text-sm text-slate-400 mb-4">
-              <strong className="text-white">Rodinná konštelácia</strong> — zadaj oboch rodičov a deti. Výsledok ukáže partnerský vzťah rodičov, vzťah každého rodiča ku každému dieťaťu, vzťahy medzi súrodencami a celkový rodinný energetický profil.
+            <p className="text-sm text-slate-600 mb-4">
+              <strong className="text-slate-900">Rodinná konštelácia</strong> — zadaj oboch rodičov a deti. Výsledok ukáže partnerský vzťah rodičov, vzťah každého rodiča ku každému dieťaťu, vzťahy medzi súrodencami a celkový rodinný energetický profil.
             </p>
           </GlassCard>
 
@@ -1487,7 +1487,7 @@ export function RelationshipsPage() {
           {constChildren.map((child, idx) => (
             <GlassCard key={idx}>
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm text-slate-400">Dieťa {idx + 1}</span>
+                <span className="text-sm text-slate-600">Dieťa {idx + 1}</span>
                 {constChildren.length > 1 && (
                   <button onClick={() => setConstChildren(constChildren.filter((_, i) => i !== idx))} className="text-xs text-red-600 hover:text-red-800 font-medium">Odstrániť</button>
                 )}
@@ -1499,7 +1499,7 @@ export function RelationshipsPage() {
           <button
             type="button"
             onClick={() => setConstChildren([...constChildren, emptyPerson()])}
-            className="w-full py-3 rounded-xl border-2 border-dashed border-indigo-500 text-indigo-800 text-sm font-semibold bg-indigo-100 hover:bg-indigo-200 active:bg-indigo-300"
+            className="w-full py-3 rounded-xl border-2 border-dashed border-indigo-600 text-indigo-900 text-sm font-bold bg-indigo-100 hover:bg-indigo-200 active:bg-indigo-300"
           >
             + Pridať ďalšie dieťa
           </button>
@@ -1524,11 +1524,11 @@ export function RelationshipsPage() {
         <div className="space-y-6">
           {/* Tvoje čítanie */}
           <GlassCard>
-            <h3 className="font-medium text-white mb-3">Tvoje čítanie — ako pracovať s rodinnou konšteláciou</h3>
+            <h3 className="font-medium text-slate-900 mb-3">Tvoje čítanie — ako pracovať s rodinnou konšteláciou</h3>
             <div className="space-y-2 text-sm text-slate-300">
               <p>
-                Rodina <strong className="text-white">{constFather.name} & {constMother.name}</strong> + <strong className="text-white">{constChildren.filter(isPersonValid).length}</strong> {constChildren.filter(isPersonValid).length === 1 ? 'dieťa' : 'deti'}.
-                Partnerský vzťah rodičov (<strong className="text-white">{constellationResult.partnerCompat.overallScore}%</strong>) je základ — jeho kvalita sa odráža na celej rodine.
+                Rodina <strong className="text-slate-900">{constFather.name} & {constMother.name}</strong> + <strong className="text-slate-900">{constChildren.filter(isPersonValid).length}</strong> {constChildren.filter(isPersonValid).length === 1 ? 'dieťa' : 'deti'}.
+                Partnerský vzťah rodičov (<strong className="text-slate-900">{constellationResult.partnerCompat.overallScore}%</strong>) je základ — jeho kvalita sa odráža na celej rodine.
               </p>
               <p>
                 <strong>Charakterová synastria</strong> porovnáva mriežky rodičov, <strong>vývojová</strong> ich K1-K4 a polaritu ega. <strong>HD bodygraph</strong> ukazuje elektromagnetické kanály (príťažlivosť), kompromisné (spoločná energia) a podmieňovanie.
@@ -1537,7 +1537,7 @@ export function RelationshipsPage() {
                 Pri každom dieťati: <strong>ŽČ + K3</strong> (poslanie), <strong>kozmický vek</strong> (generačné nastavenie), <strong>HD typ + centrá</strong> (kde rodič podmieňuje, kde dieťa učí), <strong>Génové kľúče</strong> (spoločné transformačné témy s praktickou technikou).
               </p>
               <p>
-                <strong>Medzi súrodencami:</strong> kompatibilita, HD centrá (kto koho podmieňuje), Gene Keys (spoločné lekcie). Rodinné číslo <strong className="text-white">{reduceToSingle(constellationResult.familyNumbers.reduce((a, b) => a + b, 0))}</strong> je spoločná téma celej rodiny.
+                <strong>Medzi súrodencami:</strong> kompatibilita, HD centrá (kto koho podmieňuje), Gene Keys (spoločné lekcie). Rodinné číslo <strong className="text-slate-900">{reduceToSingle(constellationResult.familyNumbers.reduce((a, b) => a + b, 0))}</strong> je spoločná téma celej rodiny.
               </p>
               <p className="text-xs text-slate-500 italic">
                 Nízka kompatibilita nie je problém — je to signál učenia. Najväčší rast je tam, kde je najväčšie trenie.
@@ -1547,7 +1547,7 @@ export function RelationshipsPage() {
 
           {/* Celkový rodinný profil */}
           <GlassCard glow>
-            <h3 className="font-medium text-white mb-3">Rodinný energetický profil</h3>
+            <h3 className="font-medium text-slate-900 mb-3">Rodinný energetický profil</h3>
             <div className="flex flex-wrap gap-2 mb-3">
               {constellationResult.familyNumbers.map((num, i) => {
                 const names = [constFather.name, constMother.name, ...constChildren.filter(isPersonValid).map(c => c.name)];
@@ -1595,7 +1595,7 @@ export function RelationshipsPage() {
 
           {/* Partnerský vzťah rodičov */}
           <GlassCard>
-            <h3 className="font-medium text-white mb-2">{constFather.name} & {constMother.name} — partnerský vzťah</h3>
+            <h3 className="font-medium text-slate-900 mb-2">{constFather.name} & {constMother.name} — partnerský vzťah</h3>
             <div className="flex items-center gap-3 mb-3">
               <div className="w-14 h-14 rounded-full bg-gradient-to-br from-rose-500 to-pink-500 flex items-center justify-center">
                 <span className="text-xl font-bold text-white">{constellationResult.partnerCompat.overallScore}%</span>
@@ -1606,7 +1606,7 @@ export function RelationshipsPage() {
                   <p className="text-xs text-emerald-300 mt-1">+ {constellationResult.partnerCompat.strengths[0]}</p>
                 )}
                 {constellationResult.partnerCompat.challenges[0] && (
-                  <p className="text-xs text-amber-300 mt-1">! {constellationResult.partnerCompat.challenges[0]}</p>
+                  <p className="text-xs text-amber-700 mt-1">! {constellationResult.partnerCompat.challenges[0]}</p>
                 )}
               </div>
             </div>
@@ -1637,16 +1637,16 @@ export function RelationshipsPage() {
             const sharedIsolated = numF.isolatedNumbers.filter(n => numM.isolatedNumbers.includes(n));
             return (
               <GlassCard>
-                <h3 className="font-medium text-white mb-1">Charakterová synastria rodičov</h3>
-                <p className="text-xs text-slate-400 mb-3">Porovnanie numerologických mriežok — spoločné silné stránky a oblasti rastu.</p>
+                <h3 className="font-medium text-slate-900 mb-1">Charakterová synastria rodičov</h3>
+                <p className="text-xs text-slate-600 mb-3">Porovnanie numerologických mriežok — spoločné silné stránky a oblasti rastu.</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
                   <div className="p-2 rounded-lg bg-indigo-500/10 border border-indigo-500/20">
                     <p className="text-[11px] text-indigo-300 font-semibold">{constFather.name}: ŽČ {numF.lifePathNumber}</p>
-                    <p className="text-[11px] text-slate-400">Plné: {numF.fullPlanes.length > 0 ? numF.fullPlanes.join(', ') : 'žiadne'}</p>
+                    <p className="text-[11px] text-slate-600">Plné: {numF.fullPlanes.length > 0 ? numF.fullPlanes.join(', ') : 'žiadne'}</p>
                   </div>
                   <div className="p-2 rounded-lg bg-violet-500/10 border border-violet-500/20">
                     <p className="text-[11px] text-violet-300 font-semibold">{constMother.name}: ŽČ {numM.lifePathNumber}</p>
-                    <p className="text-[11px] text-slate-400">Plné: {numM.fullPlanes.length > 0 ? numM.fullPlanes.join(', ') : 'žiadne'}</p>
+                    <p className="text-[11px] text-slate-600">Plné: {numM.fullPlanes.length > 0 ? numM.fullPlanes.join(', ') : 'žiadne'}</p>
                   </div>
                 </div>
                 <div className="space-y-1.5">
@@ -1676,18 +1676,18 @@ export function RelationshipsPage() {
             const egoSame = devF.egoPolarity === devM.egoPolarity && devF.egoPolarity !== 'none';
             return (
               <GlassCard>
-                <h3 className="font-medium text-white mb-1">Vývojová synastria rodičov</h3>
-                <p className="text-xs text-slate-400 mb-3">Karmické cykly a polarita ega oboch rodičov.</p>
+                <h3 className="font-medium text-slate-900 mb-1">Vývojová synastria rodičov</h3>
+                <p className="text-xs text-slate-600 mb-3">Karmické cykly a polarita ega oboch rodičov.</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30">
-                    <p className="text-xs text-amber-300 uppercase mb-1">{constFather.name}</p>
-                    <p className="text-sm text-white font-mono">K1={devF.circled[0].value} · K2={devF.circled[1].value} · K3={devF.circled[2].value} · K4={devF.circled[3].value}</p>
-                    <p className="text-[11px] text-slate-400 mt-1">Ego: {devF.egoPolarity === 'masculine' ? 'mužské' : devF.egoPolarity === 'feminine' ? 'ženské' : 'žiadne'} ({devF.oneCount}× 1)</p>
+                    <p className="text-xs text-amber-700 uppercase mb-1">{constFather.name}</p>
+                    <p className="text-sm text-slate-800 font-mono">K1={devF.circled[0].value} · K2={devF.circled[1].value} · K3={devF.circled[2].value} · K4={devF.circled[3].value}</p>
+                    <p className="text-[11px] text-slate-600 mt-1">Ego: {devF.egoPolarity === 'masculine' ? 'mužské' : devF.egoPolarity === 'feminine' ? 'ženské' : 'žiadne'} ({devF.oneCount}× 1)</p>
                   </div>
                   <div className="p-3 rounded-xl bg-violet-500/10 border border-violet-500/30">
-                    <p className="text-xs text-violet-300 uppercase mb-1">{constMother.name}</p>
-                    <p className="text-sm text-white font-mono">K1={devM.circled[0].value} · K2={devM.circled[1].value} · K3={devM.circled[2].value} · K4={devM.circled[3].value}</p>
-                    <p className="text-[11px] text-slate-400 mt-1">Ego: {devM.egoPolarity === 'masculine' ? 'mužské' : devM.egoPolarity === 'feminine' ? 'ženské' : 'žiadne'} ({devM.oneCount}× 1)</p>
+                    <p className="text-xs text-violet-700 uppercase mb-1">{constMother.name}</p>
+                    <p className="text-sm text-slate-800 font-mono">K1={devM.circled[0].value} · K2={devM.circled[1].value} · K3={devM.circled[2].value} · K4={devM.circled[3].value}</p>
+                    <p className="text-[11px] text-slate-600 mt-1">Ego: {devM.egoPolarity === 'masculine' ? 'mužské' : devM.egoPolarity === 'feminine' ? 'ženské' : 'žiadne'} ({devM.oneCount}× 1)</p>
                   </div>
                 </div>
                 <div className="mt-3 space-y-2">
@@ -1702,7 +1702,7 @@ export function RelationshipsPage() {
                     </p>
                   )}
                   {egoSame && (
-                    <p className="text-xs text-amber-300 p-2 rounded-lg bg-amber-500/10 border border-amber-500/30">
+                    <p className="text-xs text-amber-700 p-2 rounded-lg bg-amber-500/10 border border-amber-500/30">
                       ⚹ Rovnaká polarita ega — obaja rodičia pôsobia rovnakým energetickým štýlom na deti.
                     </p>
                   )}
@@ -1713,7 +1713,7 @@ export function RelationshipsPage() {
 
           {/* Otec ↔ deti */}
           <GlassCard>
-            <h3 className="font-medium text-white mb-3">{constFather.name} ↔ deti</h3>
+            <h3 className="font-medium text-slate-900 mb-3">{constFather.name} ↔ deti</h3>
             <div className="space-y-3">
               {constellationResult.fatherChildren.map(({ child, result: r }, idx) => {
                 const cn = calculateFullNumerology(parseInt(child.day), parseInt(child.month), parseInt(child.year));
@@ -1732,11 +1732,11 @@ export function RelationshipsPage() {
                 return (
                 <div key={idx} className="p-3 rounded-xl bg-blue-500/10 border border-blue-500/20 space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-white">{child.name}</span>
+                    <span className="text-sm font-medium text-slate-800">{child.name}</span>
                     <span className="text-sm font-bold text-blue-300">{r.compatibility}%</span>
                   </div>
-                  <p className="text-[11px] text-slate-400">
-                    ŽČ <strong className="text-white">{cn.lifePathNumber}</strong> · K3: {cd.circled[2].value} · {cn.age === 'aquarius' ? 'Vodnár' : 'Ryby'}
+                  <p className="text-[11px] text-slate-600">
+                    ŽČ <strong className="text-slate-900">{cn.lifePathNumber}</strong> · K3: {cd.circled[2].value} · {cn.age === 'aquarius' ? 'Vodnár' : 'Ryby'}
                     {cn.karmicDebts.length > 0 && <> · Karm. dlh: {cn.karmicDebts.map(d => d.number).join(', ')}</>}
                     {' '}· HD: {childHd.type}
                   </p>
@@ -1770,7 +1770,7 @@ export function RelationshipsPage() {
 
           {/* Matka ↔ deti */}
           <GlassCard>
-            <h3 className="font-medium text-white mb-3">{constMother.name} ↔ deti</h3>
+            <h3 className="font-medium text-slate-900 mb-3">{constMother.name} ↔ deti</h3>
             <div className="space-y-3">
               {constellationResult.motherChildren.map(({ child, result: r }, idx) => {
                 const cn = calculateFullNumerology(parseInt(child.day), parseInt(child.month), parseInt(child.year));
@@ -1789,11 +1789,11 @@ export function RelationshipsPage() {
                 return (
                 <div key={idx} className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20 space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-white">{child.name}</span>
+                    <span className="text-sm font-medium text-slate-800">{child.name}</span>
                     <span className="text-sm font-bold text-purple-300">{r.compatibility}%</span>
                   </div>
-                  <p className="text-[11px] text-slate-400">
-                    ŽČ <strong className="text-white">{cn.lifePathNumber}</strong> · K3: {cd.circled[2].value} · {cn.age === 'aquarius' ? 'Vodnár' : 'Ryby'}
+                  <p className="text-[11px] text-slate-600">
+                    ŽČ <strong className="text-slate-900">{cn.lifePathNumber}</strong> · K3: {cd.circled[2].value} · {cn.age === 'aquarius' ? 'Vodnár' : 'Ryby'}
                     {cn.karmicDebts.length > 0 && <> · Karm. dlh: {cn.karmicDebts.map(d => d.number).join(', ')}</>}
                     {' '}· HD: {childHd.type}
                   </p>
@@ -1828,7 +1828,7 @@ export function RelationshipsPage() {
           {/* Súrodenci */}
           {constellationResult.siblingCompats.length > 0 && (
             <GlassCard>
-              <h3 className="font-medium text-white mb-3">Vzťahy medzi súrodencami</h3>
+              <h3 className="font-medium text-slate-900 mb-3">Vzťahy medzi súrodencami</h3>
               <p className="text-xs text-slate-500 mb-3">
                 Súrodenecký vzťah je často najdlhší vzťah v živote. Dynamika medzi deťmi ovplyvňuje ich sebaobraz, sociálne zručnosti a schopnosť riešiť konflikty v dospelosti.
               </p>
@@ -1852,16 +1852,16 @@ export function RelationshipsPage() {
                       <span className="text-sm text-white">{child1.name} & {child2.name}</span>
                       <span className="text-sm font-bold text-indigo-300">{compat.overallScore}%</span>
                     </div>
-                    <p className="text-[11px] text-slate-400">
+                    <p className="text-[11px] text-slate-600">
                       ŽČ {n1.lifePathNumber} + {n2.lifePathNumber} → cieľ vzťahu: <strong className="text-indigo-300">{relationshipGoal}</strong>
                       {n1.age !== n2.age && <> · <span className="text-amber-300">Rôzny kozmický vek</span> — odlišné generačné vnímanie</>}
                       {' '}· HD: {hd1.type} & {hd2.type}
                     </p>
-                    <p className="text-xs text-slate-400">{compat.lifePathCompatibility.description}</p>
+                    <p className="text-xs text-slate-600">{compat.lifePathCompatibility.description}</p>
                     {compat.strengths[0] && <p className="text-xs text-emerald-300">+ {compat.strengths[0]}</p>}
                     {compat.strengths[1] && <p className="text-xs text-emerald-300">+ {compat.strengths[1]}</p>}
-                    {compat.challenges[0] && <p className="text-xs text-amber-300">! {compat.challenges[0]}</p>}
-                    {compat.challenges[1] && <p className="text-xs text-amber-300">! {compat.challenges[1]}</p>}
+                    {compat.challenges[0] && <p className="text-xs text-amber-700">! {compat.challenges[0]}</p>}
+                    {compat.challenges[1] && <p className="text-xs text-amber-700">! {compat.challenges[1]}</p>}
                     {(() => {
                       const shared = hd1.definedCenters.filter(c => hd2.definedCenters.includes(c));
                       const only1 = hd1.definedCenters.filter(c => !hd2.definedCenters.includes(c));
@@ -1900,7 +1900,7 @@ export function RelationshipsPage() {
             </button>
           </div>
 
-          <button onClick={reset} className="px-4 py-2 rounded-xl text-sm glass text-slate-400 hover:text-white">Nový výpočet</button>
+          <button onClick={reset} className="px-4 py-2 rounded-xl text-sm border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200 font-medium">Nový výpočet</button>
         </div>
       )}
     </div>

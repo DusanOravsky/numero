@@ -823,7 +823,7 @@ export function RelationshipsPage() {
           <button
             type="button"
             onClick={addChild}
-            className="w-full py-3 rounded-xl border-2 border-dashed border-slate-400 text-slate-900 text-sm font-bold bg-white hover:bg-slate-100 active:bg-slate-200"
+            className="w-full py-3 rounded-xl border-2 border-dashed border-indigo-300 text-slate-900 text-sm font-bold bg-indigo-50 hover:bg-indigo-100 active:bg-indigo-200"
           >
             + Pridať ďalšie dieťa
           </button>
@@ -1499,7 +1499,7 @@ export function RelationshipsPage() {
           <button
             type="button"
             onClick={() => setConstChildren([...constChildren, emptyPerson()])}
-            className="w-full py-3 rounded-xl border-2 border-dashed border-slate-400 text-slate-900 text-sm font-bold bg-white hover:bg-slate-100 active:bg-slate-200"
+            className="w-full py-3 rounded-xl border-2 border-dashed border-indigo-300 text-slate-900 text-sm font-bold bg-indigo-50 hover:bg-indigo-100 active:bg-indigo-200"
           >
             + Pridať ďalšie dieťa
           </button>

@@ -62,8 +62,8 @@ function ClientPickerButton({ onPick, includeProfile = true }: { onPick: (p: Per
       <button
         type="button"
         onClick={() => setOpen(o => !o)}
-        className="text-xs px-3 py-1.5 rounded-lg border border-indigo-400 bg-indigo-50 hover:bg-indigo-100 font-semibold flex items-center gap-1.5 transition-colors"
-        style={{ color: '#3730a3' }}
+        className="text-xs px-3 py-1.5 rounded-lg border font-semibold flex items-center gap-1.5 transition-colors"
+        style={{ color: '#3730a3', backgroundColor: '#eef2ff', borderColor: '#a5b4fc' }}
         aria-haspopup="listbox"
         aria-expanded={open}
       >

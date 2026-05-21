@@ -4,6 +4,10 @@ All notable changes to this project are documented in this file. Dates are
 in ISO 8601 (YYYY-MM-DD). The format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 2.45.2 — 2026-05-21
+
+**PATCH**: "Vybrať z klientov" button — bg + border úplne inline (#eef2ff bg, #a5b4fc border, #3730a3 text). Tailwind utility classes nestačili kvôli CSS override eskalácii.
+
 ## 2.45.1 — 2026-05-21
 
 **PATCH**: Hotfix viditeľnosti dropdownov a buttonov po v2.45.0.

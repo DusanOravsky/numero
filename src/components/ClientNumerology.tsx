@@ -3,21 +3,25 @@ import { useNavigate } from 'react-router-dom';
 import { GlassCard } from './GlassCard';
 import { EnergyCard } from './EnergyCard';
 import { NumerologyGrid } from './NumerologyGrid';
-import { ChakraWheel } from './ChakraWheel';
+import { ChakraBody } from './ChakraBody';
 import { LoveLanguagesCard } from './LoveLanguagesCard';
+import { DevelopmentalNumerologyView } from './DevelopmentalNumerologyView';
 import type { NumerologyResult } from '../engine/numerologyEngine';
+import type { DevelopmentalNumerologyResult } from '../engine/developmentalNumerologyEngine';
 import type { AstrologyResult } from '../engine/astrologyEngine';
 import type { HumanDesignResult } from '../engine/humanDesignEngine';
 import type { ChakraState } from '../engine/chakraEngine';
 import type { KabalahResult } from '../engine/kabalahEngine';
 import type { ThetaHealingResult } from '../engine/thetaHealingEngine';
 import { reduceToSingle } from '../engine/numerologyEngine';
+import { useStore } from '../store/useStore';
 import lifePathsData from '../data/lifePaths.json';
 
 const lifePaths = lifePathsData as Record<string, { title: string; keywords: string[]; description: string; gift: string; shadow: string }>;
 
 interface ClientNumerologyProps {
   numerology: NumerologyResult;
+  devNumerology?: DevelopmentalNumerologyResult;
   astrology: AstrologyResult;
   humanDesign: HumanDesignResult;
   chakras: ChakraState[];
@@ -25,10 +29,12 @@ interface ClientNumerologyProps {
   theta: ThetaHealingResult;
   /** ID klienta — ak je definované, "Otvoriť detail" linky pridajú ?client=ID */
   clientId?: string;
+  gender?: string;
 }
 
-export function ClientNumerology({ numerology, astrology, humanDesign, chakras, kabalah, theta, clientId }: ClientNumerologyProps) {
+export function ClientNumerology({ numerology, devNumerology, astrology, humanDesign, chakras, kabalah, theta, clientId, gender }: ClientNumerologyProps) {
   const navigate = useNavigate();
+  const numerologyMethod = useStore(s => s.numerologyMethod);
   const q = clientId ? `?client=${clientId}` : '';
   const lpInfo = lifePaths[String(numerology.lifePathNumber)] || lifePaths[String(reduceToSingle(numerology.lifePathNumber))];
 
@@ -64,27 +70,40 @@ export function ClientNumerology({ numerology, astrology, humanDesign, chakras, 
             </div>
           </GlassCard>
           <GlassCard className="lg:col-span-1">
-            <NumerologyGrid grid={numerology.grid} />
+            {numerologyMethod === 'developmental' && devNumerology ? (
+              <DevelopmentalNumerologyView result={devNumerology} gender={gender} />
+            ) : (
+              <NumerologyGrid grid={numerology.grid} />
+            )}
           </GlassCard>
           <GlassCard className="lg:col-span-1">
-            {numerology.fullPlanes.length > 0 && (
-              <div className="mb-3">
-                <p className="text-xs text-green-400 mb-1">Plné roviny</p>
-                {numerology.fullPlanes.map(p => <p key={p} className="text-xs text-slate-300">{p}</p>)}
-              </div>
+            {numerologyMethod === 'characterological' && (
+              <>
+                {numerology.fullPlanes.length > 0 && (
+                  <div className="mb-3">
+                    <p className="text-xs text-green-400 mb-1">Plné roviny</p>
+                    {numerology.fullPlanes.map(p => <p key={p} className="text-xs text-slate-300">{p}</p>)}
+                  </div>
+                )}
+                {numerology.emptyPlanes.length > 0 && (
+                  <div className="mb-3">
+                    <p className="text-xs text-amber-400 mb-1">Prázdne roviny</p>
+                    {numerology.emptyPlanes.map(p => <p key={p} className="text-xs text-slate-300">{p}</p>)}
+                  </div>
+                )}
+              </>
             )}
-            {numerology.emptyPlanes.length > 0 && (
-              <div className="mb-3">
-                <p className="text-xs text-amber-400 mb-1">Prázdne roviny</p>
-                {numerology.emptyPlanes.map(p => <p key={p} className="text-xs text-slate-300">{p}</p>)}
-              </div>
-            )}
-            {numerology.isolatedNumbers.length > 0 && (
-              <div>
-                <p className="text-xs text-rose-400 mb-1">Izolované čísla</p>
-                <div className="flex gap-1">{numerology.isolatedNumbers.map(n => <span key={n} className="w-6 h-6 rounded bg-rose-500/20 text-rose-300 text-xs flex items-center justify-center">{n}</span>)}</div>
-              </div>
-            )}
+            {(() => {
+              const isolated = numerologyMethod === 'developmental' && devNumerology
+                ? devNumerology.isolatedNumbers
+                : numerology.isolatedNumbers;
+              return isolated.length > 0 ? (
+                <div>
+                  <p className="text-xs text-rose-400 mb-1">Izolované čísla</p>
+                  <div className="flex gap-1">{isolated.map(n => <span key={n} className="w-6 h-6 rounded bg-rose-500/20 text-rose-300 text-xs flex items-center justify-center">{n}</span>)}</div>
+                </div>
+              ) : null;
+            })()}
           </GlassCard>
         </div>
 
@@ -160,7 +179,7 @@ export function ClientNumerology({ numerology, astrology, humanDesign, chakras, 
           <button onClick={() => navigate('/chakras' + q)} className="text-xs text-slate-400 hover:text-white">Otvoriť detail →</button>
         </div>
         <GlassCard>
-          <ChakraWheel chakras={chakras} />
+          <ChakraBody chakras={chakras} />
         </GlassCard>
       </motion.section>
 

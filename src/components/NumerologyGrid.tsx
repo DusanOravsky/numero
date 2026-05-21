@@ -106,7 +106,7 @@ export function NumerologyGrid({ grid, highlightPlane }: NumerologyGridProps) {
                 }`}
               >
                 {/* Mini-card hover tooltip (B32) */}
-                <div className="pointer-events-none absolute -top-2 left-1/2 -translate-x-1/2 -translate-y-full opacity-0 group-hover:opacity-100 transition-opacity z-20 whitespace-nowrap text-[10px] px-2 py-1 rounded bg-slate-900 text-white shadow-lg">
+                <div className="pointer-events-none absolute -top-2 left-1/2 -translate-x-1/2 -translate-y-full opacity-0 group-hover:opacity-100 transition-opacity z-20 whitespace-nowrap text-[10px] px-2 py-1 rounded shadow-lg" style={{ backgroundColor: '#1e293b', color: '#ffffff' }}>
                   {NUMBER_MEANINGS[num]?.theme || `Číslo ${num}`}
                 </div>
                 <span className="text-[10px] text-slate-400 mb-1">{num}</span>

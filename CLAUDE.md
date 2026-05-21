@@ -1,6 +1,6 @@
 # Integrálna mapa bytia (Número)
 
-Offline-first PWA pre numerológiu, astrológiu, Human Design, etikoterapiu, kabalu, Theta Healing, Enneagram, Ayurvédu, TCM a sebarozvoj. **v2.47.0**
+Offline-first PWA pre numerológiu, astrológiu, Human Design, etikoterapiu, kabalu, Theta Healing, Enneagram, Ayurvédu, TCM a sebarozvoj. **v2.47.2**
 
 > 📁 **Nested CLAUDE.md súbory:**
 > - `src/engine/CLAUDE.md` — engine pravidlá, numerológia/astrológia/HD matematika
@@ -139,34 +139,25 @@ JS/CSS). To znamená:
 - **Pri GitHub Pages outage funguje appka ďalej** — všetko je cached lokálne.
 - **Žiadny `skipWaiting`/`clientsClaim`** — SW sa neaktivuje sám automaticky.
 
-### Detekcia novej verzie
+### Detekcia novej verzie (v2.47.1+)
 
-Pri otvorení appky sa pri prvom mount-e porovná `localStorage.app-version`
-(uložená pri minulom otvorení) vs `APP_VERSION` z čerstvo načítaného HTML.
-Ak sú rôzne → **zobrazí sa "Nová verzia" popup** (raz, idempotentne).
+Tri nezávislé mechanizmy detekcie (belt-and-suspenders):
 
-Logika je v `src/components/PWAPrompts.tsx`:
-- `useEffect` mount → version compare → `setShowUpdate(true)`
-- `handleUpdate` → `checkForUpdate()` (online check + cache wipe + reload)
-- `dismissUpdate` → sync `app-version` → popup sa znova nezobrazí
+1. **localStorage version compare** — pri mount porovná `localStorage.app-version`
+   vs `APP_VERSION` v JS bundle. Ak sú rôzne → popup.
 
-**KRITICKÉ:** version compare sa **MUSÍ** spúšťať aj v standalone mode
-(inštalovaná PWA na ploche). To je presne scenár kde je auto-popup
-najpotrebnejší. V `useEffect` je install-hint logika (iOS hint,
-beforeinstallprompt) zabalená ZA standalone-check, ale online detection
-+ version compare sú VŽDY aktívne. Bez toho inštalovaná PWA nikdy
-nedostane upgrade upozornenie.
+2. **version.json network fetch** — fetchne `version.json` s `cache: 'no-store'`.
+   Porovná s `APP_VERSION`. Ak server má novšiu → popup.
+   **KRITICKÉ:** `version.json` je vylúčený z precache cez `globIgnores` v
+   `vite.config.ts`. Bez toho SW servíruje starú verziu z cache a detekcia nefunguje.
 
-**Caveat — CacheFirst HTML strikes again:** keďže HTML je CacheFirst,
-SW servíruje starý HTML aj keď je nový deployed na GitHube. Auto-popup
-sa preto zobrazí až **PO** prvom upgrade ktorý sa udeje cez:
-- Manuálny "Skontrolovať update" v Settings (cache wipe + reload)
-- Manuálny "Vynútiť aktualizáciu" v Settings (cache wipe + reload)
+3. **SW lifecycle detection** — `navigator.serviceWorker.getRegistration()` →
+   ak `reg.waiting` existuje alebo `updatefound` event → popup. Toto funguje
+   aj keď version.json zlyhá. Pri mount sa volá `reg.update()` na manuálny check.
 
-Po prvom takom upgrade už SW slúži novú verziu HTML aj z cache, takže
-ďalšie deploye normálne triggernú auto-popup. Inak povedané: prvý
-upgrade po deploy v2.2.0+ vyžaduje manuálny krok, všetky ďalšie idú
-cez popup.
+**handleUpdate flow:**
+- Ak je `reg.waiting` → `postMessage({ type: 'SKIP_WAITING' })` + `controllerchange` → reload
+- Fallback: `checkForUpdate()` (cache wipe + unregister SW + reload)
 
 ### Offline-safe update helpers
 

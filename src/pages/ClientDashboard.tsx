@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import { calculateFullNumerology, getGridCount, reduceToSingle } from '../engine/numerologyEngine';
+import { calculateDevelopmentalNumerology } from '../engine/developmentalNumerologyEngine';
 import { calculateAstrology } from '../engine/astrologyEngine';
 import { calculateHumanDesign } from '../engine/humanDesignEngine';
 import { evaluateChakras } from '../engine/chakraEngine';
@@ -37,6 +38,7 @@ export function ClientDashboard() {
     const lon = client.birthLongitude ?? 17.11;
     const tz = getTimezoneFromCoords(lat, lon);
     const numerology = calculateFullNumerology(d, m, y);
+    const devNumerology = calculateDevelopmentalNumerology(d, m, y);
     const astrology = calculateAstrology(d, m, y, h ?? 12, min ?? 0, lat, lon, tz);
     const humanDesign = calculateHumanDesign(d, m, y, h ?? 12, min ?? 0, tz);
     const gridCounts = getGridCount(numerology.grid);
@@ -44,7 +46,7 @@ export function ClientDashboard() {
     const lp = numerology.lifePathNumber > 9 ? reduceToSingle(numerology.lifePathNumber) : numerology.lifePathNumber;
     const kabalah = calculateKabalah(lp, reduceToSingle(d));
     const theta = calculateThetaHealing(lp);
-    return { numerology, astrology, humanDesign, chakras, kabalah, theta };
+    return { numerology, devNumerology, astrology, humanDesign, chakras, kabalah, theta };
   }, [client]);
 
   const recordVisit = () => {
@@ -76,7 +78,7 @@ export function ClientDashboard() {
 
   if (!computedResults) return <SkeletonClientDashboard />;
 
-  const { numerology, astrology, humanDesign, chakras, kabalah, theta } = computedResults;
+  const { numerology, devNumerology, astrology, humanDesign, chakras, kabalah, theta } = computedResults;
 
   return (
     <div className="space-y-6">
@@ -200,12 +202,14 @@ export function ClientDashboard() {
 
       <ClientNumerology
         numerology={numerology}
+        devNumerology={devNumerology}
         astrology={astrology}
         humanDesign={humanDesign}
         chakras={chakras}
         kabalah={kabalah}
         theta={theta}
         clientId={client.id}
+        gender={client.gender}
       />
 
       <ClientRelationships

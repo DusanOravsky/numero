@@ -488,7 +488,7 @@ export function RelationshipsPage() {
             <button
               onClick={() => { handlePartnerCalc(); setEditing(false); }}
               disabled={!isPersonValid(partner1) || !isPersonValid(partner2)}
-              className="flex-1 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-semibold hover:from-indigo-500 hover:to-violet-500 disabled:from-slate-400 disabled:to-slate-500 disabled:cursor-not-allowed disabled:shadow-none"
+              className="flex-1 py-3 rounded-xl bg-indigo-600 text-white font-semibold hover:bg-indigo-500 disabled:bg-slate-200 disabled:text-slate-900 disabled:cursor-not-allowed"
             >
               {compatibility ? 'Prepočítať' : 'Vypočítať kompatibilitu'}
             </button>
@@ -823,7 +823,7 @@ export function RelationshipsPage() {
           <button
             type="button"
             onClick={addChild}
-            className="w-full py-3 rounded-xl border-2 border-dashed border-indigo-400 text-slate-800 text-sm font-bold bg-slate-50 hover:bg-indigo-50 active:bg-indigo-100"
+            className="w-full py-3 rounded-xl border-2 border-dashed border-slate-400 text-slate-900 text-sm font-bold bg-white hover:bg-slate-100 active:bg-slate-200"
           >
             + Pridať ďalšie dieťa
           </button>
@@ -832,7 +832,7 @@ export function RelationshipsPage() {
             <button
               onClick={() => { handleFamilyCalc(); setEditing(false); }}
               disabled={!isPersonValid(parent) || !children.some(isPersonValid)}
-              className="flex-1 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-semibold hover:from-indigo-500 hover:to-violet-500 disabled:from-slate-400 disabled:to-slate-500 disabled:cursor-not-allowed disabled:shadow-none"
+              className="flex-1 py-3 rounded-xl bg-indigo-600 text-white font-semibold hover:bg-indigo-500 disabled:bg-slate-200 disabled:text-slate-900 disabled:cursor-not-allowed"
             >
               {familyResults ? 'Prepočítať' : 'Vypočítať kompatibilitu'}
             </button>
@@ -1140,7 +1140,7 @@ export function RelationshipsPage() {
             <button
               onClick={() => { handleAstroCalc(); setEditing(false); }}
               disabled={!isAstroPersonValid(astroPartner1) || !isAstroPersonValid(astroPartner2)}
-              className="flex-1 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-semibold hover:from-indigo-500 hover:to-violet-500 disabled:from-slate-400 disabled:to-slate-500 disabled:cursor-not-allowed disabled:shadow-none"
+              className="flex-1 py-3 rounded-xl bg-indigo-600 text-white font-semibold hover:bg-indigo-500 disabled:bg-slate-200 disabled:text-slate-900 disabled:cursor-not-allowed"
             >
               {synastryResult ? 'Prepočítať' : 'Vypočítať astro kompatibilitu'}
             </button>
@@ -1499,7 +1499,7 @@ export function RelationshipsPage() {
           <button
             type="button"
             onClick={() => setConstChildren([...constChildren, emptyPerson()])}
-            className="w-full py-3 rounded-xl border-2 border-dashed border-indigo-400 text-slate-800 text-sm font-bold bg-slate-50 hover:bg-indigo-50 active:bg-indigo-100"
+            className="w-full py-3 rounded-xl border-2 border-dashed border-slate-400 text-slate-900 text-sm font-bold bg-white hover:bg-slate-100 active:bg-slate-200"
           >
             + Pridať ďalšie dieťa
           </button>
@@ -1508,7 +1508,7 @@ export function RelationshipsPage() {
             <button
               onClick={() => { handleConstellationCalc(); setEditing(false); }}
               disabled={!isPersonValid(constFather) || !isPersonValid(constMother) || !constChildren.some(isPersonValid)}
-              className="flex-1 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-semibold hover:from-indigo-500 hover:to-violet-500 disabled:from-slate-400 disabled:to-slate-500 disabled:cursor-not-allowed disabled:shadow-none"
+              className="flex-1 py-3 rounded-xl bg-indigo-600 text-white font-semibold hover:bg-indigo-500 disabled:bg-slate-200 disabled:text-slate-900 disabled:cursor-not-allowed"
             >
               {constellationResult ? 'Prepočítať' : 'Vypočítať rodinnú konšteláciu'}
             </button>

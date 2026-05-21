@@ -488,7 +488,7 @@ export function RelationshipsPage() {
             <button
               onClick={() => { handlePartnerCalc(); setEditing(false); }}
               disabled={!isPersonValid(partner1) || !isPersonValid(partner2)}
-              className="flex-1 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-medium hover:from-indigo-500 hover:to-violet-500 disabled:opacity-40 disabled:cursor-not-allowed glow"
+              className="flex-1 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-semibold hover:from-indigo-500 hover:to-violet-500 disabled:from-slate-400 disabled:to-slate-500 disabled:cursor-not-allowed disabled:shadow-none"
             >
               {compatibility ? 'Prepočítať' : 'Vypočítať kompatibilitu'}
             </button>
@@ -832,7 +832,7 @@ export function RelationshipsPage() {
             <button
               onClick={() => { handleFamilyCalc(); setEditing(false); }}
               disabled={!isPersonValid(parent) || !children.some(isPersonValid)}
-              className="flex-1 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-medium hover:from-indigo-500 hover:to-violet-500 disabled:opacity-40 disabled:cursor-not-allowed glow"
+              className="flex-1 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-semibold hover:from-indigo-500 hover:to-violet-500 disabled:from-slate-400 disabled:to-slate-500 disabled:cursor-not-allowed disabled:shadow-none"
             >
               {familyResults ? 'Prepočítať' : 'Vypočítať kompatibilitu'}
             </button>
@@ -1140,7 +1140,7 @@ export function RelationshipsPage() {
             <button
               onClick={() => { handleAstroCalc(); setEditing(false); }}
               disabled={!isAstroPersonValid(astroPartner1) || !isAstroPersonValid(astroPartner2)}
-              className="flex-1 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-medium hover:from-indigo-500 hover:to-violet-500 disabled:opacity-40 disabled:cursor-not-allowed glow"
+              className="flex-1 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-semibold hover:from-indigo-500 hover:to-violet-500 disabled:from-slate-400 disabled:to-slate-500 disabled:cursor-not-allowed disabled:shadow-none"
             >
               {synastryResult ? 'Prepočítať' : 'Vypočítať astro kompatibilitu'}
             </button>
@@ -1508,7 +1508,7 @@ export function RelationshipsPage() {
             <button
               onClick={() => { handleConstellationCalc(); setEditing(false); }}
               disabled={!isPersonValid(constFather) || !isPersonValid(constMother) || !constChildren.some(isPersonValid)}
-              className="flex-1 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-medium hover:from-indigo-500 hover:to-violet-500 disabled:opacity-40 disabled:cursor-not-allowed glow"
+              className="flex-1 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-semibold hover:from-indigo-500 hover:to-violet-500 disabled:from-slate-400 disabled:to-slate-500 disabled:cursor-not-allowed disabled:shadow-none"
             >
               {constellationResult ? 'Prepočítať' : 'Vypočítať rodinnú konšteláciu'}
             </button>

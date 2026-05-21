@@ -96,18 +96,18 @@ export function ClientDashboard() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="p-3 rounded-lg bg-white/5">
             <p className="text-xs text-slate-500 mb-0.5">Kto je v jadre</p>
-            <p className="text-sm font-medium text-white">ŽČ {numerology.lifePathNumber} — {humanDesign.type}</p>
-            <p className="text-[11px] text-slate-400 mt-1">Stratégia: „{humanDesign.strategy.toLowerCase()}"</p>
+            <p className="text-sm font-medium text-indigo-900">ŽČ {numerology.lifePathNumber} — {humanDesign.type}</p>
+            <p className="text-[11px] text-slate-500 mt-1">Stratégia: „{humanDesign.strategy.toLowerCase()}"</p>
           </div>
           <div className="p-3 rounded-lg bg-white/5">
             <p className="text-xs text-slate-500 mb-0.5">Ako rozhoduje</p>
-            <p className="text-sm font-medium text-white">{humanDesign.authority}</p>
-            <p className="text-[11px] text-slate-400 mt-1">Nie-ja téma: „{humanDesign.notSelfTheme.toLowerCase()}"</p>
+            <p className="text-sm font-medium text-indigo-900">{humanDesign.authority}</p>
+            <p className="text-[11px] text-slate-500 mt-1">Nie-ja téma: „{humanDesign.notSelfTheme.toLowerCase()}"</p>
           </div>
           <div className="p-3 rounded-lg bg-white/5">
             <p className="text-xs text-slate-500 mb-0.5">Aktuálna energia</p>
-            <p className="text-sm font-medium text-white">{astrology.sunSign.name} / {astrology.moonSign.name}</p>
-            <p className="text-[11px] text-slate-400 mt-1">Element: {astrology.dominantElement}</p>
+            <p className="text-sm font-medium text-indigo-900">{astrology.sunSign.name} / {astrology.moonSign.name}</p>
+            <p className="text-[11px] text-slate-500 mt-1">Element: {astrology.dominantElement}</p>
           </div>
         </div>
       </div>
@@ -176,6 +176,28 @@ export function ClientDashboard() {
         theta={theta}
       />
 
+      <ClientNumerology
+        numerology={numerology}
+        devNumerology={devNumerology}
+        astrology={astrology}
+        humanDesign={humanDesign}
+        chakras={chakras}
+        kabalah={kabalah}
+        theta={theta}
+        clientId={client.id}
+        gender={client.gender}
+      />
+
+      <ClientRelationships
+        client={client}
+        numerology={numerology}
+        humanDesign={humanDesign}
+        showPartnerSelect={showPartnerSelect}
+        setShowPartnerSelect={setShowPartnerSelect}
+        showChildSelect={showChildSelect}
+        setShowChildSelect={setShowChildSelect}
+      />
+
       {/* AI integrálny výklad pre klienta (D1) */}
       <AIChat
         context={{
@@ -198,28 +220,6 @@ export function ClientDashboard() {
         title={`✦ AI výklad pre klienta: ${client.name}`}
         initialUserMessage={`Vyhotov mi prosím profesionálny integratívny výklad pre klienta ${client.name}, ktorý môžem použiť počas konzultácie. Zameraj sa na hlavnú životnú tému, silné stránky, výzvy aktuálneho obdobia (ORV) a praktické odporúčania.`}
         storageKey={`client-${client.id}`}
-      />
-
-      <ClientNumerology
-        numerology={numerology}
-        devNumerology={devNumerology}
-        astrology={astrology}
-        humanDesign={humanDesign}
-        chakras={chakras}
-        kabalah={kabalah}
-        theta={theta}
-        clientId={client.id}
-        gender={client.gender}
-      />
-
-      <ClientRelationships
-        client={client}
-        numerology={numerology}
-        humanDesign={humanDesign}
-        showPartnerSelect={showPartnerSelect}
-        setShowPartnerSelect={setShowPartnerSelect}
-        showChildSelect={showChildSelect}
-        setShowChildSelect={setShowChildSelect}
       />
 
       <ClientExport

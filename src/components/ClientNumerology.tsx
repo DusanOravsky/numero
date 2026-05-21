@@ -29,7 +29,7 @@ interface ClientNumerologyProps {
   theta: ThetaHealingResult;
   /** ID klienta — ak je definované, "Otvoriť detail" linky pridajú ?client=ID */
   clientId?: string;
-  gender?: string;
+  gender?: 'male' | 'female';
 }
 
 export function ClientNumerology({ numerology, devNumerology, astrology, humanDesign, chakras, kabalah, theta, clientId, gender }: ClientNumerologyProps) {

@@ -27,7 +27,7 @@ export function Dashboard() {
   const navigate = useNavigate();
   const { profiles, activeProfileId, numerologyMethod, clients } = useStore();
   const profile = profiles.find(p => p.id === activeProfileId);
-  const [lastViewedId] = useState<string | null>(() => localStorage.getItem('last-viewed-client'));
+  const [lastViewedId, setLastViewedId] = useState<string | null>(() => localStorage.getItem('last-viewed-client'));
   const lastClient = lastViewedId ? clients.find(c => c.id === lastViewedId) : null;
 
   const [today] = useState(() => new Date());
@@ -195,17 +195,26 @@ export function Dashboard() {
       </div>
 
       {lastClient && (
-        <button
-          onClick={() => navigate(`/clients/${lastClient.id}`)}
-          className="w-full flex items-center gap-3 p-3 rounded-xl bg-amber-50 border border-amber-200 hover:bg-amber-100 transition-colors text-left"
-        >
-          <span className="w-9 h-9 rounded-full bg-amber-500 flex items-center justify-center text-white">♟</span>
-          <div className="flex-1 min-w-0">
-            <p className="text-[10px] uppercase tracking-wider text-amber-700 font-semibold">Posledný klient</p>
-            <p className="text-sm font-medium text-amber-900 truncate">{lastClient.name}</p>
-          </div>
-          <span className="text-amber-600 text-sm">→</span>
-        </button>
+        <div className="relative w-full">
+          <button
+            onClick={() => navigate(`/clients/${lastClient.id}`)}
+            className="w-full flex items-center gap-3 p-3 rounded-xl bg-amber-50 border border-amber-200 hover:bg-amber-100 transition-colors text-left"
+          >
+            <span className="w-9 h-9 rounded-full bg-amber-500 flex items-center justify-center text-white">♟</span>
+            <div className="flex-1 min-w-0">
+              <p className="text-[10px] uppercase tracking-wider text-amber-700 font-semibold">Posledný klient</p>
+              <p className="text-sm font-medium text-amber-900 truncate">{lastClient.name}</p>
+            </div>
+            <span className="text-amber-600 text-sm">→</span>
+          </button>
+          <button
+            onClick={(e) => { e.stopPropagation(); localStorage.removeItem('last-viewed-client'); setLastViewedId(null); }}
+            className="absolute top-1 right-1 w-6 h-6 rounded-full flex items-center justify-center text-amber-400 hover:text-amber-700 hover:bg-amber-100 transition-colors"
+            title="Skryť"
+          >
+            ✕
+          </button>
+        </div>
       )}
 
       {/* ═══ MORNING BRIEF — vždy viditeľné ═══ */}

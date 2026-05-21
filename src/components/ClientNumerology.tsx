@@ -16,8 +16,10 @@ import type { ThetaHealingResult } from '../engine/thetaHealingEngine';
 import { reduceToSingle } from '../engine/numerologyEngine';
 import { useStore } from '../store/useStore';
 import lifePathsData from '../data/lifePaths.json';
+import isolatedData from '../data/isolatedNumbers.json';
 
 const lifePaths = lifePathsData as Record<string, { title: string; keywords: string[]; description: string; gift: string; shadow: string }>;
+const isolatedInfo = isolatedData as Record<string, { type: string; effect: string; description: string; theme: string; shadow: string; recommendation: string; body: string }>;
 
 interface ClientNumerologyProps {
   numerology: NumerologyResult;
@@ -75,8 +77,43 @@ export function ClientNumerology({ numerology, devNumerology, astrology, humanDe
                 : numerology.isolatedNumbers;
               return isolated.length > 0 ? (
                 <div className="mt-4 pt-3 border-t border-slate-200">
-                  <p className="text-xs text-rose-600 font-medium mb-1.5">Izolované čísla</p>
-                  <div className="flex gap-1.5">{isolated.map(n => <span key={n} className="w-7 h-7 rounded-lg bg-rose-500/15 border border-rose-500/30 text-rose-700 text-sm font-bold flex items-center justify-center">{n}</span>)}</div>
+                  <p className="text-xs text-rose-600 font-semibold mb-1">Izolované čísla</p>
+                  <p className="text-[11px] text-slate-500 mb-3">Obklopené prázdnymi políčkami — blokovaná energia, frustrácia alebo napätie.</p>
+                  <div className="space-y-3">
+                    {isolated.map(n => {
+                      const info = isolatedInfo[String(n)];
+                      return (
+                        <div key={n} className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20">
+                          <div className="flex items-center gap-2 mb-1.5">
+                            <span className="w-7 h-7 rounded-lg bg-rose-500/20 border border-rose-500/30 text-rose-700 text-sm font-bold flex items-center justify-center">{n}</span>
+                            <div>
+                              <p className="text-sm font-medium text-slate-800">{info?.theme || `Izolované číslo ${n}`}</p>
+                              <p className="text-[10px] text-rose-600">{info?.type === 'nepárne' ? 'Nepárne – napätie, agresivita' : 'Párne – pasivita, utiahnutosť'}</p>
+                            </div>
+                          </div>
+                          {info && (
+                            <>
+                              <p className="text-xs text-slate-600 mb-2">{info.description}</p>
+                              <div className="grid grid-cols-2 gap-2 text-[11px]">
+                                <div className="p-1.5 rounded-lg bg-red-500/10">
+                                  <p className="text-red-600 font-medium">Tieň</p>
+                                  <p className="text-slate-600">{info.shadow}</p>
+                                </div>
+                                <div className="p-1.5 rounded-lg bg-amber-500/10">
+                                  <p className="text-amber-600 font-medium">Telo</p>
+                                  <p className="text-slate-600">{info.body}</p>
+                                </div>
+                              </div>
+                              <div className="p-1.5 rounded-lg bg-indigo-500/10 mt-2 text-[11px]">
+                                <p className="text-indigo-600 font-medium">Odporúčanie</p>
+                                <p className="text-slate-600">{info.recommendation}</p>
+                              </div>
+                            </>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               ) : null;
             })()}

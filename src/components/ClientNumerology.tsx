@@ -45,7 +45,6 @@ export function ClientNumerology({ numerology, devNumerology, astrology, humanDe
           <button onClick={() => navigate('/numerology' + q)} className="text-xs text-slate-400 hover:text-indigo-600">Otvoriť detail →</button>
         </div>
         <GlassCard>
-          {/* ŽČ + ORV/OMV/ODV */}
           <div className="flex items-center gap-4 flex-wrap">
             <div className="flex items-center gap-3">
               <div className="w-14 h-14 rounded-full bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center shrink-0">
@@ -72,14 +71,27 @@ export function ClientNumerology({ numerology, devNumerology, astrology, humanDe
             </div>
           </div>
 
-          {/* Mriežka — podľa nastavenej metódy */}
-          <div className="mt-4 pt-4 border-t border-slate-200">
-            {numerologyMethod === 'developmental' && devNumerology ? (
-              <DevelopmentalNumerologyView result={devNumerology} gender={gender} compact />
-            ) : (
-              <NumerologyGrid grid={numerology.grid} />
-            )}
-          </div>
+          {/* Polarita ega (vývojová metóda) */}
+          {devNumerology && (
+            <div className="mt-3 pt-3 border-t border-slate-200">
+              <div className="flex items-center gap-2">
+                <span className="text-lg">{devNumerology.egoPolarity === 'masculine' ? '♂' : devNumerology.egoPolarity === 'feminine' ? '♀' : '○'}</span>
+                <div>
+                  <p className="text-sm font-medium text-slate-800">
+                    {devNumerology.egoPolarity === 'masculine' ? 'Mužské ego' : devNumerology.egoPolarity === 'feminine' ? 'Ženské ego' : 'Bez polarity'}{' '}
+                    <span className="text-slate-400 font-normal">({devNumerology.oneCount}× číslo 1)</span>
+                  </p>
+                  {gender && (
+                    <p className="text-xs text-slate-500">
+                      {(gender === 'male' && devNumerology.egoPolarity === 'masculine') || (gender === 'female' && devNumerology.egoPolarity === 'feminine')
+                        ? '✓ Súlad s biologickým pohlavím'
+                        : devNumerology.egoPolarity === 'none' ? 'Žiadna polarita' : '⟳ Opačná polarita — úloha integrácie'}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
         </GlassCard>
       </motion.section>
 

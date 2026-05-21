@@ -52,35 +52,35 @@ export function ComparePage() {
     return { client: c, num, dev, astro, hd, enneagram };
   });
 
-  const rows: { label: string; cells: (data: typeof computed[number]) => React.ReactNode }[] = [
+  const rows: { label: string; cells: (data: typeof computed[number]) => React.ReactNode; keyOf?: (data: typeof computed[number]) => string; highlight?: boolean }[] = [
     { label: 'Dátum', cells: d => `${d.client.birthDay}.${d.client.birthMonth}.${d.client.birthYear}` },
     { label: 'Čas', cells: d => d.client.birthHour !== undefined ? `${d.client.birthHour}:${String(d.client.birthMinute || 0).padStart(2, '0')}` : '—' },
-    { label: 'Pohlavie', cells: d => d.client.gender === 'male' ? 'Muž' : d.client.gender === 'female' ? 'Žena' : '—' },
-    { label: 'Životné číslo', cells: d => <strong className="text-indigo-700">{d.num.lifePathNumber}</strong> },
-    { label: 'ŽČ z (suma)', cells: d => d.num.lifePathFrom },
-    { label: 'VDD (vek dosp.)', cells: d => `${d.num.vdd} r.` },
-    { label: 'ΣT', cells: d => `${d.num.sigmaT} (${d.num.age === 'aquarius' ? 'Vodnár' : 'Ryby'})` },
-    { label: 'K1 (psych.)', cells: d => d.dev.circled[0].value },
-    { label: 'K2 (mat.)', cells: d => d.dev.circled[1].value },
-    { label: 'K3 (poslanie) ★', cells: d => <strong className="text-amber-700">{d.dev.circled[2].value}</strong> },
-    { label: 'K4 (sny)', cells: d => d.dev.circled[3].value },
-    { label: 'Polarita ega', cells: d => d.dev.egoPolarity === 'masculine' ? 'mužská' : d.dev.egoPolarity === 'feminine' ? 'ženská' : '—' },
+    { label: 'Pohlavie', cells: d => d.client.gender === 'male' ? 'Muž' : d.client.gender === 'female' ? 'Žena' : '—', keyOf: d => d.client.gender ?? '', highlight: true },
+    { label: 'Životné číslo', cells: d => <strong className="text-indigo-700">{d.num.lifePathNumber}</strong>, keyOf: d => String(d.num.lifePathNumber), highlight: true },
+    { label: 'ŽČ z (suma)', cells: d => d.num.lifePathFrom, keyOf: d => String(d.num.lifePathFrom), highlight: true },
+    { label: 'VDD (vek dosp.)', cells: d => `${d.num.vdd} r.`, keyOf: d => String(d.num.vdd), highlight: true },
+    { label: 'ΣT', cells: d => `${d.num.sigmaT} (${d.num.age === 'aquarius' ? 'Vodnár' : 'Ryby'})`, keyOf: d => `${d.num.sigmaT}|${d.num.age}`, highlight: true },
+    { label: 'K1 (psych.)', cells: d => d.dev.circled[0].value, keyOf: d => String(d.dev.circled[0].value), highlight: true },
+    { label: 'K2 (mat.)', cells: d => d.dev.circled[1].value, keyOf: d => String(d.dev.circled[1].value), highlight: true },
+    { label: 'K3 (poslanie) ★', cells: d => <strong className="text-amber-700">{d.dev.circled[2].value}</strong>, keyOf: d => String(d.dev.circled[2].value), highlight: true },
+    { label: 'K4 (sny)', cells: d => d.dev.circled[3].value, keyOf: d => String(d.dev.circled[3].value), highlight: true },
+    { label: 'Polarita ega', cells: d => d.dev.egoPolarity === 'masculine' ? 'mužská' : d.dev.egoPolarity === 'feminine' ? 'ženská' : '—', keyOf: d => d.dev.egoPolarity, highlight: true },
     { label: 'Plné roviny', cells: d => d.num.fullPlanes.length === 0 ? '—' : d.num.fullPlanes.join(', ') },
     { label: 'Prázdne roviny', cells: d => d.num.emptyPlanes.length === 0 ? '—' : d.num.emptyPlanes.join(', ') },
     { label: 'Izolované čísla', cells: d => d.num.isolatedNumbers.length === 0 ? '—' : d.num.isolatedNumbers.join(', ') },
-    { label: 'Slnko', cells: d => `${d.astro.planets.find(p => p.name === 'Slnko')!.sign.name} ${d.astro.planets.find(p => p.name === 'Slnko')!.degree.toFixed(0)}°` },
-    { label: 'Mesiac', cells: d => `${d.astro.planets.find(p => p.name === 'Mesiac')!.sign.name} ${d.astro.planets.find(p => p.name === 'Mesiac')!.degree.toFixed(0)}°` },
-    { label: 'Ascendent', cells: d => d.astro.ascendant.name },
-    { label: 'Dominantný živel', cells: d => d.astro.dominantElement },
-    { label: 'HD typ', cells: d => d.hd.type },
-    { label: 'HD profil', cells: d => `${d.hd.profile.line1}/${d.hd.profile.line2}` },
-    { label: 'HD autorita', cells: d => d.hd.authority },
-    { label: 'HD def. centrá', cells: d => `${d.hd.definedCenters.length}/9` },
-    { label: 'HD kanály', cells: d => d.hd.channels.length },
-    { label: 'Enneagram typ', cells: d => { const t = enneagramTypes[d.enneagram.coreType]; return t ? <strong className="text-emerald-700">{d.enneagram.coreType} ({t.name.split('/')[0].trim()})</strong> : d.enneagram.coreType; } },
-    { label: 'Enneagram krídlo', cells: d => d.enneagram.dominantWing ? `${d.enneagram.dominantWing}w` : '—' },
-    { label: 'Integrácia →', cells: d => d.enneagram.integrationDirection },
-    { label: 'Stres →', cells: d => d.enneagram.disintegrationDirection },
+    { label: 'Slnko', cells: d => `${d.astro.planets.find(p => p.name === 'Slnko')!.sign.name} ${d.astro.planets.find(p => p.name === 'Slnko')!.degree.toFixed(0)}°`, keyOf: d => d.astro.planets.find(p => p.name === 'Slnko')!.sign.name, highlight: true },
+    { label: 'Mesiac', cells: d => `${d.astro.planets.find(p => p.name === 'Mesiac')!.sign.name} ${d.astro.planets.find(p => p.name === 'Mesiac')!.degree.toFixed(0)}°`, keyOf: d => d.astro.planets.find(p => p.name === 'Mesiac')!.sign.name, highlight: true },
+    { label: 'Ascendent', cells: d => d.astro.ascendant.name, keyOf: d => d.astro.ascendant.name, highlight: true },
+    { label: 'Dominantný živel', cells: d => d.astro.dominantElement, keyOf: d => d.astro.dominantElement, highlight: true },
+    { label: 'HD typ', cells: d => d.hd.type, keyOf: d => d.hd.type, highlight: true },
+    { label: 'HD profil', cells: d => `${d.hd.profile.line1}/${d.hd.profile.line2}`, keyOf: d => `${d.hd.profile.line1}/${d.hd.profile.line2}`, highlight: true },
+    { label: 'HD autorita', cells: d => d.hd.authority, keyOf: d => d.hd.authority, highlight: true },
+    { label: 'HD def. centrá', cells: d => `${d.hd.definedCenters.length}/9`, keyOf: d => String(d.hd.definedCenters.length), highlight: true },
+    { label: 'HD kanály', cells: d => d.hd.channels.length, keyOf: d => String(d.hd.channels.length), highlight: true },
+    { label: 'Enneagram typ', cells: d => { const t = enneagramTypes[d.enneagram.coreType]; return t ? <strong className="text-emerald-700">{d.enneagram.coreType} ({t.name.split('/')[0].trim()})</strong> : d.enneagram.coreType; }, keyOf: d => String(d.enneagram.coreType), highlight: true },
+    { label: 'Enneagram krídlo', cells: d => d.enneagram.dominantWing ? `${d.enneagram.dominantWing}w` : '—', keyOf: d => d.enneagram.dominantWing ? String(d.enneagram.dominantWing) : '', highlight: true },
+    { label: 'Integrácia →', cells: d => d.enneagram.integrationDirection, keyOf: d => String(d.enneagram.integrationDirection), highlight: true },
+    { label: 'Stres →', cells: d => d.enneagram.disintegrationDirection, keyOf: d => String(d.enneagram.disintegrationDirection), highlight: true },
   ];
 
   return (
@@ -188,14 +188,24 @@ export function ComparePage() {
                 </tr>
               </thead>
               <tbody>
-                {rows.map(row => (
-                  <tr key={row.label} className="border-b border-slate-100 hover:bg-slate-50/40">
-                    <td className="p-2 text-xs text-slate-500 sticky left-0 bg-white">{row.label}</td>
-                    {computed.map(d => (
-                      <td key={d.client.id} className="p-2 text-slate-700">{row.cells(d)}</td>
-                    ))}
-                  </tr>
-                ))}
+                {rows.map(row => {
+                  const allMatch = !!row.highlight && !!row.keyOf && computed.length >= 2 && (() => {
+                    const k0 = row.keyOf!(computed[0]);
+                    if (!k0) return false;
+                    return computed.every(d => row.keyOf!(d) === k0);
+                  })();
+                  return (
+                    <tr key={row.label} className={`border-b border-slate-100 transition-colors ${allMatch ? 'bg-emerald-50/60' : 'hover:bg-slate-50/40'}`}>
+                      <td className={`p-2 text-xs sticky left-0 ${allMatch ? 'bg-emerald-50/60 text-emerald-800 font-semibold' : 'bg-white text-slate-500'}`}>
+                        {allMatch && <span className="mr-1">✓</span>}
+                        {row.label}
+                      </td>
+                      {computed.map(d => (
+                        <td key={d.client.id} className={`p-2 ${allMatch ? 'text-emerald-900 font-medium' : 'text-slate-700'}`}>{row.cells(d)}</td>
+                      ))}
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

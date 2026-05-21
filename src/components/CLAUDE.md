@@ -10,13 +10,15 @@
 - **Framer Motion** pre vstupné animácie (`initial`, `animate`, `transition delay`).
 - **Slovenčina** v UI textoch. i18n prerušujeme cez `useTranslation()` ale väčšina textov je inline (sk-only kvôli ezoterickej špecifickosti).
 
-## Klient kontext (`useSubject` hook)
+## Klient kontext (`useSubject` hook + `SubjectPicker`)
 
-Stránky Numerology, Astrology, HumanDesign, Chakras, Kabalah, Theta používajú
+Stránky Numerology, Astrology, HumanDesign, Chakras, Kabalah, Theta, Modality používajú
 **`useSubject()`** namiesto `useStore().profile`. Hook vráti:
 
 - Aktívny profil ak nie je `?client=ID` v URL
-- Klienta ak je `?client=ID` (napr. po preklikoch z `ClientDashboard`)
+- Klienta ak je `?client=ID` (napr. po preklikoch z `ClientDashboard` alebo cez SubjectPicker)
+
+**SubjectPicker** (v2.45.0+, `components/SubjectPicker.tsx`) — floating dropdown v `MainLayout` (sidebar/mobile header). Renderuje sa len na subject-aware stránkach (`SUBJECT_AWARE_PATHS`). Click → upraví `?client` query param, `useSubject()` automaticky podchytí novú hodnotu. Zachováva ostatné query params.
 
 Subject má rovnaké polia ako profile + `isClient: boolean` + `timezoneOffset`
 (odhadnutý z `birthLatitude/Longitude` cez `getTimezoneFromCoords`).
@@ -136,9 +138,11 @@ Tento vzor je v: `AstrologyPage`, `HumanDesignPage`, `KabalahPage`, `ThetaHealin
 **Výnimky kde useEffect+setState je legitímne:**
 - `PWAPrompts` — sync s localStorage version pri mount
 - `SharedView` — parsing URL hash pri mount
-- `ClientDashboard` — auto-add report 1× za deň (side-effect, nie state derivation)
+- `ClientDashboard` — sync `last-viewed-client` do localStorage pri mount (side-effect, nie state derivation)
 
 Tieto majú `// eslint-disable-next-line react-hooks/set-state-in-effect` s vysvetlením.
+
+**ClientDashboard report flow** (v2.45.0+): predtým bolo auto-add reportu pri každom otvorení detailu klienta (1× za deň). Odstránené — nahradilo manuálne tlačidlo "+ Zaznamenať dnešnú návštevu" v sekcii "Návštevy klienta". Dôvod: bez user intentu sa zoznam reportov nafukoval; teraz len pri zámernom kliku konzultanta.
 
 ## AI Chat komponent (`AIChat.tsx`) + Globálny drawer (`GlobalAIDrawer.tsx`)
 

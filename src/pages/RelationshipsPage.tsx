@@ -1,5 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { GlassCard } from '../components/GlassCard';
+import { useStore } from '../store/useStore';
+import type { Client } from '../store/useStore';
 import { calculateFullNumerology, reduceToSingle, isValidDate } from '../engine/numerologyEngine';
 import { calculateDevelopmentalNumerology } from '../engine/developmentalNumerologyEngine';
 import { calculatePartnerCompatibility, calculateParentChild } from '../engine/compatibilityEngine';
@@ -25,6 +27,85 @@ interface PersonInput {
 }
 
 const emptyPerson = (): PersonInput => ({ name: '', day: '', month: '', year: '', hour: '', minute: '', birthPlace: '' });
+
+function clientToPerson(c: Client): PersonInput {
+  return {
+    name: c.name,
+    day: String(c.birthDay),
+    month: String(c.birthMonth),
+    year: String(c.birthYear),
+    hour: c.birthHour !== undefined ? String(c.birthHour) : '',
+    minute: c.birthMinute !== undefined ? String(c.birthMinute) : '',
+    birthPlace: c.birthPlace ?? '',
+  };
+}
+
+function ClientPickerButton({ onPick, includeProfile = true }: { onPick: (p: PersonInput) => void; includeProfile?: boolean }) {
+  const { clients, profiles, activeProfileId } = useStore();
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const activeProfile = profiles.find(p => p.id === activeProfileId);
+
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [open]);
+
+  if (clients.length === 0 && !activeProfile) return null;
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen(o => !o)}
+        className="text-xs px-3 py-1.5 rounded-lg border border-indigo-300 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-medium flex items-center gap-1.5 transition-colors"
+        aria-haspopup="listbox"
+        aria-expanded={open}
+      >
+        <span>📋</span>
+        <span>Vybrať z klientov</span>
+        <span className={`text-[10px] transition-transform ${open ? 'rotate-180' : ''}`}>▾</span>
+      </button>
+      {open && (
+        <div className="absolute right-0 mt-1 w-64 max-h-72 overflow-y-auto bg-white border border-slate-200 rounded-xl shadow-xl z-30 p-1">
+          {includeProfile && activeProfile && (
+            <button
+              type="button"
+              onClick={() => { onPick(clientToPerson(activeProfile as unknown as Client)); setOpen(false); }}
+              className="w-full text-left px-3 py-2 rounded-lg text-sm text-slate-700 hover:bg-indigo-50 flex items-center gap-2"
+            >
+              <span>◉</span>
+              <span className="flex-1 truncate">{activeProfile.name}</span>
+              <span className="text-[10px] text-slate-400 uppercase">môj profil</span>
+            </button>
+          )}
+          {clients.length > 0 && includeProfile && activeProfile && (
+            <div className="border-t border-slate-100 my-1" />
+          )}
+          {clients.map(c => (
+            <button
+              key={c.id}
+              type="button"
+              onClick={() => { onPick(clientToPerson(c)); setOpen(false); }}
+              className="w-full text-left px-3 py-2 rounded-lg text-sm text-slate-700 hover:bg-indigo-50 flex items-center gap-2"
+            >
+              <span>♟</span>
+              <span className="flex-1 truncate">{c.name}</span>
+              <span className="text-[10px] text-slate-400">{c.birthDay}.{c.birthMonth}.{c.birthYear}</span>
+            </button>
+          ))}
+          {clients.length === 0 && !includeProfile && (
+            <div className="px-3 py-2 text-xs text-slate-500 text-center">Žiadni klienti.</div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
 
 function PersonForm({ person, onChange, label }: { person: PersonInput; onChange: (p: PersonInput) => void; label: string }) {
   return (
@@ -481,14 +562,26 @@ export function RelationshipsPage() {
             </p>
           )}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <PersonForm person={partner1} onChange={setPartner1} label="Partner 1" />
-            <PersonForm person={partner2} onChange={setPartner2} label="Partner 2" />
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <p className="text-sm text-slate-700 font-medium">Partner 1</p>
+                <ClientPickerButton onPick={setPartner1} />
+              </div>
+              <PersonForm person={partner1} onChange={setPartner1} label="" />
+            </div>
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <p className="text-sm text-slate-700 font-medium">Partner 2</p>
+                <ClientPickerButton onPick={setPartner2} />
+              </div>
+              <PersonForm person={partner2} onChange={setPartner2} label="" />
+            </div>
           </div>
           <div className="flex gap-3 mt-6">
             <button
               onClick={() => { handlePartnerCalc(); setEditing(false); }}
               disabled={!isPersonValid(partner1) || !isPersonValid(partner2)}
-              className="flex-1 py-3 rounded-xl font-semibold enabled:bg-indigo-600 enabled:text-white enabled:hover:bg-indigo-500 disabled:bg-slate-200 disabled:text-slate-800 disabled:cursor-not-allowed"
+              className="flex-1 py-3.5 rounded-2xl font-semibold tracking-wide enabled:bg-gradient-to-r enabled:from-indigo-600 enabled:via-violet-600 enabled:to-purple-600 enabled:text-white enabled:shadow-lg enabled:shadow-indigo-500/30 enabled:hover:shadow-xl enabled:hover:shadow-indigo-500/40 enabled:hover:-translate-y-0.5 enabled:active:translate-y-0 enabled:active:scale-[0.98] disabled:bg-slate-200 disabled:text-slate-500 disabled:cursor-not-allowed transition-all duration-200 ease-out"
             >
               {compatibility ? 'Prepočítať' : 'Vypočítať kompatibilitu'}
             </button>
@@ -805,16 +898,23 @@ export function RelationshipsPage() {
       {mode === 'family' && (!familyResults || editing) && (
         <div className="space-y-4">
           <GlassCard>
-            <PersonForm person={parent} onChange={setParent} label="Rodič" />
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-slate-700 font-medium">Rodič</span>
+              <ClientPickerButton onPick={setParent} />
+            </div>
+            <PersonForm person={parent} onChange={setParent} label="" />
           </GlassCard>
 
           {children.map((child, idx) => (
             <GlassCard key={idx}>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm text-slate-600">Dieťa {idx + 1}</span>
-                {children.length > 1 && (
-                  <button onClick={() => removeChild(idx)} className="text-xs text-red-600 hover:text-red-800 font-medium">Odstrániť</button>
-                )}
+                <div className="flex items-center gap-2">
+                  <ClientPickerButton onPick={(p) => { const next = [...children]; next[idx] = p; setChildren(next); }} includeProfile={false} />
+                  {children.length > 1 && (
+                    <button onClick={() => removeChild(idx)} className="text-xs text-red-600 hover:text-red-800 font-medium">Odstrániť</button>
+                  )}
+                </div>
               </div>
               <PersonForm person={child} onChange={(p) => { const next = [...children]; next[idx] = p; setChildren(next); }} label="" />
             </GlassCard>
@@ -823,16 +923,17 @@ export function RelationshipsPage() {
           <button
             type="button"
             onClick={addChild}
-            className="w-full py-3 rounded-xl border-2 border-dashed border-indigo-300 text-sm font-bold bg-indigo-50 hover:bg-indigo-100 active:bg-indigo-200"
+            className="group w-full py-3.5 rounded-2xl border-2 border-dashed border-indigo-400/70 text-sm font-bold bg-gradient-to-br from-indigo-50 to-violet-50/60 text-indigo-700 hover:border-indigo-500 hover:from-indigo-100 hover:to-violet-100 hover:shadow-md hover:shadow-indigo-500/10 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99] transition-all duration-200 ease-out flex items-center justify-center gap-2"
           >
-            <span style={{ color: '#0f172a' }}>+ Pridať ďalšie dieťa</span>
+            <span className="flex items-center justify-center w-6 h-6 rounded-full bg-indigo-600 text-white text-base font-bold leading-none transition-transform duration-200 group-hover:rotate-90 group-hover:scale-110">+</span>
+            <span className="text-indigo-800">Pridať ďalšie dieťa</span>
           </button>
 
           <div className="flex gap-3">
             <button
               onClick={() => { handleFamilyCalc(); setEditing(false); }}
               disabled={!isPersonValid(parent) || !children.some(isPersonValid)}
-              className="flex-1 py-3 rounded-xl font-semibold enabled:bg-indigo-600 enabled:text-white enabled:hover:bg-indigo-500 disabled:bg-slate-200 disabled:text-slate-800 disabled:cursor-not-allowed"
+              className="flex-1 py-3.5 rounded-2xl font-semibold tracking-wide enabled:bg-gradient-to-r enabled:from-indigo-600 enabled:via-violet-600 enabled:to-purple-600 enabled:text-white enabled:shadow-lg enabled:shadow-indigo-500/30 enabled:hover:shadow-xl enabled:hover:shadow-indigo-500/40 enabled:hover:-translate-y-0.5 enabled:active:translate-y-0 enabled:active:scale-[0.98] disabled:bg-slate-200 disabled:text-slate-500 disabled:cursor-not-allowed transition-all duration-200 ease-out"
             >
               {familyResults ? 'Prepočítať' : 'Vypočítať kompatibilitu'}
             </button>
@@ -1092,7 +1193,10 @@ export function RelationshipsPage() {
         <GlassCard>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-3">
-              <p className="text-sm text-slate-600 font-medium">Partner 1</p>
+              <div className="flex items-center justify-between">
+                <p className="text-sm text-slate-600 font-medium">Partner 1</p>
+                <ClientPickerButton onPick={setAstroPartner1} />
+              </div>
               <input
                 type="text"
                 placeholder="Meno"
@@ -1114,7 +1218,10 @@ export function RelationshipsPage() {
               <input type="text" placeholder="Miesto narodenia" value={astroPartner1.birthPlace} onChange={e => setAstroPartner1({ ...astroPartner1, birthPlace: e.target.value })} className="w-full px-3 py-2.5 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white text-sm focus:outline-none focus:border-indigo-500/50" />
             </div>
             <div className="space-y-3">
-              <p className="text-sm text-slate-600 font-medium">Partner 2</p>
+              <div className="flex items-center justify-between">
+                <p className="text-sm text-slate-600 font-medium">Partner 2</p>
+                <ClientPickerButton onPick={setAstroPartner2} />
+              </div>
               <input
                 type="text"
                 placeholder="Meno"
@@ -1140,7 +1247,7 @@ export function RelationshipsPage() {
             <button
               onClick={() => { handleAstroCalc(); setEditing(false); }}
               disabled={!isAstroPersonValid(astroPartner1) || !isAstroPersonValid(astroPartner2)}
-              className="flex-1 py-3 rounded-xl font-semibold enabled:bg-indigo-600 enabled:text-white enabled:hover:bg-indigo-500 disabled:bg-slate-200 disabled:text-slate-800 disabled:cursor-not-allowed"
+              className="flex-1 py-3.5 rounded-2xl font-semibold tracking-wide enabled:bg-gradient-to-r enabled:from-indigo-600 enabled:via-violet-600 enabled:to-purple-600 enabled:text-white enabled:shadow-lg enabled:shadow-indigo-500/30 enabled:hover:shadow-xl enabled:hover:shadow-indigo-500/40 enabled:hover:-translate-y-0.5 enabled:active:translate-y-0 enabled:active:scale-[0.98] disabled:bg-slate-200 disabled:text-slate-500 disabled:cursor-not-allowed transition-all duration-200 ease-out"
             >
               {synastryResult ? 'Prepočítať' : 'Vypočítať astro kompatibilitu'}
             </button>
@@ -1478,19 +1585,30 @@ export function RelationshipsPage() {
           </GlassCard>
 
           <GlassCard>
-            <PersonForm person={constFather} onChange={setConstFather} label="Otec" />
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-slate-700 font-medium">Otec</span>
+              <ClientPickerButton onPick={setConstFather} />
+            </div>
+            <PersonForm person={constFather} onChange={setConstFather} label="" />
           </GlassCard>
           <GlassCard>
-            <PersonForm person={constMother} onChange={setConstMother} label="Matka" />
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-slate-700 font-medium">Matka</span>
+              <ClientPickerButton onPick={setConstMother} />
+            </div>
+            <PersonForm person={constMother} onChange={setConstMother} label="" />
           </GlassCard>
 
           {constChildren.map((child, idx) => (
             <GlassCard key={idx}>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm text-slate-600">Dieťa {idx + 1}</span>
-                {constChildren.length > 1 && (
-                  <button onClick={() => setConstChildren(constChildren.filter((_, i) => i !== idx))} className="text-xs text-red-600 hover:text-red-800 font-medium">Odstrániť</button>
-                )}
+                <div className="flex items-center gap-2">
+                  <ClientPickerButton onPick={(p) => { const next = [...constChildren]; next[idx] = p; setConstChildren(next); }} includeProfile={false} />
+                  {constChildren.length > 1 && (
+                    <button onClick={() => setConstChildren(constChildren.filter((_, i) => i !== idx))} className="text-xs text-red-600 hover:text-red-800 font-medium">Odstrániť</button>
+                  )}
+                </div>
               </div>
               <PersonForm person={child} onChange={(p) => { const next = [...constChildren]; next[idx] = p; setConstChildren(next); }} label="" />
             </GlassCard>
@@ -1499,16 +1617,17 @@ export function RelationshipsPage() {
           <button
             type="button"
             onClick={() => setConstChildren([...constChildren, emptyPerson()])}
-            className="w-full py-3 rounded-xl border-2 border-dashed border-indigo-300 text-sm font-bold bg-indigo-50 hover:bg-indigo-100 active:bg-indigo-200"
+            className="group w-full py-3.5 rounded-2xl border-2 border-dashed border-indigo-400/70 text-sm font-bold bg-gradient-to-br from-indigo-50 to-violet-50/60 text-indigo-700 hover:border-indigo-500 hover:from-indigo-100 hover:to-violet-100 hover:shadow-md hover:shadow-indigo-500/10 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99] transition-all duration-200 ease-out flex items-center justify-center gap-2"
           >
-            <span style={{ color: '#0f172a' }}>+ Pridať ďalšie dieťa</span>
+            <span className="flex items-center justify-center w-6 h-6 rounded-full bg-indigo-600 text-white text-base font-bold leading-none transition-transform duration-200 group-hover:rotate-90 group-hover:scale-110">+</span>
+            <span className="text-indigo-800">Pridať ďalšie dieťa</span>
           </button>
 
           <div className="flex gap-3">
             <button
               onClick={() => { handleConstellationCalc(); setEditing(false); }}
               disabled={!isPersonValid(constFather) || !isPersonValid(constMother) || !constChildren.some(isPersonValid)}
-              className="flex-1 py-3 rounded-xl font-semibold enabled:bg-indigo-600 enabled:text-white enabled:hover:bg-indigo-500 disabled:bg-slate-200 disabled:text-slate-800 disabled:cursor-not-allowed"
+              className="flex-1 py-3.5 rounded-2xl font-semibold tracking-wide enabled:bg-gradient-to-r enabled:from-indigo-600 enabled:via-violet-600 enabled:to-purple-600 enabled:text-white enabled:shadow-lg enabled:shadow-indigo-500/30 enabled:hover:shadow-xl enabled:hover:shadow-indigo-500/40 enabled:hover:-translate-y-0.5 enabled:active:translate-y-0 enabled:active:scale-[0.98] disabled:bg-slate-200 disabled:text-slate-500 disabled:cursor-not-allowed transition-all duration-200 ease-out"
             >
               {constellationResult ? 'Prepočítať' : 'Vypočítať rodinnú konšteláciu'}
             </button>

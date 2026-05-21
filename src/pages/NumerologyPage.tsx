@@ -192,11 +192,6 @@ export function NumerologyPage() {
                 <GlassCard>
                   <h3 className="font-medium text-white mb-3">Tvoj numerologický profil v kocke</h3>
                   <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
-                    <div className="p-2 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-center">
-                      <p className="text-[10px] text-slate-500 uppercase">Životné číslo</p>
-                      <p className="text-xl font-bold text-indigo-300">{result.lifePathNumber}</p>
-                      <p className="text-[10px] text-slate-400">{lifePathInfo?.title || ''}</p>
-                    </div>
                     {numerologyMethod === 'developmental' && devResult && (
                       <>
                         <div className="p-2 rounded-lg bg-amber-500/10 border border-amber-500/20 text-center">

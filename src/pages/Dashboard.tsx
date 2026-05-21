@@ -1,4 +1,4 @@
-import { useMemo, useEffect } from 'react';
+import { useMemo, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
@@ -25,8 +25,10 @@ import { getTimezoneFromCoords } from '../data/cities';
 
 export function Dashboard() {
   const navigate = useNavigate();
-  const { profiles, activeProfileId, numerologyMethod } = useStore();
+  const { profiles, activeProfileId, numerologyMethod, clients } = useStore();
   const profile = profiles.find(p => p.id === activeProfileId);
+  const [lastViewedId] = useState<string | null>(() => localStorage.getItem('last-viewed-client'));
+  const lastClient = lastViewedId ? clients.find(c => c.id === lastViewedId) : null;
 
   const today = useMemo(() => new Date(), []);
   const currentDay = today.getDate();
@@ -192,6 +194,26 @@ export function Dashboard() {
         </div>
       </div>
 
+      {lastClient && (
+        <button
+          onClick={() => navigate(`/clients/${lastClient.id}`)}
+          className="w-full flex items-center gap-3 p-3 rounded-xl bg-amber-50 border border-amber-200 hover:bg-amber-100 transition-colors text-left"
+        >
+          <span className="w-9 h-9 rounded-full bg-amber-500 flex items-center justify-center text-white">♟</span>
+          <div className="flex-1 min-w-0">
+            <p className="text-[10px] uppercase tracking-wider text-amber-700 font-semibold">Posledný klient</p>
+            <p className="text-sm font-medium text-amber-900 truncate">{lastClient.name}</p>
+          </div>
+          <span className="text-amber-600 text-sm">→</span>
+        </button>
+      )}
+
+      {/* ═══ MORNING BRIEF — vždy viditeľné ═══ */}
+      <div className="flex items-center gap-2 -mb-2">
+        <span className="text-xs uppercase tracking-widest text-indigo-400 font-semibold">Ranný brief</span>
+        <div className="flex-1 h-px bg-gradient-to-r from-indigo-400/30 to-transparent"></div>
+      </div>
+
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <VibrationCard
           title="ORV – Ročná vibrácia"
@@ -298,6 +320,15 @@ export function Dashboard() {
         )}
       </GlassCard>
 
+      {/* ═══ DETAILY A INŠPIRÁCIE — collapsible ═══ */}
+      <details className="group" open>
+        <summary className="cursor-pointer list-none flex items-center gap-2 py-2">
+          <span className="text-xs uppercase tracking-widest text-amber-400 font-semibold">Detaily a inšpirácie</span>
+          <div className="flex-1 h-px bg-gradient-to-r from-amber-400/30 to-transparent"></div>
+          <span className="text-amber-400 transition-transform group-open:rotate-180">▾</span>
+        </summary>
+        <div className="space-y-6 mt-4">
+
       {/* Detaily dňa — collapsible */}
       {orvDescriptions[odv] && dailyRituals[odv] && (
         <GlassCard delay={0.38}>
@@ -387,7 +418,17 @@ export function Dashboard() {
         </GlassCard>
       </div>
 
+        </div>
+      </details>
 
+      {/* ═══ HLBŠÍ PROFIL — collapsible (default closed) ═══ */}
+      <details className="group">
+        <summary className="cursor-pointer list-none flex items-center gap-2 py-2">
+          <span className="text-xs uppercase tracking-widest text-violet-400 font-semibold">Hlbší profil</span>
+          <div className="flex-1 h-px bg-gradient-to-r from-violet-400/30 to-transparent"></div>
+          <span className="text-violet-400 transition-transform group-open:rotate-180">▾</span>
+        </summary>
+        <div className="space-y-6 mt-4">
 
       {/* Integrálny súhrn profilu — v Dashboarde ukáž OBA pohľady na mriežku */}
       {profile && fullResults && (
@@ -416,6 +457,9 @@ export function Dashboard() {
           theta={fullResults.theta}
         />
       )}
+
+        </div>
+      </details>
 
     </div>
   );

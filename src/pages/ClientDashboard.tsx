@@ -20,6 +20,11 @@ export function ClientDashboard() {
   const navigate = useNavigate();
   const { clients, addReport } = useStore();
   const client = clients.find(c => c.id === id);
+
+  useEffect(() => {
+    if (client) localStorage.setItem('last-viewed-client', client.id);
+  }, [client]);
+
   const [showPartnerSelect, setShowPartnerSelect] = useState(false);
   const [showChildSelect, setShowChildSelect] = useState(false);
 
@@ -42,24 +47,24 @@ export function ClientDashboard() {
     return { numerology, astrology, humanDesign, chakras, kabalah, theta };
   }, [client]);
 
-  // Side-effect: pridať report max raz za deň pre klienta. Toto je legitímny
-  // useEffect (zápis do externého store), nie setState.
-  useEffect(() => {
+  const recordVisit = () => {
     if (!client || !computedResults) return;
     const today = new Date().toISOString().split('T')[0];
     const reports = useStore.getState().reports;
-    if (!reports.some(r => r.clientId === client.id && r.createdAt.startsWith(today))) {
-      addReport({
-        id: crypto.randomUUID(),
-        profileId: '',
-        clientId: client.id,
-        type: 'Kompletný výklad',
-        title: `Výklad pre ${client.name}`,
-        data: { lifePathNumber: computedResults.numerology.lifePathNumber, hdType: computedResults.humanDesign.type },
-        createdAt: new Date().toISOString(),
-      });
+    if (reports.some(r => r.clientId === client.id && r.createdAt.startsWith(today))) {
+      alert('Návšteva pre tento deň je už zaznamenaná.');
+      return;
     }
-  }, [client, computedResults, addReport]);
+    addReport({
+      id: crypto.randomUUID(),
+      profileId: '',
+      clientId: client.id,
+      type: 'Kompletný výklad',
+      title: `Výklad pre ${client.name}`,
+      data: { lifePathNumber: computedResults.numerology.lifePathNumber, hdType: computedResults.humanDesign.type },
+      createdAt: new Date().toISOString(),
+    });
+  };
 
   if (!client) {
     return (
@@ -106,10 +111,23 @@ export function ClientDashboard() {
         </div>
       </div>
 
-      {/* Časová os — história konzultácií */}
+      {/* Záznam návštevy + časová os — história konzultácií */}
+      <div className="p-4 rounded-xl bg-slate-500/5 border border-slate-500/20">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="font-medium text-white">Návštevy klienta</h3>
+          <button
+            onClick={recordVisit}
+            className="px-3 py-1.5 rounded-lg text-xs font-medium bg-indigo-600 hover:bg-indigo-500 transition-colors"
+            style={{ color: '#ffffff' }}
+          >
+            + Zaznamenať dnešnú návštevu
+          </button>
+        </div>
+      </div>
+
       {(() => {
         const reports = useStore.getState().reports.filter(r => r.clientId === client.id);
-        if (reports.length <= 1) return null;
+        if (reports.length === 0) return null;
         return (
           <div className="p-4 rounded-xl bg-slate-500/5 border border-slate-500/20">
             <details>

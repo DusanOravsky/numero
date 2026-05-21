@@ -4,6 +4,29 @@ All notable changes to this project are documented in this file. Dates are
 in ISO 8601 (YYYY-MM-DD). The format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 2.45.0 — 2026-05-21
+
+**MINOR**: UX audit follow-up — Dashboard split, Subject picker, Settings tabs, Presentation mode, polish naprieč appkou.
+
+### UX vylepšenia
+
+- **Dashboard split**: rozdelený na "Ranný brief" (vždy viditeľné), "Detaily a inšpirácie" (collapsible, default open) a "Hlbší profil" (collapsible, default closed). Eliminuje preťaženie pri každom otvorení.
+- **Posledný klient shortcut**: na Dashboard amber karta s linkom na posledne otvoreného klienta (persisted v localStorage).
+- **Subject picker (quick-switch)**: nový floating picker v MainLayout (sidebar/mobile header) — okamžité prepínanie medzi vlastným profilom a klientmi na všetkých subject-aware stránkach (Numerológia, Astrológia, HD, Čakry, Kabala, Theta, Doplnkové systémy). Čisto URL-driven (`?client=ID`), bez state mutácie.
+- **RelationshipsPage client picker**: vo všetkých 4 módoch (Partnerský, Rodič+deti, Astro, Rodinná konštelácia) tlačidlo "Vybrať z klientov" — automaticky naplní form údajmi z existujúceho klienta alebo vlastného profilu.
+- **Settings tabs**: 4 taby s URL sync (`?tab=profile|ai|data|about`) — Profil, AI, Dáta, O appke. Eliminuje dlhý flat scroll.
+- **Presentation mode**: nový režim `?present=1` pre konzultácie naživo — skryje sidebar, mobile nav, headers a AI drawer; floating exit button v pravom hornom rohu. Toggle v sidebar pätke.
+- **Mobile nav**: Klienti namiesto Astrológie v primary nav (Domov, Numerológia, HD, Vzťahy, Klienti). Astrológia presunutá do "Viac" sheetu — frekvencia použitia favorizuje Klientov.
+
+### Polish
+
+- **ComparePage zelený tint**: pri porovnaní 2+ klientov sa zhodné hodnoty (ŽČ, K3, HD typ, element, atď.) zvýraznia zeleným pozadím + ✓ ikonou. Rýchla identifikácia rezonancie/komplementarity.
+- **ModalityPage premenovaný**: "Modality" → "Doplnkové systémy" (slovensky, jasnejšie).
+- **ModalityPage DateInput fallback**: keď používateľ nemá profil, dostane formulár na manuálne zadanie dátumu (konzistentné s ostatnými stránkami).
+- **NumerologyPage**: odstránená duplicita ŽČ kartičky v overview tabe (hero strip nižšie zobrazuje plný výklad).
+- **ClientDashboard**: auto-záznam návštevy nahradený manuálnym tlačidlom "+ Zaznamenať dnešnú návštevu". Predtým sa nafukovala history pri každom otvorení detailu, teraz len pri zámernom kliku.
+- **Buttony — vizuálny upgrade**: primárne CTA majú multi-color gradient (indigo→violet→purple) + glow shadow + lift hover; "Pridať dieťa" dashed buttony majú animovaný `+` v badge a hover lift.
+
 ## 2.16.0 — 2026-05-20
 
 **MINOR**: Čínsky horoskop + AI výklad v Astrológii.

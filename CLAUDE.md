@@ -1,6 +1,6 @@
 # Integrálna mapa bytia (Número)
 
-Offline-first PWA pre numerológiu, astrológiu, Human Design, etikoterapiu, kabalu, Theta Healing, Enneagram, Ayurvédu, TCM a sebarozvoj. **v2.44.0**
+Offline-first PWA pre numerológiu, astrológiu, Human Design, etikoterapiu, kabalu, Theta Healing, Enneagram, Ayurvédu, TCM a sebarozvoj. **v2.45.0**
 
 > 📁 **Nested CLAUDE.md súbory:**
 > - `src/engine/CLAUDE.md` — engine pravidlá, numerológia/astrológia/HD matematika
@@ -239,13 +239,35 @@ Stratégia podľa [SemVer](https://semver.org/):
 - **Rodič a deti** — rola rodiča, komunikácia, profil dieťaťa (ŽČ, K3, kozmický vek, karmické dlhy, izolované), HD prekrývanie centier, spoločné Génové kľúče
 - **Astro kompatibilita** — synastria (aspekty s významami), Davison chart, Composite chart
 - **Rodinná konštelácia** — celá rodina (rodičia + deti), HD prekrývanie, rodinné číslo, súrodenecká dynamika
-- **ComparePage** — vlastný profil v porovnaní + enneagram riadky
+- **ComparePage** — vlastný profil v porovnaní + enneagram riadky. **Zhodné hodnoty** medzi všetkými porovnávanými osobami (ŽČ, K3, HD typ, dominantný element, atď.) sa zvýrazňujú zelene + ✓ ikonou (v2.45.0+).
 - Všetky módy: localStorage persistence, editing mode (✎ button), reset len pre aktívny tab
+- **Client picker** (v2.45.0+) — vo všetkých 4 módoch tlačidlo "📋 Vybrať z klientov" nad PersonForm; otvorí dropdown s klientmi + vlastným profilom. `clientToPerson()` helper konvertuje `Client` → `PersonInput` (string fields).
 
-## Dashboard
+## Dashboard (v2.45.0+)
 
-- **Denný digest** — jedna vec na dnes, dnešná energia, mantra + citát + tarot
-- **Integrálny súhrn osobnosti** (`ClientSummary`) — 11 systémov, personalizovaný cross-system príbeh, čínsky horoskop, čakry, jazyky lásky
+Rozdelený na 3 vrstvy:
+- **Ranný brief** (vždy viditeľné) — privítanie, ORV/OMV/ODV, Jedna vec na dnes, Dnešná energia
+- **Detaily a inšpirácie** (`<details open>`) — Detail dennej energie, Mantra/Citát/Tarot
+- **Hlbší profil** (`<details>` default closed) — Integrálny súhrn (ClientSummary), Export PDF
+
+Plus **Posledný klient shortcut** — amber karta hneď pod headerom, naviguje na `/clients/{id}` posledne otvoreného klienta (persisted v `localStorage['last-viewed-client']` cez `ClientDashboard` mount effect).
+
+## MainLayout chrome (v2.45.0+)
+
+Floating UI prvky v `MainLayout.tsx`:
+
+- **SubjectPicker** (`components/SubjectPicker.tsx`) — quick-switch dropdown medzi vlastným profilom a klientmi. Renderuje sa len na subject-aware stránkach (`/numerology`, `/astrology`, `/human-design`, `/chakras`, `/kabalah`, `/theta-healing`, `/modality`). Čisto URL-driven cez `?client=ID` — žiadny store. `useSubject()` hook ho automaticky podchytí.
+- **Presentation mode** (`?present=1`) — skryje sidebar, mobile bottom nav, headers a `GlobalAIDrawer`. Floating "✕ Ukončiť prezentáciu" button v top-right. Toggle button v sidebar pätke. Pre konzultácie naživo bez navigácie.
+- **GlobalAIDrawer** — floating ✦ button (skrytý v presentMode + keď chýba API key + keď nie je profil).
+- **Mobile primary nav**: Domov, Numerológia, HD, Vzťahy, Klienti. Astrológia v "Viac" sheete.
+
+## Settings (v2.45.0+)
+
+4 taby s URL sync (`?tab=profile|ai|data|about`):
+- **Profil** — profily list + numerologická metóda + PWA inštalácia
+- **AI** — API kľúč + model + lenses + denné pripomenutie
+- **Dáta** — export/import záloha
+- **O appke** — verzia + update check + cache wipe + performance metriky + diagnostika error log
 
 ## Konvencie
 

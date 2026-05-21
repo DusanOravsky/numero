@@ -1,7 +1,8 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSubject } from '../hooks/useSubject';
 import { GlassCard } from '../components/GlassCard';
+import { DateInput } from '../components/DateInput';
 import { calculateFullNumerology, getGridCount } from '../engine/numerologyEngine';
 import { calculateAstrology } from '../engine/astrologyEngine';
 import { calculateHumanDesign } from '../engine/humanDesignEngine';
@@ -53,8 +54,9 @@ function computeModality(
 export function ModalityPage() {
   const navigate = useNavigate();
   const profile = useSubject();
+  const [manualData, setManualData] = useState<ModalityData | null>(null);
 
-  const data = useMemo<ModalityData | null>(() => {
+  const profileData = useMemo<ModalityData | null>(() => {
     if (!profile) return null;
     const lat = profile.birthLatitude ?? 48.15;
     const lon = profile.birthLongitude ?? 17.11;
@@ -71,18 +73,23 @@ export function ModalityPage() {
     );
   }, [profile]);
 
-  if (!profile) {
+  const data = manualData ?? profileData;
+
+  const handleCalculate = (day: number, month: number, year: number, hour?: number, minute?: number, lat?: number, lon?: number) => {
+    const tz = lon !== undefined ? Math.round(lon / 15) : 1;
+    setManualData(computeModality(day, month, year, hour ?? 12, minute ?? 0, lat ?? 48.15, lon ?? 17.11, tz));
+  };
+
+  if (!data) {
     return (
       <div className="space-y-6">
-        <h1 className="font-serif text-3xl font-bold text-white">Modality</h1>
+        <h1 className="font-serif text-3xl font-bold text-white">Doplnkové systémy</h1>
         <GlassCard>
-          <p className="text-slate-400">Najprv vytvorte profil v Nastaveniach.</p>
+          <DateInput onSubmit={handleCalculate} showTime showPlace label="Dátum narodenia (pre presnejší výpočet aj čas a miesto)" />
         </GlassCard>
       </div>
     );
   }
-
-  if (!data) return null;
 
   const primaryDosha = DOSHA_INFO[data.dosha.primary];
   const secondaryDosha = data.dosha.secondary ? DOSHA_INFO[data.dosha.secondary] : null;
@@ -101,7 +108,7 @@ export function ModalityPage() {
   return (
     <div className="space-y-6">
       <div>
-        {profile.isClient && (
+        {profile?.isClient && (
           <button
             onClick={() => navigate(`/clients/${profile.id}`)}
             className="text-sm text-indigo-600 hover:text-indigo-800 mb-2 inline-flex items-center gap-1"
@@ -110,11 +117,19 @@ export function ModalityPage() {
           </button>
         )}
         <div className="flex items-center gap-3 flex-wrap">
-          <h1 className="font-serif text-3xl font-bold text-white">Modality</h1>
-          {profile.isClient && (
+          <h1 className="font-serif text-3xl font-bold text-white">Doplnkové systémy</h1>
+          {profile?.isClient && (
             <span className="text-xs px-3 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-700">
               Klient: <strong>{profile.name}</strong>
             </span>
+          )}
+          {manualData && (
+            <button
+              onClick={() => setManualData(null)}
+              className="text-xs px-3 py-1 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200"
+            >
+              Nový výpočet
+            </button>
           )}
         </div>
         <p className="text-slate-400 mt-1">

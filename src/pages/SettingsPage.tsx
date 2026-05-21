@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useStore } from '../store/useStore';
 import type { NumerologyMethod } from '../store/useStore';
 import { GlassCard } from '../components/GlassCard';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { APP_VERSION, forceUpdate, checkForUpdate, clearAIData } from '../components/PWAPrompts';
 import { getErrorLog, clearErrorLog } from '../components/ErrorBoundary';
 import { getPerfLog, clearPerfLog } from '../hooks/usePerformanceMetrics';
@@ -13,8 +13,25 @@ import {
   getLens, setLens, INTERPRETATION_LENSES, type InterpretationLens,
 } from '../engine/aiInterpretation';
 
+type SettingsTab = 'profile' | 'ai' | 'data' | 'about';
+
+const SETTINGS_TABS: { id: SettingsTab; label: string; icon: string }[] = [
+  { id: 'profile', label: 'Profil', icon: '◉' },
+  { id: 'ai', label: 'AI', icon: '✦' },
+  { id: 'data', label: 'Dáta', icon: '⛶' },
+  { id: 'about', label: 'O appke', icon: 'ⓘ' },
+];
+
 export function SettingsPage() {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const initialTab = (searchParams.get('tab') as SettingsTab) || 'profile';
+  const validTab: SettingsTab = SETTINGS_TABS.some(t => t.id === initialTab) ? initialTab : 'profile';
+  const [activeTab, setActiveTabState] = useState<SettingsTab>(validTab);
+  const setActiveTab = (tab: SettingsTab) => {
+    setActiveTabState(tab);
+    setSearchParams({ tab }, { replace: true });
+  };
   const { profiles, activeProfileId, setActiveProfile, updateProfile, deleteProfile, numerologyMethod, setNumerologyMethod, clients, reports, favorites, themeMode, language } = useStore();
   const activeProfile = profiles.find(p => p.id === activeProfileId);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -94,6 +111,25 @@ export function SettingsPage() {
         <p className="text-slate-600 mt-1">Správa profilov a preferencií</p>
       </div>
 
+      <div className="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1">
+        {SETTINGS_TABS.map(tab => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            className={`px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all flex items-center gap-1.5 ${
+              activeTab === tab.id
+                ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/30'
+                : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
+            }`}
+          >
+            <span>{tab.icon}</span>
+            <span>{tab.label}</span>
+          </button>
+        ))}
+      </div>
+
+      {activeTab === 'profile' && (
+      <>
       <GlassCard>
         <div className="flex items-center justify-between mb-4">
           <h3 className="font-medium text-slate-900">Profily</h3>
@@ -301,7 +337,11 @@ export function SettingsPage() {
           );
         })()}
       </GlassCard>
+      </>
+      )}
 
+      {activeTab === 'ai' && (
+      <>
       {/* AI integrácia (D1) */}
       <GlassCard>
         <div className="flex items-center justify-between mb-3">
@@ -474,7 +514,11 @@ export function SettingsPage() {
           {localStorage.getItem('daily-notification') === 'true' ? '✓ Zapnuté — vypnúť' : 'Zapnúť denné pripomenutie'}
         </button>
       </GlassCard>
+      </>
+      )}
 
+      {activeTab === 'about' && (
+      <>
       <GlassCard>
         <h3 className="font-medium text-white mb-3">O aplikácii</h3>
         <div className="space-y-2 text-sm text-slate-600 mb-4">
@@ -614,7 +658,11 @@ export function SettingsPage() {
           </GlassCard>
         );
       })()}
+      </>
+      )}
 
+      {activeTab === 'data' && (
+      <>
       {activeProfile && (
         <GlassCard>
           <h3 className="font-medium text-white mb-3">Záloha dát</h3>
@@ -678,6 +726,8 @@ export function SettingsPage() {
             </label>
           </div>
         </GlassCard>
+      )}
+      </>
       )}
     </div>
   );

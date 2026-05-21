@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { Outlet, NavLink, useLocation } from 'react-router-dom';
+import { Outlet, NavLink, useLocation, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from '../i18n/useTranslation';
 import type { TranslationKey } from '../i18n/translations';
 import { useStore } from '../store/useStore';
 import { APP_VERSION } from '../components/PWAPrompts';
 import { GlobalAIDrawer } from '../components/GlobalAIDrawer';
+import { SubjectPicker } from '../components/SubjectPicker';
 
 const NAV_DEFS: { path: string; labelKey: TranslationKey; icon: string }[] = [
   { path: '/', labelKey: 'nav.dashboard', icon: '⬡' },
@@ -22,14 +23,22 @@ const NAV_DEFS: { path: string; labelKey: TranslationKey; icon: string }[] = [
 ];
 
 // Pre mobilnú spodnú navigáciu vyberieme len najpoužívanejšie položky.
-const MOBILE_PRIMARY = ['/', '/numerology', '/astrology', '/human-design', '/relationships'];
+const MOBILE_PRIMARY = ['/', '/numerology', '/human-design', '/relationships', '/clients'];
 
 export function MainLayout() {
   const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const presentMode = searchParams.get('present') === '1';
   const { t } = useTranslation();
   const logoSrc = `${import.meta.env.BASE_URL}icons/logo.svg`;
   const [showMoreSheet, setShowMoreSheet] = useState(false);
   const { themeMode, setThemeMode, language, setLanguage } = useStore();
+
+  const togglePresent = () => {
+    const next = new URLSearchParams(searchParams);
+    if (presentMode) next.delete('present'); else next.set('present', '1');
+    setSearchParams(next, { replace: true });
+  };
 
   const navItems = NAV_DEFS.map(d => ({ path: d.path, label: t(d.labelKey), icon: d.icon }));
   const mobilePrimaryItems = navItems.filter(i => MOBILE_PRIMARY.includes(i.path));
@@ -37,6 +46,7 @@ export function MainLayout() {
 
   return (
     <div className="min-h-screen flex flex-col lg:flex-row">
+      {!presentMode && (
       <aside className="hidden lg:flex lg:flex-col lg:w-64 bg-white chakra-border-right fixed h-full z-40">
         <div className="p-6 border-b border-slate-100 text-center">
           <img src={logoSrc} alt="" aria-hidden="true" className="w-16 h-16 mx-auto mb-3" />
@@ -104,18 +114,36 @@ export function MainLayout() {
               </button>
             ))}
           </div>
+          <button
+            onClick={togglePresent}
+            className="w-full py-1.5 rounded-md text-xs font-medium bg-violet-100 text-violet-700 hover:bg-violet-200 transition-colors"
+            title="Skryje navigáciu pre prezentáciu klientovi"
+          >
+            ▶ Prezentačný režim
+          </button>
           <p className="text-[10px] text-slate-400 text-center">v{APP_VERSION}</p>
         </div>
       </aside>
+      )}
 
-      <main className="flex-1 lg:ml-64 pb-20 lg:pb-0">
-        {/* Mobilný header s logom – iba na mobile */}
+      <main className={`flex-1 ${presentMode ? '' : 'lg:ml-64 pb-20 lg:pb-0'}`}>
+        {!presentMode && (
+        /* Mobilný header s logom – iba na mobile */
         <header className="lg:hidden bg-white border-b border-slate-200 px-4 py-3 flex items-center gap-3 sticky top-0 z-30">
           <img src={logoSrc} alt="" aria-hidden="true" className="w-10 h-10 shrink-0" />
-          <h1 className="font-serif text-base font-bold bg-gradient-to-r from-indigo-600 via-violet-600 to-purple-600 bg-clip-text text-transparent">
+          <h1 className="font-serif text-base font-bold bg-gradient-to-r from-indigo-600 via-violet-600 to-purple-600 bg-clip-text text-transparent flex-1 truncate">
             Integrálna mapa bytia
           </h1>
+          <SubjectPicker />
         </header>
+        )}
+
+        {/* Desktop subject picker bar */}
+        {!presentMode && (
+        <div className="hidden lg:flex justify-end px-8 pt-6">
+          <SubjectPicker />
+        </div>
+        )}
 
         <motion.div
           key={location.pathname}
@@ -129,6 +157,7 @@ export function MainLayout() {
         </motion.div>
       </main>
 
+      {!presentMode && (
       <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-50" aria-label="Hlavná navigácia">
         <div className="grid grid-cols-6 items-center py-1.5 px-1">
           {mobilePrimaryItems.map(item => (
@@ -157,8 +186,19 @@ export function MainLayout() {
           </button>
         </div>
       </nav>
+      )}
 
-      <GlobalAIDrawer />
+      {presentMode && (
+        <button
+          onClick={togglePresent}
+          className="fixed top-4 right-4 z-50 px-4 py-2 rounded-full bg-violet-600 text-white text-xs font-medium shadow-lg hover:bg-violet-500 transition-colors"
+          title="Vypnúť prezentačný režim"
+        >
+          ✕ Ukončiť prezentáciu
+        </button>
+      )}
+
+      {!presentMode && <GlobalAIDrawer />}
 
       {/* Bottom sheet pre "Viac" položky */}
       <AnimatePresence>

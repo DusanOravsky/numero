@@ -443,7 +443,7 @@ export function AstrologyPage() {
             {(() => {
               const birthYear = profile?.birthYear ?? (manualResult ? new Date().getFullYear() - 30 : null);
               if (!birthYear) return null;
-              const chinese = calculateChineseZodiac(birthYear);
+              const chinese = calculateChineseZodiac(birthYear, profile?.birthMonth, profile?.birthDay);
               const animalInfo = CHINESE_ANIMALS[chinese.animal];
               const elementInfo = CHINESE_ELEMENTS[chinese.element];
               if (!animalInfo) return null;
@@ -733,7 +733,7 @@ export function AstrologyPage() {
                           </div>
                           <span className="text-[10px] text-slate-500 shrink-0">orb {a.orb.toFixed(1)}°</span>
                         </div>
-                        <p className="text-[11px] text-slate-600 mt-0.5 italic">{a.description}</p>
+                        <p className="text-[11px] text-slate-600 mt-0.5">{a.description}</p>
                       </div>
                     );
                   })}

@@ -13,10 +13,10 @@ import { motion } from 'framer-motion';
 import { SkeletonChakraList } from '../components/Skeleton';
 import { getEtikoterapiaForChakra } from '../data/etikoterapia';
 
-function computeChakras(day: number, month: number, year: number, hour: number = 12, minute: number = 0): ChakraState[] {
+function computeChakras(day: number, month: number, year: number, hour: number = 12, minute: number = 0, lat: number = 48.15, lon: number = 17.11, tz: number = 1): ChakraState[] {
   const numerology = calculateFullNumerology(day, month, year);
-  const hd = calculateHumanDesign(day, month, year, hour, minute);
-  const astro = calculateAstrology(day, month, year, hour, minute);
+  const hd = calculateHumanDesign(day, month, year, hour, minute, tz);
+  const astro = calculateAstrology(day, month, year, hour, minute, lat, lon, tz);
   const gridCounts = getGridCount(numerology.grid);
   return evaluateChakras(
     numerology.lifePathNumber,
@@ -39,7 +39,10 @@ export function ChakrasPage() {
       profile.birthMonth,
       profile.birthYear,
       profile.birthHour ?? 12,
-      profile.birthMinute ?? 0
+      profile.birthMinute ?? 0,
+      profile.birthLatitude ?? 48.15,
+      profile.birthLongitude ?? 17.11,
+      profile.timezoneOffset
     );
   }, [profile]);
 

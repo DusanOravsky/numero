@@ -63,7 +63,7 @@ export function DateInput({ onSubmit, showTime = false, showPlace = false, label
               <span className="text-slate-400 font-bold">:</span>
               <input type="number" placeholder="Min" min={0} max={59} value={minute} onChange={e => setMinute(e.target.value)} className="w-20 px-3 py-2.5 rounded-lg bg-white border border-slate-300 text-slate-800 text-center focus:outline-none focus:border-indigo-400" />
             </div>
-            {(!hour || !minute) && (
+            {(hour === '' || minute === '') && (
               <p className="text-[11px] text-amber-700 mt-2 leading-relaxed">
                 ⚠ Bez presného času sa Mesiac môže pohnúť o znamenie a ascendent o ~1 znamenie za 2 hodiny.
                 Ak nepoznáš presný čas, použi <strong>12:00</strong> (nepriame info zostane približné, ale konzistentné).

@@ -48,7 +48,7 @@ export function ClientSummary({ clientName, birthDay, birthMonth, birthYear, num
   const showBoth = !respectMethodPreference;
   const showCharacter = showBoth || storedMethod === 'characterological';
   const showDevelopmental = showBoth || storedMethod === 'developmental';
-  const lpInfo = lifePaths[String(numerology.lifePathNumber > 9 ? reduceToSingle(numerology.lifePathNumber) : numerology.lifePathNumber)];
+  const lpInfo = lifePaths[String(numerology.lifePathNumber)] || lifePaths[String(reduceToSingle(numerology.lifePathNumber))];
 
   // Vývojová mriežka — používame explicit props ak sú dostupné,
   // inak (legacy callers) sfallback-ujeme cez regex z formuly.
@@ -427,7 +427,7 @@ export function ClientSummary({ clientName, birthDay, birthMonth, birthYear, num
 
           {/* Čínsky horoskop */}
           {(() => {
-            const cz = calculateChineseZodiac(year);
+            const cz = calculateChineseZodiac(year, birthMonth, birthDay);
             const animalInfo = CHINESE_ANIMALS[cz.animal];
             return (
               <div className="rounded-xl border border-red-200 bg-red-50/40 p-4 space-y-2">

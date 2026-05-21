@@ -125,7 +125,7 @@ export function SharedView() {
   }
 
   const { numerology, astrology, humanDesign, chakras, kabalah, theta } = results;
-  const lpInfo = lifePaths[String(numerology.lifePathNumber > 9 ? reduceToSingle(numerology.lifePathNumber) : numerology.lifePathNumber)];
+  const lpInfo = lifePaths[String(numerology.lifePathNumber)] || lifePaths[String(reduceToSingle(numerology.lifePathNumber))];
 
   return (
     <div className="max-w-4xl mx-auto p-4 lg:p-8 space-y-6">

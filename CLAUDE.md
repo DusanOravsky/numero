@@ -1,6 +1,6 @@
 # Integrálna mapa bytia (Número)
 
-Offline-first PWA pre numerológiu, astrológiu, Human Design, etikoterapiu, kabalu, Theta Healing, Enneagram, Ayurvédu, TCM a sebarozvoj. **v2.39.0**
+Offline-first PWA pre numerológiu, astrológiu, Human Design, etikoterapiu, kabalu, Theta Healing, Enneagram, Ayurvédu, TCM a sebarozvoj. **v2.44.0**
 
 > 📁 **Nested CLAUDE.md súbory:**
 > - `src/engine/CLAUDE.md` — engine pravidlá, numerológia/astrológia/HD matematika
@@ -104,7 +104,7 @@ Anthropic Claude priamo z prehliadača (header `anthropic-dangerous-direct-brows
 - **Ayurvéda** (`src/engine/ayurvedaEngine.ts`) — 3 dóše (Vata/Pitta/Kapha) derivované z astro elementu + HD typu + ŽČ. Stránka `/modality`.
 - **TCM 5 elementov** (`src/engine/tcmEngine.ts`) — Drevo/Oheň/Zem/Kov/Voda derivované z astro + ŽČ. Stránka `/modality`.
 - **Bachove kvety** — 17 esencií mapovaných na 7 čakier. Stránka `/modality`.
-- **Čínsky horoskop** (`src/engine/chineseZodiacEngine.ts`, `src/data/chineseZodiac.ts`) — 12 zvierat + 5 elementov + Yin/Yang. Výpočet z roku narodenia. Sekcia v AstrologyPage (ľavý stĺpec pod planétami). Výklad: povaha, silné stránky, výzvy, element, kompatibilita, odporúčanie, najbližší rok zvieraťa.
+- **Čínsky horoskop** (`src/engine/chineseZodiacEngine.ts`, `src/data/chineseZodiac.ts`) — 12 zvierat + 5 elementov + Yin/Yang. Výpočet z roku narodenia s korekciou podľa Lunárneho nového roka (tabuľka 1940-2030). Sekcia v AstrologyPage (ľavý stĺpec pod planétami). Výklad: povaha, silné stránky, výzvy, element, kompatibilita, odporúčanie, najbližší rok zvieraťa.
 
 ## PDF export
 

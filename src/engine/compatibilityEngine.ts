@@ -36,7 +36,9 @@ const LIFE_PATH_COMPATIBILITY: Record<string, number> = {
 };
 
 function getLifePathScore(lp1: number, lp2: number): number {
-  const key1 = `${Math.min(lp1, lp2)}-${Math.max(lp1, lp2)}`;
+  const r1 = lp1 > 9 ? reduceToSingle(lp1) : lp1;
+  const r2 = lp2 > 9 ? reduceToSingle(lp2) : lp2;
+  const key1 = `${Math.min(r1, r2)}-${Math.max(r1, r2)}`;
   return LIFE_PATH_COMPATIBILITY[key1] || 60;
 }
 

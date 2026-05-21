@@ -21,13 +21,17 @@ import { orvDescriptions } from '../data/orvDescriptions';
 import { getDailyMantra, getDailyQuote } from '../data/mantrasAndQuotes';
 import { getDailyTarot } from '../data/tarotCards';
 import { ClientExport } from '../components/ClientExport';
+import { getTimezoneFromCoords } from '../data/cities';
 
 export function Dashboard() {
   const navigate = useNavigate();
   const { profiles, activeProfileId, numerologyMethod } = useStore();
   const profile = profiles.find(p => p.id === activeProfileId);
 
-  const today = new Date();
+  const today = useMemo(() => new Date(), []);
+  const currentDay = today.getDate();
+  const currentMonth = today.getMonth() + 1;
+  const currentYear = today.getFullYear();
 
   // Lokálna notifikácia — raz denne pri otvorení appky
   useEffect(() => {
@@ -42,21 +46,15 @@ export function Dashboard() {
 
     localStorage.setItem('last-daily-notif', todayKey);
 
-    const day = today.getDate();
-    const month = today.getMonth() + 1;
-    const year = today.getFullYear();
-    const orv = calculateORV(profile.birthDay, profile.birthMonth, year, month, day);
-    const odv = calculateODV(orv, day, month);
+    const orv = calculateORV(profile.birthDay, profile.birthMonth, currentYear, currentMonth, currentDay);
+    const odv = calculateODV(orv, currentDay, currentMonth);
     const desc = orvDescriptions[odv]?.title || '';
 
     new Notification('Integrálna mapa bytia', {
       body: `Dnešná energia (ODV ${odv}): ${desc}`,
       icon: `${import.meta.env.BASE_URL}icons/logo.svg`,
     });
-  }, [profile, today]);
-  const currentDay = today.getDate();
-  const currentMonth = today.getMonth() + 1;
-  const currentYear = today.getFullYear();
+  }, [profile, today, currentDay, currentMonth, currentYear]);
 
   let orv = 0, omv = 0, odv = 0;
   if (profile) {
@@ -71,8 +69,11 @@ export function Dashboard() {
     if (!profile) return null;
     const numerology = calculateFullNumerology(profile.birthDay, profile.birthMonth, profile.birthYear);
     const developmental = calculateDevelopmentalNumerology(profile.birthDay, profile.birthMonth, profile.birthYear);
-    const astrology = calculateAstrology(profile.birthDay, profile.birthMonth, profile.birthYear, profile.birthHour ?? 12, profile.birthMinute ?? 0);
-    const humanDesign = calculateHumanDesign(profile.birthDay, profile.birthMonth, profile.birthYear, profile.birthHour ?? 12, profile.birthMinute ?? 0);
+    const lat = profile.birthLatitude ?? 48.15;
+    const lon = profile.birthLongitude ?? 17.11;
+    const tz = getTimezoneFromCoords(lat, lon);
+    const astrology = calculateAstrology(profile.birthDay, profile.birthMonth, profile.birthYear, profile.birthHour ?? 12, profile.birthMinute ?? 0, lat, lon, tz);
+    const humanDesign = calculateHumanDesign(profile.birthDay, profile.birthMonth, profile.birthYear, profile.birthHour ?? 12, profile.birthMinute ?? 0, tz);
     const lp = numerology.lifePathNumber > 9 ? reduceToSingle(numerology.lifePathNumber) : numerology.lifePathNumber;
     const kabalah = calculateKabalah(lp, reduceToSingle(profile.birthDay));
     const theta = calculateThetaHealing(lp);

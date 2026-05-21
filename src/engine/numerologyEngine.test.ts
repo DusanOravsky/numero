@@ -31,8 +31,8 @@ describe('reduceToSingle', () => {
     expect(reduceToSingle(33, true)).toBe(33);
     expect(reduceToSingle(11)).toBe(2);
   });
-  it('záporné a 0 vracia 1 (fallback)', () => {
-    expect(reduceToSingle(0)).toBe(1);
+  it('záporné vracia 1 (fallback), 0 vracia 0', () => {
+    expect(reduceToSingle(0)).toBe(0);
     expect(reduceToSingle(-5)).toBe(1);
   });
 });

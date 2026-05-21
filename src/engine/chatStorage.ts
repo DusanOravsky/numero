@@ -8,15 +8,28 @@ export interface PersistedChat {
   totalOutputTokens: number;
 }
 
+let dbInstance: IDBDatabase | null = null;
+let dbPromise: Promise<IDBDatabase> | null = null;
+
 function openDB(): Promise<IDBDatabase> {
-  return new Promise((resolve, reject) => {
+  if (dbInstance) return Promise.resolve(dbInstance);
+  if (dbPromise) return dbPromise;
+  dbPromise = new Promise((resolve, reject) => {
     const req = indexedDB.open(DB_NAME, DB_VERSION);
     req.onupgradeneeded = () => {
       req.result.createObjectStore(STORE_NAME);
     };
-    req.onsuccess = () => resolve(req.result);
-    req.onerror = () => reject(req.error);
+    req.onsuccess = () => {
+      dbInstance = req.result;
+      dbInstance.onclose = () => { dbInstance = null; dbPromise = null; };
+      resolve(dbInstance);
+    };
+    req.onerror = () => {
+      dbPromise = null;
+      reject(req.error);
+    };
   });
+  return dbPromise;
 }
 
 export async function loadChat(key: string): Promise<PersistedChat | null> {
@@ -36,8 +49,12 @@ export async function loadChat(key: string): Promise<PersistedChat | null> {
 export async function saveChat(key: string, chat: PersistedChat): Promise<void> {
   try {
     const db = await openDB();
-    const tx = db.transaction(STORE_NAME, 'readwrite');
-    tx.objectStore(STORE_NAME).put(chat, key);
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(STORE_NAME, 'readwrite');
+      const request = tx.objectStore(STORE_NAME).put(chat, key);
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
+    });
   } catch { /* ignore */ }
 }
 

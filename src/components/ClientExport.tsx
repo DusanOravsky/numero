@@ -62,7 +62,7 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
               doc.addFileToVFS('Roboto-Bold.ttf', fontModule.ROBOTO_BOLD);
               doc.addFont('Roboto-Regular.ttf', 'Roboto', 'normal');
               doc.addFont('Roboto-Bold.ttf', 'Roboto', 'bold');
-              const lpKey = String(numerology.lifePathNumber > 9 ? reduceToSingle(numerology.lifePathNumber) : numerology.lifePathNumber);
+              const lpKey = lifePaths[String(numerology.lifePathNumber)] ? String(numerology.lifePathNumber) : String(reduceToSingle(numerology.lifePathNumber));
               const lpTitle = lifePaths[lpKey]?.title || '';
               const lpDesc = lifePaths[lpKey]?.description || '';
               let y = 20;
@@ -600,7 +600,7 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
               y = 60;
 
               // Životné číslo
-              const lpKey = String(numerology.lifePathNumber > 9 ? reduceToSingle(numerology.lifePathNumber) : numerology.lifePathNumber);
+              const lpKey = lifePaths[String(numerology.lifePathNumber)] ? String(numerology.lifePathNumber) : String(reduceToSingle(numerology.lifePathNumber));
               const lpInfo = lifePaths[lpKey];
               addBold(`Životné číslo ${numerology.lifePathNumber} — ${lpInfo?.title || ''}`);
               if (lpInfo) {

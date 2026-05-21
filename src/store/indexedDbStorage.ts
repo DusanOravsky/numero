@@ -4,8 +4,13 @@ const DB_NAME = 'numero-db';
 const STORE_NAME = 'zustand';
 const DB_VERSION = 1;
 
+let dbInstance: IDBDatabase | null = null;
+let dbPromise: Promise<IDBDatabase> | null = null;
+
 function openDb(): Promise<IDBDatabase> {
-  return new Promise((resolve, reject) => {
+  if (dbInstance) return Promise.resolve(dbInstance);
+  if (dbPromise) return dbPromise;
+  dbPromise = new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, DB_VERSION);
     request.onupgradeneeded = () => {
       const db = request.result;
@@ -13,9 +18,17 @@ function openDb(): Promise<IDBDatabase> {
         db.createObjectStore(STORE_NAME);
       }
     };
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error);
+    request.onsuccess = () => {
+      dbInstance = request.result;
+      dbInstance.onclose = () => { dbInstance = null; dbPromise = null; };
+      resolve(dbInstance);
+    };
+    request.onerror = () => {
+      dbPromise = null;
+      reject(request.error);
+    };
   });
+  return dbPromise;
 }
 
 export const indexedDbStorage: StateStorage = {

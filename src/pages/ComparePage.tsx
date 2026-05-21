@@ -8,6 +8,7 @@ import { calculateAstrology } from '../engine/astrologyEngine';
 import { calculateHumanDesign } from '../engine/humanDesignEngine';
 import { deriveEnneagramType } from '../engine/enneagramEngine';
 import { enneagramTypes } from '../data/enneagram';
+import { getTimezoneFromCoords } from '../data/cities';
 
 const MAX_COMPARE = 4;
 
@@ -34,16 +35,19 @@ export function ComparePage() {
     .map(id => clients.find(c => c.id === id))
     .filter((c): c is NonNullable<typeof c> => !!c);
 
-  const allPersons: Array<{ id: string; name: string; birthDay: number; birthMonth: number; birthYear: number; birthHour?: number; birthMinute?: number; gender?: 'male' | 'female' }> = [
-    ...(includeMyProfile && activeProfile ? [{ id: activeProfile.id, name: `${activeProfile.name} (ja)`, birthDay: activeProfile.birthDay, birthMonth: activeProfile.birthMonth, birthYear: activeProfile.birthYear, birthHour: activeProfile.birthHour, birthMinute: activeProfile.birthMinute, gender: activeProfile.gender }] : []),
+  const allPersons: Array<{ id: string; name: string; birthDay: number; birthMonth: number; birthYear: number; birthHour?: number; birthMinute?: number; gender?: 'male' | 'female'; birthLatitude?: number; birthLongitude?: number }> = [
+    ...(includeMyProfile && activeProfile ? [{ id: activeProfile.id, name: `${activeProfile.name} (ja)`, birthDay: activeProfile.birthDay, birthMonth: activeProfile.birthMonth, birthYear: activeProfile.birthYear, birthHour: activeProfile.birthHour, birthMinute: activeProfile.birthMinute, gender: activeProfile.gender, birthLatitude: activeProfile.birthLatitude, birthLongitude: activeProfile.birthLongitude }] : []),
     ...selected,
   ];
 
   const computed = allPersons.map(c => {
     const num = calculateFullNumerology(c.birthDay, c.birthMonth, c.birthYear);
     const dev = calculateDevelopmentalNumerology(c.birthDay, c.birthMonth, c.birthYear);
-    const astro = calculateAstrology(c.birthDay, c.birthMonth, c.birthYear, c.birthHour ?? 12, c.birthMinute ?? 0);
-    const hd = calculateHumanDesign(c.birthDay, c.birthMonth, c.birthYear, c.birthHour ?? 12, c.birthMinute ?? 0);
+    const lat = c.birthLatitude ?? 48.15;
+    const lon = c.birthLongitude ?? 17.11;
+    const tz = getTimezoneFromCoords(lat, lon);
+    const astro = calculateAstrology(c.birthDay, c.birthMonth, c.birthYear, c.birthHour ?? 12, c.birthMinute ?? 0, lat, lon, tz);
+    const hd = calculateHumanDesign(c.birthDay, c.birthMonth, c.birthYear, c.birthHour ?? 12, c.birthMinute ?? 0, tz);
     const enneagram = deriveEnneagramType(num, dev, numerologyMethod);
     return { client: c, num, dev, astro, hd, enneagram };
   });

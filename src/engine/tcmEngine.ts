@@ -24,7 +24,7 @@ export function deriveTCMElement(
   if (astrology) {
     const el = astrology.dominantElement;
     if (el === 'Oheň') ohen += 3;
-    else if (el === 'Vzduch') kov += 3;
+    else if (el === 'Vzduch') { kov += 2; drevo += 1; }
     else if (el === 'Zem') zem += 3;
     else if (el === 'Voda') voda += 3;
   }

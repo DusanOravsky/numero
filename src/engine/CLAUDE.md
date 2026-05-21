@@ -129,7 +129,9 @@ egoPolarity:
 - **Tropický zodiak** (nie sidereal)
 - **Whole Sign domy** — každý dom = jedno celé znamenie začínajúce ascendentom
 - **True Node** (s Meeus periodickými korekciami) — nie Mean Node
-- **CET/CEST** automatic detection (`getTimezoneOffset`)
+- **CET/CEST** automatic detection (`getTimezoneOffset`) — pre roky < 1979 vždy CET (ČSSR nemalo letný čas)
+- **Timezone propagácia** — všetky stránky používajú `getTimezoneFromCoords(lat, lon)` z `data/cities.ts`
+- **Natálne aspekty** — personalizované popisy pre 45 planetárnych kombinácií (nie generické "trigón — harmónia")
 - **Astronomy.SunPosition** + `Astronomy.GeoMoon` + `Astronomy.GeoVector` pre planéty
 
 ### Lilith + Chiron (B12)
@@ -137,9 +139,9 @@ egoPolarity:
 Astronomy-engine ich nemá natívne. Používame:
 
 - **Mean Black Moon Lilith** — `getMeanLilithLongitude()` cez Meeus 47 (perigeum + 180°). Mean Lilith vs True Lilith sa líši až o ±30° v závislosti od fázy; presnosť **±5° priemerne**, použiteľné iba pre znamenie.
-- **Chiron** — `getChironLongitude()` lineárna aproximácia od J2000 epoch s mean motion 360°/(50.4*365.25). Pre dáta blízko J2000 (±10 rokov) ±3°, ale pre dátumy 1950 alebo 2010 deviácia môže byť **±10-15°** voči ephemeris (NASA Horizons). Použiteľné iba pre orientáciu znamenia.
+- **Chiron** — `getChironLongitude()` cez Keplerov problém s JPL orbitálnymi elementmi (a=13.648 AU, e=0.379, epoch J2000.0). Presnosť ±1-2° pre 1940-2030. Korektne zachytáva variabilnú rýchlosť pri excentrickej orbite.
 
-Oba body sa pridávajú do `result.planets` AŽ ZA výpočet `dominantElement` aby neovplyvňovali tradičnú dominantnú analýzu. **Vylúčené z `calculateNatalAspects`** aby aproximovaná pozícia neprodukovala šum v aspekt math.
+Oba body sa pridávajú do `result.planets` AŽ ZA výpočet `dominantElement` aby neovplyvňovali tradičnú dominantnú analýzu. **Vylúčené z `calculateNatalAspects`** aby aproximovaná pozícia neprodukovala šum v aspekt math. Chiron má retrograde detekciu (±1 deň porovnanie).
 
 ### Progresie (B10)
 

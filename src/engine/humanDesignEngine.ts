@@ -152,20 +152,19 @@ const PROFILES: Record<string, { name: string; description: string }> = {
   '6/3': { name: 'Vzor Mučeník', description: 'Optimistický experimentátor hľadajúci autenticitu.' },
 };
 
-// Klasifikácia inkarnačného kríža podľa profilu:
-// Right Angle (osobný osud): profily 1/3, 1/4, 2/4, 2/5, 3/5, 3/6, 4/6, 4/1, 5/1, 5/2, 6/2, 6/3
-//   Reálne RA profily: 1/3, 1/4, 2/4, 4/6 (konvenčne zúžené – tu používame zjednodušenú klasifikáciu)
-// Juxtaposition (fixovaný osud): 3/5
-// Left Angle (transpersonálny): 4/1, 5/1, 5/2, 6/2, 6/3
+// Klasifikácia inkarnačného kríža podľa profilu (Jovian Archive):
+// Right Angle (osobný osud): 1/3, 1/4, 2/4, 2/5, 3/5, 3/6, 4/6
+// Juxtaposition (fixovaný osud): 4/1
+// Left Angle (transpersonálny): 5/1, 5/2, 6/2, 6/3
 function getCrossAngle(line1: number, line2: number): 'Right Angle' | 'Juxtaposition' | 'Left Angle' {
   // Kanonická HD klasifikácia podľa Jovian Archive.
   // Right Angle = osobný kríž — 1/3, 1/4, 2/4, 2/5, 3/5, 3/6, 4/6
-  // Juxtaposition = fixovaný kríž — 3/5 (jediné Juxta profile)
-  // Left Angle = transpersonálny kríž — 4/1, 5/1, 5/2, 6/2, 6/3
+  // Juxtaposition = fixovaný kríž — 4/1 (jediný Juxta profil)
+  // Left Angle = transpersonálny kríž — 5/1, 5/2, 6/2, 6/3
   const profile = `${line1}/${line2}`;
-  const LEFT_ANGLE = new Set(['4/1', '5/1', '5/2', '6/2', '6/3']);
+  const LEFT_ANGLE = new Set(['5/1', '5/2', '6/2', '6/3']);
   if (LEFT_ANGLE.has(profile)) return 'Left Angle';
-  if (profile === '3/5') return 'Juxtaposition';
+  if (profile === '4/1') return 'Juxtaposition';
   return 'Right Angle';
 }
 
@@ -481,8 +480,9 @@ function getNotSelfTheme(type: HDType): HDNotSelfTheme {
 }
 
 function getTimezoneOffsetHD(day: number, month: number, year: number, baseOffset: number): number {
-  // CET/CEST: letný čas od poslednej nedele marca do poslednej nedele októbra
+  // CET/CEST: Československo nemalo letný čas pred 1979
   if (baseOffset === 1 || baseOffset === 2) {
+    if (year < 1979) return 1;
     const marchLast = new Date(year, 2, 31);
     const marchSunday = 31 - marchLast.getDay();
     const octLast = new Date(year, 9, 31);

@@ -54,8 +54,6 @@ export function ThetaHealingPage() {
         </p>
       </div>
 
-      <MeditationTimer />
-
       {!result && (
         <GlassCard>
           <DateInput onSubmit={handleCalculate} label="Dátum narodenia" />
@@ -268,6 +266,8 @@ export function ThetaHealingPage() {
           )}
         </div>
       )}
+
+      <MeditationTimer />
     </div>
   );
 }

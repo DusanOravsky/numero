@@ -90,13 +90,13 @@ export function SettingsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-serif text-3xl font-bold text-white">Nastavenia</h1>
-        <p className="text-slate-400 mt-1">Správa profilov a preferencií</p>
+        <h1 className="font-serif text-3xl font-bold text-slate-900">Nastavenia</h1>
+        <p className="text-slate-600 mt-1">Správa profilov a preferencií</p>
       </div>
 
       <GlassCard>
         <div className="flex items-center justify-between mb-4">
-          <h3 className="font-medium text-white">Profily</h3>
+          <h3 className="font-medium text-slate-900">Profily</h3>
           <button
             onClick={() => navigate('/profile')}
             className="px-3 py-1.5 rounded-lg text-xs font-medium bg-indigo-600 text-white hover:bg-indigo-500 transition-colors"
@@ -110,14 +110,14 @@ export function SettingsPage() {
               key={profile.id}
               className={`p-4 rounded-xl border transition-all ${
                 profile.id === activeProfileId
-                  ? 'border-indigo-500/50 bg-indigo-500/10'
-                  : 'border-white/5 bg-white/5 hover:border-indigo-500/20'
+                  ? 'border-indigo-500/50 bg-indigo-50'
+                  : 'border-slate-200 bg-white hover:border-indigo-300'
               }`}
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-medium text-white">{profile.name}</p>
-                  <p className="text-sm text-slate-400">
+                  <p className="font-medium text-slate-900">{profile.name}</p>
+                  <p className="text-sm text-slate-600">
                     {profile.birthDay}.{profile.birthMonth}.{profile.birthYear}
                     {profile.birthHour !== undefined && ` ${profile.birthHour}:${String(profile.birthMinute || 0).padStart(2, '0')}`}
                     {profile.birthPlace && ` | ${profile.birthPlace}`}
@@ -126,24 +126,24 @@ export function SettingsPage() {
                 <div className="flex gap-2">
                   <button
                     onClick={() => startEdit(profile.id)}
-                    className="px-3 py-1.5 rounded-lg text-xs text-amber-300 border border-amber-500/30 hover:bg-amber-500/10"
+                    className="px-3 py-1.5 rounded-lg text-xs text-amber-700 border border-amber-400 bg-amber-50 hover:bg-amber-100 font-medium"
                   >
                     Upraviť
                   </button>
                   {profile.id !== activeProfileId && (
                     <button
                       onClick={() => setActiveProfile(profile.id)}
-                      className="px-3 py-1.5 rounded-lg text-xs text-indigo-300 border border-indigo-500/30 hover:bg-indigo-500/10"
+                      className="px-3 py-1.5 rounded-lg text-xs text-indigo-700 border border-indigo-400 bg-indigo-50 hover:bg-indigo-100 font-medium"
                     >
                       Aktivovať
                     </button>
                   )}
                   {profile.id === activeProfileId && (
-                    <span className="px-3 py-1.5 rounded-lg text-xs text-green-300 bg-green-500/10">Aktívny</span>
+                    <span className="px-3 py-1.5 rounded-lg text-xs text-green-700 bg-green-100 border border-green-300 font-medium">Aktívny</span>
                   )}
                   <button
                     onClick={() => { if (confirm('Naozaj vymazať profil?')) deleteProfile(profile.id); }}
-                    className="px-3 py-1.5 rounded-lg text-xs text-red-300 border border-red-500/30 hover:bg-red-500/10"
+                    className="px-3 py-1.5 rounded-lg text-xs text-red-700 border border-red-300 bg-red-50 hover:bg-red-100 font-medium"
                   >
                     Zmazať
                   </button>
@@ -167,7 +167,7 @@ export function SettingsPage() {
                     <label className="block text-xs text-slate-500 mb-1">Čas narodenia (24h)</label>
                     <div className="flex gap-2 items-center">
                       <input type="number" placeholder="Hod" min={0} max={23} value={editHour} onChange={e => setEditHour(e.target.value)} className="w-16 px-2 py-2 rounded-lg bg-white border border-slate-300 text-slate-800 text-center text-sm" />
-                      <span className="text-slate-400">:</span>
+                      <span className="text-slate-600 font-bold">:</span>
                       <input type="number" placeholder="Min" min={0} max={59} value={editMinute} onChange={e => setEditMinute(e.target.value)} className="w-16 px-2 py-2 rounded-lg bg-white border border-slate-300 text-slate-800 text-center text-sm" />
                     </div>
                   </div>
@@ -186,7 +186,7 @@ export function SettingsPage() {
                   </div>
                   <div className="flex gap-2">
                     <button onClick={saveEdit} className="px-4 py-2 rounded-lg text-sm bg-indigo-600 text-white hover:bg-indigo-500">Uložiť</button>
-                    <button onClick={() => setEditingId(null)} className="px-4 py-2 rounded-lg text-sm text-slate-400">Zrušiť</button>
+                    <button onClick={() => setEditingId(null)} className="px-4 py-2 rounded-lg text-sm text-slate-700 border border-slate-300 bg-slate-100 hover:bg-slate-200 font-medium">Zrušiť</button>
                   </div>
                 </div>
               )}
@@ -249,7 +249,7 @@ export function SettingsPage() {
 
       <GlassCard>
         <h3 className="font-medium text-white mb-3">Inštalácia na plochu</h3>
-        <p className="text-sm text-slate-400 mb-3">Aplikácia funguje aj offline. Po inštalácii ju nájdete na ploche ako bežnú appku.</p>
+        <p className="text-sm text-slate-600 mb-3">Aplikácia funguje aj offline. Po inštalácii ju nájdete na ploche ako bežnú appku.</p>
 
         {(() => {
           const ua = navigator.userAgent;
@@ -305,17 +305,17 @@ export function SettingsPage() {
       {/* AI integrácia (D1) */}
       <GlassCard>
         <div className="flex items-center justify-between mb-3">
-          <h3 className="font-medium text-white">✦ AI integrácia (Claude)</h3>
+          <h3 className="font-medium text-slate-900">✦ AI integrácia (Claude)</h3>
           {aiKey && <span className="text-[10px] uppercase text-emerald-400 px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30">Aktívna</span>}
         </div>
-        <p className="text-xs text-slate-400 mb-3">
+        <p className="text-xs text-slate-600 mb-3">
           Pre integratívne AI výklady cez Anthropic Claude. <strong>API kľúč sa ukladá iba lokálne</strong> v tvojom prehliadači a posiela sa výlučne na <span className="font-mono">api.anthropic.com</span>.
           Získaš ho na <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noreferrer" className="text-indigo-400 underline hover:text-indigo-300">console.anthropic.com</a> ($5 minimum credit).
         </p>
 
         <div className="space-y-3">
           <div>
-            <label className="block text-xs text-slate-400 mb-1">API kľúč</label>
+            <label className="block text-xs text-slate-600 mb-1">API kľúč</label>
             <div className="flex gap-2">
               <div className="relative flex-1">
                 <input
@@ -323,14 +323,14 @@ export function SettingsPage() {
                   value={aiKey}
                   onChange={(e) => setAiKey(e.target.value)}
                   placeholder="sk-ant-api03-…"
-                  className="w-full px-3 py-2 pr-10 rounded-xl bg-slate-800/50 border border-indigo-500/30 text-white text-sm font-mono focus:outline-none focus:border-indigo-500"
+                  className="w-full px-3 py-2 pr-10 rounded-xl bg-white border border-slate-300 text-slate-800 text-sm font-mono focus:outline-none focus:border-indigo-500"
                 />
                 <button
                   type="button"
                   onClick={() => setAiKeyVisible(v => !v)}
                   title={aiKeyVisible ? 'Skryť kľúč' : 'Zobraziť kľúč'}
                   aria-label={aiKeyVisible ? 'Skryť kľúč' : 'Zobraziť kľúč'}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200 text-sm px-1"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-700 text-sm px-1"
                 >
                   {aiKeyVisible ? '🙈' : '👁'}
                 </button>
@@ -357,7 +357,7 @@ export function SettingsPage() {
           </div>
 
           <div>
-            <label className="block text-xs text-slate-400 mb-1">Model</label>
+            <label className="block text-xs text-slate-600 mb-1">Model</label>
             <div className="space-y-1">
               {CLAUDE_MODELS.map(m => (
                 <label key={m.id} className={`flex items-center gap-3 p-2 rounded-lg border cursor-pointer transition-colors ${
@@ -373,7 +373,7 @@ export function SettingsPage() {
                     className="accent-indigo-600"
                   />
                   <div className="flex-1">
-                    <p className="text-sm text-white">{m.label}</p>
+                    <p className="text-sm text-slate-800">{m.label}</p>
                     <p className="text-[11px] text-slate-500 font-mono">{m.id} · {m.cost}</p>
                   </div>
                 </label>
@@ -382,7 +382,7 @@ export function SettingsPage() {
           </div>
 
           <div>
-            <label className="block text-xs text-slate-400 mb-1">Štýl výkladu (lens)</label>
+            <label className="block text-xs text-slate-600 mb-1">Štýl výkladu (lens)</label>
             <p className="text-[11px] text-slate-500 mb-2">
               Mení rámec cez ktorý AI číta tvoj profil. Tvoje dáta zostávajú rovnaké, mení sa len uhol pohľadu.
             </p>
@@ -390,8 +390,8 @@ export function SettingsPage() {
               {INTERPRETATION_LENSES.map(l => (
                 <label key={l.id} className={`flex items-start gap-3 p-2 rounded-lg border cursor-pointer transition-colors ${
                   aiLens === l.id
-                    ? 'bg-violet-500/15 border-violet-500'
-                    : 'border-slate-700 hover:bg-slate-800/40'
+                    ? 'bg-violet-50 border-violet-500'
+                    : 'border-slate-200 hover:bg-slate-50'
                 }`}>
                   <input
                     type="radio"
@@ -401,7 +401,7 @@ export function SettingsPage() {
                     className="accent-violet-600 mt-1"
                   />
                   <div className="flex-1">
-                    <p className="text-sm text-white">{l.label}</p>
+                    <p className="text-sm text-slate-800">{l.label}</p>
                     <p className="text-[11px] text-slate-500 leading-relaxed">{l.description}</p>
                   </div>
                 </label>
@@ -444,7 +444,7 @@ export function SettingsPage() {
 
       <GlassCard>
         <h3 className="font-medium text-white mb-3">Denné pripomenutie</h3>
-        <p className="text-xs text-slate-400 mb-3">
+        <p className="text-xs text-slate-600 mb-3">
           Pri otvorení appky zobrazí notifikáciu s dennou energiou (ODV). Funguje keď máš appku otvorenú alebo nainštalovanú na ploche.
         </p>
         <button
@@ -476,8 +476,8 @@ export function SettingsPage() {
 
       <GlassCard>
         <h3 className="font-medium text-white mb-3">O aplikácii</h3>
-        <div className="space-y-2 text-sm text-slate-400 mb-4">
-          <p><strong className="text-slate-300">Integrálna mapa bytia</strong></p>
+        <div className="space-y-2 text-sm text-slate-600 mb-4">
+          <p><strong className="text-slate-800">Integrálna mapa bytia</strong></p>
           <p>Verzia: {APP_VERSION}</p>
           <p>© 2026 Dušan Oravský</p>
           <p className="text-[11px] text-slate-500">Co-created with Claude Code (Anthropic)</p>
@@ -532,7 +532,7 @@ export function SettingsPage() {
         return (
           <GlassCard>
             <div className="flex items-center justify-between mb-2">
-              <h3 className="font-medium text-white">Výkonnostné metriky</h3>
+              <h3 className="font-medium text-slate-900">Výkonnostné metriky</h3>
               <button
                 onClick={() => { clearPerfLog(); window.location.reload(); }}
                 className="text-xs text-rose-500 hover:text-rose-300 underline"
@@ -578,7 +578,7 @@ export function SettingsPage() {
         return (
           <GlassCard>
             <div className="flex items-center justify-between mb-2">
-              <h3 className="font-medium text-white">Diagnostika</h3>
+              <h3 className="font-medium text-slate-900">Diagnostika</h3>
               <button
                 onClick={() => { clearErrorLog(); window.location.reload(); }}
                 className="text-xs text-rose-500 hover:text-rose-300 underline"

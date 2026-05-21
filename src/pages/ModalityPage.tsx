@@ -5,6 +5,7 @@ import { GlassCard } from '../components/GlassCard';
 import { calculateFullNumerology, getGridCount } from '../engine/numerologyEngine';
 import { calculateAstrology } from '../engine/astrologyEngine';
 import { calculateHumanDesign } from '../engine/humanDesignEngine';
+import { getTimezoneFromCoords } from '../data/cities';
 import { evaluateChakras } from '../engine/chakraEngine';
 import { deriveDosha } from '../engine/ayurvedaEngine';
 import { deriveTCMElement } from '../engine/tcmEngine';
@@ -25,11 +26,12 @@ interface ModalityData {
 
 function computeModality(
   day: number, month: number, year: number,
-  hour: number = 12, minute: number = 0
+  hour: number = 12, minute: number = 0,
+  lat: number = 48.15, lon: number = 17.11, tz: number = 1
 ): ModalityData {
   const numerology = calculateFullNumerology(day, month, year);
-  const astrology = calculateAstrology(day, month, year, hour, minute);
-  const hd = calculateHumanDesign(day, month, year, hour, minute);
+  const astrology = calculateAstrology(day, month, year, hour, minute, lat, lon, tz);
+  const hd = calculateHumanDesign(day, month, year, hour, minute, tz);
   const gridCounts = getGridCount(numerology.grid);
   const chakras = evaluateChakras(
     numerology.lifePathNumber,
@@ -54,12 +56,18 @@ export function ModalityPage() {
 
   const data = useMemo<ModalityData | null>(() => {
     if (!profile) return null;
+    const lat = profile.birthLatitude ?? 48.15;
+    const lon = profile.birthLongitude ?? 17.11;
+    const tz = getTimezoneFromCoords(lat, lon);
     return computeModality(
       profile.birthDay,
       profile.birthMonth,
       profile.birthYear,
       profile.birthHour ?? 12,
-      profile.birthMinute ?? 0
+      profile.birthMinute ?? 0,
+      lat,
+      lon,
+      tz
     );
   }, [profile]);
 

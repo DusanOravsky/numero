@@ -43,7 +43,8 @@ export interface KarmicDebt {
 const MASTER_NUMBERS = [11, 22, 33];
 
 export function reduceToSingle(n: number, preserveMaster = false): number {
-  if (n <= 0) return 1;
+  if (n < 0) return 1;
+  if (n === 0) return 0;
   while (n > 9) {
     if (preserveMaster && MASTER_NUMBERS.includes(n)) return n;
     n = String(n).split('').reduce((sum, d) => sum + parseInt(d, 10), 0);
@@ -436,26 +437,27 @@ export function calculateLoveLanguages(
   const lpBase = lifePathNumber > 9 ? reduceToSingle(lifePathNumber) : lifePathNumber;
 
   return LOVE_LANGUAGE_PLANES.map(({ language, planes }) => {
-    let score = 0;
+    let totalScore = 0;
 
     planes.forEach(plane => {
       const allPresent = plane.every(n => (counts.get(n) || 0) > 0);
       const nonePresent = plane.every(n => (counts.get(n) || 0) === 0);
       const twoPresent = plane.filter(n => (counts.get(n) || 0) > 0).length >= 2;
 
-      if (allPresent) score += 3;
-      else if (twoPresent) score += 1;
-      if (nonePresent) score -= 2;
+      if (allPresent) totalScore += 3;
+      else if (twoPresent) totalScore += 1;
+      if (nonePresent) totalScore -= 2;
 
       plane.forEach(n => {
-        if ((counts.get(n) || 0) > 2) score += 1;
-        if (dayDigits.includes(n)) score += 1;
-        if (monthDigits.includes(n)) score += 1;
-        if (n === lpBase) score += 1;
-        if (isolatedNumbers.includes(n)) score -= 1;
+        if ((counts.get(n) || 0) > 2) totalScore += 1;
+        if (dayDigits.includes(n)) totalScore += 1;
+        if (monthDigits.includes(n)) totalScore += 1;
+        if (n === lpBase) totalScore += 1;
+        if (isolatedNumbers.includes(n)) totalScore -= 1;
       });
     });
 
+    const score = planes.length > 1 ? Math.round(totalScore / planes.length) : totalScore;
     return { language, score };
   }).sort((a, b) => b.score - a.score);
 }

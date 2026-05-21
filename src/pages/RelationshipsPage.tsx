@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { GlassCard } from '../components/GlassCard';
-import { calculateFullNumerology, reduceToSingle } from '../engine/numerologyEngine';
+import { calculateFullNumerology, reduceToSingle, isValidDate } from '../engine/numerologyEngine';
 import { calculateDevelopmentalNumerology } from '../engine/developmentalNumerologyEngine';
 import { calculatePartnerCompatibility, calculateParentChild } from '../engine/compatibilityEngine';
 import type { CompatibilityResult, ParentChildResult } from '../engine/compatibilityEngine';
@@ -9,7 +9,7 @@ import type { AstrologyResult, SynastryAspect } from '../engine/astrologyEngine'
 import { calculateHumanDesign } from '../engine/humanDesignEngine';
 import { PartnerBodygraph } from '../components/PartnerBodygraph';
 import { getGeneKeyByGate } from '../data/geneKeys';
-import { findCity } from '../data/cities';
+import { findCity, getTimezoneFromCoords } from '../data/cities';
 import { motion } from 'framer-motion';
 
 type Mode = 'partner' | 'family' | 'astro' | 'constellation';
@@ -54,7 +54,8 @@ function PersonForm({ person, onChange, label }: { person: PersonInput; onChange
 }
 
 function isPersonValid(p: PersonInput): boolean {
-  return !!(p.name.trim() && parseInt(p.day) >= 1 && parseInt(p.month) >= 1 && parseInt(p.year) >= 1900);
+  const d = parseInt(p.day), m = parseInt(p.month), y = parseInt(p.year);
+  return !!(p.name.trim() && d >= 1 && m >= 1 && y >= 1900 && isValidDate(d, m, y));
 }
 
 interface AstroPersonInput {
@@ -70,7 +71,8 @@ interface AstroPersonInput {
 const emptyAstroPerson = (): AstroPersonInput => ({ name: '', day: '', month: '', year: '', hour: '', minute: '', birthPlace: '' });
 
 function isAstroPersonValid(p: AstroPersonInput): boolean {
-  return !!(p.name.trim() && parseInt(p.day) >= 1 && parseInt(p.month) >= 1 && parseInt(p.year) >= 1900);
+  const d = parseInt(p.day), m = parseInt(p.month), y = parseInt(p.year);
+  return !!(p.name.trim() && d >= 1 && m >= 1 && y >= 1900 && isValidDate(d, m, y));
 }
 
 interface SynastryResult {
@@ -125,7 +127,8 @@ function calculateDavison(
     midTime.getUTCHours(),
     midTime.getUTCMinutes(),
     midLat,
-    midLon - (midLon > 180 ? 360 : 0)
+    midLon - (midLon > 180 ? 360 : 0),
+    0
   );
 }
 
@@ -162,11 +165,13 @@ function calculateComposite(
 }
 
 function calculateSynastry(
-  name1: string, day1: number, month1: number, year1: number, hour1: number, lat1: number, lon1: number,
-  name2: string, day2: number, month2: number, year2: number, hour2: number, lat2: number, lon2: number
+  name1: string, day1: number, month1: number, year1: number, hour1: number, minute1: number, lat1: number, lon1: number,
+  name2: string, day2: number, month2: number, year2: number, hour2: number, minute2: number, lat2: number, lon2: number
 ): SynastryResult {
-  const r1 = calculateAstrology(day1, month1, year1, hour1, 0, lat1, lon1);
-  const r2 = calculateAstrology(day2, month2, year2, hour2, 0, lat2, lon2);
+  const tz1 = getTimezoneFromCoords(lat1, lon1);
+  const tz2 = getTimezoneFromCoords(lat2, lon2);
+  const r1 = calculateAstrology(day1, month1, year1, hour1, minute1, lat1, lon1, tz1);
+  const r2 = calculateAstrology(day2, month2, year2, hour2, minute2, lat2, lon2, tz2);
 
   const sunCompat = getElementCompatibility(r1.sunSign.element, r2.sunSign.element);
   const moonCompat = getElementCompatibility(r1.moonSign.element, r2.moonSign.element);
@@ -282,10 +287,12 @@ export function RelationshipsPage() {
         savedAstro.p1.name,
         parseInt(savedAstro.p1.day), parseInt(savedAstro.p1.month), parseInt(savedAstro.p1.year),
         savedAstro.p1.hour ? parseInt(savedAstro.p1.hour) : 12,
+        savedAstro.p1.minute ? parseInt(savedAstro.p1.minute) : 0,
         city1?.lat || 48.15, city1?.lon || 17.11,
         savedAstro.p2.name,
         parseInt(savedAstro.p2.day), parseInt(savedAstro.p2.month), parseInt(savedAstro.p2.year),
         savedAstro.p2.hour ? parseInt(savedAstro.p2.hour) : 12,
+        savedAstro.p2.minute ? parseInt(savedAstro.p2.minute) : 0,
         city2?.lat || 48.15, city2?.lon || 17.11
       );
     }
@@ -386,10 +393,12 @@ export function RelationshipsPage() {
       astroPartner1.name,
       parseInt(astroPartner1.day), parseInt(astroPartner1.month), parseInt(astroPartner1.year),
       astroPartner1.hour ? parseInt(astroPartner1.hour) : 12,
+      astroPartner1.minute ? parseInt(astroPartner1.minute) : 0,
       city1?.lat || 48.15, city1?.lon || 17.11,
       astroPartner2.name,
       parseInt(astroPartner2.day), parseInt(astroPartner2.month), parseInt(astroPartner2.year),
       astroPartner2.hour ? parseInt(astroPartner2.hour) : 12,
+      astroPartner2.minute ? parseInt(astroPartner2.minute) : 0,
       city2?.lat || 48.15, city2?.lon || 17.11
     );
     setSynastryResult(result);
@@ -439,25 +448,25 @@ export function RelationshipsPage() {
       <div className="flex gap-2 flex-wrap">
         <button
           onClick={() => setMode('partner')}
-          className={`px-4 py-2 rounded-xl text-sm font-medium ${mode === 'partner' ? 'bg-indigo-600 text-white glow' : 'glass text-slate-400'}`}
+          className={`px-4 py-2 rounded-xl text-sm font-medium ${mode === 'partner' ? 'bg-indigo-600 text-white glow' : 'border border-slate-300 bg-slate-100 text-slate-700'}`}
         >
           Partnerský výklad
         </button>
         <button
           onClick={() => setMode('family')}
-          className={`px-4 py-2 rounded-xl text-sm font-medium ${mode === 'family' ? 'bg-indigo-600 text-white glow' : 'glass text-slate-400'}`}
+          className={`px-4 py-2 rounded-xl text-sm font-medium ${mode === 'family' ? 'bg-indigo-600 text-white glow' : 'border border-slate-300 bg-slate-100 text-slate-700'}`}
         >
           Rodič a deti
         </button>
         <button
           onClick={() => setMode('astro')}
-          className={`px-4 py-2 rounded-xl text-sm font-medium ${mode === 'astro' ? 'bg-indigo-600 text-white glow' : 'glass text-slate-400'}`}
+          className={`px-4 py-2 rounded-xl text-sm font-medium ${mode === 'astro' ? 'bg-indigo-600 text-white glow' : 'border border-slate-300 bg-slate-100 text-slate-700'}`}
         >
           Astro kompatibilita
         </button>
         <button
           onClick={() => setMode('constellation')}
-          className={`px-4 py-2 rounded-xl text-sm font-medium ${mode === 'constellation' ? 'bg-indigo-600 text-white glow' : 'glass text-slate-400'}`}
+          className={`px-4 py-2 rounded-xl text-sm font-medium ${mode === 'constellation' ? 'bg-indigo-600 text-white glow' : 'border border-slate-300 bg-slate-100 text-slate-700'}`}
         >
           Rodinná konštelácia
         </button>
@@ -486,7 +495,7 @@ export function RelationshipsPage() {
             {editing && (
               <button
                 onClick={() => setEditing(false)}
-                className="px-4 py-3 rounded-xl glass text-slate-400 hover:text-white"
+                className="px-4 py-3 rounded-xl border border-slate-300 bg-slate-100 text-slate-700 font-medium hover:bg-slate-200"
               >
                 Zrušiť
               </button>
@@ -760,8 +769,12 @@ export function RelationshipsPage() {
 
           {/* Human Design composite comparison + Gene Keys */}
           {(() => {
-            const hd1 = calculateHumanDesign(parseInt(partner1.day), parseInt(partner1.month), parseInt(partner1.year), partner1.hour !== '' ? parseInt(partner1.hour) : 12, partner1.minute !== '' ? parseInt(partner1.minute) : 0);
-            const hd2 = calculateHumanDesign(parseInt(partner2.day), parseInt(partner2.month), parseInt(partner2.year), partner2.hour !== '' ? parseInt(partner2.hour) : 12, partner2.minute !== '' ? parseInt(partner2.minute) : 0);
+            const pCity1 = findCity(partner1.birthPlace);
+            const pCity2 = findCity(partner2.birthPlace);
+            const pTz1 = getTimezoneFromCoords(pCity1?.lat ?? 48.15, pCity1?.lon ?? 17.11);
+            const pTz2 = getTimezoneFromCoords(pCity2?.lat ?? 48.15, pCity2?.lon ?? 17.11);
+            const hd1 = calculateHumanDesign(parseInt(partner1.day), parseInt(partner1.month), parseInt(partner1.year), partner1.hour !== '' ? parseInt(partner1.hour) : 12, partner1.minute !== '' ? parseInt(partner1.minute) : 0, pTz1);
+            const hd2 = calculateHumanDesign(parseInt(partner2.day), parseInt(partner2.month), parseInt(partner2.year), partner2.hour !== '' ? parseInt(partner2.hour) : 12, partner2.minute !== '' ? parseInt(partner2.minute) : 0, pTz2);
             const gates1 = new Set([...hd1.personalityGates.map(g => g.gate), ...hd1.designGates.map(g => g.gate)]);
             const gates2 = new Set([...hd2.personalityGates.map(g => g.gate), ...hd2.designGates.map(g => g.gate)]);
             const partnerGK = [...gates1].filter(g => gates2.has(g)).slice(0, 4).map(g => getGeneKeyByGate(g)).filter(Boolean);
@@ -800,7 +813,7 @@ export function RelationshipsPage() {
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm text-slate-400">Dieťa {idx + 1}</span>
                 {children.length > 1 && (
-                  <button onClick={() => removeChild(idx)} className="text-xs text-red-400 hover:text-red-300">Odstrániť</button>
+                  <button onClick={() => removeChild(idx)} className="text-xs text-red-600 hover:text-red-800 font-medium">Odstrániť</button>
                 )}
               </div>
               <PersonForm person={child} onChange={(p) => { const next = [...children]; next[idx] = p; setChildren(next); }} label="" />
@@ -810,7 +823,7 @@ export function RelationshipsPage() {
           <button
             type="button"
             onClick={addChild}
-            className="w-full py-3 rounded-xl border-2 border-dashed border-indigo-400 text-indigo-700 text-sm font-medium bg-indigo-50 hover:bg-indigo-100 active:bg-indigo-200"
+            className="w-full py-3 rounded-xl border-2 border-dashed border-indigo-500 text-indigo-800 text-sm font-semibold bg-indigo-100 hover:bg-indigo-200 active:bg-indigo-300"
           >
             + Pridať ďalšie dieťa
           </button>
@@ -824,7 +837,7 @@ export function RelationshipsPage() {
               {familyResults ? 'Prepočítať' : 'Vypočítať kompatibilitu'}
             </button>
             {editing && (
-              <button onClick={() => setEditing(false)} className="px-4 py-3 rounded-xl glass text-slate-400 hover:text-white">Zrušiť</button>
+              <button onClick={() => setEditing(false)} className="px-4 py-3 rounded-xl border border-slate-300 bg-slate-100 text-slate-700 font-medium hover:bg-slate-200">Zrušiť</button>
             )}
           </div>
         </div>
@@ -924,8 +937,12 @@ export function RelationshipsPage() {
 
                   {/* HD porovnanie rodič↔dieťa */}
                   {(() => {
-                    const parentHd = calculateHumanDesign(parseInt(parent.day), parseInt(parent.month), parseInt(parent.year), parent.hour ? parseInt(parent.hour) : 12, parent.minute ? parseInt(parent.minute) : 0);
-                    const childHd = calculateHumanDesign(parseInt(child.day), parseInt(child.month), parseInt(child.year), child.hour ? parseInt(child.hour) : 12, child.minute ? parseInt(child.minute) : 0);
+                    const parentCityHd = findCity(parent.birthPlace);
+                    const childCityHd = findCity(child.birthPlace);
+                    const parentTzHd = getTimezoneFromCoords(parentCityHd?.lat ?? 48.15, parentCityHd?.lon ?? 17.11);
+                    const childTzHd = getTimezoneFromCoords(childCityHd?.lat ?? 48.15, childCityHd?.lon ?? 17.11);
+                    const parentHd = calculateHumanDesign(parseInt(parent.day), parseInt(parent.month), parseInt(parent.year), parent.hour ? parseInt(parent.hour) : 12, parent.minute ? parseInt(parent.minute) : 0, parentTzHd);
+                    const childHd = calculateHumanDesign(parseInt(child.day), parseInt(child.month), parseInt(child.year), child.hour ? parseInt(child.hour) : 12, child.minute ? parseInt(child.minute) : 0, childTzHd);
                     const sharedDefined = parentHd.definedCenters.filter(c => childHd.definedCenters.includes(c));
                     const parentOnly = parentHd.definedCenters.filter(c => !childHd.definedCenters.includes(c));
                     const childOnly = childHd.definedCenters.filter(c => !parentHd.definedCenters.includes(c));
@@ -1013,8 +1030,12 @@ export function RelationshipsPage() {
                   const n1 = calculateFullNumerology(parseInt(c1.day), parseInt(c1.month), parseInt(c1.year));
                   const n2 = calculateFullNumerology(parseInt(c2.day), parseInt(c2.month), parseInt(c2.year));
                   const compat = calculatePartnerCompatibility(n1, n2);
-                  const hd1 = calculateHumanDesign(parseInt(c1.day), parseInt(c1.month), parseInt(c1.year), c1.hour ? parseInt(c1.hour) : 12, c1.minute ? parseInt(c1.minute) : 0);
-                  const hd2 = calculateHumanDesign(parseInt(c2.day), parseInt(c2.month), parseInt(c2.year), c2.hour ? parseInt(c2.hour) : 12, c2.minute ? parseInt(c2.minute) : 0);
+                  const c1City = findCity(c1.birthPlace);
+                  const c2City = findCity(c2.birthPlace);
+                  const c1Tz = getTimezoneFromCoords(c1City?.lat ?? 48.15, c1City?.lon ?? 17.11);
+                  const c2Tz = getTimezoneFromCoords(c2City?.lat ?? 48.15, c2City?.lon ?? 17.11);
+                  const hd1 = calculateHumanDesign(parseInt(c1.day), parseInt(c1.month), parseInt(c1.year), c1.hour ? parseInt(c1.hour) : 12, c1.minute ? parseInt(c1.minute) : 0, c1Tz);
+                  const hd2 = calculateHumanDesign(parseInt(c2.day), parseInt(c2.month), parseInt(c2.year), c2.hour ? parseInt(c2.hour) : 12, c2.minute ? parseInt(c2.minute) : 0, c2Tz);
                   const g1 = new Set([...hd1.personalityGates.map(g => g.gate), ...hd1.designGates.map(g => g.gate)]);
                   const g2 = new Set([...hd2.personalityGates.map(g => g.gate), ...hd2.designGates.map(g => g.gate)]);
                   const childGK = [...g1].filter(g => g2.has(g)).slice(0, 3).map(g => getGeneKeyByGate(g)).filter(Boolean);
@@ -1124,7 +1145,7 @@ export function RelationshipsPage() {
               {synastryResult ? 'Prepočítať' : 'Vypočítať astro kompatibilitu'}
             </button>
             {editing && (
-              <button onClick={() => setEditing(false)} className="px-4 py-3 rounded-xl glass text-slate-400 hover:text-white">Zrušiť</button>
+              <button onClick={() => setEditing(false)} className="px-4 py-3 rounded-xl border border-slate-300 bg-slate-100 text-slate-700 font-medium hover:bg-slate-200">Zrušiť</button>
             )}
           </div>
         </GlassCard>
@@ -1468,7 +1489,7 @@ export function RelationshipsPage() {
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm text-slate-400">Dieťa {idx + 1}</span>
                 {constChildren.length > 1 && (
-                  <button onClick={() => setConstChildren(constChildren.filter((_, i) => i !== idx))} className="text-xs text-red-400 hover:text-red-300">Odstrániť</button>
+                  <button onClick={() => setConstChildren(constChildren.filter((_, i) => i !== idx))} className="text-xs text-red-600 hover:text-red-800 font-medium">Odstrániť</button>
                 )}
               </div>
               <PersonForm person={child} onChange={(p) => { const next = [...constChildren]; next[idx] = p; setConstChildren(next); }} label="" />
@@ -1478,7 +1499,7 @@ export function RelationshipsPage() {
           <button
             type="button"
             onClick={() => setConstChildren([...constChildren, emptyPerson()])}
-            className="w-full py-3 rounded-xl border-2 border-dashed border-indigo-400 text-indigo-700 text-sm font-medium bg-indigo-50 hover:bg-indigo-100"
+            className="w-full py-3 rounded-xl border-2 border-dashed border-indigo-500 text-indigo-800 text-sm font-semibold bg-indigo-100 hover:bg-indigo-200 active:bg-indigo-300"
           >
             + Pridať ďalšie dieťa
           </button>
@@ -1492,7 +1513,7 @@ export function RelationshipsPage() {
               {constellationResult ? 'Prepočítať' : 'Vypočítať rodinnú konšteláciu'}
             </button>
             {editing && (
-              <button onClick={() => setEditing(false)} className="px-4 py-3 rounded-xl glass text-slate-400 hover:text-white">Zrušiť</button>
+              <button onClick={() => setEditing(false)} className="px-4 py-3 rounded-xl border border-slate-300 bg-slate-100 text-slate-700 font-medium hover:bg-slate-200">Zrušiť</button>
             )}
           </div>
         </div>
@@ -1593,8 +1614,12 @@ export function RelationshipsPage() {
 
           {/* HD rodičov */}
           {(() => {
-            const hdF = calculateHumanDesign(parseInt(constFather.day), parseInt(constFather.month), parseInt(constFather.year), constFather.hour ? parseInt(constFather.hour) : 12, constFather.minute ? parseInt(constFather.minute) : 0);
-            const hdM = calculateHumanDesign(parseInt(constMother.day), parseInt(constMother.month), parseInt(constMother.year), constMother.hour ? parseInt(constMother.hour) : 12, constMother.minute ? parseInt(constMother.minute) : 0);
+            const fatherCityHd = findCity(constFather.birthPlace);
+            const motherCityHd = findCity(constMother.birthPlace);
+            const fatherTzHd = getTimezoneFromCoords(fatherCityHd?.lat ?? 48.15, fatherCityHd?.lon ?? 17.11);
+            const motherTzHd = getTimezoneFromCoords(motherCityHd?.lat ?? 48.15, motherCityHd?.lon ?? 17.11);
+            const hdF = calculateHumanDesign(parseInt(constFather.day), parseInt(constFather.month), parseInt(constFather.year), constFather.hour ? parseInt(constFather.hour) : 12, constFather.minute ? parseInt(constFather.minute) : 0, fatherTzHd);
+            const hdM = calculateHumanDesign(parseInt(constMother.day), parseInt(constMother.month), parseInt(constMother.year), constMother.hour ? parseInt(constMother.hour) : 12, constMother.minute ? parseInt(constMother.minute) : 0, motherTzHd);
             return (
               <GlassCard>
                 <h3 className="font-medium text-purple-300 mb-3">Human Design — rodičovský pár</h3>
@@ -1693,8 +1718,12 @@ export function RelationshipsPage() {
               {constellationResult.fatherChildren.map(({ child, result: r }, idx) => {
                 const cn = calculateFullNumerology(parseInt(child.day), parseInt(child.month), parseInt(child.year));
                 const cd = calculateDevelopmentalNumerology(parseInt(child.day), parseInt(child.month), parseInt(child.year));
-                const fatherHd = calculateHumanDesign(parseInt(constFather.day), parseInt(constFather.month), parseInt(constFather.year), constFather.hour ? parseInt(constFather.hour) : 12, constFather.minute ? parseInt(constFather.minute) : 0);
-                const childHd = calculateHumanDesign(parseInt(child.day), parseInt(child.month), parseInt(child.year), child.hour ? parseInt(child.hour) : 12, child.minute ? parseInt(child.minute) : 0);
+                const fCityConst = findCity(constFather.birthPlace);
+                const chCityConst = findCity(child.birthPlace);
+                const fTzConst = getTimezoneFromCoords(fCityConst?.lat ?? 48.15, fCityConst?.lon ?? 17.11);
+                const chTzConst = getTimezoneFromCoords(chCityConst?.lat ?? 48.15, chCityConst?.lon ?? 17.11);
+                const fatherHd = calculateHumanDesign(parseInt(constFather.day), parseInt(constFather.month), parseInt(constFather.year), constFather.hour ? parseInt(constFather.hour) : 12, constFather.minute ? parseInt(constFather.minute) : 0, fTzConst);
+                const childHd = calculateHumanDesign(parseInt(child.day), parseInt(child.month), parseInt(child.year), child.hour ? parseInt(child.hour) : 12, child.minute ? parseInt(child.minute) : 0, chTzConst);
                 const sharedDef = fatherHd.definedCenters.filter(c => childHd.definedCenters.includes(c));
                 const fatherOnly = fatherHd.definedCenters.filter(c => !childHd.definedCenters.includes(c));
                 const fGates = new Set([...fatherHd.personalityGates.map(g => g.gate), ...fatherHd.designGates.map(g => g.gate)]);
@@ -1746,8 +1775,12 @@ export function RelationshipsPage() {
               {constellationResult.motherChildren.map(({ child, result: r }, idx) => {
                 const cn = calculateFullNumerology(parseInt(child.day), parseInt(child.month), parseInt(child.year));
                 const cd = calculateDevelopmentalNumerology(parseInt(child.day), parseInt(child.month), parseInt(child.year));
-                const motherHd = calculateHumanDesign(parseInt(constMother.day), parseInt(constMother.month), parseInt(constMother.year), constMother.hour ? parseInt(constMother.hour) : 12, constMother.minute ? parseInt(constMother.minute) : 0);
-                const childHd = calculateHumanDesign(parseInt(child.day), parseInt(child.month), parseInt(child.year), child.hour ? parseInt(child.hour) : 12, child.minute ? parseInt(child.minute) : 0);
+                const mCityConst = findCity(constMother.birthPlace);
+                const mchCityConst = findCity(child.birthPlace);
+                const mTzConst = getTimezoneFromCoords(mCityConst?.lat ?? 48.15, mCityConst?.lon ?? 17.11);
+                const mchTzConst = getTimezoneFromCoords(mchCityConst?.lat ?? 48.15, mchCityConst?.lon ?? 17.11);
+                const motherHd = calculateHumanDesign(parseInt(constMother.day), parseInt(constMother.month), parseInt(constMother.year), constMother.hour ? parseInt(constMother.hour) : 12, constMother.minute ? parseInt(constMother.minute) : 0, mTzConst);
+                const childHd = calculateHumanDesign(parseInt(child.day), parseInt(child.month), parseInt(child.year), child.hour ? parseInt(child.hour) : 12, child.minute ? parseInt(child.minute) : 0, mchTzConst);
                 const sharedDef = motherHd.definedCenters.filter(c => childHd.definedCenters.includes(c));
                 const motherOnly = motherHd.definedCenters.filter(c => !childHd.definedCenters.includes(c));
                 const mGates = new Set([...motherHd.personalityGates.map(g => g.gate), ...motherHd.designGates.map(g => g.gate)]);
@@ -1804,8 +1837,12 @@ export function RelationshipsPage() {
                   const n1 = calculateFullNumerology(parseInt(child1.day), parseInt(child1.month), parseInt(child1.year));
                   const n2 = calculateFullNumerology(parseInt(child2.day), parseInt(child2.month), parseInt(child2.year));
                   const relationshipGoal = reduceToSingle(n1.lifePathNumber + n2.lifePathNumber);
-                  const hd1 = calculateHumanDesign(parseInt(child1.day), parseInt(child1.month), parseInt(child1.year), child1.hour ? parseInt(child1.hour) : 12, child1.minute ? parseInt(child1.minute) : 0);
-                  const hd2 = calculateHumanDesign(parseInt(child2.day), parseInt(child2.month), parseInt(child2.year), child2.hour ? parseInt(child2.hour) : 12, child2.minute ? parseInt(child2.minute) : 0);
+                  const s1City = findCity(child1.birthPlace);
+                  const s2City = findCity(child2.birthPlace);
+                  const s1Tz = getTimezoneFromCoords(s1City?.lat ?? 48.15, s1City?.lon ?? 17.11);
+                  const s2Tz = getTimezoneFromCoords(s2City?.lat ?? 48.15, s2City?.lon ?? 17.11);
+                  const hd1 = calculateHumanDesign(parseInt(child1.day), parseInt(child1.month), parseInt(child1.year), child1.hour ? parseInt(child1.hour) : 12, child1.minute ? parseInt(child1.minute) : 0, s1Tz);
+                  const hd2 = calculateHumanDesign(parseInt(child2.day), parseInt(child2.month), parseInt(child2.year), child2.hour ? parseInt(child2.hour) : 12, child2.minute ? parseInt(child2.minute) : 0, s2Tz);
                   const g1 = new Set([...hd1.personalityGates.map(g => g.gate), ...hd1.designGates.map(g => g.gate)]);
                   const g2 = new Set([...hd2.personalityGates.map(g => g.gate), ...hd2.designGates.map(g => g.gate)]);
                   const siblingGK = [...g1].filter(g => g2.has(g)).slice(0, 3).map(g => getGeneKeyByGate(g)).filter(Boolean);

@@ -12,7 +12,9 @@ import { deriveEnneagramType } from '../engine/enneagramEngine';
 import { deriveDosha } from '../engine/ayurvedaEngine';
 import { deriveTCMElement } from '../engine/tcmEngine';
 import { evaluateChakras } from '../engine/chakraEngine';
+import { generateInterpretation } from '../engine/interpretationEngine';
 import { hasApiKey } from '../engine/aiInterpretation';
+import { getTimezoneFromCoords } from '../data/cities';
 
 export function GlobalAIDrawer() {
   const [open, setOpen] = useState(false);
@@ -30,8 +32,11 @@ export function GlobalAIDrawer() {
     if (!profile || !open) return null;
     const numerology = calculateFullNumerology(profile.birthDay, profile.birthMonth, profile.birthYear);
     const developmental = calculateDevelopmentalNumerology(profile.birthDay, profile.birthMonth, profile.birthYear);
-    const astrology = calculateAstrology(profile.birthDay, profile.birthMonth, profile.birthYear, profile.birthHour ?? 12, profile.birthMinute ?? 0);
-    const humanDesign = calculateHumanDesign(profile.birthDay, profile.birthMonth, profile.birthYear, profile.birthHour ?? 12, profile.birthMinute ?? 0);
+    const lat = profile.birthLatitude ?? 48.15;
+    const lon = profile.birthLongitude ?? 17.11;
+    const tz = getTimezoneFromCoords(lat, lon);
+    const astrology = calculateAstrology(profile.birthDay, profile.birthMonth, profile.birthYear, profile.birthHour ?? 12, profile.birthMinute ?? 0, lat, lon, tz);
+    const humanDesign = calculateHumanDesign(profile.birthDay, profile.birthMonth, profile.birthYear, profile.birthHour ?? 12, profile.birthMinute ?? 0, tz);
     const lp = numerology.lifePathNumber > 9 ? reduceToSingle(numerology.lifePathNumber) : numerology.lifePathNumber;
     const kabalah = calculateKabalah(lp, reduceToSingle(profile.birthDay));
     const theta = calculateThetaHealing(lp);
@@ -40,6 +45,7 @@ export function GlobalAIDrawer() {
     const tcm = deriveTCMElement(numerology, astrology);
     const gridCounts = getGridCount(numerology.grid);
     const chakras = evaluateChakras(numerology.lifePathNumber, gridCounts, numerology.isolatedNumbers, humanDesign.definedCenters, astrology.dominantElement);
+    const interpretation = generateInterpretation(numerology, astrology, humanDesign, chakras, kabalah, theta);
     return {
       name: profile.name,
       gender: profile.gender,
@@ -62,6 +68,13 @@ export function GlobalAIDrawer() {
       tcm,
       chakras: chakras?.map(c => ({ name: c.chakra.name, status: c.status, score: c.score })),
       loveLanguages: numerology.loveLanguages.slice(0, 3),
+      interpretation: {
+        mainLifeTheme: interpretation.mainLifeTheme,
+        currentLesson: interpretation.currentLesson,
+        gift: interpretation.gift,
+        shadow: interpretation.shadow,
+        themes: interpretation.themes.slice(0, 3).map(t => t.theme),
+      },
     };
   }, [profile, numerologyMethod, open]);
 

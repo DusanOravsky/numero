@@ -21,7 +21,7 @@ export default defineConfig({
       template: 'treemap',
     }),
     VitePWA({
-      registerType: 'autoUpdate',
+      registerType: 'prompt',
       includeAssets: ['favicon.svg', 'icons/*.png'],
       manifest: {
         name: 'Integrálna mapa bytia',

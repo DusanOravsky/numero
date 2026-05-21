@@ -13,6 +13,7 @@ import { AIChat } from '../components/AIChat';
 import { ClientRelationships } from '../components/ClientRelationships';
 import { ClientExport } from '../components/ClientExport';
 import { SkeletonClientDashboard } from '../components/Skeleton';
+import { getTimezoneFromCoords } from '../data/cities';
 
 export function ClientDashboard() {
   const { id } = useParams();
@@ -27,9 +28,12 @@ export function ClientDashboard() {
     if (!client) return null;
     const { birthDay: d, birthMonth: m, birthYear: y, birthHour: h, birthMinute: min } = client;
 
+    const lat = client.birthLatitude ?? 48.15;
+    const lon = client.birthLongitude ?? 17.11;
+    const tz = getTimezoneFromCoords(lat, lon);
     const numerology = calculateFullNumerology(d, m, y);
-    const astrology = calculateAstrology(d, m, y, h ?? 12, min ?? 0);
-    const humanDesign = calculateHumanDesign(d, m, y, h ?? 12, min ?? 0);
+    const astrology = calculateAstrology(d, m, y, h ?? 12, min ?? 0, lat, lon, tz);
+    const humanDesign = calculateHumanDesign(d, m, y, h ?? 12, min ?? 0, tz);
     const gridCounts = getGridCount(numerology.grid);
     const chakras = evaluateChakras(numerology.lifePathNumber, gridCounts, numerology.isolatedNumbers, humanDesign.definedCenters, astrology.dominantElement);
     const lp = numerology.lifePathNumber > 9 ? reduceToSingle(numerology.lifePathNumber) : numerology.lifePathNumber;

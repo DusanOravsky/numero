@@ -119,6 +119,13 @@ export interface ProfileContext {
   chakras?: Array<{ name: string; status: string; score: number }>;
   geneKeys?: Array<{ gate: number; shadow: string; gift: string; siddhi: string }>;
   loveLanguages?: Array<{ language: string; score: number }>;
+  interpretation?: {
+    mainLifeTheme: string;
+    currentLesson: string;
+    gift: string;
+    shadow: string;
+    themes?: string[];
+  };
 }
 
 /**
@@ -259,6 +266,16 @@ export function summarizeProfile(ctx: ProfileContext): string {
   if (ctx.loveLanguages && ctx.loveLanguages.length > 0) {
     lines.push('=== JAZYKY LÁSKY ===');
     lines.push(`Top 3: ${ctx.loveLanguages.slice(0, 3).map(l => `${l.language} (${l.score})`).join(', ')}`);
+    lines.push('');
+  }
+
+  if (ctx.interpretation) {
+    lines.push('=== INTERPRETÁCIA (cross-system) ===');
+    lines.push(`Hlavná životná téma: ${ctx.interpretation.mainLifeTheme}`);
+    lines.push(`Aktuálna lekcia: ${ctx.interpretation.currentLesson}`);
+    lines.push(`Dar: ${ctx.interpretation.gift}`);
+    lines.push(`Tieň: ${ctx.interpretation.shadow}`);
+    if (ctx.interpretation.themes?.length) lines.push(`Kľúčové témy: ${ctx.interpretation.themes.join(', ')}`);
     lines.push('');
   }
 

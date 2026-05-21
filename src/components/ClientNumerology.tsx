@@ -30,7 +30,7 @@ interface ClientNumerologyProps {
 export function ClientNumerology({ numerology, astrology, humanDesign, chakras, kabalah, theta, clientId }: ClientNumerologyProps) {
   const navigate = useNavigate();
   const q = clientId ? `?client=${clientId}` : '';
-  const lpInfo = lifePaths[String(numerology.lifePathNumber > 9 ? reduceToSingle(numerology.lifePathNumber) : numerology.lifePathNumber)];
+  const lpInfo = lifePaths[String(numerology.lifePathNumber)] || lifePaths[String(reduceToSingle(numerology.lifePathNumber))];
 
   return (
     <>

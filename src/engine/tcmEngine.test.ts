@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { deriveTCMElement } from './tcmEngine';
 import { calculateFullNumerology } from './numerologyEngine';
+import type { AstrologyResult } from './astrologyEngine';
 
 function makeMinimalNumerology(lifePathNumber: number) {
   const num = calculateFullNumerology(30, 8, 1979);
@@ -93,14 +94,14 @@ describe('deriveTCMElement — ŽČ mapovanie', () => {
 describe('deriveTCMElement — astro element vplyv', () => {
   it('Oheň → ohen +3', () => {
     const num = makeMinimalNumerology(6); // voda +2
-    const astro = { dominantElement: 'Oheň' } as any;
+    const astro = { dominantElement: 'Oheň' } as Partial<AstrologyResult>;
     const result = deriveTCMElement(num, astro);
     expect(result.primary).toBe('ohen');
   });
 
   it('Vzduch → kov +2, drevo +1', () => {
     const num = makeMinimalNumerology(6); // voda +2
-    const astro = { dominantElement: 'Vzduch' } as any;
+    const astro = { dominantElement: 'Vzduch' } as Partial<AstrologyResult>;
     const result = deriveTCMElement(num, astro);
     // kov=2, drevo=1, voda=2 → tie kov/voda
     expect(['kov', 'voda']).toContain(result.primary);
@@ -108,14 +109,14 @@ describe('deriveTCMElement — astro element vplyv', () => {
 
   it('Zem → zem +3', () => {
     const num = makeMinimalNumerology(1); // drevo +2
-    const astro = { dominantElement: 'Zem' } as any;
+    const astro = { dominantElement: 'Zem' } as Partial<AstrologyResult>;
     const result = deriveTCMElement(num, astro);
     expect(result.primary).toBe('zem');
   });
 
   it('Voda → voda +3', () => {
     const num = makeMinimalNumerology(1); // drevo +2
-    const astro = { dominantElement: 'Voda' } as any;
+    const astro = { dominantElement: 'Voda' } as Partial<AstrologyResult>;
     const result = deriveTCMElement(num, astro);
     expect(result.primary).toBe('voda');
   });

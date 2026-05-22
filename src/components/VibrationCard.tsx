@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface VibrationCardProps {
@@ -12,7 +12,7 @@ interface VibrationCardProps {
   delay?: number;
 }
 
-export function VibrationCard({ title, value, subtitle, icon, color, formula, description, delay = 0 }: VibrationCardProps) {
+export const VibrationCard = memo(function VibrationCard({ title, value, subtitle, icon, color, formula, description, delay = 0 }: VibrationCardProps) {
   const [showTooltip, setShowTooltip] = useState(false);
 
   const colorClasses: Record<string, string> = {
@@ -63,4 +63,4 @@ export function VibrationCard({ title, value, subtitle, icon, color, formula, de
       </AnimatePresence>
     </motion.div>
   );
-}
+});

@@ -18,6 +18,7 @@ import { ETIKOTERAPIA_BY_CHAKRA } from '../data/etikoterapia';
 import { deriveDosha } from '../engine/ayurvedaEngine';
 import { deriveTCMElement } from '../engine/tcmEngine';
 import { orvDescriptions } from '../data/orvDescriptions';
+import { omvDescriptions } from '../data/omvDescriptions';
 import { getDailyMantra, getDailyQuote } from '../data/mantrasAndQuotes';
 import { getDailyTarot } from '../data/tarotCards';
 import { ClientExport } from '../components/ClientExport';
@@ -212,7 +213,7 @@ export function Dashboard() {
           <button
             onClick={(e) => { e.stopPropagation(); localStorage.removeItem('last-viewed-client'); setLastViewedId(null); }}
             className="absolute top-1 right-1 w-6 h-6 rounded-full flex items-center justify-center text-amber-400 hover:text-amber-700 hover:bg-amber-100 transition-colors"
-            title="Skryť"
+            aria-label="Skryť posledného klienta"
           >
             ✕
           </button>
@@ -455,20 +456,20 @@ export function Dashboard() {
       )}
 
       {/* Detail mesačnej energie */}
-      {orvDescriptions[omv] && (
+      {omvDescriptions[omv] && (
         <GlassCard delay={0.52}>
           <details open>
             <summary className="cursor-pointer hover:text-purple-300 transition-colors">
               <span className="font-medium text-white">Detail mesačnej energie (OMV {omv})</span>
             </summary>
             <div className="mt-3 space-y-3">
-              <p className="text-sm text-slate-300">{orvDescriptions[omv].advice}</p>
+              <p className="text-sm text-slate-300">{omvDescriptions[omv].advice}</p>
               <div className="flex flex-wrap gap-1">
-                {orvDescriptions[omv].keywords.map(k => (
+                {omvDescriptions[omv].keywords.map(k => (
                   <span key={k} className="text-xs px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-300">{k}</span>
                 ))}
               </div>
-              <p className="text-xs text-purple-400 italic mt-2">{orvDescriptions[omv].theme}</p>
+              <p className="text-xs text-purple-400 italic mt-2">{omvDescriptions[omv].theme}</p>
             </div>
           </details>
         </GlassCard>

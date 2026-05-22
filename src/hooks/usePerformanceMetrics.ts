@@ -54,7 +54,7 @@ export function usePerformanceMetrics(name: string): void {
           duration: Math.round(duration * 100) / 100,
           timestamp: new Date().toISOString(),
         });
-        if (typeof console !== 'undefined' && 'debug' in console) {
+        if (import.meta.env.DEV) {
           console.debug(`[perf] ${name} ready in ${duration.toFixed(1)}ms`);
         }
       });
@@ -81,7 +81,7 @@ export function captureWebVitals(): void {
           duration: Math.round(last.startTime),
           timestamp: new Date().toISOString(),
         });
-        console.debug(`[perf] LCP = ${Math.round(last.startTime)}ms`);
+        if (import.meta.env.DEV) console.debug(`[perf] LCP = ${Math.round(last.startTime)}ms`);
       }
     });
     lcpObserver.observe({ type: 'largest-contentful-paint', buffered: true });
@@ -105,7 +105,7 @@ export function captureWebVitals(): void {
         duration: Math.round(clsValue * 1000) / 1000,
         timestamp: new Date().toISOString(),
       });
-      console.debug(`[perf] CLS = ${clsValue.toFixed(3)}`);
+      if (import.meta.env.DEV) console.debug(`[perf] CLS = ${clsValue.toFixed(3)}`);
     }, 10000);
   } catch {
     // Browser doesn't support these — no-op

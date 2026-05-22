@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { motion } from 'framer-motion';
 import type { ReactNode } from 'react';
 
@@ -10,7 +11,7 @@ interface GlassCardProps {
   onClick?: () => void;
 }
 
-export function GlassCard({ children, className = '', glow = false, animate = true, delay = 0, onClick }: GlassCardProps) {
+export const GlassCard = memo(function GlassCard({ children, className = '', glow = false, animate = true, delay = 0, onClick }: GlassCardProps) {
   const Component = animate ? motion.div : 'div';
   const animateProps = animate ? {
     initial: { opacity: 0, y: 20 },
@@ -27,4 +28,4 @@ export function GlassCard({ children, className = '', glow = false, animate = tr
       {children}
     </Component>
   );
-}
+});

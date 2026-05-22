@@ -65,6 +65,7 @@ export function SubjectPicker() {
             : 'bg-white border-slate-300 hover:bg-slate-50'
         }`}
         style={{ color: isViewingClient ? '#92400e' : '#1e293b' }}
+        aria-label="Výber profilu alebo klienta"
         aria-haspopup="listbox"
         aria-expanded={open}
       >
@@ -74,7 +75,7 @@ export function SubjectPicker() {
       </button>
 
       {open && (
-        <div className="absolute right-0 mt-2 w-72 max-h-96 overflow-y-auto bg-white border border-slate-200 rounded-xl shadow-xl z-50 p-1" style={{ color: '#1e293b' }}>
+        <div className="absolute right-0 mt-2 w-[calc(100vw-2rem)] sm:w-72 max-h-96 overflow-y-auto bg-white border border-slate-200 rounded-xl shadow-xl z-50 p-1" style={{ color: '#1e293b' }}>
           {activeProfile && (
             <button
               type="button"

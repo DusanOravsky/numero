@@ -16,6 +16,7 @@ import type { DevelopmentalNumerologyResult } from '../engine/developmentalNumer
 import lifePathsData from '../data/lifePaths.json';
 import isolatedData from '../data/isolatedNumbers.json';
 import { orvDescriptions } from '../data/orvDescriptions';
+import { omvDescriptions } from '../data/omvDescriptions';
 import { findMissingCharacterNumbers } from '../data/characterMissingNumbers';
 import { ORVLifeHistogram } from '../components/ORVLifeHistogram';
 import { PersonalYearTimeline } from '../components/PersonalYearTimeline';
@@ -913,6 +914,25 @@ export function NumerologyPage() {
                   <div className="flex gap-1 flex-wrap">
                     {orvDescriptions[result.orv].keywords.map(k => (
                       <span key={k} className="text-xs px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300">{k}</span>
+                    ))}
+                  </div>
+                </GlassCard>
+              )}
+
+              {omvDescriptions[profile ? customOmv : result.omv] && (
+                <GlassCard>
+                  <h3 className="font-serif text-xl font-bold text-white mb-2">
+                    OMV {profile ? customOmv : result.omv} – {omvDescriptions[profile ? customOmv : result.omv].title}
+                  </h3>
+                  <p className="text-sm text-purple-300 mb-3">{omvDescriptions[profile ? customOmv : result.omv].theme}</p>
+                  <p className="text-sm text-slate-300 mb-4">{omvDescriptions[profile ? customOmv : result.omv].description}</p>
+                  <div className="p-4 rounded-xl bg-purple-500/10 border border-purple-500/20 mb-3">
+                    <p className="text-xs text-purple-400 uppercase mb-1">Odporúčanie pre tento mesiac</p>
+                    <p className="text-sm text-slate-300">{omvDescriptions[profile ? customOmv : result.omv].advice}</p>
+                  </div>
+                  <div className="flex gap-1 flex-wrap">
+                    {omvDescriptions[profile ? customOmv : result.omv].keywords.map(k => (
+                      <span key={k} className="text-xs px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300">{k}</span>
                     ))}
                   </div>
                 </GlassCard>

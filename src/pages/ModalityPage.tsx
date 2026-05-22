@@ -734,7 +734,7 @@ export function ModalityPage() {
           </h2>
           <p className="text-xs text-slate-400 mb-4">
             Váš životný príbeh sa odvíja cez archetyp <strong className="text-indigo-300">{archetype.primary.name}</strong>.
-            S ŽČ {data.lifePathNumber} a znamením {sunSign} prirodzene hráte túto rolu vo svete — nie je to maška, je to vaša podstata.
+            S ŽČ {data.lifePathNumber} a znamením {sunSign} prirodzene hráte túto rolu vo svete — nie je to maska, je to vaša podstata.
           </p>
 
           <div className="p-4 rounded-xl bg-indigo-500/10 border border-indigo-500/20 mb-4">

@@ -25,7 +25,10 @@ import { developmentalMeanings } from '../data/developmentalMeanings';
 import { loveLanguageDescriptions } from '../data/orvDescriptions';
 import { deriveArchetype } from '../engine/archetypeEngine';
 import { calculateBiorhythm } from '../engine/biorhythmEngine';
+import { calculateKua } from '../engine/kuaEngine';
 import { getDailyCrystal, getZodiacCrystals } from '../data/crystals';
+import { omvDescriptions } from '../data/omvDescriptions';
+import { odvDescriptions } from '../data/odvDescriptions';
 import lifePathsData from '../data/lifePaths.json';
 
 const lifePaths = lifePathsData as Record<string, { title: string; keywords: string[]; description: string; gift: string; shadow: string }>;
@@ -595,6 +598,43 @@ export function ClientSummary({ clientName, birthDay, birthMonth, birthYear, num
           </div>
         </div>
 
+        {/* Vibrácie + Karmické dlhy + Kua */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-5">
+          {omvDescriptions[numerology.omv] && (
+            <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20">
+              <p className="text-[10px] text-purple-400 uppercase mb-1">☽ OMV {numerology.omv}</p>
+              <p className="text-xs font-medium text-purple-300">{omvDescriptions[numerology.omv].title}</p>
+              <p className="text-[10px] text-slate-500 mt-1">{omvDescriptions[numerology.omv].theme}</p>
+            </div>
+          )}
+          {odvDescriptions[numerology.odv] && (
+            <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
+              <p className="text-[10px] text-amber-400 uppercase mb-1">☀ ODV {numerology.odv}</p>
+              <p className="text-xs font-medium text-amber-300">{odvDescriptions[numerology.odv].title}</p>
+              <p className="text-[10px] text-slate-500 mt-1">{odvDescriptions[numerology.odv].theme}</p>
+            </div>
+          )}
+          {(() => {
+            const kua = calculateKua(year, 'male');
+            return (
+              <div className="p-3 rounded-xl bg-orange-500/10 border border-orange-500/20">
+                <p className="text-[10px] text-orange-400 uppercase mb-1">🧭 Kua {kua.kuaNumber}</p>
+                <p className="text-xs font-medium text-orange-300">{kua.group === 'east' ? 'Východná' : 'Západná'} skupina</p>
+                <p className="text-[10px] text-slate-500 mt-1">Spálňa: {kua.bestForSleep} | Práca: {kua.bestForWork}</p>
+              </div>
+            );
+          })()}
+        </div>
+
+        {numerology.karmicDebts.length > 0 && (
+          <div className="mt-3 p-3 rounded-xl bg-red-500/10 border border-red-500/20">
+            <p className="text-[10px] text-red-400 uppercase mb-1">Karmické dlhy</p>
+            <p className="text-xs font-medium" style={{ color: '#dc2626' }}>
+              {numerology.karmicDebts.map(d => `${d.number} — ${d.theme}`).join(' | ')}
+            </p>
+          </div>
+        )}
+
         {/* Archetyp + Biorytmus + Kryštál */}
         {(() => {
           const archetype = deriveArchetype(numerology.lifePathNumber, enneagram.coreType, humanDesign.type);
@@ -602,7 +642,7 @@ export function ClientSummary({ clientName, birthDay, birthMonth, birthYear, num
           const dailyCrystal = getDailyCrystal(numerology.odv);
           const zodiacCrystals = getZodiacCrystals(astrology.sunSign.name);
           return (
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-5">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-3">
               <div className="p-3 rounded-xl bg-indigo-500/10 border border-indigo-500/20">
                 <p className="text-[10px] text-indigo-400 uppercase mb-1">🎭 Archetyp</p>
                 <p className="text-sm font-medium text-indigo-300">{archetype.primary.name}</p>

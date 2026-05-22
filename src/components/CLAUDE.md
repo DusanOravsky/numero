@@ -62,12 +62,20 @@ NumerologyPage bola zrefaktorovaná z ~1585 na ~1200 riadkov. Taby extrahované 
 | `NameTab` | Numerológia mena |
 | `EnneagramTab` | Enneagram typ, krídla, integrácia/dezintegrácia |
 
-## ModalityPage (v2.14.0)
+## ModalityPage (v2.59.0)
 
-Nová stránka `/modality` s 3 systémami:
-- **Ayurvéda** — dóša profil (Vata/Pitta/Kapha)
-- **TCM** — 5 elementov (Drevo/Oheň/Zem/Kov/Voda)
-- **Bachove kvety** — 17 esencií mapovaných na 7 čakier
+Stránka `/modality` s **6 tabmi** (URL-synced cez `?tab=`):
+
+| Tab | Obsah |
+|-----|-------|
+| `overview` (default) | Ako sa to počíta (6 kariet) + Tvoje čítanie personalizované |
+| `ayurveda` | Ayurvéda dóša + TCM 5 elementov |
+| `bach` | Bachove kvetové esencie (17 esencií × 7 čakier) |
+| `crystals` | Kristaloterapia — podľa znamenia, blokovaných čakier, ODV |
+| `archetype` | 12 Jungových archetypov (primárny/sekundárny/tieňový) |
+| `fengshui` | Kua číslo — priaznivé/nepriaznivé svetové strany |
+
+Hooks (`useSearchParams`, `useCallback`, `useMemo`) musia byť **pred** early return (`if (!data)`).
 
 ## Personalizované sprievodcovia "Tvoje čítanie" (v2.15.0+)
 

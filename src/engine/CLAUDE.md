@@ -313,6 +313,26 @@ export function calculateAstrology(day, month, year, hour = 12, minute = 0, ...)
 - Mapovanie z astro znamenia + ŽČ na 5 elementov
 - Vracia dominantný element + scoring
 
+## Biorytmus engine (`biorhythmEngine.ts`)
+
+- `calculateBiorhythm(day, month, year, date?)` — sin cykly: fyzický 23d, emocionálny 28d, intelektuálny 33d
+- Vracia -100 až +100 per kanál + phase (high/low/critical, critical = ±10% od nuly)
+- `getBiorhythmForDays(day, month, year, days?)` — pole pre graf (-7 dní až +days)
+
+## Archetyp engine (`archetypeEngine.ts`)
+
+- `deriveArchetype(lifePathNumber, enneagramType, hdType)` → primary, secondary, shadow
+- 12 archetypov: Nevinný, Mudrc, Prieskumník, Rebel, Mág, Hrdina, Milovník, Šašo, Opatrovateľ, Tvorca, Vládca, Každý človek
+- Konvergentné mapovanie z 3 systémov — ak 2+ systémy ukazujú na rovnaký archetyp, ten je primárny
+- Tieňový = protiklad primárneho (fixná mapa)
+
+## Kua engine (`kuaEngine.ts`)
+
+- `calculateKua(birthYear, gender)` → KuaResult (číslo, skupina, 4 favorable/unfavorable)
+- **Formula:** posledné 2 cifry roka → sum digits → pre-2000 muži: 11-sum, ženy: sum+4; post-2000 muži: 9-sum, ženy: sum+6
+- Kua 5 neexistuje → muži=2, ženy=8
+- Skupiny: East (1,3,4,9) / West (2,6,7,8)
+
 ## AI engine (`aiInterpretation.ts`)
 
 - Anthropic Claude direct browser call (`anthropic-dangerous-direct-browser-access: true`)

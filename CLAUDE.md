@@ -69,7 +69,7 @@ src/
   components/      # Reusable UI — viď src/components/CLAUDE.md
     numerology/    # NumerologyPage taby (PlanesTab, KarmicTab, LoveTab, NameTab, EnneagramTab)
   pages/           # Stránky (routes, lazy-loaded okrem Dashboard)
-    ModalityPage   # Ayurvéda + TCM + Bachove kvety (/modality)
+    ModalityPage   # 6 tabov: Prehľad, Ayurvéda & TCM, Bachove kvety, Kryštály, Archetyp, Feng Shui (/modality)
   store/           # Zustand store s migráciou (IndexedDB persist)
   layouts/         # MainLayout so sidebar/bottom nav
   styles/          # Tailwind + light mode overrides
@@ -291,6 +291,8 @@ App má pôvodný **dark-mode JSX** (`text-white`, `text-slate-300`, `bg-{color}
 3. **Karty s pastelovým bg** (`bg-{color}-500/10`) majú zvýšenú opacity 0.06 → 0.12-0.16 pre viditeľnosť na bielom pozadí. Bordery 0.15 → 0.30-0.40.
 
 **KRITICKÉ — wildcard trap [[feedback-css-override]]:** Selektor `[class*="bg-blue-5"]` zachytáva aj `bg-blue-50` (svetlé pastelové) aj `bg-blue-500` (tmavé saturated). Vždy použiť **presné classy** `.bg-blue-500`, `.bg-blue-600` — wildcardy lámu pastelové buttony (príklad: ProfileSetup "Muž" toggle — biely text na svetlom pozadí, neviditeľné).
+
+**KRITICKÉ — gradient opacity trap (v2.59.0+):** Selektor `[class*="bg-gradient-to"] .text-white` robí text biely aj vnútri svetlých gradientov (`from-orange-500/20 to-amber-500/20` = pastelové, opacity 20%). Na takých bg je biely text neviditeľný. **Riešenie:** na kartách s farebnými ale svetlými gradientmi použiť **inline style** (`style={{ color: '#1e293b' }}`) namiesto `text-white`. Príklad: HumanDesignPage typ karta.
 
 **Long-term refactor — TODO:** Odstrániť `.text-white !important` override úplne a manuálne prejsť ~270 výskytov v 44 súboroch (zmeniť `text-white` → `text-slate-800` na svetlých bg, ponechať na tmavých). Veľký zásah, samostatná session.
 

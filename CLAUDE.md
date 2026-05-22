@@ -1,6 +1,6 @@
 # Integrálna mapa bytia (Número)
 
-Offline-first PWA pre numerológiu, astrológiu, Human Design, etikoterapiu, kabalu, Theta Healing, Enneagram, Ayurvédu, TCM a sebarozvoj. **v2.50.0**
+Offline-first PWA pre numerológiu, astrológiu, Human Design, etikoterapiu, kabalu, Theta Healing, Enneagram, Ayurvédu, TCM, biorytmus, Jungove archetypy, kristaloterapiu, Feng Shui (Kua) a sebarozvoj. **v2.59.0**
 
 > 📁 **Nested CLAUDE.md súbory:**
 > - `src/engine/CLAUDE.md` — engine pravidlá, numerológia/astrológia/HD matematika
@@ -90,7 +90,7 @@ Anthropic Claude priamo z prehliadača (header `anthropic-dangerous-direct-brows
 - Settings → "✦ AI integrácia (Claude)" — input + Test + Save
 - Modely: Haiku 4.5 / Sonnet 4.6 (default) / Opus 4.7
 - **max_tokens**: 4096 (stream chat), 3500 (summarize)
-- **ProfileContext**: 11 systémov (numerológia, astrológia, HD, čakry, kabala, theta, enneagram, dosha, tcm, čínsky horoskop, jazyky lásky).
+- **ProfileContext**: 15 systémov (numerológia, astrológia, HD, čakry, kabala, theta, enneagram, dosha, tcm, čínsky horoskop, jazyky lásky, biorytmus, archetyp, kua, kristaloterapia).
 - **Interpretation lenses** (v2.3.0): integratívny ezoterický (default), logické úrovne (NLP/Dilts), etikoterapia (Vogeltanz/Bezděk), koučing (GROW). Volia sa v Settings, perzistované v `localStorage` pod `anthropic-lens`. Lens iba mení system prompt, žiadny vplyv na engine výpočty.
 - **Globálny AI drawer** (v2.33.0): floating ✦ button v `MainLayout` → slide-out panel s `AIChat`. Dostupný z hociktorej stránky. Lazy computation (engines sa počítajú až pri otvorení). Escape na zatvorenie. Nahrádza per-page AI sekcie (odstránené v v2.34.0).
 - Ponechaný len `ClientDashboard` AI chat (špecifický kontext klienta na konzultáciu).
@@ -105,6 +105,10 @@ Anthropic Claude priamo z prehliadača (header `anthropic-dangerous-direct-brows
 - **TCM 5 elementov** (`src/engine/tcmEngine.ts`) — Drevo/Oheň/Zem/Kov/Voda derivované z astro + ŽČ. Stránka `/modality`.
 - **Bachove kvety** — 17 esencií mapovaných na 7 čakier. Stránka `/modality`.
 - **Čínsky horoskop** (`src/engine/chineseZodiacEngine.ts`, `src/data/chineseZodiac.ts`) — 12 zvierat + 5 elementov + Yin/Yang. Výpočet z roku narodenia s korekciou podľa Lunárneho nového roka (tabuľka 1940-2030). Sekcia v AstrologyPage (ľavý stĺpec pod planétami). Výklad: povaha, silné stránky, výzvy, element, kompatibilita, odporúčanie, najbližší rok zvieraťa.
+- **Biorytmus** (`src/engine/biorhythmEngine.ts`) — fyzický (23d), emocionálny (28d), intelektuálny (33d) cyklus. Zobrazený v Dashboard (progress bary + denný tip). Derivovaný čisto z dátumu narodenia.
+- **Jungove archetypy** (`src/engine/archetypeEngine.ts`) — 12 archetypov (Nevinný, Mudrc, Prieskumník, Rebel, Mág, Hrdina, Milovník, Šašo, Opatrovateľ, Tvorca, Vládca, Každý človek). Primárny/sekundárny/tieňový derivované z ŽČ + Enneagram + HD typ. Stránka `/modality`.
+- **Kristaloterapia** (`src/data/crystals.ts`) — kryštály mapované na 7 čakier (3 per čakra), 9 ODV čísel, 12 znamení zodiaku. Dashboard: kryštál dňa. ModalityPage: podľa znamenia + blokovaných čakier.
+- **Kua číslo / Feng Shui** (`src/engine/kuaEngine.ts`) — osobné číslo z roku narodenia + pohlavie. 4 priaznivé a 4 nepriaznivé svetové strany. Praktické rady: kam orientovať posteľ, pracovný stôl, vchod. Stránka `/modality`.
 
 ## PDF export
 
@@ -113,6 +117,7 @@ Anthropic Claude priamo z prehliadača (header `anthropic-dangerous-direct-brows
 - Komponent: `components/ClientExport.tsx`
 - **Personalizované výklady** — za každou sekciou je fialový blok "Ako čítať" s konkrétnymi hodnotami (rovnaký koncept ako v appke)
 - jsPDF 4.x s custom font registráciou cez `addFileToVFS` + `addFont`
+- **Sekcie v PDF** (v2.59.0): Numerológia, Vývojová, Gene Keys, Astrológia (s natálnym kolieskom), Human Design (s bodygraphom), Enneagram, Čakry, Ayurvéda, TCM, Čínsky horoskop, ORV/OMV/ODV s popismi, Biorytmus, Jungov archetyp, Kristaloterapia, Kua Feng Shui, Jazyky lásky, Theta Healing, Kabala, Partnerská kompatibilita
 
 ## Performance & quality
 
@@ -221,7 +226,11 @@ Stratégia podľa [SemVer](https://semver.org/):
 
 ## Statické dáta
 
-- 230 citátov, 225 mantier, 22 tarot kariet × 12 rád
+- 228 citátov, 441 mantier (49 per ODV), 22 tarot kariet × 12 rád (rotujúci výber 2-3 per ODV)
+- 9 ORV popisov (ročné), 9 OMV popisov (mesačné), 9 ODV popisov (denné)
+- 5 rotujúcich afirmácií per ODV + sezónny kontext (jar/leto/jeseň/zima)
+- 21 kryštálov (7 čakier × 3) + 9 numerologických + 24 zodiacných (12 × 2)
+- 12 Jungových archetypov s motto, darom, tieňom, stratégiou
 
 ## Vzťahy a porovnania
 
@@ -234,11 +243,11 @@ Stratégia podľa [SemVer](https://semver.org/):
 - Všetky módy: localStorage persistence, editing mode (✎ button), reset len pre aktívny tab
 - **Client picker** (v2.45.0+) — vo všetkých 4 módoch tlačidlo "📋 Vybrať z klientov" nad PersonForm; otvorí dropdown s klientmi + vlastným profilom. `clientToPerson()` helper konvertuje `Client` → `PersonInput` (string fields).
 
-## Dashboard (v2.45.0+)
+## Dashboard (v2.59.0)
 
 Rozdelený na 3 vrstvy:
-- **Ranný brief** (vždy viditeľné) — privítanie, ORV/OMV/ODV, Jedna vec na dnes, Dnešná energia
-- **Detaily a inšpirácie** (`<details open>`) — Detail dennej energie, Mantra/Citát/Tarot
+- **Ranný brief** (vždy viditeľné) — privítanie, ORV/OMV/ODV, Jedna vec na dnes, Biorytmus + Kryštál dňa, Dnešná energia (sezónny kontext + rotujúca afirmácia)
+- **Detaily a inšpirácie** (`<details open>`) — Detail dennej energie (odvDescriptions), Detail mesačnej energie (omvDescriptions), Mantra/Citát/Tarot (s mesačnou kartou), Kalendár energie
 - **Hlbší profil** (`<details>` default closed) — Integrálny súhrn (ClientSummary), Export PDF
 
 Plus **Posledný klient shortcut** — amber karta hneď pod headerom, naviguje na `/clients/{id}` posledne otvoreného klienta (persisted v `localStorage['last-viewed-client']` cez `ClientDashboard` mount effect). Má ✕ dismiss button (v2.50.0+).

@@ -27,6 +27,9 @@
 | `ayurvedaEngine.ts` | Ayurvéda dóša scoring (Vata/Pitta/Kapha) z astro elementu + HD typu + ŽČ |
 | `tcmEngine.ts` | TCM 5 elementov (Drevo/Oheň/Zem/Kov/Voda) scoring z astro + ŽČ |
 | `chineseZodiacEngine.ts` | Čínsky horoskop — 12 zvierat + 5 elementov + Yin/Yang + najbližší rok |
+| `biorhythmEngine.ts` | Biorytmus — fyzický (23d), emocionálny (28d), intelektuálny (33d) cyklus |
+| `archetypeEngine.ts` | 12 Jungových archetypov derivovaných z ŽČ + Enneagram + HD typ |
+| `kuaEngine.ts` | Kua číslo (Feng Shui) — priaznivé/nepriaznivé svetové strany z roku + pohlavia |
 | `aiInterpretation.ts` | Claude API client (single-shot + streaming chat) |
 
 ## Numerológia (podľa PDF Škola NUMERO + Robin Steinová)
@@ -316,7 +319,7 @@ export function calculateAstrology(day, month, year, hour = 12, minute = 0, ...)
 - API kľúč v `localStorage` pod `anthropic-api-key`
 - Default model: `claude-sonnet-4-6`
 - **max_tokens**: 4096 (streamChat), 3500 (summarizeProfile)
-- **ProfileContext**: rozšírený o `enneagram`, `dosha`, `tcm` polia (9 systémov celkovo)
+- **ProfileContext**: rozšírený o `enneagram`, `dosha`, `tcm`, `archetype`, `biorhythm`, `kua`, `crystals` polia (15 systémov celkovo)
 - `summarizeProfile(ctx)` — buduje text prompt zo všetkých systémov
 - `streamChat(messages, systemContext, onChunk, abortSignal)` — SSE streaming
 - `testApiKey(key)` — overenie cez ping na Haiku

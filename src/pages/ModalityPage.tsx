@@ -107,7 +107,7 @@ export function ModalityPage() {
 
   // Tab routing (hooks musia byť pred early return)
   const [searchParams, setSearchParams] = useSearchParams();
-  const activeTab = searchParams.get('tab') || 'ayurveda';
+  const activeTab = searchParams.get('tab') || 'overview';
   const setTab = useCallback((tab: string) => {
     setSearchParams(prev => { prev.set('tab', tab); return prev; }, { replace: true });
   }, [setSearchParams]);
@@ -149,6 +149,7 @@ export function ModalityPage() {
   const archetype = data.archetype;
 
   const TABS = [
+    { id: 'overview', label: 'Prehľad', icon: '◉' },
     { id: 'ayurveda', label: 'Ayurvéda & TCM', icon: '🌿' },
     { id: 'bach', label: 'Bachove kvety', icon: '✿' },
     { id: 'crystals', label: 'Kryštály', icon: '💎' },
@@ -207,7 +208,7 @@ export function ModalityPage() {
       </div>
 
       {/* ═══ TAB CONTENT ═══ */}
-      {activeTab === 'ayurveda' && (<>
+      {activeTab === 'overview' && (<>
       {/* Ako sa to počíta — vysvetlenie pre laikov */}
       <GlassCard>
         <h3 className="font-medium text-white mb-3">Ako sa to počíta</h3>
@@ -366,7 +367,9 @@ export function ModalityPage() {
           </div>
         </details>
       </GlassCard>
+      </>)}
 
+      {activeTab === 'ayurveda' && (<>
       {/* Ayurvéda */}
       <GlassCard delay={0.1}>
         <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">

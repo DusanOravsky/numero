@@ -377,12 +377,18 @@ export function Dashboard() {
               const intType = enneagramTypes[fullResults.enneagram.integrationDirection];
               const growthPath = enneagramTypes[fullResults.enneagram.coreType].growthPath;
               const sentences = growthPath.split('. ').filter(s => s.length > 10);
+              if (sentences.length === 0) return (
+                <div className="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+                  <p className="text-xs text-emerald-300 font-medium">Enneagram: smeruj k {intType?.name}</p>
+                </div>
+              );
               const dayOfYear = Math.floor((today.getTime() - new Date(currentYear, 0, 0).getTime()) / 86400000);
               const tipIdx = dayOfYear % sentences.length;
+              const tip = sentences[tipIdx];
               return (
                 <div className="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
                   <p className="text-xs text-emerald-300 font-medium">Enneagram: smeruj k {intType?.name}</p>
-                  <p className="text-[10px] text-emerald-400/80 mt-0.5 italic">{sentences[tipIdx]}{sentences[tipIdx].endsWith('.') ? '' : '.'}</p>
+                  <p className="text-[10px] text-emerald-400/80 mt-0.5 italic">{tip}{tip.endsWith('.') ? '' : '.'}</p>
                 </div>
               );
             })()}

@@ -664,20 +664,26 @@ export function ModalityPage() {
         <h2 className="font-serif text-xl font-bold text-white mb-1 flex items-center gap-2">
           <span className="text-2xl">💎</span> Kristaloterapia
         </h2>
-        <p className="text-xs text-slate-400 mb-4">Kryštály podľa vášho znamenia, blokovaných čakier a ODV čísla.</p>
+        <p className="text-xs text-slate-400 mb-4">
+          Ako {sunSign} s životným číslom {data.lifePathNumber} máte prirodzenú rezonanciu s určitými minerálmi.
+          {data.blockedChakras.length > 0
+            ? ` Vaše blokované čakry (${data.blockedChakras.join(', ')}) potrebujú podporu — kryštály nižšie sú vybrané presne pre vás.`
+            : ' Vaše čakry sú vyvážené — kryštály znamenia posilnia to, čo už funguje.'}
+        </p>
 
         {zodiacCrystals.length > 0 && (
           <div className="mb-4">
-            <h3 className="text-sm font-medium text-slate-700 mb-2">Kryštály pre vaše znamenie ({sunSign})</h3>
+            <h3 className="text-sm font-medium text-slate-700 mb-2">Kryštály pre {sunSign}</h3>
+            <p className="text-xs text-slate-400 mb-3">Tieto kamene rezonujú s energiou vášho slnečného znamenia. Nos ich blízko tela alebo ich používajte pri meditácii.</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {zodiacCrystals.map(c => (
                 <div key={c.name} className="p-3 rounded-xl bg-violet-500/10 border border-violet-500/20">
                   <div className="flex items-center gap-2 mb-1">
-                    <div className="w-4 h-4 rounded-full" style={{ backgroundColor: c.color }} />
+                    <div className="w-5 h-5 rounded-full border-2" style={{ backgroundColor: c.color, borderColor: c.color + '60' }} />
                     <span className="text-sm font-medium text-violet-300">{c.name}</span>
                   </div>
                   <p className="text-xs text-slate-400">{c.properties}</p>
-                  <p className="text-[10px] text-slate-500 mt-1 italic">{c.usage}</p>
+                  <p className="text-[10px] text-slate-500 mt-1 italic">💡 {c.usage}</p>
                 </div>
               ))}
             </div>
@@ -686,22 +692,30 @@ export function ModalityPage() {
 
         {blockedCrystals.length > 0 && (
           <div className="mb-4">
-            <h3 className="text-sm font-medium text-slate-700 mb-2">Pre blokované čakry</h3>
+            <h3 className="text-sm font-medium text-slate-700 mb-2">Liečivé kryštály pre vaše blokované čakry</h3>
+            <p className="text-xs text-slate-400 mb-3">Tieto kamene pomáhajú uvoľniť energetické bloky. Prikladajte na zodpovedajúcu čakru počas meditácie (5-15 min).</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {blockedCrystals.map(c => (
                 <div key={c.name + c.chakra} className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20">
                   <div className="flex items-center gap-2 mb-1">
-                    <div className="w-4 h-4 rounded-full" style={{ backgroundColor: c.color }} />
+                    <div className="w-5 h-5 rounded-full border-2" style={{ backgroundColor: c.color, borderColor: c.color + '60' }} />
                     <span className="text-sm font-medium text-rose-300">{c.name}</span>
-                    <span className="text-[9px] text-slate-500">čakra {c.chakra}</span>
+                    <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-rose-500/20 text-rose-400">čakra {c.chakra}</span>
                   </div>
                   <p className="text-xs text-slate-400">{c.properties}</p>
-                  <p className="text-[10px] text-slate-500 mt-1 italic">{c.usage}</p>
+                  <p className="text-[10px] text-slate-500 mt-1 italic">💡 {c.usage}</p>
                 </div>
               ))}
             </div>
           </div>
         )}
+
+        <div className="p-3 rounded-xl bg-slate-500/10 border border-slate-500/20 mt-4">
+          <p className="text-[10px] text-slate-500 uppercase mb-1">Ako pracovať s kryštálmi</p>
+          <p className="text-xs text-slate-400">
+            Pred prvým použitím kameň očistite (prúdiacou vodou, slnkom, alebo selenitom). Nabite ho úmyslom — držte v rukách a vizualizujte čo chcete dosiahnuť. Nos pri sebe, na nočnom stolíku, alebo prikladajte na čakru. Kryštál dňa (podľa ODV) sa mení — reaguje na dennú energiu.
+          </p>
+        </div>
       </GlassCard>
 
       </>)}
@@ -713,29 +727,42 @@ export function ModalityPage() {
           <h2 className="font-serif text-xl font-bold text-white mb-1 flex items-center gap-2">
             <span className="text-2xl">🎭</span> Jungov archetyp
           </h2>
-          <p className="text-xs text-slate-400 mb-4">Derivovaný z vášho ŽČ, Enneagramu a HD typu.</p>
+          <p className="text-xs text-slate-400 mb-4">
+            Váš životný príbeh sa odvíja cez archetyp <strong className="text-indigo-300">{archetype.primary.name}</strong>.
+            S ŽČ {data.lifePathNumber} a znamením {sunSign} prirodzene hráte túto rolu vo svete — nie je to maška, je to vaša podstata.
+          </p>
 
-          <div className="p-4 rounded-xl bg-indigo-500/10 border border-indigo-500/20 mb-3">
-            <p className="text-xs text-indigo-400 uppercase mb-1">Primárny archetyp</p>
+          <div className="p-4 rounded-xl bg-indigo-500/10 border border-indigo-500/20 mb-4">
+            <p className="text-xs text-indigo-400 uppercase mb-1">Primárny archetyp — kto ste vo svete</p>
             <p className="text-lg font-bold text-indigo-300">{archetype.primary.name}</p>
             <p className="text-sm text-slate-400 italic mb-2">„{archetype.primary.motto}"</p>
-            <p className="text-xs text-slate-400"><strong className="text-slate-300">Dar:</strong> {archetype.primary.gift}</p>
-            <p className="text-xs text-slate-400"><strong className="text-slate-300">Stratégia:</strong> {archetype.primary.strategy}</p>
+            <p className="text-xs text-slate-400 mb-1"><strong className="text-slate-300">Základná túžba:</strong> {archetype.primary.coreDesire}</p>
+            <p className="text-xs text-slate-400 mb-1"><strong className="text-slate-300">Dar:</strong> {archetype.primary.gift}</p>
+            <p className="text-xs text-slate-400"><strong className="text-slate-300">Stratégia na každý deň:</strong> {archetype.primary.strategy}</p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
             <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20">
-              <p className="text-[10px] text-purple-400 uppercase mb-1">Sekundárny</p>
+              <p className="text-[10px] text-purple-400 uppercase mb-1">Sekundárny — skrytá stránka</p>
               <p className="text-sm font-medium text-purple-300">{archetype.secondary.name}</p>
-              <p className="text-[10px] text-slate-400 italic">„{archetype.secondary.motto}"</p>
-              <p className="text-xs text-slate-400 mt-1">{archetype.secondary.gift}</p>
+              <p className="text-[10px] text-slate-400 italic mb-1">„{archetype.secondary.motto}"</p>
+              <p className="text-xs text-slate-400">{archetype.secondary.gift}</p>
+              <p className="text-xs text-slate-500 mt-1">Toto je energia, ku ktorej sa obraciate v kľúčových momentoch — keď primárny archetyp nestačí.</p>
             </div>
             <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20">
-              <p className="text-[10px] text-rose-400 uppercase mb-1">Tieňový</p>
+              <p className="text-[10px] text-rose-400 uppercase mb-1">Tieňový — výzva k integrácii</p>
               <p className="text-sm font-medium text-rose-300">{archetype.shadow.name}</p>
-              <p className="text-[10px] text-slate-400 italic">„{archetype.shadow.motto}"</p>
-              <p className="text-xs text-slate-400 mt-1">{archetype.shadow.shadow}</p>
+              <p className="text-[10px] text-slate-400 italic mb-1">„{archetype.shadow.motto}"</p>
+              <p className="text-xs text-slate-400">{archetype.shadow.shadow}</p>
+              <p className="text-xs text-slate-500 mt-1">Keď sa cítite v nerovnováhe, pravdepodobne žijete tento tieň. Rozpoznajte ho bez súdenia.</p>
             </div>
+          </div>
+
+          <div className="p-3 rounded-xl bg-slate-500/10 border border-slate-500/20">
+            <p className="text-[10px] text-slate-500 uppercase mb-1">Ako pracovať s archetypom</p>
+            <p className="text-xs text-slate-400">
+              Primárny archetyp nie je cieľ — je to štartovací bod. Cieľom je integrovať všetky tri: žiť dar primárneho, rozvíjať múdrosť sekundárneho a s láskou prijať tieňového. Všímajte si, kedy počas dňa „hráte" ktorú rolu — a či je to vedomá voľba.
+            </p>
           </div>
         </GlassCard>
       )}
@@ -749,50 +776,67 @@ export function ModalityPage() {
           <h2 className="font-serif text-xl font-bold text-white mb-1 flex items-center gap-2">
             <span className="text-2xl">🧭</span> Kua číslo (Feng Shui)
           </h2>
-          <p className="text-xs text-slate-400 mb-4">Vaše osobné číslo určuje priaznivé svetové strany pre spánok, prácu a vstup.</p>
+          <p className="text-xs text-slate-400 mb-4">
+            Vaše Kua číslo je <strong className="text-amber-300">{kuaResult.kuaNumber}</strong> ({kuaResult.group === 'east' ? 'Východná' : 'Západná'} skupina, element {kuaResult.element}).
+            Toto číslo určuje, ktoré svetové strany vám prinášajú energiu a ktoré ju odoberajú — ovplyvňuje kvalitu spánku, produktivitu pri práci a tok energie vo vašom domove.
+          </p>
 
           <div className="flex items-center gap-4 mb-4">
             <div className="w-14 h-14 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-2xl font-bold text-white">
               {kuaResult.kuaNumber}
             </div>
             <div>
-              <p className="text-sm font-medium text-slate-700">Skupina: {kuaResult.group === 'east' ? 'Východná' : 'Západná'}</p>
-              <p className="text-xs text-slate-500">Element: {kuaResult.element}</p>
+              <p className="text-sm font-medium text-slate-700">{kuaResult.group === 'east' ? 'Východná' : 'Západná'} skupina</p>
+              <p className="text-xs text-slate-500">Element: {kuaResult.element} | Rok: {profile?.birthYear}</p>
             </div>
           </div>
 
+          <h3 className="text-sm font-medium text-slate-700 mb-2">Praktické odporúčania pre váš priestor</h3>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-4">
-            <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-center">
-              <p className="text-[10px] text-emerald-400 uppercase">Spálňa</p>
+            <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
+              <p className="text-[10px] text-emerald-400 uppercase">🛏 Spálňa / Hlava</p>
               <p className="text-sm font-bold text-emerald-300">{kuaResult.bestForSleep}</p>
+              <p className="text-[10px] text-slate-500 mt-1">Orientujte hlavu postele smerom na {kuaResult.bestForSleep} pre hlbší a regeneratívnejší spánok.</p>
             </div>
-            <div className="p-3 rounded-xl bg-blue-500/10 border border-blue-500/20 text-center">
-              <p className="text-[10px] text-blue-400 uppercase">Pracovný stôl</p>
+            <div className="p-3 rounded-xl bg-blue-500/10 border border-blue-500/20">
+              <p className="text-[10px] text-blue-400 uppercase">💻 Pracovný stôl</p>
               <p className="text-sm font-bold text-blue-300">{kuaResult.bestForWork}</p>
+              <p className="text-[10px] text-slate-500 mt-1">Seďte čelom na {kuaResult.bestForWork} pri práci vyžadujúcej sústredenie a kreativitu.</p>
             </div>
-            <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-center">
-              <p className="text-[10px] text-amber-400 uppercase">Vstup</p>
+            <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
+              <p className="text-[10px] text-amber-400 uppercase">🚪 Hlavný vstup</p>
               <p className="text-sm font-bold text-amber-300">{kuaResult.bestForEntrance}</p>
+              <p className="text-[10px] text-slate-500 mt-1">Ak máte voľbu, vstupujte do domu z {kuaResult.bestForEntrance} — prináša pozitívnu Chi.</p>
             </div>
           </div>
 
-          <details open>
-            <summary className="text-[11px] text-indigo-400 cursor-pointer hover:text-indigo-300">Všetky priaznivé a nepriaznivé smery</summary>
-            <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-2">
-              <div>
-                <p className="text-[10px] text-emerald-400 uppercase mb-1">Priaznivé</p>
-                {kuaResult.favorable.map(d => (
-                  <p key={d.direction} className="text-xs text-slate-400">✓ {d.direction} — {d.meaning}</p>
-                ))}
-              </div>
-              <div>
-                <p className="text-[10px] text-rose-400 uppercase mb-1">Nepriaznivé</p>
-                {kuaResult.unfavorable.map(d => (
-                  <p key={d.direction} className="text-xs text-slate-400">✗ {d.direction}</p>
-                ))}
-              </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+            <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
+              <p className="text-[10px] text-emerald-400 uppercase mb-2">✓ Priaznivé smery</p>
+              {kuaResult.favorable.map(d => (
+                <div key={d.direction} className="mb-1.5">
+                  <p className="text-xs text-slate-300 font-medium">✓ {d.direction}</p>
+                  <p className="text-[10px] text-slate-500">{d.meaning} — {d.use}</p>
+                </div>
+              ))}
             </div>
-          </details>
+            <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20">
+              <p className="text-[10px] text-rose-400 uppercase mb-2">✗ Nepriaznivé smery</p>
+              {kuaResult.unfavorable.map(d => (
+                <div key={d.direction} className="mb-1.5">
+                  <p className="text-xs text-slate-300 font-medium">✗ {d.direction}</p>
+                  <p className="text-[10px] text-slate-500">{d.meaning}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="p-3 rounded-xl bg-slate-500/10 border border-slate-500/20">
+            <p className="text-[10px] text-slate-500 uppercase mb-1">Praktický tip</p>
+            <p className="text-xs text-slate-400">
+              Ak nemôžete zmeniť orientáciu postele alebo stola, umiestnite do priaznivého smeru aspoň symbolický prvok — kryštál, rastlinu, alebo zrkadlo. Najdôležitejší je smer spánku (hlava) — tam trávite 8h denne.
+            </p>
+          </div>
         </GlassCard>
       )}
 

@@ -120,6 +120,10 @@ export interface ProfileContext {
   chakras?: Array<{ name: string; status: string; score: number }>;
   geneKeys?: Array<{ gate: number; shadow: string; gift: string; siddhi: string }>;
   loveLanguages?: Array<{ language: string; score: number }>;
+  archetype?: { primary: string; secondary: string; shadow: string };
+  biorhythm?: { physical: number; emotional: number; intellectual: number };
+  kua?: { number: number; group: string; bestForSleep: string; bestForWork: string };
+  crystals?: { zodiac: string[]; daily: string };
   interpretation?: {
     mainLifeTheme: string;
     currentLesson: string;
@@ -267,6 +271,31 @@ export function summarizeProfile(ctx: ProfileContext): string {
   if (ctx.loveLanguages && ctx.loveLanguages.length > 0) {
     lines.push('=== JAZYKY LÁSKY ===');
     lines.push(`Top 3: ${ctx.loveLanguages.slice(0, 3).map(l => `${l.language} (${l.score})`).join(', ')}`);
+    lines.push('');
+  }
+
+  if (ctx.archetype) {
+    lines.push('=== JUNGOV ARCHETYP ===');
+    lines.push(`Primárny: ${ctx.archetype.primary} | Sekundárny: ${ctx.archetype.secondary} | Tieňový: ${ctx.archetype.shadow}`);
+    lines.push('');
+  }
+
+  if (ctx.biorhythm) {
+    lines.push('=== BIORYTMUS (dnes) ===');
+    lines.push(`Fyzický: ${ctx.biorhythm.physical}% | Emocionálny: ${ctx.biorhythm.emotional}% | Intelektuálny: ${ctx.biorhythm.intellectual}%`);
+    lines.push('');
+  }
+
+  if (ctx.kua) {
+    lines.push('=== KUA (Feng Shui) ===');
+    lines.push(`Kua ${ctx.kua.number} (${ctx.kua.group}) | Spálňa: ${ctx.kua.bestForSleep} | Práca: ${ctx.kua.bestForWork}`);
+    lines.push('');
+  }
+
+  if (ctx.crystals) {
+    lines.push('=== KRISTALOTERAPIA ===');
+    if (ctx.crystals.zodiac.length > 0) lines.push(`Znamenie: ${ctx.crystals.zodiac.join(', ')}`);
+    lines.push(`Kryštál dňa: ${ctx.crystals.daily}`);
     lines.push('');
   }
 

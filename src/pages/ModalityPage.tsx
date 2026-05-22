@@ -13,6 +13,13 @@ import { deriveTCMElement } from '../engine/tcmEngine';
 import { DOSHA_INFO } from '../data/ayurveda';
 import { TCM_ELEMENTS } from '../data/tcm';
 import { BACH_FLOWERS_BY_CHAKRA } from '../data/bachFlowers';
+import { getZodiacCrystals, getBlockedChakraCrystals } from '../data/crystals';
+import { deriveArchetype } from '../engine/archetypeEngine';
+import type { ArchetypeResult } from '../engine/archetypeEngine';
+import { calculateKua } from '../engine/kuaEngine';
+import type { KuaResult } from '../engine/kuaEngine';
+import { deriveEnneagramType } from '../engine/enneagramEngine';
+import { calculateDevelopmentalNumerology } from '../engine/developmentalNumerologyEngine';
 import type { DoshaProfile } from '../data/ayurveda';
 import type { TCMResult } from '../engine/tcmEngine';
 import type { ChakraState } from '../engine/chakraEngine';
@@ -23,6 +30,10 @@ interface ModalityData {
   tcm: TCMResult;
   chakras: ChakraState[];
   blockedChakras: number[];
+  sunSign: string;
+  archetype: ArchetypeResult | null;
+  kua: KuaResult | null;
+  lifePathNumber: number;
 }
 
 function computeModality(
@@ -48,7 +59,19 @@ function computeModality(
     .filter(c => c.status === 'blocked')
     .map(c => c.chakra.number);
 
-  return { dosha, tcm, chakras, blockedChakras };
+  const devNum = calculateDevelopmentalNumerology(day, month, year);
+  const enneagram = deriveEnneagramType(numerology, devNum, 'developmental');
+  const archetype = enneagram
+    ? deriveArchetype(numerology.lifePathNumber, enneagram.coreType, hd.type)
+    : null;
+
+  return {
+    dosha, tcm, chakras, blockedChakras,
+    sunSign: astrology.sunSign.name,
+    archetype,
+    kua: null,
+    lifePathNumber: numerology.lifePathNumber,
+  };
 }
 
 export function ModalityPage() {
@@ -104,6 +127,19 @@ export function ModalityPage() {
       recommendedFlowers.push(...flowers);
     }
   }
+
+  // Kryštály, archetypy, Kua
+  const sunSign = data.sunSign;
+  const zodiacCrystals = getZodiacCrystals(sunSign);
+  const blockedCrystals = getBlockedChakraCrystals(data.blockedChakras);
+  const archetype = data.archetype;
+
+  // Kua — potrebuje pohlavie z profilu
+  const kuaResult = useMemo<KuaResult | null>(() => {
+    if (!profile) return null;
+    const gender = (profile as { gender?: string }).gender === 'female' ? 'female' : 'male';
+    return calculateKua(profile.birthYear, gender as 'male' | 'female');
+  }, [profile]);
 
   return (
     <div className="space-y-6">
@@ -518,6 +554,137 @@ export function ModalityPage() {
           Bachove kvetové esencie sú jemná energetická podpora. Nie sú náhradou za odbornú lekársku starostlivosť.
         </p>
       </GlassCard>
+
+      {/* === KRISTALOTERAPIA === */}
+      <GlassCard>
+        <h2 className="font-serif text-xl font-bold text-white mb-1 flex items-center gap-2">
+          <span className="text-2xl">💎</span> Kristaloterapia
+        </h2>
+        <p className="text-xs text-slate-400 mb-4">Kryštály podľa vášho znamenia, blokovaných čakier a ODV čísla.</p>
+
+        {zodiacCrystals.length > 0 && (
+          <div className="mb-4">
+            <h3 className="text-sm font-medium text-slate-700 mb-2">Kryštály pre vaše znamenie ({sunSign})</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              {zodiacCrystals.map(c => (
+                <div key={c.name} className="p-3 rounded-xl bg-violet-500/10 border border-violet-500/20">
+                  <div className="flex items-center gap-2 mb-1">
+                    <div className="w-4 h-4 rounded-full" style={{ backgroundColor: c.color }} />
+                    <span className="text-sm font-medium text-violet-300">{c.name}</span>
+                  </div>
+                  <p className="text-xs text-slate-400">{c.properties}</p>
+                  <p className="text-[10px] text-slate-500 mt-1 italic">{c.usage}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {blockedCrystals.length > 0 && (
+          <div className="mb-4">
+            <h3 className="text-sm font-medium text-slate-700 mb-2">Pre blokované čakry</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              {blockedCrystals.map(c => (
+                <div key={c.name + c.chakra} className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20">
+                  <div className="flex items-center gap-2 mb-1">
+                    <div className="w-4 h-4 rounded-full" style={{ backgroundColor: c.color }} />
+                    <span className="text-sm font-medium text-rose-300">{c.name}</span>
+                    <span className="text-[9px] text-slate-500">čakra {c.chakra}</span>
+                  </div>
+                  <p className="text-xs text-slate-400">{c.properties}</p>
+                  <p className="text-[10px] text-slate-500 mt-1 italic">{c.usage}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </GlassCard>
+
+      {/* === JUNGOVE ARCHETYPY === */}
+      {archetype && (
+        <GlassCard>
+          <h2 className="font-serif text-xl font-bold text-white mb-1 flex items-center gap-2">
+            <span className="text-2xl">🎭</span> Jungov archetyp
+          </h2>
+          <p className="text-xs text-slate-400 mb-4">Derivovaný z vášho ŽČ, Enneagramu a HD typu.</p>
+
+          <div className="p-4 rounded-xl bg-indigo-500/10 border border-indigo-500/20 mb-3">
+            <p className="text-xs text-indigo-400 uppercase mb-1">Primárny archetyp</p>
+            <p className="text-lg font-bold text-indigo-300">{archetype.primary.name}</p>
+            <p className="text-sm text-slate-400 italic mb-2">„{archetype.primary.motto}"</p>
+            <p className="text-xs text-slate-400"><strong className="text-slate-300">Dar:</strong> {archetype.primary.gift}</p>
+            <p className="text-xs text-slate-400"><strong className="text-slate-300">Stratégia:</strong> {archetype.primary.strategy}</p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20">
+              <p className="text-[10px] text-purple-400 uppercase mb-1">Sekundárny</p>
+              <p className="text-sm font-medium text-purple-300">{archetype.secondary.name}</p>
+              <p className="text-[10px] text-slate-400 italic">„{archetype.secondary.motto}"</p>
+              <p className="text-xs text-slate-400 mt-1">{archetype.secondary.gift}</p>
+            </div>
+            <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20">
+              <p className="text-[10px] text-rose-400 uppercase mb-1">Tieňový</p>
+              <p className="text-sm font-medium text-rose-300">{archetype.shadow.name}</p>
+              <p className="text-[10px] text-slate-400 italic">„{archetype.shadow.motto}"</p>
+              <p className="text-xs text-slate-400 mt-1">{archetype.shadow.shadow}</p>
+            </div>
+          </div>
+        </GlassCard>
+      )}
+
+      {/* === KUA ČÍSLO (FENG SHUI) === */}
+      {kuaResult && (
+        <GlassCard>
+          <h2 className="font-serif text-xl font-bold text-white mb-1 flex items-center gap-2">
+            <span className="text-2xl">🧭</span> Kua číslo (Feng Shui)
+          </h2>
+          <p className="text-xs text-slate-400 mb-4">Vaše osobné číslo určuje priaznivé svetové strany pre spánok, prácu a vstup.</p>
+
+          <div className="flex items-center gap-4 mb-4">
+            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-2xl font-bold text-white">
+              {kuaResult.kuaNumber}
+            </div>
+            <div>
+              <p className="text-sm font-medium text-slate-700">Skupina: {kuaResult.group === 'east' ? 'Východná' : 'Západná'}</p>
+              <p className="text-xs text-slate-500">Element: {kuaResult.element}</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-4">
+            <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-center">
+              <p className="text-[10px] text-emerald-400 uppercase">Spálňa</p>
+              <p className="text-sm font-bold text-emerald-300">{kuaResult.bestForSleep}</p>
+            </div>
+            <div className="p-3 rounded-xl bg-blue-500/10 border border-blue-500/20 text-center">
+              <p className="text-[10px] text-blue-400 uppercase">Pracovný stôl</p>
+              <p className="text-sm font-bold text-blue-300">{kuaResult.bestForWork}</p>
+            </div>
+            <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-center">
+              <p className="text-[10px] text-amber-400 uppercase">Vstup</p>
+              <p className="text-sm font-bold text-amber-300">{kuaResult.bestForEntrance}</p>
+            </div>
+          </div>
+
+          <details>
+            <summary className="text-[11px] text-indigo-400 cursor-pointer hover:text-indigo-300">Všetky priaznivé a nepriaznivé smery</summary>
+            <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <div>
+                <p className="text-[10px] text-emerald-400 uppercase mb-1">Priaznivé</p>
+                {kuaResult.favorable.map(d => (
+                  <p key={d.direction} className="text-xs text-slate-400">✓ {d.direction} — {d.meaning}</p>
+                ))}
+              </div>
+              <div>
+                <p className="text-[10px] text-rose-400 uppercase mb-1">Nepriaznivé</p>
+                {kuaResult.unfavorable.map(d => (
+                  <p key={d.direction} className="text-xs text-slate-400">✗ {d.direction}</p>
+                ))}
+              </div>
+            </div>
+          </details>
+        </GlassCard>
+      )}
 
     </div>
   );

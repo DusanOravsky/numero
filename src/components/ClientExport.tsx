@@ -16,6 +16,10 @@ import { evaluateChakras } from '../engine/chakraEngine';
 import { deriveDosha } from '../engine/ayurvedaEngine';
 import { deriveTCMElement } from '../engine/tcmEngine';
 import { calculateChineseZodiac } from '../engine/chineseZodiacEngine';
+import { calculateBiorhythm } from '../engine/biorhythmEngine';
+import { deriveArchetype } from '../engine/archetypeEngine';
+import { calculateKua } from '../engine/kuaEngine';
+import { getDailyCrystal, getZodiacCrystals, getBlockedChakraCrystals } from '../data/crystals';
 import { planetInSignDescriptions, cycleVibrationDescriptions } from '../data/planetSignDescriptions';
 import { getGeneKeyByGate } from '../data/geneKeys';
 import { orvDescriptions } from '../data/orvDescriptions';
@@ -522,8 +526,8 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
                 addSection('ENNEAGRAM', 'emerald');
                 const coreType = enneagramTypes[enneagram.coreType];
                 addBoldLine(`Typ ${enneagram.coreType} — ${coreType?.name || ''}`);
-                if (coreType?.description) addLine(coreType.description.slice(0, 200));
-                addLine(`Krídlo: ${enneagram.wing} | Integrácia → ${enneagram.integrationDirection} | Stres → ${enneagram.stressDirection}`);
+                if (coreType?.motivation) addLine(coreType.motivation.slice(0, 200));
+                addLine(`Krídlo: ${enneagram.dominantWing || enneagram.wing1} | Integrácia → ${enneagram.integrationDirection} | Stres → ${enneagram.disintegrationDirection}`);
                 if (coreType?.growthPath) {
                   addSpace();
                   addBoldLine('Cesta rastu:');
@@ -540,12 +544,12 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
               const balanced = chakras.filter(ch => ch.status === 'balanced');
               if (blocked.length > 0) {
                 addBoldLine('Blokované:');
-                blocked.forEach(ch => addLine(`  ${ch.name} (${ch.score}/100) — ${ch.description.slice(0, 80)}`));
+                blocked.forEach(ch => addLine(`  ${ch.chakra.name} (${ch.score}/100)`));
                 addSpace();
               }
               if (balanced.length > 0) {
                 addBoldLine('Vyvážené:');
-                balanced.forEach(ch => addLine(`  ${ch.name} (${ch.score}/100)`));
+                balanced.forEach(ch => addLine(`  ${ch.chakra.name} (${ch.score}/100)`));
                 addSpace();
               }
               addInterpretation(
@@ -558,28 +562,21 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
               const dosha = deriveDosha(numerology, astrology, humanDesign);
               addSection('AYURVÉDA', 'amber');
               addBoldLine(`Dominantná dóša: ${dosha.primary}`);
-              addLine(`Sekundárna: ${dosha.secondary}`);
-              addLine(`Vata: ${dosha.scores.vata}% | Pitta: ${dosha.scores.pitta}% | Kapha: ${dosha.scores.kapha}%`);
-              if (dosha.tips?.length) {
-                addSpace();
-                addBoldLine('Odporúčania:');
-                dosha.tips.slice(0, 3).forEach(t => addLine(`  • ${t}`));
-              }
+              addLine(`Sekundárna: ${dosha.secondary || 'žiadna'}`);
+              addLine(`Dominancia: ${dosha.balance}%`);
               addSpace();
 
               // === TCM ===
               const tcm = deriveTCMElement(numerology, astrology);
               addSection('TCM — 5 ELEMENTOV', 'emerald');
               addBoldLine(`Dominantný element: ${tcm.primary}`);
-              addLine(`Orgán: ${tcm.organ} | Emócia: ${tcm.emotion} | Cnosť: ${tcm.virtue}`);
-              if (tcm.advice) addLine(`Rada: ${tcm.advice}`);
+              addLine(`Sekundárny element: ${tcm.secondary}`);
               addSpace();
 
               // === ČÍNSKY HOROSKOP ===
               const chineseZodiac = calculateChineseZodiac(client.birthYear);
               addSection('ČÍNSKY HOROSKOP', 'red');
-              addBoldLine(`${chineseZodiac.animal} — ${chineseZodiac.element} (${chineseZodiac.yinYang})`);
-              if (chineseZodiac.traits) addLine(chineseZodiac.traits.slice(0, 200));
+              addBoldLine(`${chineseZodiac.animal} — ${chineseZodiac.element} (${chineseZodiac.polarity})`);
               addSpace();
 
               // === ORV / OMV / ODV S POPISMI ===
@@ -592,6 +589,55 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
               addSpace();
               addBoldLine(`ODV ${numerology.odv} — ${odvDescriptions[numerology.odv]?.title || ''}`);
               addLine(odvDescriptions[numerology.odv]?.advice || '');
+              addSpace();
+
+              // === BIORYTMUS ===
+              const biorhythm = calculateBiorhythm(client.birthDay, client.birthMonth, client.birthYear);
+              addSection('BIORYTMUS', 'cyan');
+              addLine(`Fyzický: ${biorhythm.physical > 0 ? '+' : ''}${biorhythm.physical}% (${biorhythm.physicalPhase === 'high' ? 'vysoký' : biorhythm.physicalPhase === 'low' ? 'nízky' : 'kritický'})`);
+              addLine(`Emocionálny: ${biorhythm.emotional > 0 ? '+' : ''}${biorhythm.emotional}% (${biorhythm.emotionalPhase === 'high' ? 'vysoký' : biorhythm.emotionalPhase === 'low' ? 'nízky' : 'kritický'})`);
+              addLine(`Intelektuálny: ${biorhythm.intellectual > 0 ? '+' : ''}${biorhythm.intellectual}% (${biorhythm.intellectualPhase === 'high' ? 'vysoký' : biorhythm.intellectualPhase === 'low' ? 'nízky' : 'kritický'})`);
+              addSpace();
+
+              // === JUNGOV ARCHETYP ===
+              const archetype = deriveArchetype(
+                numerology.lifePathNumber,
+                enneagram?.coreType || 9,
+                humanDesign.type
+              );
+              addSection('JUNGOV ARCHETYP', 'purple');
+              addBoldLine(`Primárny: ${archetype.primary.name} — „${archetype.primary.motto}"`);
+              addLine(`Dar: ${archetype.primary.gift}`);
+              addLine(`Stratégia: ${archetype.primary.strategy}`);
+              addLine(`Sekundárny: ${archetype.secondary.name} | Tieňový: ${archetype.shadow.name}`);
+              addSpace();
+
+              // === KRISTALOTERAPIA ===
+              addSection('KRISTALOTERAPIA', 'violet');
+              const zodiacCrystals = getZodiacCrystals(astrology.sunSign.name);
+              if (zodiacCrystals.length > 0) {
+                addBoldLine(`Kryštály pre ${astrology.sunSign.name}:`);
+                zodiacCrystals.forEach(c => addLine(`  ${c.name} — ${c.properties}`));
+                addSpace();
+              }
+              const blockedChakraNums = chakras.filter(c => c.status === 'blocked').map(c => c.chakra?.number).filter((n): n is number => n !== undefined);
+              const healingCrystals = getBlockedChakraCrystals(blockedChakraNums);
+              if (healingCrystals.length > 0) {
+                addBoldLine('Pre blokované čakry:');
+                healingCrystals.forEach(c => addLine(`  ${c.name} (čakra ${c.chakra}) — ${c.usage}`));
+                addSpace();
+              }
+              const dailyCrystal = getDailyCrystal(numerology.odv);
+              addLine(`Kryštál dňa (ODV ${numerology.odv}): ${dailyCrystal.name} — ${dailyCrystal.properties}`);
+              addSpace();
+
+              // === KUA ČÍSLO ===
+              const gender = (client as { gender?: string }).gender === 'female' ? 'female' : 'male';
+              const kua = calculateKua(client.birthYear, gender as 'male' | 'female');
+              addSection('KUA ČÍSLO (FENG SHUI)', 'amber');
+              addBoldLine(`Kua: ${kua.kuaNumber} | Skupina: ${kua.group === 'east' ? 'Východná' : 'Západná'} | Element: ${kua.element}`);
+              addLine(`Spálňa: ${kua.bestForSleep} | Pracovný stôl: ${kua.bestForWork} | Vstup: ${kua.bestForEntrance}`);
+              addLine(`Priaznivé smery: ${kua.favorable.map(d => d.direction).join(', ')}`);
               addSpace();
 
               // === PARTNERSKÁ KOMPATIBILITA ===

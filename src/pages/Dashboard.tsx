@@ -25,6 +25,8 @@ import { getDailyTarot, getMonthlyTarot } from '../data/tarotCards';
 import { ClientExport } from '../components/ClientExport';
 import { getTimezoneFromCoords } from '../data/cities';
 import { getGeneKeyByGate } from '../data/geneKeys';
+import { calculateBiorhythm } from '../engine/biorhythmEngine';
+import { getDailyCrystal } from '../data/crystals';
 
 export function Dashboard() {
   const navigate = useNavigate();
@@ -300,6 +302,74 @@ export function Dashboard() {
             </div>
           </div>
         </GlassCard>
+      )}
+
+      {/* Biorytmus + Kryštál dňa */}
+      {profile && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <GlassCard delay={0.34}>
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-lg">〰️</span>
+              <p className="text-xs text-slate-500 uppercase font-medium">Biorytmus</p>
+            </div>
+            {(() => {
+              const br = calculateBiorhythm(profile.birthDay, profile.birthMonth, profile.birthYear);
+              const bar = (val: number, color: string) => (
+                <div className="flex items-center gap-2">
+                  <div className="flex-1 h-2 rounded-full bg-slate-200 overflow-hidden">
+                    <div className={`h-full rounded-full ${color}`} style={{ width: `${Math.abs(val)}%`, marginLeft: val < 0 ? `${100 - Math.abs(val)}%` : '0' }} />
+                  </div>
+                  <span className={`text-xs font-bold w-10 text-right ${val > 50 ? 'text-emerald-600' : val < -50 ? 'text-rose-600' : 'text-slate-500'}`}>{val > 0 ? '+' : ''}{val}%</span>
+                </div>
+              );
+              return (
+                <div className="space-y-2">
+                  <div>
+                    <p className="text-[10px] text-red-400 uppercase">Fyzický</p>
+                    {bar(br.physical, br.physical > 0 ? 'bg-red-400' : 'bg-red-200')}
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-blue-400 uppercase">Emocionálny</p>
+                    {bar(br.emotional, br.emotional > 0 ? 'bg-blue-400' : 'bg-blue-200')}
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-green-400 uppercase">Intelektuálny</p>
+                    {bar(br.intellectual, br.intellectual > 0 ? 'bg-green-400' : 'bg-green-200')}
+                  </div>
+                  <p className="text-[9px] text-slate-400 mt-1">
+                    {br.physicalPhase === 'critical' || br.emotionalPhase === 'critical' || br.intellectualPhase === 'critical'
+                      ? '⚠️ Kritický bod — buďte opatrní a odpočívajte.'
+                      : br.physical > 70 ? '💪 Výborný deň na fyzickú aktivitu.'
+                      : br.intellectual > 70 ? '🧠 Ideálny deň na učenie a analýzu.'
+                      : br.emotional > 70 ? '💙 Deň vhodný na vzťahy a emocionálnu prácu.'
+                      : 'Stabilný deň — prúďte s energiou.'}
+                  </p>
+                </div>
+              );
+            })()}
+          </GlassCard>
+          <GlassCard delay={0.34}>
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-lg">💎</span>
+              <p className="text-xs text-slate-500 uppercase font-medium">Kryštál dňa</p>
+            </div>
+            {(() => {
+              const crystal = getDailyCrystal(odv);
+              return (
+                <div>
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full border-2" style={{ backgroundColor: crystal.color, borderColor: crystal.color + '80' }} />
+                    <div>
+                      <p className="text-sm font-medium text-slate-800">{crystal.name}</p>
+                      <p className="text-[10px] text-slate-500">{crystal.properties}</p>
+                    </div>
+                  </div>
+                  <p className="text-xs text-slate-400 mt-2 italic">{crystal.usage}</p>
+                </div>
+              );
+            })()}
+          </GlassCard>
+        </div>
       )}
 
       {/* Dnešná energia — kompaktný prehľad */}

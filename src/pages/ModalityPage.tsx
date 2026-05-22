@@ -773,7 +773,7 @@ export function ModalityPage() {
             </div>
           </div>
 
-          <details>
+          <details open>
             <summary className="text-[11px] text-indigo-400 cursor-pointer hover:text-indigo-300">Všetky priaznivé a nepriaznivé smery</summary>
             <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-2">
               <div>

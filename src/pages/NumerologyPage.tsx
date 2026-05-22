@@ -17,6 +17,7 @@ import lifePathsData from '../data/lifePaths.json';
 import isolatedData from '../data/isolatedNumbers.json';
 import { orvDescriptions } from '../data/orvDescriptions';
 import { omvDescriptions } from '../data/omvDescriptions';
+import { odvDescriptions } from '../data/odvDescriptions';
 import { findMissingCharacterNumbers } from '../data/characterMissingNumbers';
 import { ORVLifeHistogram } from '../components/ORVLifeHistogram';
 import { PersonalYearTimeline } from '../components/PersonalYearTimeline';
@@ -217,10 +218,15 @@ export function NumerologyPage() {
                       <p className="text-xl font-bold text-purple-300">{result.orv}</p>
                       <p className="text-[10px] text-slate-400">{orvDescriptions[result.orv]?.title || ''}</p>
                     </div>
+                    <div className="p-2 rounded-lg bg-fuchsia-500/10 border border-fuchsia-500/20 text-center">
+                      <p className="text-[10px] text-slate-500 uppercase">OMV (mesiac)</p>
+                      <p className="text-xl font-bold text-fuchsia-300">{result.omv}</p>
+                      <p className="text-[10px] text-slate-400">{omvDescriptions[result.omv]?.title || ''}</p>
+                    </div>
                     <div className="p-2 rounded-lg bg-amber-500/10 border border-amber-500/20 text-center">
                       <p className="text-[10px] text-slate-500 uppercase">ODV (dnes)</p>
                       <p className="text-xl font-bold text-amber-300">{result.odv}</p>
-                      <p className="text-[10px] text-slate-400">{(orvDescriptions[result.odv]?.title || '').replace('Rok ', 'Deň ')}</p>
+                      <p className="text-[10px] text-slate-400">{odvDescriptions[result.odv]?.title || ''}</p>
                     </div>
                     {numerologyMethod === 'characterological' && (
                       <>

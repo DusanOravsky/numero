@@ -19,6 +19,7 @@ import { deriveDosha } from '../engine/ayurvedaEngine';
 import { deriveTCMElement } from '../engine/tcmEngine';
 import { orvDescriptions } from '../data/orvDescriptions';
 import { omvDescriptions } from '../data/omvDescriptions';
+import { odvDescriptions } from '../data/odvDescriptions';
 import { getDailyMantra, getDailyQuote } from '../data/mantrasAndQuotes';
 import { getDailyTarot } from '../data/tarotCards';
 import { ClientExport } from '../components/ClientExport';
@@ -261,7 +262,7 @@ export function Dashboard() {
 
 
       {/* JEDNA VEC NA DNES — syntetizovaná akcia zo všetkých systémov */}
-      {fullResults && orvDescriptions[odv] && (
+      {fullResults && odvDescriptions[odv] && (
         <GlassCard glow delay={0.33}>
           <div className="flex items-start gap-4">
             <div className="w-14 h-14 rounded-full bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center text-2xl shrink-0">
@@ -434,16 +435,16 @@ export function Dashboard() {
         <div className="space-y-6 mt-4">
 
       {/* Detail dennej energie */}
-      {orvDescriptions[odv] && dailyRituals[odv] && (
+      {odvDescriptions[odv] && dailyRituals[odv] && (
         <GlassCard delay={0.50}>
           <details open>
             <summary className="cursor-pointer hover:text-indigo-300 transition-colors">
               <span className="font-medium text-white">Detail dennej energie (ODV {odv})</span>
             </summary>
             <div className="mt-3 space-y-3">
-              <p className="text-sm text-slate-300">{orvDescriptions[odv].advice}</p>
+              <p className="text-sm text-slate-300">{odvDescriptions[odv].advice}</p>
               <div className="flex flex-wrap gap-1">
-                {orvDescriptions[odv].keywords.map(k => (
+                {odvDescriptions[odv].keywords.map(k => (
                   <span key={k} className="text-xs px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-300">{k}</span>
                 ))}
               </div>

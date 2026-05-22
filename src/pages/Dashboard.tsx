@@ -364,6 +364,8 @@ export function Dashboard() {
               return (
                 <div className="p-2 rounded-lg bg-rose-500/10 border border-rose-500/20">
                   <p className="text-xs text-rose-300 italic">„{etiko.reflectionQuestions[questionIdx]}"</p>
+                  <p className="text-[10px] text-rose-400 mt-1 font-medium">Cnosť dňa: {etiko.liberatingVirtue}</p>
+                  <p className="text-[10px] text-slate-500 mt-0.5">{etiko.practicalPath}</p>
                 </div>
               );
             })()}

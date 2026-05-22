@@ -1132,6 +1132,37 @@ export function RelationshipsPage() {
                     ))}
                   </div>
 
+                  {/* Jazyky lásky rodič↔dieťa — komunikačný štýl */}
+                  {(() => {
+                    const parentNum = calculateFullNumerology(parseInt(parent.day), parseInt(parent.month), parseInt(parent.year));
+                    const parentLangs = parentNum.loveLanguages;
+                    const childLangs = childNum.loveLanguages;
+                    if (!parentLangs?.length || !childLangs?.length) return null;
+                    const parentTop = parentLangs[0].language;
+                    const childTop = childLangs[0].language;
+                    const same = parentTop === childTop;
+                    return (
+                      <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20">
+                        <p className="text-xs text-rose-700 font-semibold uppercase mb-1">Jazyky lásky — komunikačný štýl</p>
+                        <div className="grid grid-cols-2 gap-3 mb-2">
+                          <div>
+                            <p className="text-[10px] text-slate-500">{parent.name}</p>
+                            <p className="text-xs text-slate-800 font-medium">{parentTop}</p>
+                          </div>
+                          <div>
+                            <p className="text-[10px] text-slate-500">{child.name}</p>
+                            <p className="text-xs text-slate-800 font-medium">{childTop}</p>
+                          </div>
+                        </div>
+                        {same ? (
+                          <p className="text-[11px] text-green-700">✓ Rovnaký primárny jazyk — komunikácia je prirodzená. Dieťa sa cíti milované tým, čo robíte intuitívne.</p>
+                        ) : (
+                          <p className="text-[11px] text-amber-700">Rôzne jazyky: vy dávate lásku cez „{parentTop}", ale dieťa ju najlepšie prijíma cez „{childTop}". Skúste vedome pridať jeho jazyk.</p>
+                        )}
+                      </div>
+                    );
+                  })()}
+
                   {/* HD porovnanie rodič↔dieťa */}
                   {(() => {
                     const parentCityHd = findCity(parent.birthPlace);

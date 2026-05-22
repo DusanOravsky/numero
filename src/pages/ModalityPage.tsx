@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useMemo, useState, useCallback } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useSubject } from '../hooks/useSubject';
 import { GlassCard } from '../components/GlassCard';
 import { DateInput } from '../components/DateInput';
@@ -105,6 +105,13 @@ export function ModalityPage() {
     return calculateKua(profile.birthYear, gender as 'male' | 'female');
   }, [profile]);
 
+  // Tab routing (hooks musia byť pred early return)
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeTab = searchParams.get('tab') || 'ayurveda';
+  const setTab = useCallback((tab: string) => {
+    setSearchParams(prev => { prev.set('tab', tab); return prev; }, { replace: true });
+  }, [setSearchParams]);
+
   const handleCalculate = (day: number, month: number, year: number, hour?: number, minute?: number, lat?: number, lon?: number) => {
     const tz = lon !== undefined ? Math.round(lon / 15) : 1;
     setManualData(computeModality(day, month, year, hour ?? 12, minute ?? 0, lat ?? 48.15, lon ?? 17.11, tz));
@@ -141,6 +148,14 @@ export function ModalityPage() {
   const blockedCrystals = getBlockedChakraCrystals(data.blockedChakras);
   const archetype = data.archetype;
 
+  const TABS = [
+    { id: 'ayurveda', label: 'Ayurvéda & TCM', icon: '🌿' },
+    { id: 'bach', label: 'Bachove kvety', icon: '✿' },
+    { id: 'crystals', label: 'Kryštály', icon: '💎' },
+    { id: 'archetype', label: 'Archetyp', icon: '🎭' },
+    { id: 'fengshui', label: 'Feng Shui', icon: '🧭' },
+  ];
+
   return (
     <div className="space-y-6">
       <div>
@@ -169,10 +184,30 @@ export function ModalityPage() {
           )}
         </div>
         <p className="text-slate-400 mt-1">
-          Ayurvéda, Tradičná čínska medicína a Bachove kvetové esencie
+          Ayurvéda, TCM, Bachove kvety, Kristaloterapia, Jungov archetyp, Feng Shui
         </p>
       </div>
 
+      {/* Tab bar */}
+      <div className="flex gap-1 overflow-x-auto pb-1 scrollbar-none">
+        {TABS.map(tab => (
+          <button
+            key={tab.id}
+            onClick={() => setTab(tab.id)}
+            className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium whitespace-nowrap transition-all ${
+              activeTab === tab.id
+                ? 'bg-indigo-600 text-white'
+                : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
+            }`}
+          >
+            <span>{tab.icon}</span>
+            <span>{tab.label}</span>
+          </button>
+        ))}
+      </div>
+
+      {/* ═══ TAB CONTENT ═══ */}
+      {activeTab === 'ayurveda' && (<>
       {/* Ako sa to počíta — vysvetlenie pre laikov */}
       <GlassCard>
         <h3 className="font-medium text-white mb-3">Ako sa to počíta</h3>
@@ -513,6 +548,9 @@ export function ModalityPage() {
         </div>
       </GlassCard>
 
+      </>)}
+
+      {activeTab === 'bach' && (<>
       {/* Bach Flowers */}
       <GlassCard delay={0.3}>
         <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
@@ -555,6 +593,9 @@ export function ModalityPage() {
         </p>
       </GlassCard>
 
+      </>)}
+
+      {activeTab === 'crystals' && (<>
       {/* === KRISTALOTERAPIA === */}
       <GlassCard>
         <h2 className="font-serif text-xl font-bold text-white mb-1 flex items-center gap-2">
@@ -600,6 +641,9 @@ export function ModalityPage() {
         )}
       </GlassCard>
 
+      </>)}
+
+      {activeTab === 'archetype' && (<>
       {/* === JUNGOVE ARCHETYPY === */}
       {archetype && (
         <GlassCard>
@@ -633,6 +677,9 @@ export function ModalityPage() {
         </GlassCard>
       )}
 
+      </>)}
+
+      {activeTab === 'fengshui' && (<>
       {/* === KUA ČÍSLO (FENG SHUI) === */}
       {kuaResult && (
         <GlassCard>
@@ -685,6 +732,8 @@ export function ModalityPage() {
           </details>
         </GlassCard>
       )}
+
+      </>)}
 
     </div>
   );

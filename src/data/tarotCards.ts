@@ -522,34 +522,62 @@ export const TAROT_CARDS: TarotCard[] = [
   },
 ];
 
-// Spätná kompatibilita: ODV lookup (1-9)
+// Tematicky príbuzné karty per ODV (2-3 karty rotujú)
+const TAROT_GROUPS_BY_ODV: Record<number, number[]> = {
+  1: [1, 0, 7],    // Mág, Blázon, Voz — iniciatíva, začiatky, pohyb vpred
+  2: [2, 11, 6],   // Veľkňažka, Spravodlivosť, Zaľúbení — intuícia, rovnováha, vzťahy
+  3: [3, 17, 19],  // Cisárovná, Hviezda, Slnko — tvorivosť, inšpirácia, radosť
+  4: [4, 11, 21],  // Cisár, Spravodlivosť, Svet — štruktúra, poriadok, dokončenie
+  5: [10, 16, 0],  // Kolo šťastia, Veža, Blázon — zmena, prekvapenie, skok
+  6: [6, 3, 14],   // Zaľúbení, Cisárovná, Miernosť — láska, harmónia, starostlivosť
+  7: [9, 12, 18],  // Pustovník, Obesenec, Mesiac — introspekcia, ticho, hlbiny
+  8: [8, 15, 21],  // Sila, Diabol, Svet — moc, manifestácia, majstrovstvo
+  9: [13, 20, 9],  // Smrť, Súd, Pustovník — transformácia, uzatváranie, múdrosť
+};
+
+// Spätná kompatibilita
 export const TAROT_BY_ODV: Record<number, TarotCard> = {
-  1: TAROT_CARDS[1],  // Mág
-  2: TAROT_CARDS[2],  // Veľkňažka
-  3: TAROT_CARDS[3],  // Cisárovná
-  4: TAROT_CARDS[4],  // Cisár
-  5: TAROT_CARDS[5],  // Hierofant
-  6: TAROT_CARDS[6],  // Zaľúbení
-  7: TAROT_CARDS[7],  // Voz
-  8: TAROT_CARDS[8],  // Sila
-  9: TAROT_CARDS[9],  // Pustovník
+  1: TAROT_CARDS[1],
+  2: TAROT_CARDS[2],
+  3: TAROT_CARDS[3],
+  4: TAROT_CARDS[4],
+  5: TAROT_CARDS[5],
+  6: TAROT_CARDS[6],
+  7: TAROT_CARDS[7],
+  8: TAROT_CARDS[8],
+  9: TAROT_CARDS[9],
 };
 
 /**
  * Vráti dennú tarot kartu pre dané ODV číslo (1-9).
- * Rotuje cez advices podľa dňa v roku.
+ * Rotuje cez skupinu 2-3 tematicky príbuzných kariet + ich advices.
  */
 export function getDailyTarot(odv: number): TarotCard & { dailyAdvice: string } {
-  const card = TAROT_BY_ODV[odv] || TAROT_BY_ODV[1];
+  const group = TAROT_GROUPS_BY_ODV[odv] || TAROT_GROUPS_BY_ODV[1];
   const dayOfYear = Math.floor(
     (Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000
   );
-  const adviceIndex = dayOfYear % card.advices.length;
+  const card = TAROT_CARDS[group[dayOfYear % group.length]];
+  const adviceIndex = Math.floor(dayOfYear / group.length) % card.advices.length;
 
   return {
     ...card,
     dailyAdvice: card.advices[adviceIndex],
   };
+}
+
+/**
+ * Vráti mesačnú tarot kartu podľa OMV (1-9).
+ * Rotuje cez rok — každý mesiac s rovnakým OMV dostane inú kartu.
+ */
+export function getMonthlyTarot(omv: number): TarotCard & { monthlyAdvice: string } {
+  const group = TAROT_GROUPS_BY_ODV[omv] || TAROT_GROUPS_BY_ODV[1];
+  const now = new Date();
+  const monthIndex = now.getMonth();
+  // Offset od dennej aby nebola rovnaká karta
+  const card = TAROT_CARDS[group[(monthIndex + 1) % group.length]];
+  const adviceIndex = monthIndex % card.advices.length;
+  return { ...card, monthlyAdvice: card.advices[adviceIndex] };
 }
 
 /**

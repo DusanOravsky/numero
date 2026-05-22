@@ -20,7 +20,7 @@ export const odvDescriptions: Record<number, { title: string; theme: string; adv
   4: {
     title: 'Deň práce a poriadku',
     theme: 'Disciplína, organizácia, dokončenie',
-    advice: 'Praktický deň. Dokončite rozrobenú vec, upratatajte, vyriešte papierovačky. Malé kroky s disciplínou dnes prinášajú veľké výsledky.',
+    advice: 'Praktický deň. Dokončite rozrobenú vec, upratajte, vyriešte papierovačky. Malé kroky s disciplínou dnes prinášajú veľké výsledky.',
     keywords: ['disciplína', 'poriadok', 'dokončenie', 'práca', 'stabilita'],
   },
   5: {

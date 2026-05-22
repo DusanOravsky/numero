@@ -23,8 +23,8 @@ export const omvDescriptions: Record<number, { title: string; theme: string; des
   4: {
     title: 'Mesiac budovania',
     theme: 'Disciplína, práca, poriadok',
-    description: 'Praktický mesiac, kedy energia žiada konkreétne výsledky. Poriadok v papieroch, disciplína v rutine, dokončenie rozrobených vecí. Nie je to vzrušujúce, ale je to nevyhnutné.',
-    advice: 'Dokončite rozrobené projekty. Upratatajte priestor — fyzický aj mentálny. Vytvorte si rutinu, ktorá vám slúži. Malé kroky každý deň.',
+    description: 'Praktický mesiac, kedy energia žiada konkrétne výsledky. Poriadok v papieroch, disciplína v rutine, dokončenie rozrobených vecí. Nie je to vzrušujúce, ale je to nevyhnutné.',
+    advice: 'Dokončite rozrobené projekty. Upratajte priestor — fyzický aj mentálny. Vytvorte si rutinu, ktorá vám slúži. Malé kroky každý deň.',
     keywords: ['disciplína', 'dokončenie', 'poriadok', 'rutina', 'výsledky'],
   },
   5: {
@@ -37,7 +37,7 @@ export const omvDescriptions: Record<number, { title: string; theme: string; des
   6: {
     title: 'Mesiac harmónie',
     theme: 'Domov, vzťahy, krása, zodpovednosť',
-    description: 'Mesiac orientovaný na domov, rodinu a vzťahy. Energia podporuje vytáranie krásy a harmónie vo vašom okolí. Možno prídu dôležité rozhodnutia vo vzťahoch.',
+    description: 'Mesiac orientovaný na domov, rodinu a vzťahy. Energia podporuje vytváranie krásy a harmónie vo vašom okolí. Možno prídu dôležité rozhodnutia vo vzťahoch.',
     advice: 'Venujte sa blízkym vzťahom. Skrášlite si priestor. Prijmite zodpovednosť s láskou. Ak cítite, že niečo vo vzťahu treba povedať — teraz je čas.',
     keywords: ['harmónia', 'rodina', 'krása', 'vzťahy', 'starostlivosť'],
   },

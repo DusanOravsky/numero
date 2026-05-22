@@ -21,7 +21,7 @@ import { orvDescriptions } from '../data/orvDescriptions';
 import { omvDescriptions } from '../data/omvDescriptions';
 import { odvDescriptions } from '../data/odvDescriptions';
 import { getDailyMantra, getDailyQuote } from '../data/mantrasAndQuotes';
-import { getDailyTarot } from '../data/tarotCards';
+import { getDailyTarot, getMonthlyTarot } from '../data/tarotCards';
 import { ClientExport } from '../components/ClientExport';
 import { getTimezoneFromCoords } from '../data/cities';
 import { getGeneKeyByGate } from '../data/geneKeys';
@@ -91,17 +91,21 @@ export function Dashboard() {
     return { numerology, developmental, astrology, humanDesign, kabalah, theta, enneagram, dosha, tcm, chakras };
   }, [profile, numerologyMethod]);
 
-  const affirmations: Record<number, string> = {
-    1: 'Dnes začínam s odvahou a jasnosťou.',
-    2: 'Dnes som otvorený/á hlbokému prepojeniu.',
-    3: 'Dnes tvorím a vyjadrujem svoju pravdu.',
-    4: 'Dnes budujem s trpezlivosťou a láskou.',
-    5: 'Dnes vítam nové s dôverou.',
-    6: 'Dnes milujem bezpodmienečne.',
-    7: 'Dnes počúvam svoju vnútornú múdrosť.',
-    8: 'Dnes manifestujem svoju víziu.',
-    9: 'Dnes púšťam staré a vytváram priestor.',
+  const affirmationsPool: Record<number, string[]> = {
+    1: ['Dnes začínam s odvahou a jasnosťou.', 'Moja energia nového začiatku je nezastaviteľná.', 'Som pripravený/á viesť svoj deň.', 'Dnes robím odvážny prvý krok.', 'Moja vôľa je jasná — konám.'],
+    2: ['Dnes som otvorený/á hlbokému prepojeniu.', 'Moja trpezlivosť prináša vzácne plody.', 'Počúvam s celým srdcom.', 'Harmónia vo vzťahoch začína vo mne.', 'Dnes dávam priestor tichej spolupráci.'],
+    3: ['Dnes tvorím a vyjadrujem svoju pravdu.', 'Moja kreativita nemá hranice.', 'Radosť je moja navigácia životom.', 'Zdieľam svoju autenticitu so svetom.', 'Dnes komunikujem s ľahkosťou a láskou.'],
+    4: ['Dnes budujem s trpezlivosťou a láskou.', 'Moja disciplína je cesta k slobode.', 'Každý malý krok dnes má veľký zmysel.', 'Poriadok v mojom živote prináša pokoj.', 'Dokončujem veci s radosťou a precíznosťou.'],
+    5: ['Dnes vítam nové s dôverou.', 'Zmena je moja spojenkyňa — nie nepriateľka.', 'Som flexibilný/á a otvorený/á prekvapeniu.', 'Každá nová skúsenosť ma obohacuje.', 'Dnes hovorím áno dobrodružstvu.'],
+    6: ['Dnes milujem bezpodmienečne.', 'Vytváram harmóniu a krásu okolo seba.', 'Som tu pre tých, ktorí ma potrebujú.', 'Moja starostlivosť je moja sila.', 'Dnes sa postarám o niečo krásne.'],
+    7: ['Dnes počúvam svoju vnútornú múdrosť.', 'V tichu nachádzam odpovede.', 'Moja introspekcia je cestou k pravde.', 'Dovolím si len byť — bez tlaku na výkon.', 'Moja vnútorná cesta je tá najdôležitejšia.'],
+    8: ['Dnes manifestujem svoju víziu.', 'Konám s autoritou a integritou.', 'Hojnosť je môj prirodzený stav.', 'Som tvorca/tvorkyňa vlastnej reality.', 'Moja sila slúži vyššiemu dobru.'],
+    9: ['Dnes púšťam staré a vytváram priestor.', 'Odpúšťam s ľahkosťou a vďakou.', 'Dokončujem veci s pokojom v srdci.', 'Som kanálom súcitu pre tento svet.', 'Moja múdrosť vie, kedy pustiť.'],
   };
+  const dayOfYear = Math.floor((today.getTime() - new Date(currentYear, 0, 0).getTime()) / 86400000);
+  const affirmations: Record<number, string> = Object.fromEntries(
+    Object.entries(affirmationsPool).map(([k, v]) => [k, v[dayOfYear % v.length]])
+  );
 
   const dailyRituals: Record<number, { morning: string; evening: string; body: string }> = {
     1: {
@@ -306,8 +310,17 @@ export function Dashboard() {
             <span className="text-xs text-indigo-300">Rok: {orvDescriptions[orv].title}</span>
           )}
         </div>
-        <p className="text-slate-300 font-serif text-lg italic mb-3">
+        <p className="text-slate-300 font-serif text-lg italic mb-2">
           "{affirmations[odv] || affirmations[1]}"
+        </p>
+        <p className="text-[10px] text-slate-500 mb-3">
+          {(() => {
+            const m = currentMonth;
+            if (m >= 3 && m <= 5) return '🌱 Jar — čas rastu a nových semienok. Energia prírody podporuje vaše začiatky.';
+            if (m >= 6 && m <= 8) return '☀️ Leto — plnosť a expanzia. Vaša energia je na vrchole — využite ju.';
+            if (m >= 9 && m <= 11) return '🍂 Jeseň — žatva a reflexia. Čas zbierať plody a púšťať nepotrebné.';
+            return '❄️ Zima — ticho a regenerácia. Obdobie vnútorného rastu a prípravy na nový cyklus.';
+          })()}
         </p>
         {fullResults && (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -398,6 +411,7 @@ export function Dashboard() {
         <GlassCard delay={0.46}>
           {(() => {
             const t = getDailyTarot(odv);
+            const mt = getMonthlyTarot(omv);
             return (
               <div>
                 <div className="flex items-start gap-3">
@@ -419,6 +433,15 @@ export function Dashboard() {
                     <p className="text-slate-300"><strong className="text-emerald-300">Rada:</strong> {t.advice}</p>
                   </div>
                 </details>
+                <div className="mt-3 pt-3 border-t border-slate-200">
+                  <div className="flex items-center gap-2">
+                    <span className="text-lg">{mt.symbol}</span>
+                    <div>
+                      <p className="text-[10px] text-indigo-400 uppercase">Karta mesiaca: {mt.name}</p>
+                      <p className="text-[10px] text-slate-400">{mt.monthlyAdvice}</p>
+                    </div>
+                  </div>
+                </div>
               </div>
             );
           })()}

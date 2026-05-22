@@ -44,18 +44,19 @@ const DIRECTION_MEANINGS: Record<string, { meaning: string; use: string }> = {
 };
 
 export function calculateKua(birthYear: number, gender: 'male' | 'female'): KuaResult {
-  const digits = String(birthYear).split('').map(Number);
-  let sum = digits.reduce((a, b) => a + b, 0);
-  while (sum > 9) sum = String(sum).split('').map(Number).reduce((a, b) => a + b, 0);
+  // Štandardná Kua formula: posledné 2 cifry roka
+  const lastTwo = birthYear % 100;
+  let sum = Math.floor(lastTwo / 10) + (lastTwo % 10);
+  while (sum > 9) sum = Math.floor(sum / 10) + (sum % 10);
 
   let kua: number;
-  if (gender === 'male') {
-    kua = 11 - sum;
-    if (kua > 9) kua = kua - 9;
+  if (birthYear < 2000) {
+    kua = gender === 'male' ? 11 - sum : sum + 4;
   } else {
-    kua = sum + 4;
-    if (kua > 9) kua = kua - 9;
+    kua = gender === 'male' ? 9 - sum : sum + 6;
   }
+  if (kua <= 0) kua += 9;
+  if (kua > 9) kua -= 9;
 
   // Kua 5 neexistuje — muži → 2, ženy → 8
   if (kua === 5) kua = gender === 'male' ? 2 : 8;

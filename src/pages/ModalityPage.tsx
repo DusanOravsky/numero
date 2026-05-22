@@ -722,6 +722,11 @@ export function ModalityPage() {
 
       {activeTab === 'archetype' && (<>
       {/* === JUNGOVE ARCHETYPY === */}
+      {!archetype && (
+        <GlassCard>
+          <p className="text-sm text-slate-400">Archetyp sa nepodarilo odvodiť — pre výpočet je potrebný kompletný profil s dátumom narodenia.</p>
+        </GlassCard>
+      )}
       {archetype && (
         <GlassCard>
           <h2 className="font-serif text-xl font-bold text-white mb-1 flex items-center gap-2">

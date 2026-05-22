@@ -341,7 +341,7 @@ export function Dashboard() {
       {/* Detaily dňa — collapsible */}
       {orvDescriptions[odv] && dailyRituals[odv] && (
         <GlassCard delay={0.38}>
-          <details open>
+          <details>
             <summary className="cursor-pointer hover:text-indigo-300 transition-colors">
               <span className="font-medium text-white">Detail dennej energie (ODV {odv})</span>
             </summary>

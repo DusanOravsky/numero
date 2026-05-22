@@ -22,6 +22,7 @@ import { getDailyMantra, getDailyQuote } from '../data/mantrasAndQuotes';
 import { getDailyTarot } from '../data/tarotCards';
 import { ClientExport } from '../components/ClientExport';
 import { getTimezoneFromCoords } from '../data/cities';
+import { getGeneKeyByGate } from '../data/geneKeys';
 
 export function Dashboard() {
   const navigate = useNavigate();
@@ -256,6 +257,55 @@ export function Dashboard() {
         />
       </div>
 
+      {/* Týždenný ODV prehľad — 7 dní */}
+      {profile && (
+        <GlassCard delay={0.32}>
+          <h3 className="font-medium text-white mb-2">Týždňový prehľad energie</h3>
+          <div className="flex gap-1.5">
+            {Array.from({ length: 7 }, (_, i) => {
+              const d = new Date(today);
+              d.setDate(d.getDate() + i);
+              const dd = d.getDate();
+              const mm = d.getMonth() + 1;
+              const yy = d.getFullYear();
+              const dayOrv = calculateORV(profile.birthDay, profile.birthMonth, yy, mm, dd);
+              const dayOdv = calculateODV(dayOrv, dd, mm);
+              const isToday = i === 0;
+              const isBest = dayOdv === 3 || dayOdv === 8;
+              const isHard = dayOdv === 4 || dayOdv === 9;
+              return (
+                <div
+                  key={i}
+                  className={`flex-1 text-center p-1.5 rounded-lg border ${
+                    isToday ? 'border-indigo-400 bg-indigo-500/15' :
+                    isBest ? 'border-green-300 bg-green-500/10' :
+                    isHard ? 'border-amber-300 bg-amber-500/10' :
+                    'border-slate-200 bg-slate-500/5'
+                  }`}
+                >
+                  <p className="text-[10px] text-slate-500">
+                    {d.toLocaleDateString('sk-SK', { weekday: 'short' })}
+                  </p>
+                  <p className={`text-lg font-bold ${
+                    isToday ? 'text-indigo-400' :
+                    isBest ? 'text-green-600' :
+                    isHard ? 'text-amber-600' :
+                    'text-slate-700'
+                  }`}>{dayOdv}</p>
+                  <p className="text-[9px] text-slate-500 truncate">
+                    {orvDescriptions[dayOdv]?.title?.split(',')[0] || ''}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+          <div className="flex gap-3 mt-2 text-[10px] text-slate-500">
+            <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-green-500"></span>Tvorivé/manifestačné</span>
+            <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-amber-500"></span>Práca/uzatváranie</span>
+          </div>
+        </GlassCard>
+      )}
+
       {/* JEDNA VEC NA DNES — syntetizovaná akcia zo všetkých systémov */}
       {fullResults && orvDescriptions[odv] && (
         <GlassCard glow delay={0.33}>
@@ -322,6 +372,16 @@ export function Dashboard() {
                 <p className="text-xs text-violet-300">{fullResults.kabalah.malchutAction}</p>
               </div>
             )}
+            {(() => {
+              const geneKey = getGeneKeyByGate(odv);
+              if (!geneKey) return null;
+              return (
+                <div className="p-2 rounded-lg bg-cyan-500/10 border border-cyan-500/20">
+                  <p className="text-xs text-cyan-300 font-medium">Gene Key {odv}: {geneKey.shadow} → {geneKey.gift}</p>
+                  <p className="text-[10px] text-slate-500 mt-0.5">{geneKey.giftDescription.slice(0, 80)}…</p>
+                </div>
+              );
+            })()}
           </div>
         )}
         {dailyRituals[odv] && (

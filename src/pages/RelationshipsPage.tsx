@@ -712,6 +712,98 @@ export function RelationshipsPage() {
             </GlassCard>
           </div>
 
+          {/* Čo máte spoločné — zhody medzi partnermi */}
+          {(() => {
+            const n1 = calculateFullNumerology(parseInt(partner1.day), parseInt(partner1.month), parseInt(partner1.year));
+            const n2 = calculateFullNumerology(parseInt(partner2.day), parseInt(partner2.month), parseInt(partner2.year));
+            const c1 = findCity(partner1.birthPlace);
+            const c2 = findCity(partner2.birthPlace);
+            const lat1 = c1?.lat ?? 48.15, lon1 = c1?.lon ?? 17.11;
+            const lat2 = c2?.lat ?? 48.15, lon2 = c2?.lon ?? 17.11;
+            const pTz1 = getTimezoneFromCoords(lat1, lon1);
+            const pTz2 = getTimezoneFromCoords(lat2, lon2);
+            const a1 = calculateAstrology(parseInt(partner1.day), parseInt(partner1.month), parseInt(partner1.year), partner1.hour ? parseInt(partner1.hour) : 12, partner1.minute ? parseInt(partner1.minute) : 0, lat1, lon1, pTz1);
+            const a2 = calculateAstrology(parseInt(partner2.day), parseInt(partner2.month), parseInt(partner2.year), partner2.hour ? parseInt(partner2.hour) : 12, partner2.minute ? parseInt(partner2.minute) : 0, lat2, lon2, pTz2);
+            const hd1 = calculateHumanDesign(parseInt(partner1.day), parseInt(partner1.month), parseInt(partner1.year), partner1.hour ? parseInt(partner1.hour) : 12, partner1.minute ? parseInt(partner1.minute) : 0, pTz1);
+            const hd2 = calculateHumanDesign(parseInt(partner2.day), parseInt(partner2.month), parseInt(partner2.year), partner2.hour ? parseInt(partner2.hour) : 12, partner2.minute ? parseInt(partner2.minute) : 0, pTz2);
+
+            const matches: { label: string; value: string }[] = [];
+            if (n1.lifePathNumber === n2.lifePathNumber) matches.push({ label: 'Životné číslo', value: String(n1.lifePathNumber) });
+            if (hd1.type === hd2.type) matches.push({ label: 'HD typ', value: hd1.type });
+            if (hd1.authority === hd2.authority) matches.push({ label: 'Autorita', value: hd1.authority });
+            if (a1.dominantElement === a2.dominantElement) matches.push({ label: 'Dominantný element', value: a1.dominantElement });
+            if (a1.sunSign === a2.sunSign) matches.push({ label: 'Slnko', value: String(a1.sunSign) });
+            if (a1.moonSign === a2.moonSign) matches.push({ label: 'Mesiac', value: String(a1.moonSign) });
+            const sharedIso = n1.isolatedNumbers.filter(n => n2.isolatedNumbers.includes(n));
+            if (sharedIso.length > 0) matches.push({ label: 'Izolované čísla', value: sharedIso.join(', ') });
+
+            if (matches.length === 0) return null;
+            return (
+              <GlassCard>
+                <h3 className="font-medium text-slate-900 mb-1">Čo máte spoločné</h3>
+                <p className="text-xs text-slate-600 mb-3">Hodnoty, ktoré zdieľate — spoločný základ vášho vzťahu.</p>
+                <div className="flex flex-wrap gap-2">
+                  {matches.map(m => (
+                    <div key={m.label} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-50 border border-green-200">
+                      <span className="text-green-600">✓</span>
+                      <span className="text-xs text-slate-700"><strong>{m.label}:</strong> {m.value}</span>
+                    </div>
+                  ))}
+                </div>
+              </GlassCard>
+            );
+          })()}
+
+          {/* Jazyky lásky — plný profil oboch partnerov */}
+          {(() => {
+            const n1 = calculateFullNumerology(parseInt(partner1.day), parseInt(partner1.month), parseInt(partner1.year));
+            const n2 = calculateFullNumerology(parseInt(partner2.day), parseInt(partner2.month), parseInt(partner2.year));
+            const langs1 = n1.loveLanguages;
+            const langs2 = n2.loveLanguages;
+            if (!langs1?.length || !langs2?.length) return null;
+            return (
+              <GlassCard>
+                <h3 className="font-medium text-slate-900 mb-1">Jazyky lásky — detail</h3>
+                <p className="text-xs text-slate-600 mb-3">Ako každý z vás prijíma a dáva lásku. Primárny jazyk partnera je kľúč k tomu, aby sa cítil milovaný.</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {[{ name: partner1.name, langs: langs1 }, { name: partner2.name, langs: langs2 }].map(({ name, langs }) => (
+                    <div key={name}>
+                      <p className="text-xs font-semibold text-slate-700 mb-2">{name}</p>
+                      <div className="space-y-1.5">
+                        {langs.map((lang, idx) => {
+                          const widthPct = Math.max(0, Math.min(100, (lang.score + 5) * 8));
+                          return (
+                            <div key={lang.language}>
+                              <div className="flex items-center justify-between text-[11px] mb-0.5">
+                                <span className={idx === 0 ? 'text-rose-700 font-medium' : 'text-slate-600'}>
+                                  {idx + 1}. {lang.language}
+                                </span>
+                                <span className="text-slate-500">{lang.score}</span>
+                              </div>
+                              <div className="h-1.5 bg-slate-200 rounded-full overflow-hidden">
+                                <div
+                                  className={`h-full rounded-full ${idx === 0 ? 'bg-gradient-to-r from-rose-500 to-pink-500' : 'bg-indigo-400'}`}
+                                  style={{ width: `${widthPct}%` }}
+                                />
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                {compatibility.loveLanguageMatch.mismatched.length > 0 && (
+                  <div className="mt-3 p-2 rounded-lg bg-amber-50 border border-amber-200">
+                    <p className="text-[11px] text-amber-700">
+                      <strong>Nesúlad:</strong> {compatibility.loveLanguageMatch.mismatched.join(', ')} — tu jeden z vás potrebuje niečo, čo druhému nepríde prirodzene. Komunikácia je kľúč.
+                    </p>
+                  </div>
+                )}
+              </GlassCard>
+            );
+          })()}
+
           {/* Charakterová synastria — porovnanie mriežok */}
           {(() => {
             const num1 = calculateFullNumerology(parseInt(partner1.day), parseInt(partner1.month), parseInt(partner1.year));

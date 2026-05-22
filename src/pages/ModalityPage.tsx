@@ -215,27 +215,47 @@ export function ModalityPage() {
           <p>
             Tieto modality nie sú tradičný dotazník — sú <strong className="text-white">derivované z tvojich existujúcich výsledkov</strong>. Každý systém sa pozerá na tie isté dáta z iného uhla:
           </p>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             <div className="p-3 rounded-xl bg-amber-50 border border-amber-200">
-              <p className="text-xs text-amber-700 font-semibold mb-1">Ayurvéda</p>
+              <p className="text-xs text-amber-700 font-semibold mb-1">🌿 Ayurvéda</p>
               <p className="text-xs text-slate-700">
                 Dominantný astro element (Oheň→Pitta, Vzduch→Vata, Zem/Voda→Kapha) → dóša.
                 HD typ → energetický štýl. ŽČ → temperament.
-                Plné/prázdne roviny → stabilita vs variabilita.
               </p>
             </div>
             <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200">
-              <p className="text-xs text-emerald-700 font-semibold mb-1">TCM 5 elementov</p>
+              <p className="text-xs text-emerald-700 font-semibold mb-1">🌳 TCM 5 elementov</p>
               <p className="text-xs text-slate-700">
                 Astro element priamo mapuje na TCM element.
                 ŽČ dodáva sekundárny element (1,9→Drevo, 3,7→Oheň, 2,5→Zem, 4,8→Kov, 6→Voda).
               </p>
             </div>
             <div className="p-3 rounded-xl bg-violet-50 border border-violet-200">
-              <p className="text-xs text-violet-700 font-semibold mb-1">Bachove kvety</p>
+              <p className="text-xs text-violet-700 font-semibold mb-1">✿ Bachove kvety</p>
               <p className="text-xs text-slate-700">
-                Čakry, ktoré sú blokované (skóre &lt; 50) → mapujú sa na esencie
+                Blokované čakry (skóre &lt; 50) → mapujú sa na esencie
                 riešiace danú emočnú tému (strach, vina, nedôvera...).
+              </p>
+            </div>
+            <div className="p-3 rounded-xl bg-purple-50 border border-purple-200">
+              <p className="text-xs text-purple-700 font-semibold mb-1">💎 Kristaloterapia</p>
+              <p className="text-xs text-slate-700">
+                Kryštály mapované na vaše slnečné znamenie + blokované čakry + ODV číslo dňa.
+                Praktické rady nosenia a použitia.
+              </p>
+            </div>
+            <div className="p-3 rounded-xl bg-indigo-50 border border-indigo-200">
+              <p className="text-xs text-indigo-700 font-semibold mb-1">🎭 Jungov archetyp</p>
+              <p className="text-xs text-slate-700">
+                12 archetypov derivovaných z ŽČ + Enneagram + HD typ.
+                Primárny (kto ste), sekundárny (skrytá stránka), tieňový (výzva).
+              </p>
+            </div>
+            <div className="p-3 rounded-xl bg-orange-50 border border-orange-200">
+              <p className="text-xs text-orange-700 font-semibold mb-1">🧭 Kua (Feng Shui)</p>
+              <p className="text-xs text-slate-700">
+                Osobné číslo z roku + pohlavia → 4 priaznivé a 4 nepriaznivé svetové strany.
+                Kam orientovať posteľ, stôl, vchod.
               </p>
             </div>
           </div>
@@ -250,8 +270,8 @@ export function ModalityPage() {
           </summary>
           <div className="mt-4 space-y-4">
             <p className="text-xs text-slate-400">
-              Tieto tri systémy sa pozerajú na tvoje telo, energiu a emócie z rôznych tradícií.
-              Neukazujú „diagnózu" — ukazujú tvoju prirodzenosť a čo potrebuješ pre rovnováhu.
+              Šesť systémov sa pozerá na tvoje telo, energiu, emócie a priestor z rôznych tradícií.
+              Neukazujú „diagnózu" — ukazujú tvoju prirodzenosť, darčeky a čo potrebuješ pre rovnováhu.
             </p>
 
             {/* Ayurvéda — prakticky */}
@@ -295,12 +315,52 @@ export function ModalityPage() {
               </p>
             </div>
 
+            {/* Kryštály — prakticky */}
+            {zodiacCrystals.length > 0 && (
+              <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20">
+                <p className="text-xs font-semibold text-purple-300 mb-1">
+                  Tvoje kryštály ({sunSign})
+                </p>
+                <p className="text-xs text-slate-300">
+                  {zodiacCrystals.map(c => c.name).join(', ')} — nos ich blízko tela pre rezonanciu s tvojím znamením.
+                  {blockedCrystals.length > 0 && ` Pre blokované čakry: ${blockedCrystals.map(c => c.name).join(', ')}.`}
+                </p>
+              </div>
+            )}
+
+            {/* Archetyp — prakticky */}
+            {archetype && (
+              <div className="p-3 rounded-xl bg-indigo-500/10 border border-indigo-500/20">
+                <p className="text-xs font-semibold text-indigo-300 mb-1">
+                  Tvoj archetyp: {archetype.primary.name}
+                </p>
+                <p className="text-xs text-slate-300">
+                  „{archetype.primary.motto}" — {archetype.primary.strategy}
+                </p>
+                <p className="text-xs text-slate-400 mt-1 italic">
+                  Tieňový archetyp ({archetype.shadow.name}): dávaj pozor na {archetype.shadow.shadow.toLowerCase()}.
+                </p>
+              </div>
+            )}
+
+            {/* Kua — prakticky */}
+            {kuaResult && (
+              <div className="p-3 rounded-xl bg-orange-500/10 border border-orange-500/20">
+                <p className="text-xs font-semibold text-orange-300 mb-1">
+                  Kua {kuaResult.kuaNumber} — {kuaResult.group === 'east' ? 'Východná' : 'Západná'} skupina
+                </p>
+                <p className="text-xs text-slate-300">
+                  Spálňa: orientuj hlavu na {kuaResult.bestForSleep}. Pracovný stôl: smerom na {kuaResult.bestForWork}. Vstup: ideálne z {kuaResult.bestForEntrance}.
+                </p>
+              </div>
+            )}
+
             <div className="p-3 rounded-xl bg-slate-500/10 border border-slate-500/20">
               <p className="text-[10px] text-slate-500 uppercase mb-1">Praktický tip</p>
               <p className="text-xs text-slate-300">
                 Začni od dóše — pochopenie svojho typu ti pomôže s jedlom, pohybom a denným rytmom.
-                TCM element ti ukáže emočnú tému a orgán na ktorý dávať pozor.
-                Bachove kvety sú jemná podpora pri konkrétnych emočných blokoch.
+                TCM element ti ukáže emočnú tému. Kryštály nos pri sebe podľa toho, čo práve potrebuješ.
+                Archetyp ti ukáže tvoj životný príbeh. Kua ti povie kam orientovať nábytok.
               </p>
             </div>
           </div>

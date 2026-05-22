@@ -98,6 +98,13 @@ export function ModalityPage() {
 
   const data = manualData ?? profileData;
 
+  // Kua — potrebuje pohlavie z profilu (hook musí byť pred early return)
+  const kuaResult = useMemo<KuaResult | null>(() => {
+    if (!profile) return null;
+    const gender = (profile as { gender?: string }).gender === 'female' ? 'female' : 'male';
+    return calculateKua(profile.birthYear, gender as 'male' | 'female');
+  }, [profile]);
+
   const handleCalculate = (day: number, month: number, year: number, hour?: number, minute?: number, lat?: number, lon?: number) => {
     const tz = lon !== undefined ? Math.round(lon / 15) : 1;
     setManualData(computeModality(day, month, year, hour ?? 12, minute ?? 0, lat ?? 48.15, lon ?? 17.11, tz));
@@ -128,18 +135,11 @@ export function ModalityPage() {
     }
   }
 
-  // Kryštály, archetypy, Kua
+  // Kryštály, archetypy
   const sunSign = data.sunSign;
   const zodiacCrystals = getZodiacCrystals(sunSign);
   const blockedCrystals = getBlockedChakraCrystals(data.blockedChakras);
   const archetype = data.archetype;
-
-  // Kua — potrebuje pohlavie z profilu
-  const kuaResult = useMemo<KuaResult | null>(() => {
-    if (!profile) return null;
-    const gender = (profile as { gender?: string }).gender === 'female' ? 'female' : 'male';
-    return calculateKua(profile.birthYear, gender as 'male' | 'female');
-  }, [profile]);
 
   return (
     <div className="space-y-6">

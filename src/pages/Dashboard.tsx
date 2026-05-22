@@ -258,70 +258,6 @@ export function Dashboard() {
         />
       </div>
 
-      {/* Týždenný ODV prehľad — 7 dní */}
-      {profile && (() => {
-        const odvDayLabels: Record<number, string> = {
-          1: 'Začiatky', 2: 'Vzťahy', 3: 'Kreativita',
-          4: 'Práca', 5: 'Zmena', 6: 'Láska',
-          7: 'Introspekcia', 8: 'Manifestácia', 9: 'Uzatváranie',
-        };
-        const odvCategory = (v: number) => {
-          if (v === 1 || v === 3 || v === 8) return 'creative';
-          if (v === 4 || v === 9) return 'work';
-          if (v === 2 || v === 6) return 'heart';
-          return 'inner';
-        };
-        return (
-        <GlassCard delay={0.32}>
-          <h3 className="font-medium text-white mb-2">Týždňový prehľad energie</h3>
-          <div className="flex gap-1.5">
-            {Array.from({ length: 7 }, (_, i) => {
-              const d = new Date(today);
-              d.setDate(d.getDate() + i);
-              const dd = d.getDate();
-              const mm = d.getMonth() + 1;
-              const yy = d.getFullYear();
-              const dayOrv = calculateORV(profile.birthDay, profile.birthMonth, yy, mm, dd);
-              const dayOdv = calculateODV(dayOrv, dd, mm);
-              const isToday = i === 0;
-              const cat = odvCategory(dayOdv);
-              return (
-                <div
-                  key={i}
-                  className={`flex-1 text-center p-1.5 rounded-lg border ${
-                    isToday ? 'border-indigo-400 bg-indigo-500/15' :
-                    cat === 'creative' ? 'border-green-300 bg-green-500/10' :
-                    cat === 'work' ? 'border-amber-300 bg-amber-500/10' :
-                    cat === 'heart' ? 'border-rose-300 bg-rose-500/10' :
-                    'border-violet-300 bg-violet-500/10'
-                  }`}
-                >
-                  <p className="text-[10px] text-slate-500">
-                    {d.toLocaleDateString('sk-SK', { weekday: 'short' })}
-                  </p>
-                  <p className={`text-lg font-bold ${
-                    isToday ? 'text-indigo-400' :
-                    cat === 'creative' ? 'text-green-600' :
-                    cat === 'work' ? 'text-amber-600' :
-                    cat === 'heart' ? 'text-rose-600' :
-                    'text-violet-600'
-                  }`}>{dayOdv}</p>
-                  <p className="text-[9px] text-slate-500 truncate">
-                    {odvDayLabels[dayOdv] || ''}
-                  </p>
-                </div>
-              );
-            })}
-          </div>
-          <div className="flex flex-wrap gap-3 mt-2 text-[10px] text-slate-500">
-            <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-green-500"></span>Tvorivé</span>
-            <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-amber-500"></span>Práca</span>
-            <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-rose-500"></span>Srdce</span>
-            <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-violet-500"></span>Vnútro</span>
-          </div>
-        </GlassCard>
-        );
-      })()}
 
       {/* JEDNA VEC NA DNES — syntetizovaná akcia zo všetkých systémov */}
       {fullResults && orvDescriptions[odv] && (
@@ -584,6 +520,12 @@ export function Dashboard() {
                   }
                   return cells;
                 })()}
+              </div>
+              <div className="flex flex-wrap gap-3 mt-3 text-[10px] text-slate-500">
+                <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-green-500"></span>Tvorivé (1, 3, 8)</span>
+                <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-amber-500"></span>Práca (4, 9)</span>
+                <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-rose-500"></span>Srdce (2, 6)</span>
+                <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-violet-500"></span>Vnútro (5, 7)</span>
               </div>
             </div>
           </details>

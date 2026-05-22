@@ -40,7 +40,7 @@ export function Dashboard() {
     if (!profile) return;
     const enabled = localStorage.getItem('daily-notification') === 'true';
     if (!enabled) return;
-    if (Notification.permission !== 'granted') return;
+    if (typeof Notification === 'undefined' || Notification.permission !== 'granted') return;
 
     const todayKey = today.toISOString().split('T')[0];
     const lastNotif = localStorage.getItem('last-daily-notif');
@@ -352,16 +352,29 @@ export function Dashboard() {
                   <span key={k} className="text-xs px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-300">{k}</span>
                 ))}
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
-                <div className="p-2 rounded-lg bg-green-500/10 border border-green-500/20">
-                  <p className="text-xs text-green-300">Telo: {dailyRituals[odv].body}</p>
-                </div>
-                {orvDescriptions[omv] && (
-                  <div className="p-2 rounded-lg bg-purple-500/10 border border-purple-500/20">
-                    <p className="text-xs text-purple-300">Mesiac (OMV {omv}): {orvDescriptions[omv].theme}</p>
-                  </div>
-                )}
+              <div className="p-2 rounded-lg bg-green-500/10 border border-green-500/20 mt-2">
+                <p className="text-xs text-green-300">Telo: {dailyRituals[odv].body}</p>
               </div>
+            </div>
+          </details>
+        </GlassCard>
+      )}
+
+      {/* Detail mesačnej energie — collapsible */}
+      {orvDescriptions[omv] && (
+        <GlassCard delay={0.40}>
+          <details>
+            <summary className="cursor-pointer hover:text-purple-300 transition-colors">
+              <span className="font-medium text-white">Detail mesačnej energie (OMV {omv})</span>
+            </summary>
+            <div className="mt-3 space-y-3">
+              <p className="text-sm text-slate-300">{orvDescriptions[omv].advice}</p>
+              <div className="flex flex-wrap gap-1">
+                {orvDescriptions[omv].keywords.map(k => (
+                  <span key={k} className="text-xs px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-300">{k}</span>
+                ))}
+              </div>
+              <p className="text-xs text-purple-400 italic mt-2">{orvDescriptions[omv].theme}</p>
             </div>
           </details>
         </GlassCard>

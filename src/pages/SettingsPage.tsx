@@ -488,6 +488,10 @@ export function SettingsPage() {
           onClick={() => {
             const current = localStorage.getItem('daily-notification') === 'true';
             if (!current) {
+              if (typeof Notification === 'undefined') {
+                alert('Tento prehliadač nepodporuje notifikácie.');
+                return;
+              }
               Notification.requestPermission().then(perm => {
                 if (perm === 'granted') {
                   localStorage.setItem('daily-notification', 'true');

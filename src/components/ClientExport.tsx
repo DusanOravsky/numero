@@ -10,8 +10,18 @@ import type { HumanDesignResult } from '../engine/humanDesignEngine';
 import type { KabalahResult } from '../engine/kabalahEngine';
 import type { ThetaHealingResult } from '../engine/thetaHealingEngine';
 import { calculatePartnerCompatibility } from '../engine/compatibilityEngine';
+import { deriveEnneagramType } from '../engine/enneagramEngine';
+import { enneagramTypes } from '../data/enneagram';
+import { evaluateChakras } from '../engine/chakraEngine';
+import { deriveDosha } from '../engine/ayurvedaEngine';
+import { deriveTCMElement } from '../engine/tcmEngine';
+import { calculateChineseZodiac } from '../engine/chineseZodiacEngine';
 import { planetInSignDescriptions, cycleVibrationDescriptions } from '../data/planetSignDescriptions';
 import { getGeneKeyByGate } from '../data/geneKeys';
+import { orvDescriptions } from '../data/orvDescriptions';
+import { omvDescriptions } from '../data/omvDescriptions';
+import { odvDescriptions } from '../data/odvDescriptions';
+import { getGridCount } from '../engine/numerologyEngine';
 import lifePathsData from '../data/lifePaths.json';
 import { useStore } from '../store/useStore';
 
@@ -503,6 +513,85 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
               addLine(`Dar: ${kabalah.primarySefira.gift}`);
               addLine(`Tieň: ${kabalah.primarySefira.shadow}`);
               addLine(`Čin v Malchut: ${kabalah.malchutAction}`);
+              addSpace();
+
+              // === ENNEAGRAM ===
+              const devNumForEnneagram = calculateDevelopmentalNumerology(client.birthDay, client.birthMonth, client.birthYear);
+              const enneagram = deriveEnneagramType(numerology, devNumForEnneagram, 'developmental');
+              if (enneagram) {
+                addSection('ENNEAGRAM', 'emerald');
+                const coreType = enneagramTypes[enneagram.coreType];
+                addBoldLine(`Typ ${enneagram.coreType} — ${coreType?.name || ''}`);
+                if (coreType?.description) addLine(coreType.description.slice(0, 200));
+                addLine(`Krídlo: ${enneagram.wing} | Integrácia → ${enneagram.integrationDirection} | Stres → ${enneagram.stressDirection}`);
+                if (coreType?.growthPath) {
+                  addSpace();
+                  addBoldLine('Cesta rastu:');
+                  addLine(coreType.growthPath.slice(0, 250));
+                }
+                addSpace();
+              }
+
+              // === ČAKRY ===
+              const gridCounts = getGridCount(numerology.grid);
+              const chakras = evaluateChakras(numerology.lifePathNumber, gridCounts, numerology.isolatedNumbers, humanDesign.definedCenters, astrology.dominantElement);
+              addSection('ČAKRY', 'rose');
+              const blocked = chakras.filter(ch => ch.status === 'blocked');
+              const balanced = chakras.filter(ch => ch.status === 'balanced');
+              if (blocked.length > 0) {
+                addBoldLine('Blokované:');
+                blocked.forEach(ch => addLine(`  ${ch.name} (${ch.score}/100) — ${ch.description.slice(0, 80)}`));
+                addSpace();
+              }
+              if (balanced.length > 0) {
+                addBoldLine('Vyvážené:');
+                balanced.forEach(ch => addLine(`  ${ch.name} (${ch.score}/100)`));
+                addSpace();
+              }
+              addInterpretation(
+                'Ako čítať: Blokované čakry = oblasti na vedomé rozvíjanie (meditácia, afirmácie, pohyb). ' +
+                'Vyvážené = vaše silné stránky a zdroje energie.'
+              );
+              addSpace();
+
+              // === AYURVÉDA ===
+              const dosha = deriveDosha(numerology, astrology, humanDesign);
+              addSection('AYURVÉDA', 'amber');
+              addBoldLine(`Dominantná dóša: ${dosha.primary}`);
+              addLine(`Sekundárna: ${dosha.secondary}`);
+              addLine(`Vata: ${dosha.scores.vata}% | Pitta: ${dosha.scores.pitta}% | Kapha: ${dosha.scores.kapha}%`);
+              if (dosha.tips?.length) {
+                addSpace();
+                addBoldLine('Odporúčania:');
+                dosha.tips.slice(0, 3).forEach(t => addLine(`  • ${t}`));
+              }
+              addSpace();
+
+              // === TCM ===
+              const tcm = deriveTCMElement(numerology, astrology);
+              addSection('TCM — 5 ELEMENTOV', 'emerald');
+              addBoldLine(`Dominantný element: ${tcm.primary}`);
+              addLine(`Orgán: ${tcm.organ} | Emócia: ${tcm.emotion} | Cnosť: ${tcm.virtue}`);
+              if (tcm.advice) addLine(`Rada: ${tcm.advice}`);
+              addSpace();
+
+              // === ČÍNSKY HOROSKOP ===
+              const chineseZodiac = calculateChineseZodiac(client.birthYear);
+              addSection('ČÍNSKY HOROSKOP', 'red');
+              addBoldLine(`${chineseZodiac.animal} — ${chineseZodiac.element} (${chineseZodiac.yinYang})`);
+              if (chineseZodiac.traits) addLine(chineseZodiac.traits.slice(0, 200));
+              addSpace();
+
+              // === ORV / OMV / ODV S POPISMI ===
+              addSection('OSOBNÉ VIBRÁCIE', 'indigo');
+              addBoldLine(`ORV ${numerology.orv} — ${orvDescriptions[numerology.orv]?.title || ''}`);
+              addLine(orvDescriptions[numerology.orv]?.advice || '');
+              addSpace();
+              addBoldLine(`OMV ${numerology.omv} — ${omvDescriptions[numerology.omv]?.title || ''}`);
+              addLine(omvDescriptions[numerology.omv]?.advice || '');
+              addSpace();
+              addBoldLine(`ODV ${numerology.odv} — ${odvDescriptions[numerology.odv]?.title || ''}`);
+              addLine(odvDescriptions[numerology.odv]?.advice || '');
               addSpace();
 
               // === PARTNERSKÁ KOMPATIBILITA ===

@@ -28,6 +28,7 @@ import { TCM_ELEMENTS } from '../data/tcm';
 import lifePathsData from '../data/lifePaths.json';
 import { orvDescriptions } from '../data/orvDescriptions';
 import { getGeneKeyByGate } from '../data/geneKeys';
+import { ETIKOTERAPIA_BY_CHAKRA } from '../data/etikoterapia';
 
 const lifePaths = lifePathsData as Record<string, { title: string; keywords: string[]; description: string; gift: string; shadow: string }>;
 
@@ -273,10 +274,30 @@ export function SharedView() {
         </div>
       </GlassCard>
 
-      {/* Cakry */}
+      {/* Cakry + Etikoterapia */}
       <GlassCard>
-        <h3 className="font-serif text-lg font-bold text-green-700 mb-3">Cakry</h3>
+        <h3 className="font-serif text-lg font-bold text-green-700 mb-3">Čakry</h3>
         <ChakraWheel chakras={chakras} />
+        {(() => {
+          const blocked = chakras.filter(c => c.status === 'blocked');
+          if (blocked.length === 0) return null;
+          return (
+            <div className="mt-4 space-y-2">
+              <p className="text-xs text-slate-500 font-medium uppercase">Etikoterapia — blokované čakry</p>
+              {blocked.map(c => {
+                const etiko = ETIKOTERAPIA_BY_CHAKRA[c.chakra.number];
+                if (!etiko) return null;
+                return (
+                  <div key={c.chakra.number} className="p-2 rounded-lg bg-rose-50 border border-rose-200">
+                    <p className="text-xs text-rose-700 font-medium">{c.chakra.number}. čakra — {etiko.ethicalTheme}</p>
+                    <p className="text-[11px] text-slate-700 mt-0.5">Cnosť: <strong>{etiko.liberatingVirtue}</strong></p>
+                    <p className="text-[11px] text-slate-500 italic mt-0.5">„{etiko.reflectionQuestions[0]}"</p>
+                  </div>
+                );
+              })}
+            </div>
+          );
+        })()}
       </GlassCard>
 
       {/* Kabala */}

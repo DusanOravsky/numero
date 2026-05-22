@@ -51,7 +51,8 @@ export function Dashboard() {
 
     const orv = calculateORV(profile.birthDay, profile.birthMonth, currentYear, currentMonth, currentDay);
     const odv = calculateODV(orv, currentDay, currentMonth);
-    const desc = orvDescriptions[odv]?.title || '';
+    const odvLabels: Record<number, string> = { 1: 'Začiatky', 2: 'Vzťahy', 3: 'Kreativita', 4: 'Práca', 5: 'Zmena', 6: 'Láska', 7: 'Introspekcia', 8: 'Manifestácia', 9: 'Uzatváranie' };
+    const desc = odvLabels[odv] || '';
 
     new Notification('Integrálna mapa bytia', {
       body: `Dnešná energia (ODV ${odv}): ${desc}`,
@@ -333,15 +334,20 @@ export function Dashboard() {
               <h3 className="font-medium text-white mb-1">Jedna vec na dnes</h3>
               <p className="text-sm text-slate-300">
                 {(() => {
-                  const odvTheme = orvDescriptions[odv]?.title || '';
+                  const odvDayThemes: Record<number, string> = {
+                    1: 'začiatkov a iniciatívy', 2: 'spolupráce a vzťahov', 3: 'kreativity a sebavyjadrenia',
+                    4: 'práce a budovania', 5: 'zmien a slobody', 6: 'lásky a harmónie',
+                    7: 'introspekcie a ticha', 8: 'manifestácie a sily', 9: 'uzatvárania a odpúšťania',
+                  };
+                  const odvTheme = odvDayThemes[odv] || '';
                   const enneaGrowth = fullResults.enneagram
                     ? enneagramTypes[fullResults.enneagram.integrationDirection]?.name
                     : null;
                   const hdStrategy = fullResults.humanDesign?.strategy?.toLowerCase() || '';
 
-                  if (odv <= 3) return `Dnes je deň ${odvTheme.toLowerCase()}. ${enneaGrowth ? `Vyskúšaj sa priblížiť k energii „${enneaGrowth}". ` : ''}Pamätaj: tvoja stratégia je „${hdStrategy}".`;
-                  if (odv <= 6) return `Energia dňa: ${odvTheme.toLowerCase()}. ${enneaGrowth ? `Smeruj k „${enneaGrowth}" — ` : ''}dnes je ideálny čas na jednu konkrétnu vec z tejto oblasti. Nemusíš veľa — stačí krok.`;
-                  return `Dnes je deň ${odvTheme.toLowerCase()}. ${enneaGrowth ? `Integračný smer „${enneaGrowth}" ti pomôže. ` : ''}Stratégia: „${hdStrategy}" — počúvaj telo, nie hlavu.`;
+                  if (odv <= 3) return `Dnes je deň ${odvTheme}. ${enneaGrowth ? `Vyskúšaj sa priblížiť k energii „${enneaGrowth}". ` : ''}Pamätaj: tvoja stratégia je „${hdStrategy}".`;
+                  if (odv <= 6) return `Energia dňa: ${odvTheme}. ${enneaGrowth ? `Smeruj k „${enneaGrowth}" — ` : ''}dnes je ideálny čas na jednu konkrétnu vec z tejto oblasti. Nemusíš veľa — stačí krok.`;
+                  return `Dnes je deň ${odvTheme}. ${enneaGrowth ? `Integračný smer „${enneaGrowth}" ti pomôže. ` : ''}Stratégia: „${hdStrategy}" — počúvaj telo, nie hlavu.`;
                 })()}
               </p>
               {dailyRituals[odv] && (
@@ -367,11 +373,19 @@ export function Dashboard() {
         </p>
         {fullResults && (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            {fullResults.enneagram && enneagramTypes[fullResults.enneagram.coreType] && (
-              <div className="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
-                <p className="text-xs text-emerald-300 font-medium">Enneagram: smeruj k {enneagramTypes[fullResults.enneagram.integrationDirection]?.name}</p>
-              </div>
-            )}
+            {fullResults.enneagram && enneagramTypes[fullResults.enneagram.coreType] && (() => {
+              const intType = enneagramTypes[fullResults.enneagram.integrationDirection];
+              const growthPath = enneagramTypes[fullResults.enneagram.coreType].growthPath;
+              const sentences = growthPath.split('. ').filter(s => s.length > 10);
+              const dayOfYear = Math.floor((today.getTime() - new Date(currentYear, 0, 0).getTime()) / 86400000);
+              const tipIdx = dayOfYear % sentences.length;
+              return (
+                <div className="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+                  <p className="text-xs text-emerald-300 font-medium">Enneagram: smeruj k {intType?.name}</p>
+                  <p className="text-[10px] text-emerald-400/80 mt-0.5 italic">{sentences[tipIdx]}{sentences[tipIdx].endsWith('.') ? '' : '.'}</p>
+                </div>
+              );
+            })()}
             {(() => {
               const chakraIdx = odv <= 7 ? odv : odv - 7;
               const etiko = ETIKOTERAPIA_BY_CHAKRA[chakraIdx];
@@ -513,6 +527,58 @@ export function Dashboard() {
                 ))}
               </div>
               <p className="text-xs text-purple-400 italic mt-2">{orvDescriptions[omv].theme}</p>
+            </div>
+          </details>
+        </GlassCard>
+      )}
+
+      {/* Mesačný ODV kalendár */}
+      {profile && (
+        <GlassCard delay={0.54}>
+          <details>
+            <summary className="cursor-pointer hover:text-indigo-300 transition-colors">
+              <span className="font-medium text-white">Kalendár energie — {today.toLocaleDateString('sk-SK', { month: 'long', year: 'numeric' })}</span>
+            </summary>
+            <div className="mt-3">
+              <div className="grid grid-cols-7 gap-1 text-center">
+                {['Po', 'Ut', 'St', 'Št', 'Pi', 'So', 'Ne'].map(d => (
+                  <p key={d} className="text-[9px] text-slate-500 font-medium">{d}</p>
+                ))}
+                {(() => {
+                  const firstDay = new Date(currentYear, currentMonth - 1, 1);
+                  const daysInMonth = new Date(currentYear, currentMonth, 0).getDate();
+                  const startIdx = (firstDay.getDay() + 6) % 7;
+                  const cells = [];
+                  for (let i = 0; i < startIdx; i++) cells.push(<div key={`e${i}`} />);
+                  for (let d = 1; d <= daysInMonth; d++) {
+                    const dayOrv = calculateORV(profile.birthDay, profile.birthMonth, currentYear, currentMonth, d);
+                    const dayOdv = calculateODV(dayOrv, d, currentMonth);
+                    const isT = d === currentDay;
+                    const cat = (dayOdv === 1 || dayOdv === 3 || dayOdv === 8) ? 'creative' :
+                                (dayOdv === 4 || dayOdv === 9) ? 'work' :
+                                (dayOdv === 2 || dayOdv === 6) ? 'heart' : 'inner';
+                    cells.push(
+                      <div key={d} className={`p-0.5 rounded ${
+                        isT ? 'ring-2 ring-indigo-400' : ''
+                      } ${
+                        cat === 'creative' ? 'bg-green-500/15' :
+                        cat === 'work' ? 'bg-amber-500/15' :
+                        cat === 'heart' ? 'bg-rose-500/15' :
+                        'bg-violet-500/15'
+                      }`}>
+                        <p className="text-[10px] text-slate-700 font-medium">{d}</p>
+                        <p className={`text-xs font-bold ${
+                          cat === 'creative' ? 'text-green-600' :
+                          cat === 'work' ? 'text-amber-600' :
+                          cat === 'heart' ? 'text-rose-600' :
+                          'text-violet-600'
+                        }`}>{dayOdv}</p>
+                      </div>
+                    );
+                  }
+                  return cells;
+                })()}
+              </div>
             </div>
           </details>
         </GlassCard>

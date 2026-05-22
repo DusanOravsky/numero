@@ -219,7 +219,7 @@ export function NumerologyPage() {
                     <div className="p-2 rounded-lg bg-amber-500/10 border border-amber-500/20 text-center">
                       <p className="text-[10px] text-slate-500 uppercase">ODV (dnes)</p>
                       <p className="text-xl font-bold text-amber-300">{result.odv}</p>
-                      <p className="text-[10px] text-slate-400">{orvDescriptions[result.odv]?.title || ''}</p>
+                      <p className="text-[10px] text-slate-400">{(orvDescriptions[result.odv]?.title || '').replace('Rok ', 'Deň ')}</p>
                     </div>
                     {numerologyMethod === 'characterological' && (
                       <>

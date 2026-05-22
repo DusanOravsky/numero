@@ -273,7 +273,7 @@ export function NumerologyPage() {
                   </div>
                   {result.karmicDebts.length > 0 && (
                     <div className="mt-3 p-2 rounded-lg bg-red-500/10 border border-red-500/20">
-                      <p className="text-xs text-red-300">
+                      <p className="text-xs font-medium" style={{ color: '#dc2626' }}>
                         Karmické dlhy: {result.karmicDebts.map(d => `${d.number} (${d.theme})`).join(', ')}
                       </p>
                     </div>

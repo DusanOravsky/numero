@@ -329,58 +329,7 @@ export function Dashboard() {
         )}
       </GlassCard>
 
-      {/* ═══ DETAILY A INŠPIRÁCIE — collapsible ═══ */}
-      <details className="group" open>
-        <summary className="cursor-pointer list-none flex items-center gap-2 py-2">
-          <span className="text-xs uppercase tracking-widest text-amber-400 font-semibold">Detaily a inšpirácie</span>
-          <div className="flex-1 h-px bg-gradient-to-r from-amber-400/30 to-transparent"></div>
-          <span className="text-amber-400 transition-transform group-open:rotate-180">▾</span>
-        </summary>
-        <div className="space-y-6 mt-4">
-
-      {/* Detaily dňa — collapsible */}
-      {orvDescriptions[odv] && dailyRituals[odv] && (
-        <GlassCard delay={0.38}>
-          <details>
-            <summary className="cursor-pointer hover:text-indigo-300 transition-colors">
-              <span className="font-medium text-white">Detail dennej energie (ODV {odv})</span>
-            </summary>
-            <div className="mt-3 space-y-3">
-              <p className="text-sm text-slate-300">{orvDescriptions[odv].advice}</p>
-              <div className="flex flex-wrap gap-1">
-                {orvDescriptions[odv].keywords.map(k => (
-                  <span key={k} className="text-xs px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-300">{k}</span>
-                ))}
-              </div>
-              <div className="p-2 rounded-lg bg-green-500/10 border border-green-500/20 mt-2">
-                <p className="text-xs text-green-300">Telo: {dailyRituals[odv].body}</p>
-              </div>
-            </div>
-          </details>
-        </GlassCard>
-      )}
-
-      {/* Detail mesačnej energie — collapsible */}
-      {orvDescriptions[omv] && (
-        <GlassCard delay={0.40}>
-          <details>
-            <summary className="cursor-pointer hover:text-purple-300 transition-colors">
-              <span className="font-medium text-white">Detail mesačnej energie (OMV {omv})</span>
-            </summary>
-            <div className="mt-3 space-y-3">
-              <p className="text-sm text-slate-300">{orvDescriptions[omv].advice}</p>
-              <div className="flex flex-wrap gap-1">
-                {orvDescriptions[omv].keywords.map(k => (
-                  <span key={k} className="text-xs px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-300">{k}</span>
-                ))}
-              </div>
-              <p className="text-xs text-purple-400 italic mt-2">{orvDescriptions[omv].theme}</p>
-            </div>
-          </details>
-        </GlassCard>
-      )}
-
-      {/* Mantra + Quote + Tarot (B25, B26, B23) — rotujú každý deň podľa ODV */}
+      {/* Mantra + Quote + Tarot — pred Detaily a inšpirácie */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <GlassCard delay={0.42}>
           <div className="flex items-start gap-3">
@@ -439,6 +388,57 @@ export function Dashboard() {
           })()}
         </GlassCard>
       </div>
+
+      {/* ═══ DETAILY A INŠPIRÁCIE — collapsible ═══ */}
+      <details className="group" open>
+        <summary className="cursor-pointer list-none flex items-center gap-2 py-2">
+          <span className="text-xs uppercase tracking-widest text-amber-400 font-semibold">Detaily a inšpirácie</span>
+          <div className="flex-1 h-px bg-gradient-to-r from-amber-400/30 to-transparent"></div>
+          <span className="text-amber-400 transition-transform group-open:rotate-180">▾</span>
+        </summary>
+        <div className="space-y-6 mt-4">
+
+      {/* Detail dennej energie */}
+      {orvDescriptions[odv] && dailyRituals[odv] && (
+        <GlassCard delay={0.50}>
+          <details open>
+            <summary className="cursor-pointer hover:text-indigo-300 transition-colors">
+              <span className="font-medium text-white">Detail dennej energie (ODV {odv})</span>
+            </summary>
+            <div className="mt-3 space-y-3">
+              <p className="text-sm text-slate-300">{orvDescriptions[odv].advice}</p>
+              <div className="flex flex-wrap gap-1">
+                {orvDescriptions[odv].keywords.map(k => (
+                  <span key={k} className="text-xs px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-300">{k}</span>
+                ))}
+              </div>
+              <div className="p-2 rounded-lg bg-green-500/10 border border-green-500/20 mt-2">
+                <p className="text-xs text-green-300">Telo: {dailyRituals[odv].body}</p>
+              </div>
+            </div>
+          </details>
+        </GlassCard>
+      )}
+
+      {/* Detail mesačnej energie */}
+      {orvDescriptions[omv] && (
+        <GlassCard delay={0.52}>
+          <details open>
+            <summary className="cursor-pointer hover:text-purple-300 transition-colors">
+              <span className="font-medium text-white">Detail mesačnej energie (OMV {omv})</span>
+            </summary>
+            <div className="mt-3 space-y-3">
+              <p className="text-sm text-slate-300">{orvDescriptions[omv].advice}</p>
+              <div className="flex flex-wrap gap-1">
+                {orvDescriptions[omv].keywords.map(k => (
+                  <span key={k} className="text-xs px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-300">{k}</span>
+                ))}
+              </div>
+              <p className="text-xs text-purple-400 italic mt-2">{orvDescriptions[omv].theme}</p>
+            </div>
+          </details>
+        </GlassCard>
+      )}
 
         </div>
       </details>

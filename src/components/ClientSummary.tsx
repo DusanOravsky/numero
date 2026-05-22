@@ -23,6 +23,9 @@ import { orvDescriptions } from '../data/orvDescriptions';
 import { getGeneKeyByGate } from '../data/geneKeys';
 import { developmentalMeanings } from '../data/developmentalMeanings';
 import { loveLanguageDescriptions } from '../data/orvDescriptions';
+import { deriveArchetype } from '../engine/archetypeEngine';
+import { calculateBiorhythm } from '../engine/biorhythmEngine';
+import { getDailyCrystal, getZodiacCrystals } from '../data/crystals';
 import lifePathsData from '../data/lifePaths.json';
 
 const lifePaths = lifePathsData as Record<string, { title: string; keywords: string[]; description: string; gift: string; shadow: string }>;
@@ -591,6 +594,41 @@ export function ClientSummary({ clientName, birthDay, birthMonth, birthYear, num
             </div>
           </div>
         </div>
+
+        {/* Archetyp + Biorytmus + Kryštál */}
+        {(() => {
+          const archetype = deriveArchetype(numerology.lifePathNumber, enneagram.coreType, humanDesign.type);
+          const biorhythm = calculateBiorhythm(day, month, year);
+          const dailyCrystal = getDailyCrystal(numerology.odv);
+          const zodiacCrystals = getZodiacCrystals(astrology.sunSign.name);
+          return (
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-5">
+              <div className="p-3 rounded-xl bg-indigo-500/10 border border-indigo-500/20">
+                <p className="text-[10px] text-indigo-400 uppercase mb-1">🎭 Archetyp</p>
+                <p className="text-sm font-medium text-indigo-300">{archetype.primary.name}</p>
+                <p className="text-[10px] text-slate-400 italic">„{archetype.primary.motto}"</p>
+                <p className="text-[10px] text-slate-500 mt-1">Tieň: {archetype.shadow.name}</p>
+              </div>
+              <div className="p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/20">
+                <p className="text-[10px] text-cyan-400 uppercase mb-1">〰️ Biorytmus dnes</p>
+                <p className="text-[10px] text-slate-400">Fyzický: <strong className={biorhythm.physical > 0 ? 'text-emerald-400' : 'text-rose-400'}>{biorhythm.physical > 0 ? '+' : ''}{biorhythm.physical}%</strong></p>
+                <p className="text-[10px] text-slate-400">Emocionálny: <strong className={biorhythm.emotional > 0 ? 'text-emerald-400' : 'text-rose-400'}>{biorhythm.emotional > 0 ? '+' : ''}{biorhythm.emotional}%</strong></p>
+                <p className="text-[10px] text-slate-400">Intelektuálny: <strong className={biorhythm.intellectual > 0 ? 'text-emerald-400' : 'text-rose-400'}>{biorhythm.intellectual > 0 ? '+' : ''}{biorhythm.intellectual}%</strong></p>
+              </div>
+              <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20">
+                <p className="text-[10px] text-purple-400 uppercase mb-1">💎 Kryštál dňa</p>
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 rounded-full" style={{ backgroundColor: dailyCrystal.color }} />
+                  <p className="text-sm font-medium text-purple-300">{dailyCrystal.name}</p>
+                </div>
+                <p className="text-[10px] text-slate-500 mt-1">{dailyCrystal.properties}</p>
+                {zodiacCrystals.length > 0 && (
+                  <p className="text-[10px] text-slate-500 mt-1">Znamenie: {zodiacCrystals.map(c => c.name).join(', ')}</p>
+                )}
+              </div>
+            </div>
+          );
+        })()}
       </GlassCard>
     </motion.section>
   );

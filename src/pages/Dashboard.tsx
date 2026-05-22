@@ -315,7 +315,7 @@ export function Dashboard() {
               const sentences = growthPath.split('. ').filter(s => s.length > 10);
               if (sentences.length === 0) return (
                 <div className="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
-                  <p className="text-xs text-emerald-300 font-medium">Enneagram: smeruj k {intType?.name}</p>
+                  <p className="text-xs text-emerald-700 font-medium">Enneagram: smeruj k {intType?.name}</p>
                 </div>
               );
               const dayOfYear = Math.floor((today.getTime() - new Date(currentYear, 0, 0).getTime()) / 86400000);
@@ -323,8 +323,8 @@ export function Dashboard() {
               const tip = sentences[tipIdx];
               return (
                 <div className="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
-                  <p className="text-xs text-emerald-300 font-medium">Enneagram: smeruj k {intType?.name}</p>
-                  <p className="text-[10px] text-emerald-400/80 mt-0.5 italic">{tip}{tip.endsWith('.') ? '' : '.'}</p>
+                  <p className="text-xs text-emerald-700 font-medium">Enneagram: smeruj k {intType?.name}</p>
+                  <p className="text-[10px] text-emerald-600 mt-0.5 italic">{tip}{tip.endsWith('.') ? '' : '.'}</p>
                 </div>
               );
             })()}
@@ -343,7 +343,7 @@ export function Dashboard() {
             })()}
             {fullResults.kabalah && (
               <div className="p-2 rounded-lg bg-violet-500/10 border border-violet-500/20">
-                <p className="text-xs text-violet-300">{fullResults.kabalah.malchutAction}</p>
+                <p className="text-xs text-violet-700">{fullResults.kabalah.malchutAction}</p>
               </div>
             )}
             {(() => {

@@ -306,9 +306,15 @@ html.dark .text-rose-600, html.dark .text-rose-700 { color: #fda4af !important; 
 html.dark .text-red-300 { color: #fca5a5 !important; }
 html.dark .text-red-400, html.dark .text-red-600, html.dark .text-red-700 { color: #fca5a5 !important; }
 html.dark .text-cyan-300, html.dark .text-cyan-400 { color: #67e8f9 !important; }
+html.dark .text-blue-300, html.dark .text-blue-400 { color: #93c5fd !important; }
 html.dark .text-blue-700 { color: #93c5fd !important; }
 html.dark .text-teal-300 { color: #5eead4 !important; }
 html.dark .text-orange-600, html.dark .text-orange-700 { color: #fdba74 !important; }
+html.dark .text-amber-800 { color: #fcd34d !important; }
+html.dark .text-cyan-700 { color: #67e8f9 !important; }
+html.dark .text-indigo-900 { color: #a5b4fc !important; }
+html.dark .text-rose-500 { color: #fda4af !important; }
+html.dark .text-yellow-700 { color: #fde047 !important; }
 
 /* Section backgrounds darker */
 html.dark .bg-green-500\/10 { background-color: rgba(34, 197, 94, 0.12) !important; }

@@ -317,21 +317,21 @@ export function HumanDesignPage() {
 
           <GlassCard glow>
             <div className={`p-6 rounded-xl bg-gradient-to-br ${typeColors[result.type] || typeColors['Generátor']}`}>
-              <p className="text-xs uppercase tracking-wider" style={{ color: '#64748b' }}>Váš typ</p>
-              <h2 className="font-serif text-3xl font-bold mt-1" style={{ color: '#1e293b' }}>{result.type}</h2>
-              <p className="text-sm mt-2" style={{ color: '#334155' }}>{TYPE_DESCRIPTIONS[result.type]}</p>
+              <p className="text-xs uppercase tracking-wider text-slate-500">Váš typ</p>
+              <h2 className="font-serif text-3xl font-bold mt-1 text-slate-900">{result.type}</h2>
+              <p className="text-sm mt-2 text-slate-700">{TYPE_DESCRIPTIONS[result.type]}</p>
               <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
-                  <p className="text-xs" style={{ color: '#64748b' }}>Stratégia</p>
-                  <p className="text-sm font-medium" style={{ color: '#1e293b' }}>{result.strategy}</p>
+                  <p className="text-xs text-slate-500">Stratégia</p>
+                  <p className="text-sm font-medium text-slate-900">{result.strategy}</p>
                 </div>
                 <div>
-                  <p className="text-xs" style={{ color: '#64748b' }}>Autorita</p>
-                  <p className="text-sm font-medium" style={{ color: '#1e293b' }}>{result.authority}</p>
+                  <p className="text-xs text-slate-500">Autorita</p>
+                  <p className="text-sm font-medium text-slate-900">{result.authority}</p>
                 </div>
                 <div>
-                  <p className="text-xs" style={{ color: '#64748b' }}>Nie-ja téma</p>
-                  <p className="text-sm font-medium" style={{ color: '#e11d48' }}>{result.notSelfTheme}</p>
+                  <p className="text-xs text-slate-500">Nie-ja téma</p>
+                  <p className="text-sm font-medium text-rose-600">{result.notSelfTheme}</p>
                 </div>
               </div>
             </div>

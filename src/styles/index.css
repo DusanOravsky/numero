@@ -148,6 +148,7 @@ body {
 .text-orange-300, .text-orange-400 { color: #c2410c !important; }
 .text-fuchsia-300, .text-fuchsia-400 { color: #a21caf !important; }
 .text-blue-300, .text-blue-400 { color: #1d4ed8 !important; }
+.text-yellow-300, .text-yellow-400 { color: #a16207 !important; }
 
 /* On colored/dark backgrounds — keep text white.
    POZOR: presné classy (bg-{color}-500/600/700), nie wildcard ktorý
@@ -302,19 +303,26 @@ html.dark .text-emerald-600, html.dark .text-emerald-700 { color: #6ee7b7 !impor
 html.dark .text-amber-300, html.dark .text-amber-400 { color: #fcd34d !important; }
 html.dark .text-amber-600, html.dark .text-amber-700 { color: #fcd34d !important; }
 html.dark .text-rose-300, html.dark .text-rose-400 { color: #fda4af !important; }
-html.dark .text-rose-600, html.dark .text-rose-700 { color: #fda4af !important; }
 html.dark .text-red-300 { color: #fca5a5 !important; }
 html.dark .text-red-400, html.dark .text-red-600, html.dark .text-red-700 { color: #fca5a5 !important; }
 html.dark .text-cyan-300, html.dark .text-cyan-400 { color: #67e8f9 !important; }
 html.dark .text-blue-300, html.dark .text-blue-400 { color: #93c5fd !important; }
 html.dark .text-blue-700 { color: #93c5fd !important; }
 html.dark .text-teal-300 { color: #5eead4 !important; }
-html.dark .text-orange-600, html.dark .text-orange-700 { color: #fdba74 !important; }
-html.dark .text-amber-800 { color: #fcd34d !important; }
-html.dark .text-cyan-700 { color: #67e8f9 !important; }
+html.dark .text-orange-600, html.dark .text-orange-700, html.dark .text-orange-800 { color: #fdba74 !important; }
+html.dark .text-amber-800, html.dark .text-amber-900 { color: #fcd34d !important; }
+html.dark .text-cyan-600, html.dark .text-cyan-700 { color: #67e8f9 !important; }
 html.dark .text-indigo-900 { color: #a5b4fc !important; }
-html.dark .text-rose-500 { color: #fda4af !important; }
-html.dark .text-yellow-700 { color: #fde047 !important; }
+html.dark .text-rose-500, html.dark .text-rose-600, html.dark .text-rose-700 { color: #fda4af !important; }
+html.dark .text-rose-800, html.dark .text-rose-900 { color: #fda4af !important; }
+html.dark .text-yellow-300, html.dark .text-yellow-400, html.dark .text-yellow-700 { color: #fde047 !important; }
+html.dark .text-emerald-800, html.dark .text-emerald-900 { color: #6ee7b7 !important; }
+html.dark .text-violet-800 { color: #c4b5fd !important; }
+html.dark .text-green-800 { color: #86efac !important; }
+html.dark .text-red-800 { color: #fca5a5 !important; }
+html.dark .text-blue-600 { color: #93c5fd !important; }
+html.dark .text-teal-600, html.dark .text-teal-700 { color: #5eead4 !important; }
+html.dark .text-pink-700 { color: #f9a8d4 !important; }
 
 /* Section backgrounds darker */
 html.dark .bg-green-500\/10 { background-color: rgba(34, 197, 94, 0.12) !important; }
@@ -365,7 +373,11 @@ html.dark .from-cyan-50.to-teal-50 {
 
 /* Borders */
 html.dark .border-slate-100, html.dark .border-slate-200, html.dark .border-slate-300 {
-  border-color: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(255, 255, 255, 0.10) !important;
+}
+html.dark .border-slate-400, html.dark .border-slate-500,
+html.dark .border-slate-600, html.dark .border-slate-700 {
+  border-color: rgba(255, 255, 255, 0.18) !important;
 }
 html.dark .border-amber-200 { border-color: rgba(245, 158, 11, 0.25) !important; }
 html.dark .border-green-200 { border-color: rgba(34, 197, 94, 0.25) !important; }

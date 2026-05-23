@@ -106,7 +106,7 @@ export function GlobalAIDrawer() {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-              className="fixed top-0 right-0 bottom-0 w-full sm:w-[420px] bg-white z-[90] shadow-2xl flex flex-col overflow-hidden"
+              className="fixed top-0 right-0 bottom-0 w-full sm:w-[420px] bg-white z-[90] shadow-2xl flex flex-col overflow-hidden mobile-sheet"
             >
               <div className="flex items-center justify-between px-4 py-3 border-b border-slate-200">
                 <h2 className="font-medium text-slate-800 text-sm">✦ AI asistent</h2>

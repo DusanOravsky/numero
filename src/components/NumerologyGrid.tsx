@@ -101,7 +101,7 @@ export function NumerologyGrid({ grid, highlightPlane }: NumerologyGridProps) {
                     : isHighlighted
                     ? 'border-amber-400 bg-amber-50'
                     : items.length > 0
-                    ? 'border-indigo-200 bg-indigo-50/50 hover:border-indigo-300'
+                    ? 'border-indigo-200 bg-indigo-50 hover:border-indigo-300'
                     : 'border-slate-200 bg-slate-50 hover:border-slate-300'
                 }`}
               >

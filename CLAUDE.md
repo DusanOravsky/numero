@@ -1,6 +1,6 @@
 # Integrálna mapa bytia (Número)
 
-Offline-first PWA pre numerológiu, astrológiu, Human Design, etikoterapiu, kabalu, Theta Healing, Enneagram, Ayurvédu, TCM, biorytmus, Jungove archetypy, kristaloterapiu, Feng Shui (Kua) a sebarozvoj. **v3.0.0**
+Offline-first PWA pre numerológiu, astrológiu, Human Design, etikoterapiu, kabalu, Theta Healing, Enneagram, Ayurvédu, TCM, biorytmus, Jungove archetypy, kristaloterapiu, Feng Shui (Kua) a sebarozvoj. **v3.1.0**
 
 > 📁 **Nested CLAUDE.md súbory:**
 > - `src/engine/CLAUDE.md` — engine pravidlá, numerológia/astrológia/HD matematika
@@ -12,7 +12,7 @@ Offline-first PWA pre numerológiu, astrológiu, Human Design, etikoterapiu, kab
 - React 19 + TypeScript
 - Vite 8 + TailwindCSS 4
 - Framer Motion (animácie)
-- Zustand (state management s persist, version 4 + migrácie)
+- Zustand (state management s persist, version 5 + migrácie)
 - astronomy-engine (planetárne výpočty, eclipses)
 - jsPDF (PDF export, lazy-loaded)
 - vite-plugin-pwa (service worker, runtimeCaching, offline)
@@ -212,7 +212,7 @@ Stratégia podľa [SemVer](https://semver.org/):
 
 ## Store (Zustand + persist → IndexedDB)
 
-- Verzia 4, migrácie v `src/store/useStore.ts`
+- Verzia 5, migrácie v `src/store/useStore.ts` (v5: `themeMode: 'system'` → `'light'`)
 - Profily, klienti (s tags), reports (max 200), favourites
 - Preferencie: language (sk/en), numerologyMethod, themeMode
 - Persisted cez zustand persist v **IndexedDB** (nie localStorage)
@@ -246,7 +246,7 @@ Stratégia podľa [SemVer](https://semver.org/):
 ## Dashboard (v2.59.0)
 
 Rozdelený na 3 vrstvy:
-- **Ranný brief** (vždy viditeľné) — privítanie, ORV/OMV/ODV, Jedna vec na dnes, Biorytmus + Kryštál dňa, Dnešná energia (sezónny kontext + rotujúca afirmácia)
+- **Ranný brief** (vždy viditeľné) — privítanie, ODV/OMV/ORV (poradie: denná prvá), Jedna vec na dnes, Biorytmus + Kryštál dňa, Dnešná energia (sezónny kontext + rotujúca afirmácia)
 - **Detaily a inšpirácie** (`<details open>`) — Detail dennej energie (odvDescriptions), Detail mesačnej energie (omvDescriptions), Mantra/Citát/Tarot (s mesačnou kartou), Kalendár energie
 - **Hlbší profil** (`<details>` default closed) — Integrálny súhrn (ClientSummary), Export PDF
 
@@ -280,26 +280,29 @@ Floating UI prvky v `MainLayout.tsx`:
 - Komponent: `pages/SharedView.tsx`. Strict validácia inputov (max 80 char meno, day 1-31, month 1-12, year 1900-2100, hour 0-23, minute 0-59). Pri zlých dátach → error message.
 - Vygenerovaný v `ClientExport.tsx` cez tlačidlo "Zdieľať výklad" (encode base64) alebo "QR kód" (vykreslí QR pre URL).
 
-## CSS strategy — light/dark mode (v2.46.x)
+## CSS strategy — light/dark mode (v3.1.0)
 
-App má pôvodný **dark-mode JSX** (`text-white`, `text-slate-300`, `bg-{color}-500/10`). Aktuálne defaultný **light mode** funguje cez globálne CSS overrides v `src/styles/index.css`.
+App má pôvodný **dark-mode JSX** (`text-white`, `text-slate-300`, `bg-{color}-500/10`). Defaultný **light mode** funguje cez globálne CSS overrides v `src/styles/index.css`. Dark mode sa prepína v Settings → Profil → Vzhľad (alebo sidebar na desktop).
 
 **Hlavné pravidlá:**
 
-1. **`.text-{color}-{300,400}` overrides** mapujú svetlé tóny na **tmavé** v light mode (čitateľné na bielom bg) a späť na svetlé v `html.dark` selektore.
-2. **Buttony s tmavým bg** (`bg-{color}-500/600/700/800/900` pre indigo/violet/purple/rose/green/emerald/amber/cyan/red/orange/blue/fuchsia/pink + slate/stone/zinc/neutral/gray) majú forcnutý biely text cez selektor `button.bg-{color}-{500-900} { color: #ffffff !important }`.
-3. **Karty s pastelovým bg** (`bg-{color}-500/10`) majú zvýšenú opacity 0.06 → 0.12-0.16 pre viditeľnosť na bielom pozadí. Bordery 0.15 → 0.30-0.40.
+1. **`.text-{color}-{300,400,500,600,700,800,900}` overrides** — v light mode mapujú na tmavé farby (čitateľné na bielom bg). V `html.dark` mapujú na svetlé farby. **Každý text-slate-\* shade musí mať dark override.**
+2. **Buttony s tmavým bg** (`bg-{color}-500/600/700/800/900`) majú forcnutý biely text cez selektor `button.bg-{color}-{500-900} { color: #ffffff !important }`.
+3. **Karty s pastelovým bg** (`bg-{color}-500/10`) majú zvýšenú opacity pre light mode. V dark mode `.glass` má `rgba(255,255,255,0.06)` bg.
+4. **`bg-white` v dark mode** → solid `#1e1b4b` (nie priehľadné!). Platí pre karty, inputy, popupy, dropdowny.
+5. **Gradient karty** (`from-{color}-50.to-{color}-50`) majú v dark mode override cez `background-image: linear-gradient(...)` s nízkou opacity tinted verziou.
+6. **Floating elementy** (bottom sheet, dropdowny) dostávajú class `mobile-sheet` → solid dark bg `#1a1545`.
 
-**KRITICKÉ — wildcard trap [[feedback-css-override]]:** Selektor `[class*="bg-blue-5"]` zachytáva aj `bg-blue-50` (svetlé pastelové) aj `bg-blue-500` (tmavé saturated). Vždy použiť **presné classy** `.bg-blue-500`, `.bg-blue-600` — wildcardy lámu pastelové buttony (príklad: ProfileSetup "Muž" toggle — biely text na svetlom pozadí, neviditeľné).
+**KRITICKÉ — žiadne inline `style={{ color: }}` pre farby!** Vždy používať Tailwind classy (`text-slate-800`, `text-indigo-600` atď.) ktoré majú dark mode CSS overrides. Inline style ignoruje dark/light prepínanie.
 
-**KRITICKÉ — gradient opacity trap (v2.59.0+):** Selektor `[class*="bg-gradient-to"] .text-white` robí text biely aj vnútri svetlých gradientov (`from-orange-500/20 to-amber-500/20` = pastelové, opacity 20%). Na takých bg je biely text neviditeľný. **Riešenie:** na kartách s farebnými ale svetlými gradientmi použiť **inline style** (`style={{ color: '#1e293b' }}`) namiesto `text-white`. Príklad: HumanDesignPage typ karta.
+**KRITICKÉ — wildcard trap [[feedback-css-override]]:** Selektor `[class*="bg-blue-5"]` zachytáva aj `bg-blue-50` aj `bg-blue-500`. Vždy použiť **presné classy**.
 
-**Long-term refactor — TODO:** Odstrániť `.text-white !important` override úplne a manuálne prejsť ~270 výskytov v 44 súboroch (zmeniť `text-white` → `text-slate-800` na svetlých bg, ponechať na tmavých). Veľký zásah, samostatná session.
+**KRITICKÉ — gradient opacity trap:** Selektor `[class*="bg-gradient-to"] .text-white` robí text biely aj vnútri svetlých gradientov. Na kartách s farebnými ale svetlými gradientmi použiť `text-slate-900` (nie `text-white`).
 
 ## Konvencie
 
 - **Slovenčina** v UI a dátach
-- **Light mode** default (biele pozadie, čakrový gradient sidebar). Dark + System dostupné v Settings.
+- **Light mode** default (biele pozadie, čakrový gradient sidebar). Dark dostupné v Settings → Profil → Vzhľad (mobile) alebo sidebar picker (desktop). Store migrácia v5 forcuje `'system'` → `'light'`.
 - Čas vždy v 24h formáte
 - Miesto narodenia cez autocomplete (`data/cities.ts` s lat/lon)
 - Master numbers (11, 22, 33) sa zachovávajú v ŽČ

@@ -131,7 +131,7 @@ export function MainLayout() {
         /* Mobilný header s logom – iba na mobile */
         <header className="lg:hidden bg-white border-b border-slate-200 px-4 py-3 flex items-center gap-3 sticky top-0 z-30">
           <img src={logoSrc} alt="" aria-hidden="true" className="w-10 h-10 shrink-0" />
-          <h1 className="font-serif text-base font-bold bg-gradient-to-r from-indigo-600 via-violet-600 to-purple-600 bg-clip-text text-transparent flex-1 truncate">
+          <h1 className="font-serif text-base font-bold bg-gradient-to-r from-indigo-600 via-violet-600 to-purple-600 bg-clip-text text-transparent flex-1 truncate landing-title">
             Integrálna mapa bytia
           </h1>
           <SubjectPicker />

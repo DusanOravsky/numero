@@ -444,7 +444,7 @@ export function Dashboard() {
           </div>
         )}
         {dailyRituals[odv] && (
-          <p className="text-xs mt-3" style={{ color: '#475569' }}><strong style={{ color: '#1e293b' }}>Večer:</strong> {dailyRituals[odv].evening}</p>
+          <p className="text-xs mt-3 text-slate-600"><strong className="text-slate-800">Večer:</strong> {dailyRituals[odv].evening}</p>
         )}
       </GlassCard>
 

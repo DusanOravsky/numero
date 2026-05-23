@@ -629,7 +629,7 @@ export function ClientSummary({ clientName, birthDay, birthMonth, birthYear, num
         {numerology.karmicDebts.length > 0 && (
           <div className="mt-3 p-3 rounded-xl bg-red-500/10 border border-red-500/20">
             <p className="text-[10px] text-red-400 uppercase mb-1">Karmické dlhy</p>
-            <p className="text-xs font-medium" style={{ color: '#dc2626' }}>
+            <p className="text-xs font-medium text-red-600">
               {numerology.karmicDebts.map(d => `${d.number} — ${d.theme}`).join(' | ')}
             </p>
           </div>

@@ -62,27 +62,25 @@ function ClientPickerButton({ onPick, includeProfile = true }: { onPick: (p: Per
       <button
         type="button"
         onClick={() => setOpen(o => !o)}
-        className="text-xs px-3 py-1.5 rounded-lg border font-semibold flex items-center gap-1.5 transition-colors"
-        style={{ color: '#3730a3', backgroundColor: '#eef2ff', borderColor: '#a5b4fc' }}
+        className="text-xs px-3 py-1.5 rounded-lg border font-semibold flex items-center gap-1.5 transition-colors text-indigo-800 bg-indigo-50 border-indigo-300"
         aria-haspopup="listbox"
         aria-expanded={open}
       >
         <span>📋</span>
-        <span style={{ color: '#3730a3' }}>Vybrať z klientov</span>
-        <span style={{ color: '#3730a3' }} className={`text-[10px] transition-transform ${open ? 'rotate-180' : ''}`}>▾</span>
+        <span>Vybrať z klientov</span>
+        <span className={`text-[10px] transition-transform ${open ? 'rotate-180' : ''}`}>▾</span>
       </button>
       {open && (
-        <div className="absolute right-0 mt-1 w-64 max-h-72 overflow-y-auto bg-white border border-slate-200 rounded-xl shadow-xl z-30 p-1" style={{ color: '#1e293b' }}>
+        <div className="absolute right-0 mt-1 w-64 max-h-72 overflow-y-auto bg-white border border-slate-200 rounded-xl shadow-xl z-30 p-1 mobile-sheet text-slate-800">
           {includeProfile && activeProfile && (
             <button
               type="button"
               onClick={() => { onPick(clientToPerson(activeProfile as unknown as Client)); setOpen(false); }}
-              className="w-full text-left px-3 py-2 rounded-lg text-sm hover:bg-indigo-50 flex items-center gap-2"
-              style={{ color: '#1e293b' }}
+              className="w-full text-left px-3 py-2 rounded-lg text-sm hover:bg-indigo-50 flex items-center gap-2 text-slate-800"
             >
-              <span style={{ color: '#4f46e5' }}>◉</span>
-              <span className="flex-1 truncate" style={{ color: '#1e293b' }}>{activeProfile.name}</span>
-              <span className="text-[10px] uppercase" style={{ color: '#64748b' }}>môj profil</span>
+              <span className="text-indigo-600">◉</span>
+              <span className="flex-1 truncate text-slate-800">{activeProfile.name}</span>
+              <span className="text-[10px] uppercase text-slate-500">môj profil</span>
             </button>
           )}
           {clients.length > 0 && includeProfile && activeProfile && (
@@ -93,16 +91,15 @@ function ClientPickerButton({ onPick, includeProfile = true }: { onPick: (p: Per
               key={c.id}
               type="button"
               onClick={() => { onPick(clientToPerson(c)); setOpen(false); }}
-              className="w-full text-left px-3 py-2 rounded-lg text-sm hover:bg-indigo-50 flex items-center gap-2"
-              style={{ color: '#1e293b' }}
+              className="w-full text-left px-3 py-2 rounded-lg text-sm hover:bg-indigo-50 flex items-center gap-2 text-slate-800"
             >
-              <span style={{ color: '#d97706' }}>♟</span>
-              <span className="flex-1 truncate" style={{ color: '#1e293b' }}>{c.name}</span>
-              <span className="text-[10px]" style={{ color: '#64748b' }}>{c.birthDay}.{c.birthMonth}.{c.birthYear}</span>
+              <span className="text-amber-600">♟</span>
+              <span className="flex-1 truncate text-slate-800">{c.name}</span>
+              <span className="text-[10px] text-slate-500">{c.birthDay}.{c.birthMonth}.{c.birthYear}</span>
             </button>
           ))}
           {clients.length === 0 && (!includeProfile || !activeProfile) && (
-            <div className="px-3 py-3 text-xs text-center" style={{ color: '#64748b' }}>
+            <div className="px-3 py-3 text-xs text-center text-slate-500">
               {!activeProfile && !clients.length
                 ? 'Najprv si vytvor profil alebo pridaj klientov.'
                 : 'Žiadni klienti — pridaj ich v sekcii Klienti.'}

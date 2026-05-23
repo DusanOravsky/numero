@@ -216,7 +216,7 @@ export function MainLayout() {
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-              className="lg:hidden fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl z-[70] p-6 pb-8 shadow-2xl"
+              className="lg:hidden fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl z-[70] p-6 pb-8 shadow-2xl mobile-sheet"
             >
               <div className="w-12 h-1 bg-slate-300 rounded-full mx-auto mb-4" />
               <h3 className="font-medium text-slate-800 mb-4">{t('nav.more')}</h3>

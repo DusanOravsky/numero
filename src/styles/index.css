@@ -275,28 +275,40 @@ html.dark .glass-light {
 html.dark .gradient-card { background: rgba(255, 255, 255, 0.03); }
 html.dark .gradient-cosmic { background: #0f0a2e; }
 
-/* Text colors back to light */
+/* Text colors back to light — all slate shades must be clearly readable on dark bg */
 html.dark .text-white { color: #ffffff !important; }
 html.dark .text-slate-300 { color: #cbd5e1 !important; }
 html.dark .text-slate-400 { color: #94a3b8 !important; }
-html.dark .text-slate-500 { color: #64748b !important; }
-html.dark .text-slate-600 { color: #94a3b8 !important; }
-html.dark .text-slate-700 { color: #cbd5e1 !important; }
-html.dark .text-slate-800 { color: #e2e8f0 !important; }
+html.dark .text-slate-500 { color: #94a3b8 !important; }
+html.dark .text-slate-600 { color: #cbd5e1 !important; }
+html.dark .text-slate-700 { color: #e2e8f0 !important; }
+html.dark .text-slate-800 { color: #f1f5f9 !important; }
+html.dark .text-slate-900 { color: #f8fafc !important; }
+
+/* Colored text — vibrant on dark backgrounds */
+html.dark .text-indigo-200 { color: #c7d2fe !important; }
 html.dark .text-indigo-300 { color: #a5b4fc !important; }
 html.dark .text-indigo-400 { color: #818cf8 !important; }
-html.dark .text-indigo-600, html.dark .text-indigo-700 { color: #a5b4fc !important; }
+html.dark .text-indigo-500 { color: #a5b4fc !important; }
+html.dark .text-indigo-600, html.dark .text-indigo-700, html.dark .text-indigo-800 { color: #a5b4fc !important; }
+html.dark .text-violet-300, html.dark .text-violet-400 { color: #c4b5fd !important; }
+html.dark .text-violet-600, html.dark .text-violet-700 { color: #c4b5fd !important; }
 html.dark .text-purple-300, html.dark .text-purple-400 { color: #d8b4fe !important; }
+html.dark .text-purple-600, html.dark .text-purple-700 { color: #d8b4fe !important; }
 html.dark .text-green-300, html.dark .text-green-400 { color: #86efac !important; }
 html.dark .text-green-600, html.dark .text-green-700 { color: #86efac !important; }
+html.dark .text-emerald-300, html.dark .text-emerald-400 { color: #6ee7b7 !important; }
+html.dark .text-emerald-600, html.dark .text-emerald-700 { color: #6ee7b7 !important; }
 html.dark .text-amber-300, html.dark .text-amber-400 { color: #fcd34d !important; }
 html.dark .text-amber-600, html.dark .text-amber-700 { color: #fcd34d !important; }
 html.dark .text-rose-300, html.dark .text-rose-400 { color: #fda4af !important; }
 html.dark .text-rose-600, html.dark .text-rose-700 { color: #fda4af !important; }
+html.dark .text-red-300 { color: #fca5a5 !important; }
+html.dark .text-red-400, html.dark .text-red-600, html.dark .text-red-700 { color: #fca5a5 !important; }
 html.dark .text-cyan-300, html.dark .text-cyan-400 { color: #67e8f9 !important; }
 html.dark .text-blue-700 { color: #93c5fd !important; }
-html.dark .text-red-400, html.dark .text-red-700 { color: #fca5a5 !important; }
 html.dark .text-teal-300 { color: #5eead4 !important; }
+html.dark .text-orange-600, html.dark .text-orange-700 { color: #fdba74 !important; }
 
 /* Section backgrounds darker */
 html.dark .bg-green-500\/10 { background-color: rgba(34, 197, 94, 0.12) !important; }
@@ -326,6 +338,18 @@ html.dark .bg-amber-200 { background-color: rgba(245, 158, 11, 0.2) !important; 
 html.dark .bg-slate-50 { background-color: rgba(148, 163, 184, 0.08) !important; }
 html.dark .bg-slate-100 { background-color: rgba(148, 163, 184, 0.12) !important; }
 html.dark .bg-white { background-color: rgba(255, 255, 255, 0.05) !important; color: #e2e8f0; }
+
+/* Gradient cards (VibrationCard etc.) — override pastel gradients to subtle dark tints */
+html.dark .from-indigo-50, html.dark .from-amber-50, html.dark .from-purple-50 {
+  --tw-gradient-from: rgba(99, 102, 241, 0.12) !important;
+}
+html.dark .to-violet-50, html.dark .to-yellow-50, html.dark .to-fuchsia-50 {
+  --tw-gradient-to: rgba(139, 92, 246, 0.08) !important;
+}
+html.dark .from-amber-50 { --tw-gradient-from: rgba(245, 158, 11, 0.12) !important; }
+html.dark .to-yellow-50 { --tw-gradient-to: rgba(234, 179, 8, 0.08) !important; }
+html.dark .from-purple-50 { --tw-gradient-from: rgba(168, 85, 247, 0.12) !important; }
+html.dark .to-fuchsia-50 { --tw-gradient-to: rgba(217, 70, 239, 0.08) !important; }
 
 /* Borders */
 html.dark .border-slate-100, html.dark .border-slate-200, html.dark .border-slate-300 {
@@ -358,9 +382,10 @@ html.dark .landing-title {
   background-image: linear-gradient(to right, #a5b4fc, #c4b5fd, #d8b4fe) !important;
 }
 
-/* Mobile sidebar / nav backgrounds */
-html.dark aside.bg-white, html.dark nav.bg-white, html.dark header.bg-white {
-  background: rgba(15, 10, 46, 0.8) !important;
+/* Mobile sidebar / nav / bottom-sheet backgrounds */
+html.dark aside.bg-white, html.dark nav.bg-white, html.dark header.bg-white,
+html.dark .mobile-sheet {
+  background: rgba(15, 10, 46, 0.95) !important;
   backdrop-filter: blur(12px);
   border-color: rgba(255, 255, 255, 0.08) !important;
 }

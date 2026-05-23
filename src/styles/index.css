@@ -413,6 +413,14 @@ html.dark .bg-slate-200 { background-color: rgba(148, 163, 184, 0.18) !important
 
 /* Disabled buttons */
 html.dark button:disabled.disabled\:bg-slate-200 { background-color: rgba(148, 163, 184, 0.15) !important; }
+html.dark button:disabled.disabled\:text-slate-800 { color: #94a3b8 !important; }
+
+/* Dashed "add" buttons — gradient with opacity modifier */
+html.dark .from-indigo-50.to-violet-50\/60 {
+  background-image: linear-gradient(to bottom right, rgba(99,102,241,0.12), rgba(139,92,246,0.08)) !important;
+}
+html.dark .hover\:from-indigo-100:hover { --tw-gradient-from: rgba(99,102,241,0.18) !important; }
+html.dark .hover\:to-violet-100:hover { --tw-gradient-to: rgba(139,92,246,0.12) !important; }
 
 /* Landing title gradient — svetlejšia v dark mode */
 html.dark .landing-title {

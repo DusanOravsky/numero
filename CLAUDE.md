@@ -282,22 +282,30 @@ Floating UI prvky v `MainLayout.tsx`:
 
 ## CSS strategy — light/dark mode (v3.1.0)
 
-App má pôvodný **dark-mode JSX** (`text-white`, `text-slate-300`, `bg-{color}-500/10`). Defaultný **light mode** funguje cez globálne CSS overrides v `src/styles/index.css`. Dark mode sa prepína v Settings → Profil → Vzhľad (alebo sidebar na desktop).
+App má pôvodný **dark-mode JSX** (`text-white`, `text-slate-300`, `bg-{color}-500/10`). Defaultný **light mode** funguje cez globálne CSS overrides v `src/styles/index.css`. Dark mode sa prepína v Settings → Profil → Vzhľad (mobile) alebo sidebar picker (desktop).
 
 **Hlavné pravidlá:**
 
-1. **`.text-{color}-{300,400,500,600,700,800,900}` overrides** — v light mode mapujú na tmavé farby (čitateľné na bielom bg). V `html.dark` mapujú na svetlé farby. **Každý text-slate-\* shade musí mať dark override.**
+1. **Text overrides** — Každý `text-{color}-{shade}` použitý v appke MUSÍ mať `html.dark` override v CSS. Light mode mapuje svetlé shady (300-400) na tmavé. Dark mode mapuje tmavé shady (600-900) na svetlé. Aktuálne pokryté: slate 300-900, indigo 200-900, violet 300-800, purple 300-700, green 300-800, emerald 300-900, amber 300-900, rose 300-900, cyan 300-700, blue 300-700, red 300-800, teal 300-700, orange 600-800, yellow 300-700, pink 700.
 2. **Buttony s tmavým bg** (`bg-{color}-500/600/700/800/900`) majú forcnutý biely text cez selektor `button.bg-{color}-{500-900} { color: #ffffff !important }`.
-3. **Karty s pastelovým bg** (`bg-{color}-500/10`) majú zvýšenú opacity pre light mode. V dark mode `.glass` má `rgba(255,255,255,0.06)` bg.
-4. **`bg-white` v dark mode** → solid `#1e1b4b` (nie priehľadné!). Platí pre karty, inputy, popupy, dropdowny.
-5. **Gradient karty** (`from-{color}-50.to-{color}-50`) majú v dark mode override cez `background-image: linear-gradient(...)` s nízkou opacity tinted verziou.
-6. **Floating elementy** (bottom sheet, dropdowny) dostávajú class `mobile-sheet` → solid dark bg `#1a1545`.
+3. **`bg-white` v dark mode** → solid `#1e1b4b`. Platí pre karty, inputy, popupy, dropdowny. NIE priehľadné.
+4. **`.glass` karty** v dark mode: `rgba(255,255,255,0.06)` bg + `rgba(255,255,255,0.12)` border.
+5. **Gradient karty** (`from-{color}-50.to-{color}-50`) — 5 overrides cez `background-image` (indigo, amber, purple, rose, cyan).
+6. **Floating elementy** (bottom sheet, AI drawer, dropdowny) → class `mobile-sheet` = solid `#1a1545` + blur.
+7. **Hover states** — `hover:bg-slate-50/100/200` majú dark override (bez bieleho flashu).
+8. **`bg-slate-200`** (progress bar tracky) → `rgba(148,163,184,0.18)` v dark mode.
+9. **Disabled buttons** (`disabled:bg-slate-200`) → dark override.
+10. **Bordery** — slate-100/200/300 → 10% white, slate-400/500/600/700 → 18% white.
 
-**KRITICKÉ — žiadne inline `style={{ color: }}` pre farby!** Vždy používať Tailwind classy (`text-slate-800`, `text-indigo-600` atď.) ktoré majú dark mode CSS overrides. Inline style ignoruje dark/light prepínanie.
+**KRITICKÉ — žiadne inline `style={{ color: }}` pre farby!** Vždy Tailwind classy. Inline style ignoruje dark/light prepínanie.
+
+**KRITICKÉ — SVG/Bodygraph hardcoded farby:** Undefined centrá používajú `rgba(148,163,184,0.1)` bg + `rgba(148,163,184,0.3)` border (nie #ffffff!). Inactive kanály `#94a3b8`. NatalWheel Lilith `#6b7280`.
 
 **KRITICKÉ — wildcard trap [[feedback-css-override]]:** Selektor `[class*="bg-blue-5"]` zachytáva aj `bg-blue-50` aj `bg-blue-500`. Vždy použiť **presné classy**.
 
-**KRITICKÉ — gradient opacity trap:** Selektor `[class*="bg-gradient-to"] .text-white` robí text biely aj vnútri svetlých gradientov. Na kartách s farebnými ale svetlými gradientmi použiť `text-slate-900` (nie `text-white`).
+**KRITICKÉ — gradient opacity trap:** `[class*="bg-gradient-to"] .text-white` robí text biely aj vnútri svetlých gradientov. Na kartách s farebnými ale svetlými gradientmi použiť `text-slate-900`.
+
+**Segmented controls (theme/language picker):** Aktívny stav = `bg-indigo-600 text-white` (viditeľný v oboch módoch). NIE `bg-white` (v dark mode nerozlíšiteľné od pozadia).
 
 ## Konvencie
 

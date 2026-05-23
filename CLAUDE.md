@@ -294,8 +294,10 @@ App má pôvodný **dark-mode JSX** (`text-white`, `text-slate-300`, `bg-{color}
 6. **Floating elementy** (bottom sheet, AI drawer, dropdowny) → class `mobile-sheet` = solid `#1a1545` + blur.
 7. **Hover states** — `hover:bg-slate-50/100/200` majú dark override (bez bieleho flashu).
 8. **`bg-slate-200`** (progress bar tracky) → `rgba(148,163,184,0.18)` v dark mode.
-9. **Disabled buttons** (`disabled:bg-slate-200`) → dark override.
+9. **Disabled buttons** — `disabled:bg-slate-200` → `rgba(148,163,184,0.15)`, `disabled:text-slate-800` → `#94a3b8`. Tieto sú **pseudo-class varianty** — bežný `.text-slate-800` override ich NEZACHYTÍ, treba explicitný `button:disabled.disabled\:text-slate-800` selektor.
 10. **Bordery** — slate-100/200/300 → 10% white, slate-400/500/600/700 → 18% white.
+11. **Opacity modifiers na bg classách** (`bg-indigo-50/50`, `to-violet-50/60`) — CSS override pre `bg-indigo-50` NEZACHYTÍ `bg-indigo-50/50` (je to iná Tailwind class). Buď nepoužívať opacity modifier, alebo pridať separátny CSS override.
+12. **Dashed "pridať" buttony** (`from-indigo-50.to-violet-50/60`) — majú vlastný dark gradient override.
 
 **KRITICKÉ — žiadne inline `style={{ color: }}` pre farby!** Vždy Tailwind classy. Inline style ignoruje dark/light prepínanie.
 

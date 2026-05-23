@@ -81,7 +81,7 @@ interface AppState {
   setLanguage: (l: Language) => void;
 }
 
-const STORE_VERSION = 4;
+const STORE_VERSION = 5;
 
 export const useStore = create<AppState>()(
   persist(
@@ -146,6 +146,9 @@ export const useStore = create<AppState>()(
           }
           if (version < 4) {
             state.themeMode = state.themeMode || 'light';
+          }
+          if (version < 5) {
+            if (state.themeMode === 'system') state.themeMode = 'light';
           }
           return state as unknown as AppState;
         } catch {

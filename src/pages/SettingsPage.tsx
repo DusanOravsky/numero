@@ -32,7 +32,7 @@ export function SettingsPage() {
     setActiveTabState(tab);
     setSearchParams({ tab }, { replace: true });
   };
-  const { profiles, activeProfileId, setActiveProfile, updateProfile, deleteProfile, numerologyMethod, setNumerologyMethod, clients, reports, favorites, themeMode, language } = useStore();
+  const { profiles, activeProfileId, setActiveProfile, updateProfile, deleteProfile, numerologyMethod, setNumerologyMethod, clients, reports, favorites, themeMode, setThemeMode, language } = useStore();
   const activeProfile = profiles.find(p => p.id === activeProfileId);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editHour, setEditHour] = useState('');
@@ -279,6 +279,29 @@ export function SettingsPage() {
               </div>
             </div>
           </label>
+        </div>
+      </GlassCard>
+
+      <GlassCard>
+        <h3 className="font-medium text-white mb-2">Vzhľad</h3>
+        <p className="text-sm text-slate-500 mb-3">Zvoľte svetlý alebo tmavý režim zobrazenia.</p>
+        <div className="grid grid-cols-2 gap-0 p-0.5 bg-slate-100 rounded-lg">
+          {([
+            { id: 'light' as const, label: '☀ Svetlá' },
+            { id: 'dark' as const, label: '🌙 Tmavá' },
+          ]).map(opt => (
+            <button
+              key={opt.id}
+              onClick={() => setThemeMode(opt.id)}
+              className={`py-2.5 rounded-md text-sm font-medium transition-colors ${
+                themeMode === opt.id || (themeMode === 'system' && opt.id === 'light')
+                  ? 'bg-white text-indigo-600 shadow-sm'
+                  : 'text-slate-500 hover:text-slate-700'
+              }`}
+            >
+              {opt.label}
+            </button>
+          ))}
         </div>
       </GlassCard>
 

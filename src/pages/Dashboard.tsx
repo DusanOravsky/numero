@@ -170,10 +170,10 @@ export function Dashboard() {
             alt="Integrálna mapa bytia"
             className="w-32 h-32 lg:w-40 lg:h-40 mx-auto mb-6 drop-shadow-lg"
           />
-          <h1 className="font-serif text-4xl lg:text-5xl font-bold bg-gradient-to-r from-indigo-400 via-violet-400 to-purple-400 bg-clip-text text-transparent mb-4">
+          <h1 className="font-serif text-4xl lg:text-5xl font-bold bg-gradient-to-r from-indigo-600 via-violet-600 to-purple-600 bg-clip-text text-transparent mb-4 landing-title">
             Integrálna mapa bytia
           </h1>
-          <p className="text-slate-400 text-lg mb-8 max-w-md mx-auto">
+          <p className="text-slate-600 text-lg mb-8 max-w-md mx-auto">
             Váš osobný sprievodca sebapoznaním. Offline. Súkromne. Profesionálne.
           </p>
           <button

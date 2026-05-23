@@ -131,7 +131,7 @@ export function PartnerBodygraph({ result1, result2, name1, name2 }: PartnerBody
       const key = `${Math.min(c.gates[0], c.gates[1])}-${Math.max(c.gates[0], c.gates[1])}`;
       return key === channelKey;
     });
-    if (!ch) return '#e2e8f0';
+    if (!ch) return 'rgba(148,163,184,0.3)';
 
     const gates1 = new Set(result1.allActivatedGates);
     const gates2 = new Set(result2.allActivatedGates);
@@ -151,7 +151,7 @@ export function PartnerBodygraph({ result1, result2, name1, name2 }: PartnerBody
                     (p1HasB && p2HasA && !p1HasA && !p2HasB);
     if (electro) return '#f59e0b'; // amber - electromagnetic
 
-    return '#e2e8f0';
+    return 'rgba(148,163,184,0.3)';
   };
 
   // Determine center colors
@@ -162,7 +162,7 @@ export function PartnerBodygraph({ result1, result2, name1, name2 }: PartnerBody
     if (d1 && d2) return { bg: '#7c3aed', border: '#7c3aed', text: 'text-white' }; // purple - both
     if (d1 && !d2) return { bg: '#f43f5e', border: '#f43f5e', text: 'text-white' }; // rose - person1
     if (!d1 && d2) return { bg: '#6366f1', border: '#6366f1', text: 'text-white' }; // indigo - person2
-    return { bg: '#ffffff', border: '#e2e8f0', text: 'text-slate-400' }; // white - neither
+    return { bg: 'rgba(148,163,184,0.1)', border: 'rgba(148,163,184,0.3)', text: 'text-slate-400' };
   };
 
   return (
@@ -180,7 +180,7 @@ export function PartnerBodygraph({ result1, result2, name1, name2 }: PartnerBody
             const x2 = parseFloat(p2.left) * 3;
             const y2 = parseFloat(p2.top) * 4;
             const color = getChannelColor(channelKey);
-            const isActive = color !== '#e2e8f0';
+            const isActive = !color.startsWith('rgba(148');
             return (
               <line key={channelKey} x1={x1} y1={y1} x2={x2} y2={y2}
                 stroke={color}
@@ -201,11 +201,11 @@ export function PartnerBodygraph({ result1, result2, name1, name2 }: PartnerBody
               style={{ top: cfg.top, left: cfg.left }}
             >
               <div
-                className={`w-9 h-9 rounded-md flex items-center justify-center text-[9px] font-bold border-2 transition-all ${colors.text} ${colors.bg !== '#ffffff' ? 'shadow-md' : ''}`}
+                className={`w-9 h-9 rounded-md flex items-center justify-center text-[9px] font-bold border-2 transition-all ${colors.text} ${!colors.bg.startsWith('rgba(148') ? 'shadow-md' : ''}`}
                 style={{
                   backgroundColor: colors.bg,
                   borderColor: colors.border,
-                  boxShadow: colors.bg !== '#ffffff' ? `0 2px 8px ${colors.bg}30` : 'none',
+                  boxShadow: !colors.bg.startsWith('rgba(148') ? `0 2px 8px ${colors.bg}30` : 'none',
                 }}
                 title={`${cfg.label} - ${cfg.fullName}`}
               >

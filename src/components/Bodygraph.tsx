@@ -78,7 +78,7 @@ export function Bodygraph({ result }: BodygraphProps) {
           const active = activeConnections.has(`${c1}|${c2}`);
           return (
             <line key={i} x1={x1} y1={y1} x2={x2} y2={y2}
-              stroke={active ? '#6366f1' : '#e2e8f0'}
+              stroke={active ? '#6366f1' : '#94a3b8'}
               strokeWidth={active ? 3 : 1.5}
               opacity={active ? 1 : 0.8}
             />
@@ -101,8 +101,8 @@ export function Bodygraph({ result }: BodygraphProps) {
                 defined ? 'text-white shadow-md' : 'text-slate-400'
               }`}
               style={{
-                backgroundColor: defined ? cfg.color : '#ffffff',
-                borderColor: defined ? cfg.color : '#e2e8f0',
+                backgroundColor: defined ? cfg.color : 'rgba(148, 163, 184, 0.1)',
+                borderColor: defined ? cfg.color : 'rgba(148, 163, 184, 0.3)',
                 boxShadow: defined ? `0 2px 8px ${cfg.color}30` : 'none',
               }}
               title={`${cfg.label} – ${cfg.fullName}${activeGates.length > 0 ? ` · brány ${activeGates.join(', ')}` : ''}`}
@@ -116,7 +116,7 @@ export function Bodygraph({ result }: BodygraphProps) {
                     key={g}
                     className="text-[8px] px-1 py-0 rounded font-mono"
                     style={{
-                      backgroundColor: defined ? `${cfg.color}40` : '#f1f5f9',
+                      backgroundColor: defined ? `${cfg.color}40` : 'rgba(148, 163, 184, 0.12)',
                       color: defined ? cfg.color : '#64748b',
                     }}
                   >

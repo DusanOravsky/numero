@@ -295,7 +295,7 @@ export function SettingsPage() {
               onClick={() => setThemeMode(opt.id)}
               className={`py-2.5 rounded-md text-sm font-medium transition-colors ${
                 themeMode === opt.id || (themeMode === 'system' && opt.id === 'light')
-                  ? 'bg-white text-indigo-600 shadow-sm'
+                  ? 'bg-indigo-600 text-white shadow-sm'
                   : 'text-slate-500 hover:text-slate-700'
               }`}
             >
@@ -423,7 +423,7 @@ export function SettingsPage() {
                 <label key={m.id} className={`flex items-center gap-3 p-2 rounded-lg border cursor-pointer transition-colors ${
                   aiModel === m.id
                     ? 'bg-indigo-500/15 border-indigo-500'
-                    : 'border-slate-700 hover:bg-slate-800/40'
+                    : 'border-slate-200 hover:bg-slate-50'
                 }`}>
                   <input
                     type="radio"

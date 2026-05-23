@@ -86,7 +86,7 @@ export function MainLayout() {
                 aria-label={opt.label}
                 className={`flex items-center justify-center gap-1.5 py-1.5 rounded-md text-xs font-medium transition-colors ${
                   themeMode === opt.id
-                    ? 'bg-white text-indigo-600 shadow-sm'
+                    ? 'bg-indigo-600 text-white shadow-sm'
                     : 'text-slate-500 hover:text-slate-700'
                 }`}
               >

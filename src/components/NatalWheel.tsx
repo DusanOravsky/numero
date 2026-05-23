@@ -31,7 +31,7 @@ const PLANET_COLORS: Record<string, string> = {
   'Urán': '#2dd4bf',
   'Neptún': '#818cf8',
   'Pluto': '#e879f9',
-  'Lilith': '#1f2937',
+  'Lilith': '#6b7280',
   'Chiron': '#fb923c',
 };
 

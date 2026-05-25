@@ -60,6 +60,27 @@ Detaily matematiky: `src/engine/CLAUDE.md`.
 
 UI je **method-aware**: niektoré sekcie (Roviny, Karmické cykly, Jazyky lásky) sú špecifické pre Charakterovú a skryjú sa pri Vývojovej. Detail v `src/components/CLAUDE.md`.
 
+## i18n — kompletná bilingválnosť (v4.0.0)
+
+Plná SK/EN podpora. **Vždy 1:1** — každý text musí existovať v oboch jazykoch v rovnakej hĺbke.
+
+**Architektúra:**
+- `src/i18n/namespaces/*.ts` — 8 namespace súborov s typed SK+EN dictionaries
+- `src/i18n/registry.ts` — merge, `translate()`, `TranslationKey` union type
+- `src/i18n/entityNames.ts` — display mapy (zodiac→Aries, planéty→Sun, HD typy→Generator, etc.)
+- `useTranslation()` hook → `{ t, language }`. Pre content paragrafy: `language === 'sk' ? 'SK' : 'EN'` ternary
+- Dátové súbory: accessor funkcie s `lang: Language = 'sk'` (fallback na SK)
+- Engine výpočty NIKDY neimportujú i18n — vracajú SK strings, UI vrstva prekladá cez `displayName()`
+
+**Pri pridaní novej funkcionality:**
+1. UI labely → pridať key do príslušného namespace (oba jazyky)
+2. Content paragrafy → `language === 'sk' ? ... : ...` ternary
+3. Dátový obsah → accessor s `lang` parametrom + oba jazyky
+4. Entity names z engines → `displayName(MAPA, skKey, language)` v renderovaní
+5. **Žiadne skrátené verzie** — EN musí mať rovnakú hĺbku ako SK
+
+**Language picker:** Settings → Profil tab (mobile aj desktop) + Desktop sidebar.
+
 ## Štruktúra
 
 ```
@@ -74,7 +95,11 @@ src/
   layouts/         # MainLayout so sidebar/bottom nav
   styles/          # Tailwind + light mode overrides
   hooks/           # useTheme, useSessionState, usePerformanceMetrics
-  i18n/            # Lightweight in-house dictionary (sk/en)
+  i18n/            # Full bilingual SK/EN system (v4.0.0)
+    namespaces/    # 8 namespace files (common, settings, clients, dashboard, numerology, astrology, chakras, relationships)
+    registry.ts    # Merges namespaces, exports translate() + TranslationKey union
+    entityNames.ts # Display name maps for zodiac, planets, elements, HD types, Chinese animals
+    useTranslation.ts # Hook: { t, language }
   test/            # Vitest setup (jsdom + jest-dom matchers)
 e2e/               # Playwright smoke tests — viď e2e/CLAUDE.md
 .github/

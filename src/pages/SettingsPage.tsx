@@ -42,7 +42,7 @@ export function SettingsPage() {
     setActiveTabState(tab);
     setSearchParams({ tab }, { replace: true });
   };
-  const { profiles, activeProfileId, setActiveProfile, updateProfile, deleteProfile, numerologyMethod, setNumerologyMethod, clients, reports, favorites, themeMode, setThemeMode, language } = useStore();
+  const { profiles, activeProfileId, setActiveProfile, updateProfile, deleteProfile, numerologyMethod, setNumerologyMethod, clients, reports, favorites, themeMode, setThemeMode, language, setLanguage } = useStore();
   const activeProfile = profiles.find(p => p.id === activeProfileId);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editHour, setEditHour] = useState('');
@@ -305,6 +305,26 @@ export function SettingsPage() {
               onClick={() => setThemeMode(opt.id)}
               className={`py-2.5 rounded-md text-sm font-medium transition-colors ${
                 themeMode === opt.id || (themeMode === 'system' && opt.id === 'light')
+                  ? 'bg-indigo-600 text-white shadow-sm'
+                  : 'text-slate-500 hover:text-slate-700'
+              }`}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+
+        <h3 className="font-medium text-white mt-5 mb-2">{t('settings.language')}</h3>
+        <div className="grid grid-cols-2 gap-0 p-0.5 bg-slate-100 rounded-lg">
+          {([
+            { id: 'sk' as const, label: t('settings.languageSk') },
+            { id: 'en' as const, label: t('settings.languageEn') },
+          ]).map(opt => (
+            <button
+              key={opt.id}
+              onClick={() => setLanguage(opt.id)}
+              className={`py-2.5 rounded-md text-sm font-medium transition-colors ${
+                language === opt.id
                   ? 'bg-indigo-600 text-white shadow-sm'
                   : 'text-slate-500 hover:text-slate-700'
               }`}

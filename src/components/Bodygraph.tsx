@@ -1,3 +1,4 @@
+import { useTranslation } from '../i18n/useTranslation';
 import type { HumanDesignResult } from '../engine/humanDesignEngine';
 
 interface BodygraphProps {
@@ -46,6 +47,7 @@ const CENTERS: Record<string, CenterInfo> = {
 };
 
 export function Bodygraph({ result }: BodygraphProps) {
+  const { language } = useTranslation();
   const nameToKey: Record<string, string> = {
     'Hlava': 'Hlava', 'Ajna': 'Ajna', 'Hrdlo': 'Hrdlo', 'G': 'G',
     'Srdce/Ego': 'Ego', 'Sakrálne': 'Sakrálne', 'Solárny plexus': 'SP',
@@ -64,7 +66,7 @@ export function Bodygraph({ result }: BodygraphProps) {
   });
 
   return (
-    <div className="relative w-full max-w-sm mx-auto" role="img" aria-label="Human Design bodygraph — definované a otvorené centrá s kanálmi" style={{ aspectRatio: '3/4', minHeight: 480 }}>
+    <div className="relative w-full max-w-sm mx-auto" role="img" aria-label={language === 'sk' ? 'Human Design bodygraph — definované a otvorené centrá s kanálmi' : 'Human Design bodygraph — defined and open centers with channels'} style={{ aspectRatio: '3/4', minHeight: 480 }}>
       {/* Channels as absolute lines using CSS */}
       <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 300 400" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
         {Object.values(CHANNEL_TO_CENTERS).map(([c1, c2], i) => {
@@ -135,13 +137,13 @@ export function Bodygraph({ result }: BodygraphProps) {
       {/* Legend */}
       <div className="absolute -bottom-6 left-0 right-0 flex items-center justify-center gap-4 text-[9px] text-slate-500">
         <span className="flex items-center gap-1">
-          <span className="w-3 h-3 rounded bg-indigo-500"></span> Definované
+          <span className="w-3 h-3 rounded bg-indigo-500"></span> {language === 'sk' ? 'Definované' : 'Defined'}
         </span>
         <span className="flex items-center gap-1">
-          <span className="w-3 h-3 rounded border border-slate-600 bg-cosmic-900"></span> Otvorené
+          <span className="w-3 h-3 rounded border border-slate-600 bg-cosmic-900"></span> {language === 'sk' ? 'Otvorené' : 'Open'}
         </span>
         <span className="flex items-center gap-1">
-          <span className="w-4 h-0.5 bg-indigo-400 rounded"></span> Kanál
+          <span className="w-4 h-0.5 bg-indigo-400 rounded"></span> {language === 'sk' ? 'Kanál' : 'Channel'}
         </span>
       </div>
     </div>

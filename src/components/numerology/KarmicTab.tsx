@@ -1,14 +1,16 @@
 import { motion } from 'framer-motion';
 import { GlassCard } from '../GlassCard';
 import type { NumerologyResult } from '../../engine/numerologyEngine';
-import { cycleVibrationDescriptions } from '../../data/planetSignDescriptions';
-import { cosmicAgeDescriptions } from '../../data/orvDescriptions';
+import { getCycleVibrationDescription } from '../../data/planetSignDescriptions';
+import { getCosmicAgeDescription } from '../../data/orvDescriptions';
+import { useTranslation } from '../../i18n/useTranslation';
 
 interface KarmicTabProps {
   result: NumerologyResult;
 }
 
 export function KarmicTab({ result }: KarmicTabProps) {
+  const { language } = useTranslation();
   return (
     <div className="space-y-4">
       <GlassCard>
@@ -54,8 +56,8 @@ export function KarmicTab({ result }: KarmicTabProps) {
                 <span className="text-xs text-slate-600">({t.influence})</span>
               </div>
               <p className="text-xs text-slate-700 mt-1">{t.description}</p>
-              {cycleVibrationDescriptions[t.vibration] && (
-                <p className="text-xs text-slate-600 mt-1 italic">{cycleVibrationDescriptions[t.vibration]}</p>
+              {getCycleVibrationDescription(t.vibration, language) && (
+                <p className="text-xs text-slate-600 mt-1 italic">{getCycleVibrationDescription(t.vibration, language)}</p>
               )}
             </motion.div>
           ))}
@@ -83,8 +85,8 @@ export function KarmicTab({ result }: KarmicTabProps) {
                 <span className="text-xs text-slate-600">({t.influence})</span>
               </div>
               <p className="text-xs text-slate-700 mt-1">{t.description}</p>
-              {cycleVibrationDescriptions[t.vibration] && (
-                <p className="text-xs text-slate-600 mt-1 italic">{cycleVibrationDescriptions[t.vibration]}</p>
+              {getCycleVibrationDescription(t.vibration, language) && (
+                <p className="text-xs text-slate-600 mt-1 italic">{getCycleVibrationDescription(t.vibration, language)}</p>
               )}
             </motion.div>
           ))}
@@ -232,7 +234,7 @@ export function KarmicTab({ result }: KarmicTabProps) {
           </div>
         </div>
         {(() => {
-          const ageInfo = cosmicAgeDescriptions[result.age];
+          const ageInfo = getCosmicAgeDescription(result.age, language);
           return ageInfo ? (
             <div className="space-y-2 p-3 rounded-xl bg-slate-50 border border-slate-200">
               <p className="text-sm font-medium text-slate-800">{ageInfo.title}</p>

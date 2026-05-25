@@ -1,4 +1,14 @@
-export const omvDescriptions: Record<number, { title: string; theme: string; description: string; advice: string; keywords: string[] }> = {
+import type { Language } from '../store/useStore';
+
+export interface OmvDescription {
+  title: string;
+  theme: string;
+  description: string;
+  advice: string;
+  keywords: string[];
+}
+
+const sk: Record<number, OmvDescription> = {
   1: {
     title: 'Mesiac iniciatívy',
     theme: 'Štart, rozhodnutia, nová energia',
@@ -63,3 +73,78 @@ export const omvDescriptions: Record<number, { title: string; theme: string; des
     keywords: ['uzatváranie', 'odpustenie', 'dokončenie', 'uvoľnenie', 'príprava'],
   },
 };
+
+const en: Record<number, OmvDescription> = {
+  1: {
+    title: 'Month of Initiative',
+    theme: 'New starts, decisions, fresh energy',
+    description: 'This month of your personal year brings the energy of beginnings. It is time to launch new endeavors, take the first step and seize the initiative. Do not postpone decisions — the energy favors action.',
+    advice: 'Take that first step you have been contemplating. Send the email, make the call, start the project. This month gives you courage and determination.',
+    keywords: ['initiative', 'decisions', 'first step', 'courage', 'action'],
+  },
+  2: {
+    title: 'Month of Cooperation',
+    theme: 'Relationships, patience, details',
+    description: 'Month 2 slows the pace and shifts focus to relationships and cooperation. It is not the time for bold solo moves — rather for fine-tuning details, building connections and listening to others.',
+    advice: 'Nurture relationships and alliances. Be patient — things are ripening. Notice the details you have been overlooking. Listen more than you speak.',
+    keywords: ['cooperation', 'patience', 'partnership', 'details', 'intuition'],
+  },
+  3: {
+    title: 'Month of Creativity',
+    theme: 'Communication, joy, self-expression',
+    description: 'This month\'s energy supports creativity, communication and social life. It is time to share ideas, create and express yourself. Lightness and optimism are your allies.',
+    advice: 'Create without self-censorship — writing, drawing, speaking. Go out and mingle, share your ideas. Do not keep joy to yourself — spread it.',
+    keywords: ['creativity', 'communication', 'optimism', 'sharing', 'joy'],
+  },
+  4: {
+    title: 'Month of Building',
+    theme: 'Discipline, work, order',
+    description: 'A practical month when the energy demands tangible results. Order in paperwork, discipline in routine, finishing unfinished tasks. It is not exciting, but it is essential.',
+    advice: 'Finish open projects. Declutter your space — physical and mental. Create a routine that serves you. Small steps every day.',
+    keywords: ['discipline', 'completion', 'order', 'routine', 'results'],
+  },
+  5: {
+    title: 'Month of Change',
+    theme: 'Flexibility, unexpected opportunities, movement',
+    description: 'A dynamic month full of surprises and shifts. Plans may change — and that is perfectly fine. The energy supports adaptability, travel and new experiences.',
+    advice: 'Do not resist changes — they are opportunities. Try something new. Say yes to an invitation you would normally decline. Stay flexible.',
+    keywords: ['change', 'flexibility', 'adventure', 'new experiences', 'adaptability'],
+  },
+  6: {
+    title: 'Month of Harmony',
+    theme: 'Home, relationships, beauty, responsibility',
+    description: 'A month focused on home, family and relationships. The energy supports creating beauty and harmony in your surroundings. Important relationship decisions may arise.',
+    advice: 'Tend to close relationships. Beautify your space. Embrace responsibility with love. If something in a relationship needs to be said — now is the time.',
+    keywords: ['harmony', 'family', 'beauty', 'relationships', 'care'],
+  },
+  7: {
+    title: 'Month of Introspection',
+    theme: 'Silence, study, inner growth',
+    description: 'A month of turning inward. The energy does not support outer expansion — rather reflection, learning and spiritual growth. If you feel drained by company, it is natural.',
+    advice: 'Read, meditate, study. Spend time alone with yourself. Do not yield to pressure to be constantly productive outwardly — inner work is work too.',
+    keywords: ['introspection', 'silence', 'study', 'reflection', 'spirituality'],
+  },
+  8: {
+    title: 'Month of Manifestation',
+    theme: 'Results, authority, abundance',
+    description: 'A powerful month for material matters. The energy supports financial decisions, career moves and expressing personal power. What you built in previous months now bears fruit.',
+    advice: 'Act with authority. Ask for what you deserve. Invest — in yourself, in projects, in the future. Do not be afraid to be visible.',
+    keywords: ['manifestation', 'authority', 'abundance', 'results', 'courage'],
+  },
+  9: {
+    title: 'Month of Closure',
+    theme: 'Completion, forgiveness, preparation',
+    description: 'The final month of the mini-cycle. Time to finish the unfinished, forgive and release what no longer serves you. Do not start major new projects — leave space for ripening and closure.',
+    advice: 'Let go of what weighs you down. Forgive — yourself and others. Complete one open project. Prepare inwardly for a new cycle.',
+    keywords: ['closure', 'forgiveness', 'completion', 'release', 'preparation'],
+  },
+};
+
+const dictionaries = { sk, en };
+
+export function getOmvDescription(key: number, lang: Language = 'sk'): OmvDescription {
+  return dictionaries[lang]?.[key] ?? dictionaries.sk[key];
+}
+
+// Backward compatibility
+export const omvDescriptions = sk;

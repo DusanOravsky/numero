@@ -601,8 +601,8 @@ function sanitizeForPrompt(text: string, maxLen: number = 80): string {
  * Skús API kľúč krátkou žiadosťou na zistenie či funguje.
  */
 export async function testApiKey(apiKey: string): Promise<{ ok: boolean; message: string }> {
-  if (!apiKey || !apiKey.startsWith('sk-ant-')) {
-    return { ok: false, message: 'Kľúč musí začínať na "sk-ant-".' };
+  if (!apiKey || apiKey.length < 20) {
+    return { ok: false, message: 'Neplatný API kľúč (príliš krátky).' };
   }
 
   try {

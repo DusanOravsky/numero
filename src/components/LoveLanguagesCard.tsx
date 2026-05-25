@@ -1,7 +1,8 @@
 import { motion } from 'framer-motion';
 import { GlassCard } from './GlassCard';
 import type { NumerologyResult } from '../engine/numerologyEngine';
-import { loveLanguageDescriptions, loveLanguageScoringExplanation } from '../data/orvDescriptions';
+import { getLoveLanguageDescription, getLoveLanguageScoringExplanation } from '../data/orvDescriptions';
+import { useTranslation } from '../i18n/useTranslation';
 
 interface Props {
   numerology: NumerologyResult;
@@ -12,11 +13,12 @@ interface Props {
 }
 
 export function LoveLanguagesCard({ numerology, compact = false, title }: Props) {
+  const { language } = useTranslation();
   const langs = numerology.loveLanguages;
   if (!langs || langs.length === 0) return null;
 
   const top = langs[0];
-  const topInfo = top ? loveLanguageDescriptions[top.language] : undefined;
+  const topInfo = top ? getLoveLanguageDescription(top.language, language) : undefined;
 
   return (
     <GlassCard>
@@ -97,19 +99,20 @@ export function LoveLanguagesCard({ numerology, compact = false, title }: Props)
       {!compact && (
         <details className="mt-3">
           <summary className="text-xs text-indigo-600 cursor-pointer hover:text-indigo-800 select-none">
-            Ako sa skóre vypočítava?
+            {language === 'sk' ? 'Ako sa skóre vypočítava?' : 'How is the score calculated?'}
           </summary>
           <div className="mt-2 p-3 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-600 space-y-2">
-            <p>{loveLanguageScoringExplanation}</p>
+            <p>{getLoveLanguageScoringExplanation(language)}</p>
             <p>
-              <strong>Krátko:</strong> každý jazyk lásky zodpovedá určitej numerologickej rovine
-              (napr. „Slová uistenia" = rovina 3-6-9 Empatia, „Kvalitný čas" = 2-5-8 Vášeň,
-              „Skutky služby" = 1-4-7 Zručnosti + 4-5-6 Vytrvalosť, „Fyzický dotyk" = 7-8-9 Energia,
-              „Obdarovávanie" = 2-6-8). Skóre rastie, ak sú čísla z týchto rovín v mriežke,
-              klesá pri prázdnych alebo izolovaných číslach.
+              {language === 'sk'
+                ? <><strong>Krátko:</strong> každý jazyk lásky zodpovedá určitej numerologickej rovine (napr. „Slová uistenia" = rovina 3-6-9 Empatia, „Kvalitný čas" = 2-5-8 Vášeň, „Skutky služby" = 1-4-7 Zručnosti + 4-5-6 Vytrvalosť, „Fyzický dotyk" = 7-8-9 Energia, „Obdarovávanie" = 2-6-8). Skóre rastie, ak sú čísla z týchto rovín v mriežke, klesá pri prázdnych alebo izolovaných číslach.</>
+                : <><strong>In short:</strong> each love language corresponds to a specific numerological plane (e.g. &quot;Words of Affirmation&quot; = plane 3-6-9 Empathy, &quot;Quality Time&quot; = 2-5-8 Passion, &quot;Acts of Service&quot; = 1-4-7 Skills + 4-5-6 Perseverance, &quot;Physical Touch&quot; = 7-8-9 Energy, &quot;Receiving Gifts&quot; = 2-6-8). The score increases when numbers from these planes are present in the grid, and decreases with empty or isolated numbers.</>
+              }
             </p>
             <p className="text-slate-500 italic">
-              Záporné skóre neznamená neschopnosť — len to, že daný jazyk vyžaduje vedomé úsilie.
+              {language === 'sk'
+                ? 'Záporné skóre neznamená neschopnosť — len to, že daný jazyk vyžaduje vedomé úsilie.'
+                : 'A negative score does not mean inability — only that the given love language requires conscious effort.'}
             </p>
           </div>
         </details>

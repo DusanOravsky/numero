@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { GlassCard } from './GlassCard';
 import { calculateSolarReturn } from '../engine/astrologyEngine';
+import { useTranslation } from '../i18n/useTranslation';
+import { displayName, ZODIAC_DISPLAY, ELEMENT_DISPLAY } from '../i18n/entityNames';
 
 interface Props {
   birthDay: number;
@@ -19,6 +21,7 @@ interface Props {
  * nadchádzajúceho roku života.
  */
 export function SolarReturnView({ birthDay, birthMonth, birthYear, birthHour, birthMinute, latitude, longitude }: Props) {
+  const { language } = useTranslation();
   const currentYear = new Date().getFullYear();
   const [year, setYear] = useState(currentYear);
 
@@ -31,7 +34,7 @@ export function SolarReturnView({ birthDay, birthMonth, birthYear, birthHour, bi
     return (
       <GlassCard>
         <p className="text-sm text-slate-500 italic">
-          Solar Return pre rok {year} sa nepodarilo vyrátať.
+          {language === 'sk' ? `Solar Return pre rok ${year} sa nepodarilo vyrátať.` : `Solar Return for year ${year} could not be calculated.`}
         </p>
       </GlassCard>
     );
@@ -44,8 +47,10 @@ export function SolarReturnView({ birthDay, birthMonth, birthYear, birthHour, bi
     <GlassCard>
       <h3 className="font-medium text-white mb-1">Solar Return — výročný horoskop</h3>
       <p className="text-xs text-slate-500 mb-3">
-        Presný moment, kedy Slnko opäť dosiahne svoju natálnu longitúdu. <strong>Ascendent</strong> a <strong>Mesiac</strong>
-        tohto solárneho návratu opisujú kvalitu nadchádzajúceho roku života.
+        {language === 'sk'
+          ? <>Presný moment, kedy Slnko opäť dosiahne svoju natálnu longitúdu. <strong>Ascendent</strong> a <strong>Mesiac</strong> tohto solárneho návratu opisujú kvalitu nadchádzajúceho roku života.</>
+          : <>The exact moment when the Sun again reaches its natal longitude. The <strong>Ascendant</strong> and <strong>Moon</strong> of this solar return describe the quality of the upcoming year of life.</>
+        }
       </p>
 
       <div className="flex items-center gap-3 mb-4 flex-wrap">
@@ -86,10 +91,10 @@ export function SolarReturnView({ birthDay, birthMonth, birthYear, birthHour, bi
         <div className="p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/30">
           <p className="text-xs text-cyan-300 uppercase mb-1">Ascendent SR</p>
           <p className="text-sm text-white font-medium">
-            {sr.result.ascendant.symbol} {sr.result.ascendant.name} {sr.result.ascendantDegree.toFixed(1)}°
+            {sr.result.ascendant.symbol} {displayName(ZODIAC_DISPLAY, sr.result.ascendant.name, language)} {sr.result.ascendantDegree.toFixed(1)}°
           </p>
           <p className="text-[11px] text-slate-400">
-            Téma celého roka — {sr.result.ascendant.element}, {sr.result.ascendant.quality}.
+            Téma celého roka — {displayName(ELEMENT_DISPLAY, sr.result.ascendant.element, language)}, {sr.result.ascendant.quality}.
           </p>
         </div>
       </div>

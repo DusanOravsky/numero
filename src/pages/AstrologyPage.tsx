@@ -7,14 +7,16 @@ import { DateInput } from '../components/DateInput';
 import { calculateAstrology, calculateNatalAspects, calculateTransitAspects } from '../engine/astrologyEngine';
 import type { AstrologyResult, SynastryAspect, TransitAspect } from '../engine/astrologyEngine';
 import { motion } from 'framer-motion';
-import { planetInSignDescriptions } from '../data/planetSignDescriptions';
+import { getPlanetSignDescription } from '../data/planetSignDescriptions';
 import { LunarTimeline } from '../components/LunarTimeline';
 import { NatalWheel } from '../components/NatalWheel';
 import { UpcomingEclipses } from '../components/UpcomingEclipses';
 import { ProgressionsView } from '../components/ProgressionsView';
 import { SolarReturnView } from '../components/SolarReturnView';
 import { calculateChineseZodiac } from '../engine/chineseZodiacEngine';
-import { CHINESE_ANIMALS, CHINESE_ELEMENTS } from '../data/chineseZodiac';
+import { getChineseAnimalInfo, CHINESE_ELEMENTS } from '../data/chineseZodiac';
+import { useTranslation } from '../i18n/useTranslation';
+import { displayName, ZODIAC_DISPLAY, PLANET_DISPLAY, ELEMENT_DISPLAY, QUALITY_DISPLAY, MOON_PHASE_DISPLAY, CHINESE_ANIMAL_DISPLAY, CHINESE_ELEMENT_DISPLAY } from '../i18n/entityNames';
 
 function getSunSignDescription(sign: string): string {
   const descriptions: Record<string, string> = {
@@ -171,6 +173,7 @@ function getNodeDescription(sign: string, type: 'north' | 'south'): string {
 }
 
 export function AstrologyPage() {
+  const { t, language } = useTranslation();
   const navigate = useNavigate();
   const profile = useSubject();
   const [manualResult, setManualResult] = useState<AstrologyResult | null>(null);
@@ -203,11 +206,11 @@ export function AstrologyPage() {
             onClick={() => navigate(`/clients/${profile.id}`)}
             className="text-sm text-indigo-600 hover:text-indigo-800 mb-2 inline-flex items-center gap-1"
           >
-            ← Späť na klienta {profile.name}
+            ← {t('clients.backToClient')} {profile.name}
           </button>
         )}
         <div className="flex items-center gap-3 flex-wrap">
-          <h1 className="font-serif text-3xl font-bold text-white">Astrológia</h1>
+          <h1 className="font-serif text-3xl font-bold text-white">{t('astrology.title')}</h1>
           {profile?.isClient && (
             <span className="text-xs px-3 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-700">
               Klient: <strong>{profile.name}</strong>
@@ -245,7 +248,7 @@ export function AstrologyPage() {
 
           {/* Jednoducho povedané — praktické takeaway */}
           <GlassCard>
-            <h3 className="font-medium text-white mb-3">Čo si z toho vziať</h3>
+            <h3 className="font-medium text-white mb-3">{t('astrology.whatToTakeAway')}</h3>
             <div className="space-y-3 text-sm text-slate-300">
               <p>
                 Astrológia ti nehovorí, čo sa ti stane — hovorí ti, <strong className="text-white">akú energiu máš k dispozícii</strong>. Tu sú tri veci, ktoré ti pomôžu hneď:
@@ -254,19 +257,19 @@ export function AstrologyPage() {
                 <div className="p-3 rounded-xl bg-amber-50 border border-amber-200">
                   <p className="text-xs text-amber-700 font-semibold mb-1">{result.sunSign.symbol} Kto si (Slnko)</p>
                   <p className="text-xs text-slate-700">
-                    Si <strong>{result.sunSign.name}</strong> — tvoje vedomé ja, to čo ťa baví a kde sa cítiš „doma". Element {result.sunSign.element.toLowerCase()} = {result.sunSign.element === 'Oheň' ? 'akcia a vášeň' : result.sunSign.element === 'Zem' ? 'stabilita a prax' : result.sunSign.element === 'Vzduch' ? 'myslenie a komunikácia' : 'emócie a intuícia'}.
+                    Si <strong>{displayName(ZODIAC_DISPLAY, result.sunSign.name, language)}</strong> — tvoje vedomé ja, to čo ťa baví a kde sa cítiš „doma". Element {displayName(ELEMENT_DISPLAY, result.sunSign.element, language).toLowerCase()} = {result.sunSign.element === 'Oheň' ? 'akcia a vášeň' : result.sunSign.element === 'Zem' ? 'stabilita a prax' : result.sunSign.element === 'Vzduch' ? 'myslenie a komunikácia' : 'emócie a intuícia'}.
                   </p>
                 </div>
                 <div className="p-3 rounded-xl bg-purple-50 border border-purple-200">
                   <p className="text-xs text-purple-700 font-semibold mb-1">{result.moonSign.symbol} Čo cítiš (Mesiac)</p>
                   <p className="text-xs text-slate-700">
-                    Mesiac v <strong>{result.moonSign.name}</strong> — tvoje emócie a podvedomie. Takto spracúvaš stres, lásku a strach. Nemusíš sa podľa toho „správať" — ale pomáha to pochopiť.
+                    Mesiac v <strong>{displayName(ZODIAC_DISPLAY, result.moonSign.name, language)}</strong> — tvoje emócie a podvedomie. Takto spracúvaš stres, lásku a strach. Nemusíš sa podľa toho „správať" — ale pomáha to pochopiť.
                   </p>
                 </div>
                 <div className="p-3 rounded-xl bg-cyan-50 border border-cyan-200">
                   <p className="text-xs text-cyan-700 font-semibold mb-1">{result.ascendant.symbol} Ako ťa vidia (Asc)</p>
                   <p className="text-xs text-slate-700">
-                    Ascendent v <strong>{result.ascendant.name}</strong> — prvý dojem, tvoje „obaly". Nie je to kto si, je to ako ťa svet vníma a akú energiu vyžaruješ.
+                    Ascendent v <strong>{displayName(ZODIAC_DISPLAY, result.ascendant.name, language)}</strong> — prvý dojem, tvoje „obaly". Nie je to kto si, je to ako ťa svet vníma a akú energiu vyžaruješ.
                   </p>
                 </div>
               </div>
@@ -280,7 +283,7 @@ export function AstrologyPage() {
           <GlassCard>
             <details open>
               <summary className="cursor-pointer hover:text-indigo-300 transition-colors">
-                <span className="font-medium text-white">Tvoje čítanie — ako pracovať s horoskopom</span>
+                <span className="font-medium text-white">{t('astrology.yourReading')}</span>
               </summary>
               <div className="mt-4 space-y-4">
                 <p className="text-xs text-slate-400">
@@ -291,29 +294,29 @@ export function AstrologyPage() {
                 {/* Slnko — podstata */}
                 <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
                   <p className="text-xs font-semibold text-amber-300 mb-1">
-                    {result.sunSign.symbol} Tvoja podstata: Slnko v {result.sunSign.name}
+                    {result.sunSign.symbol} Tvoja podstata: Slnko v {displayName(ZODIAC_DISPLAY, result.sunSign.name, language)}
                   </p>
                   <p className="text-xs text-slate-300">{getSunSignDescription(result.sunSign.name)}</p>
                   <p className="text-[11px] text-slate-400 mt-1 italic">
-                    Element {result.sunSign.element} + kvalita {result.sunSign.quality.toLowerCase()} = {result.sunSign.quality === 'Kardinálny' ? 'iniciatíva a začínanie' : result.sunSign.quality === 'Fixný' ? 'vytrvalosť a stabilita' : 'adaptabilita a flexibilita'}.
+                    Element {displayName(ELEMENT_DISPLAY, result.sunSign.element, language)} + kvalita {displayName(QUALITY_DISPLAY, result.sunSign.quality, language).toLowerCase()} = {result.sunSign.quality === 'Kardinálny' ? 'iniciatíva a začínanie' : result.sunSign.quality === 'Fixný' ? 'vytrvalosť a stabilita' : 'adaptabilita a flexibilita'}.
                   </p>
                 </div>
 
                 {/* Mesiac — emócie */}
                 <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20">
                   <p className="text-xs font-semibold text-purple-300 mb-1">
-                    {result.moonSign.symbol} Tvoje emócie: Mesiac v {result.moonSign.name}
+                    {result.moonSign.symbol} Tvoje emócie: Mesiac v {displayName(ZODIAC_DISPLAY, result.moonSign.name, language)}
                   </p>
                   <p className="text-xs text-slate-300">{getMoonSignDescription(result.moonSign.name)}</p>
                   <p className="text-[11px] text-slate-400 mt-1 italic">
-                    Fáza Mesiaca pri narodení: {result.moonPhase} — {getMoonPhaseDescription(result.moonPhase)}
+                    Fáza Mesiaca pri narodení: {displayName(MOON_PHASE_DISPLAY, result.moonPhase, language)} — {getMoonPhaseDescription(result.moonPhase)}
                   </p>
                 </div>
 
                 {/* Ascendent — maska */}
                 <div className="p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/20">
                   <p className="text-xs font-semibold text-cyan-300 mb-1">
-                    {result.ascendant.symbol} Ako ťa vidia: Ascendent v {result.ascendant.name}
+                    {result.ascendant.symbol} Ako ťa vidia: Ascendent v {displayName(ZODIAC_DISPLAY, result.ascendant.name, language)}
                   </p>
                   <p className="text-xs text-slate-300">{getAscendantDescription(result.ascendant.name)}</p>
                 </div>
@@ -321,7 +324,7 @@ export function AstrologyPage() {
                 {/* Lunárne uzly — životná cesta */}
                 <div className="p-3 rounded-xl bg-indigo-500/10 border border-indigo-500/20">
                   <p className="text-xs font-semibold text-indigo-300 mb-1">
-                    Tvoja životná cesta: severný uzol v {result.northNode.name}
+                    Tvoja životná cesta: severný uzol v {displayName(ZODIAC_DISPLAY, result.northNode.name, language)}
                   </p>
                   <p className="text-xs text-slate-300">
                     <strong className="text-emerald-300">Kam smeruješ:</strong> {getNodeDescription(result.northNode.name, 'north')}
@@ -337,7 +340,7 @@ export function AstrologyPage() {
                 {/* Dominantný element + planéta */}
                 <div className="p-3 rounded-xl bg-slate-500/10 border border-slate-500/20">
                   <p className="text-xs font-semibold text-slate-300 mb-1">
-                    Tvoja dominantná energia: {result.dominantElement} + {result.dominantPlanet}
+                    Tvoja dominantná energia: {displayName(ELEMENT_DISPLAY, result.dominantElement, language)} + {displayName(PLANET_DISPLAY, result.dominantPlanet, language)}
                   </p>
                   <p className="text-xs text-slate-400">{getElementDescription(result.dominantElement)}</p>
                   <p className="text-xs text-slate-400 mt-1">{getDominantPlanetDescription(result.dominantPlanet)}</p>
@@ -356,23 +359,23 @@ export function AstrologyPage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <EnergyCard
-              title="Slnečné znamenie"
-              value={`${result.sunSign.symbol} ${result.sunSign.name}`}
-              subtitle={`${result.sunSign.element} | ${result.sunSign.quality}`}
+              title={t('astrology.sunSign')}
+              value={`${result.sunSign.symbol} ${displayName(ZODIAC_DISPLAY, result.sunSign.name, language)}`}
+              subtitle={`${displayName(ELEMENT_DISPLAY, result.sunSign.element, language)} | ${displayName(QUALITY_DISPLAY, result.sunSign.quality, language)}`}
               color="gold"
               delay={0.1}
             />
             <EnergyCard
-              title="Mesačné znamenie"
-              value={`${result.moonSign.symbol} ${result.moonSign.name}`}
-              subtitle={`${result.moonSign.element} | ${result.moonSign.quality}`}
+              title={t('astrology.moonSign')}
+              value={`${result.moonSign.symbol} ${displayName(ZODIAC_DISPLAY, result.moonSign.name, language)}`}
+              subtitle={`${displayName(ELEMENT_DISPLAY, result.moonSign.element, language)} | ${displayName(QUALITY_DISPLAY, result.moonSign.quality, language)}`}
               color="purple"
               delay={0.2}
             />
             <EnergyCard
-              title="Ascendent"
-              value={`${result.ascendant.symbol} ${result.ascendant.name}`}
-              subtitle={`${result.ascendant.element} | ${result.ascendant.quality}`}
+              title={t('astrology.ascSign')}
+              value={`${result.ascendant.symbol} ${displayName(ZODIAC_DISPLAY, result.ascendant.name, language)}`}
+              subtitle={`${displayName(ELEMENT_DISPLAY, result.ascendant.element, language)} | ${displayName(QUALITY_DISPLAY, result.ascendant.quality, language)}`}
               color="cyan"
               delay={0.3}
             />
@@ -382,15 +385,15 @@ export function AstrologyPage() {
             <h3 className="font-medium text-white mb-3">Čo znamenajú vaše tri hlavné body</h3>
             <div className="space-y-3">
               <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
-                <p className="text-xs text-amber-400 uppercase mb-1">Slnko v {result.sunSign.name} ({result.sunSign.element})</p>
+                <p className="text-xs text-amber-400 uppercase mb-1">{displayName(PLANET_DISPLAY, 'Slnko', language)} v {displayName(ZODIAC_DISPLAY, result.sunSign.name, language)} ({displayName(ELEMENT_DISPLAY, result.sunSign.element, language)})</p>
                 <p className="text-sm text-slate-300">{getSunSignDescription(result.sunSign.name)}</p>
               </div>
               <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20">
-                <p className="text-xs text-purple-400 uppercase mb-1">Mesiac v {result.moonSign.name} ({result.moonSign.element})</p>
+                <p className="text-xs text-purple-400 uppercase mb-1">{displayName(PLANET_DISPLAY, 'Mesiac', language)} v {displayName(ZODIAC_DISPLAY, result.moonSign.name, language)} ({displayName(ELEMENT_DISPLAY, result.moonSign.element, language)})</p>
                 <p className="text-sm text-slate-300">{getMoonSignDescription(result.moonSign.name)}</p>
               </div>
               <div className="p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/20">
-                <p className="text-xs text-cyan-400 uppercase mb-1">Ascendent v {result.ascendant.name} ({result.ascendant.element})</p>
+                <p className="text-xs text-cyan-400 uppercase mb-1">{t('astrology.ascendant')} v {displayName(ZODIAC_DISPLAY, result.ascendant.name, language)} ({displayName(ELEMENT_DISPLAY, result.ascendant.element, language)})</p>
                 <p className="text-sm text-slate-300">{getAscendantDescription(result.ascendant.name)}</p>
               </div>
             </div>
@@ -402,7 +405,7 @@ export function AstrologyPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div className="space-y-6">
             <GlassCard>
-              <h3 className="font-medium text-white mb-2">Planéty v znameniach</h3>
+              <h3 className="font-medium text-white mb-2">{t('astrology.planetsInSigns')}</h3>
               <p className="text-xs text-slate-400 mb-4">Každá planéta ovplyvňuje inú oblasť vášho života. Znamenie, v ktorom sa nachádza, určuje spôsob, akým sa táto energia prejavuje.</p>
               <div className="space-y-3">
                 {result.planets.map((planet, idx) => (
@@ -417,12 +420,12 @@ export function AstrologyPage() {
                       <div className="flex items-center gap-3">
                         <span className="text-xl">{planet.symbol}</span>
                         <div>
-                          <span className="text-sm font-medium text-white">{planet.name}</span>
+                          <span className="text-sm font-medium text-white">{displayName(PLANET_DISPLAY, planet.name, language)}</span>
                           <p className="text-[10px] text-slate-500">{getPlanetMeaning(planet.name)}</p>
                         </div>
                       </div>
                       <div className="text-right">
-                        <span className="text-sm text-indigo-300">{planet.sign.symbol} {planet.sign.name}</span>
+                        <span className="text-sm text-indigo-300">{planet.sign.symbol} {displayName(ZODIAC_DISPLAY, planet.sign.name, language)}</span>
                         <span className="text-xs text-slate-500 ml-2">{planet.degree.toFixed(1)}°</span>
                         {result.planetHouses[planet.name] && (
                           <span className="block text-[10px] text-amber-700 mt-0.5">
@@ -431,8 +434,8 @@ export function AstrologyPage() {
                         )}
                       </div>
                     </div>
-                    {planetInSignDescriptions[planet.name]?.[planet.sign.name] && (
-                      <p className="text-xs text-slate-400 mt-2">{planetInSignDescriptions[planet.name][planet.sign.name]}</p>
+                    {getPlanetSignDescription(planet.name, planet.sign.name, language) && (
+                      <p className="text-xs text-slate-400 mt-2">{getPlanetSignDescription(planet.name, planet.sign.name, language)}</p>
                     )}
                   </motion.div>
                 ))}
@@ -444,18 +447,18 @@ export function AstrologyPage() {
               const birthYear = profile?.birthYear ?? (manualResult ? new Date().getFullYear() - 30 : null);
               if (!birthYear) return null;
               const chinese = calculateChineseZodiac(birthYear, profile?.birthMonth, profile?.birthDay);
-              const animalInfo = CHINESE_ANIMALS[chinese.animal];
+              const animalInfo = getChineseAnimalInfo(chinese.animal, language);
               const elementInfo = CHINESE_ELEMENTS[chinese.element];
               if (!animalInfo) return null;
               return (
                 <GlassCard>
-                  <h3 className="font-medium text-white mb-3">Čínsky horoskop</h3>
+                  <h3 className="font-medium text-white mb-3">{t('astrology.chineseZodiac')}</h3>
                   <div className="flex items-center gap-4 mb-4">
                     <div className="text-5xl">{chinese.animalEmoji}</div>
                     <div>
-                      <p className="text-lg font-serif font-bold text-white">{chinese.animal}</p>
+                      <p className="text-lg font-serif font-bold text-white">{displayName(CHINESE_ANIMAL_DISPLAY, chinese.animal, language)}</p>
                       <p className="text-sm text-slate-400">
-                        {chinese.element} {chinese.elementEmoji} · {chinese.polarity} · rok {birthYear}
+                        {displayName(CHINESE_ELEMENT_DISPLAY, chinese.element, language)} {chinese.elementEmoji} · {chinese.polarity} · rok {birthYear}
                       </p>
                     </div>
                   </div>
@@ -469,7 +472,7 @@ export function AstrologyPage() {
 
                   <div className="space-y-3">
                     <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20">
-                      <p className="text-xs text-red-400 uppercase mb-1">Povaha {chinese.animal}</p>
+                      <p className="text-xs text-red-400 uppercase mb-1">{t('astrology.chineseAnimal')}: {displayName(CHINESE_ANIMAL_DISPLAY, chinese.animal, language)}</p>
                       <p className="text-xs text-slate-300">{animalInfo.traits}</p>
                     </div>
 
@@ -485,23 +488,23 @@ export function AstrologyPage() {
                     </div>
 
                     <div className="p-3 rounded-xl bg-indigo-500/10 border border-indigo-500/20">
-                      <p className="text-xs text-indigo-400 uppercase mb-1">Element: {chinese.element} {chinese.elementEmoji}</p>
+                      <p className="text-xs text-indigo-400 uppercase mb-1">{t('astrology.chineseElement')}: {displayName(CHINESE_ELEMENT_DISPLAY, chinese.element, language)} {chinese.elementEmoji}</p>
                       <p className="text-xs text-slate-300">{elementInfo?.personality}</p>
                     </div>
 
                     <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20">
-                      <p className="text-xs text-purple-400 uppercase mb-1">Kompatibilita</p>
+                      <p className="text-xs text-purple-400 uppercase mb-1">{t('astrology.chineseCompat')}</p>
                       <p className="text-xs text-slate-300">{animalInfo.compatibility}</p>
                     </div>
 
                     <div className="p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/20">
-                      <p className="text-xs text-cyan-400 uppercase mb-1">Odporúčanie</p>
+                      <p className="text-xs text-cyan-400 uppercase mb-1">{t('astrology.chineseAdvice')}</p>
                       <p className="text-xs text-slate-300 italic">{animalInfo.advice}</p>
                     </div>
 
                     <div className="p-3 rounded-xl bg-slate-500/10 border border-slate-500/20">
                       <p className="text-xs text-slate-400">
-                        Najbližší rok {chinese.animalGenitive} {chinese.animalEmoji}: <strong className="text-white">{chinese.nextYear}</strong>
+                        {t('astrology.chineseNextYear')} {chinese.animalGenitive} {chinese.animalEmoji}: <strong className="text-white">{chinese.nextYear}</strong>
                         <span className="text-slate-500"> (za {chinese.nextYear - new Date().getFullYear()} {chinese.nextYear - new Date().getFullYear() === 1 ? 'rok' : chinese.nextYear - new Date().getFullYear() < 5 ? 'roky' : 'rokov'})</span>
                       </p>
                     </div>
@@ -513,27 +516,27 @@ export function AstrologyPage() {
 
             <div className="space-y-4">
               <GlassCard>
-                <h3 className="font-medium text-white mb-2">Dominantné energie</h3>
+                <h3 className="font-medium text-white mb-2">{t('astrology.dominantEnergies')}</h3>
                 <p className="text-xs text-slate-400 mb-3">Dominanty ukazujú, aké energie vo vašom horoskope prevládajú a formujú váš celkový prístup k životu.</p>
                 <div className="space-y-3">
                   <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20">
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm text-slate-300">Dominantný živel</span>
-                      <span className="font-medium text-white">{result.dominantElement}</span>
+                      <span className="text-sm text-slate-300">{t('astrology.dominantElement')}</span>
+                      <span className="font-medium text-white">{displayName(ELEMENT_DISPLAY, result.dominantElement, language)}</span>
                     </div>
                     <p className="text-xs text-slate-400">{getElementDescription(result.dominantElement)}</p>
                   </div>
                   <div className="p-3 rounded-xl bg-blue-500/10 border border-blue-500/20">
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm text-slate-300">Dominantná kvalita</span>
-                      <span className="font-medium text-white">{result.dominantQuality}</span>
+                      <span className="text-sm text-slate-300">{t('astrology.dominantQuality')}</span>
+                      <span className="font-medium text-white">{displayName(QUALITY_DISPLAY, result.dominantQuality, language)}</span>
                     </div>
                     <p className="text-xs text-slate-400">{getQualityDescription(result.dominantQuality)}</p>
                   </div>
                   <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20">
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm text-slate-300">Dominantná planéta</span>
-                      <span className="font-medium text-white">{result.dominantPlanet}</span>
+                      <span className="text-sm text-slate-300">{t('astrology.dominantPlanet')}</span>
+                      <span className="font-medium text-white">{displayName(PLANET_DISPLAY, result.dominantPlanet, language)}</span>
                     </div>
                     <p className="text-xs text-slate-400">{getDominantPlanetDescription(result.dominantPlanet)}</p>
                   </div>
@@ -541,8 +544,8 @@ export function AstrologyPage() {
               </GlassCard>
 
               <GlassCard>
-                <h3 className="font-medium text-white mb-2">Mesačná fáza pri narodení</h3>
-                <p className="text-lg text-indigo-300 font-serif">{result.moonPhase}</p>
+                <h3 className="font-medium text-white mb-2">{t('astrology.moonPhase')}</h3>
+                <p className="text-lg text-indigo-300 font-serif">{displayName(MOON_PHASE_DISPLAY, result.moonPhase, language)}</p>
                 <p className="text-xs text-slate-400 mt-2">{getMoonPhaseDescription(result.moonPhase)}</p>
               </GlassCard>
 
@@ -554,23 +557,23 @@ export function AstrologyPage() {
                 const personal = transits.filter(t => !['Jupiter', 'Saturn', 'Urán', 'Neptún', 'Pluto'].includes(t.transitPlanet));
                 return (
                   <GlassCard>
-                    <h3 className="font-medium text-white mb-2">Aktuálne tranzity</h3>
+                    <h3 className="font-medium text-white mb-2">{t('astrology.currentTransits')}</h3>
                     <p className="text-xs text-slate-500 mb-4">
                       Planéty na oblohe práve teraz tvoria aspekty k tvojim natálnym pozíciám. Vonkajšie planéty (Jupiter–Pluto) sú dlhodobejšie a dôležitejšie.
                     </p>
 
                     {important.length > 0 && (
                       <div className="mb-4">
-                        <p className="text-xs text-amber-400 uppercase font-semibold mb-2">Dlhodobé (vonkajšie planéty)</p>
+                        <p className="text-xs text-amber-400 uppercase font-semibold mb-2">{t('astrology.longTermTransits')}</p>
                         <div className="space-y-2">
-                          {important.slice(0, 6).map((t, i) => (
-                            <div key={i} className={`p-3 rounded-xl border ${t.nature === 'harmonic' ? 'bg-emerald-500/10 border-emerald-500/20' : t.nature === 'tense' ? 'bg-rose-500/10 border-rose-500/20' : 'bg-indigo-500/10 border-indigo-500/20'}`}>
+                          {important.slice(0, 6).map((tr, i) => (
+                            <div key={i} className={`p-3 rounded-xl border ${tr.nature === 'harmonic' ? 'bg-emerald-500/10 border-emerald-500/20' : tr.nature === 'tense' ? 'bg-rose-500/10 border-rose-500/20' : 'bg-indigo-500/10 border-indigo-500/20'}`}>
                               <div className="flex items-center gap-2 mb-1">
-                                <span className="text-sm font-medium text-white">{t.transitPlanet} {t.symbol} {t.natalPlanet}</span>
-                                <span className="text-xs text-slate-400 ml-auto">orb {t.orb.toFixed(1)}°</span>
+                                <span className="text-sm font-medium text-white">{displayName(PLANET_DISPLAY, tr.transitPlanet, language)} {tr.symbol} {displayName(PLANET_DISPLAY, tr.natalPlanet, language)}</span>
+                                <span className="text-xs text-slate-400 ml-auto">orb {tr.orb.toFixed(1)}°</span>
                               </div>
-                              <p className="text-xs text-slate-300">{t.meaning}</p>
-                              <p className="text-[10px] text-slate-500 mt-1">Tranzit {t.transitPlanet} v {t.transitSign} → natálny {t.natalPlanet} v {t.natalSign}</p>
+                              <p className="text-xs text-slate-300">{tr.meaning}</p>
+                              <p className="text-[10px] text-slate-500 mt-1">Tranzit {displayName(PLANET_DISPLAY, tr.transitPlanet, language)} v {displayName(ZODIAC_DISPLAY, tr.transitSign, language)} → natálny {displayName(PLANET_DISPLAY, tr.natalPlanet, language)} v {displayName(ZODIAC_DISPLAY, tr.natalSign, language)}</p>
                             </div>
                           ))}
                         </div>
@@ -580,16 +583,16 @@ export function AstrologyPage() {
                     {personal.length > 0 && (
                       <details>
                         <summary className="text-xs text-indigo-700 font-medium cursor-pointer hover:text-indigo-800 select-none">
-                          Krátkodobé tranzity ({personal.length}) — Slnko, Mesiac, osobné planéty
+                          {t('astrology.shortTermTransits')} ({personal.length})
                         </summary>
                         <div className="space-y-2 mt-3">
-                          {personal.slice(0, 8).map((t, i) => (
-                            <div key={i} className={`p-2 rounded-lg border ${t.nature === 'harmonic' ? 'bg-emerald-500/5 border-emerald-500/15' : t.nature === 'tense' ? 'bg-rose-500/5 border-rose-500/15' : 'bg-slate-500/5 border-slate-500/15'}`}>
+                          {personal.slice(0, 8).map((tr, i) => (
+                            <div key={i} className={`p-2 rounded-lg border ${tr.nature === 'harmonic' ? 'bg-emerald-500/5 border-emerald-500/15' : tr.nature === 'tense' ? 'bg-rose-500/5 border-rose-500/15' : 'bg-slate-500/5 border-slate-500/15'}`}>
                               <div className="flex items-center gap-2">
-                                <span className="text-xs font-medium text-white">{t.transitPlanet} {t.symbol} {t.natalPlanet}</span>
-                                <span className="text-[10px] text-slate-400 ml-auto">{t.orb.toFixed(1)}°</span>
+                                <span className="text-xs font-medium text-white">{displayName(PLANET_DISPLAY, tr.transitPlanet, language)} {tr.symbol} {displayName(PLANET_DISPLAY, tr.natalPlanet, language)}</span>
+                                <span className="text-[10px] text-slate-400 ml-auto">{tr.orb.toFixed(1)}°</span>
                               </div>
-                              <p className="text-[10px] text-slate-400">{t.meaning}</p>
+                              <p className="text-[10px] text-slate-400">{tr.meaning}</p>
                             </div>
                           ))}
                         </div>
@@ -626,7 +629,7 @@ export function AstrologyPage() {
               )}
 
               <GlassCard>
-                <h3 className="font-medium text-white mb-2">Astrologické domy (Whole Sign)</h3>
+                <h3 className="font-medium text-white mb-2">{t('astrology.houses')}</h3>
                 <p className="text-xs text-slate-500 mb-3">
                   12 domov začína znamením ascendentu. Každý dom predstavuje oblasť života. Planéty v dome ukazujú, aká energia v tej oblasti pôsobí.
                 </p>
@@ -637,7 +640,7 @@ export function AstrologyPage() {
                       <div key={h.number} className="p-2 rounded-lg bg-amber-50 border border-amber-200">
                         <div className="flex items-center justify-between">
                           <span className="text-xs font-bold text-amber-700">{h.number}. {h.sign.symbol}</span>
-                          <span className="text-[10px] text-slate-500">{h.sign.name}</span>
+                          <span className="text-[10px] text-slate-500">{displayName(ZODIAC_DISPLAY, h.sign.name, language)}</span>
                         </div>
                         <p className="text-[10px] text-slate-600 mt-0.5 leading-tight">{h.theme}</p>
                         {planetsInHouse.length > 0 && (
@@ -654,22 +657,22 @@ export function AstrologyPage() {
               </GlassCard>
 
               <GlassCard>
-                <h3 className="font-medium text-white mb-2">Karmické uzly</h3>
+                <h3 className="font-medium text-white mb-2">{t('astrology.karmicNodes')}</h3>
                 <p className="text-xs text-slate-400 mb-3">Severný uzol ukazuje smer vašej evolúcie – kam sa máte posúvať. Južný uzol je vaša komfortná zóna z minulých životov.</p>
                 <div className="space-y-2">
                   <div className="p-2 rounded-lg bg-indigo-500/10">
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-slate-300">Severný uzol (budúcnosť)</span>
-                      <span className="text-sm text-indigo-300">{result.northNode.symbol} {result.northNode.name}</span>
+                      <span className="text-sm text-indigo-300">{result.northNode.symbol} {displayName(ZODIAC_DISPLAY, result.northNode.name, language)}</span>
                     </div>
-                    <p className="text-xs text-slate-400 mt-1">Smer rastu: {getNodeDescription(result.northNode.name, 'north')}</p>
+                    <p className="text-xs text-slate-400 mt-1">{t('astrology.growthDirection')} {getNodeDescription(result.northNode.name, 'north')}</p>
                   </div>
                   <div className="p-2 rounded-lg bg-purple-500/10">
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-slate-300">Južný uzol (minulosť)</span>
-                      <span className="text-sm text-purple-300">{result.southNode.symbol} {result.southNode.name}</span>
+                      <span className="text-sm text-purple-300">{result.southNode.symbol} {displayName(ZODIAC_DISPLAY, result.southNode.name, language)}</span>
                     </div>
-                    <p className="text-xs text-slate-400 mt-1">Vrodený talent: {getNodeDescription(result.southNode.name, 'south')}</p>
+                    <p className="text-xs text-slate-400 mt-1">{t('astrology.innateTalent')} {getNodeDescription(result.southNode.name, 'south')}</p>
                   </div>
                 </div>
               </GlassCard>
@@ -690,7 +693,7 @@ export function AstrologyPage() {
             const top = natalAspects.slice(0, 12);
             return (
               <GlassCard>
-                <h3 className="font-medium text-white mb-2">Natálne aspekty</h3>
+                <h3 className="font-medium text-white mb-2">{t('astrology.natalAspects')}</h3>
                 <p className="text-xs text-slate-500 mb-3">
                   Uhly medzi planétami v rámci vášho vlastného horoskopu. Každý aspekt je dialóg dvoch planét — buď harmonický (trigon, sextil), napäťový (kvadratúra, opozícia) alebo neutrálny (spojenie, ktoré planétne energie zlučuje).
                 </p>
@@ -698,15 +701,15 @@ export function AstrologyPage() {
                 {/* Súhrn počtu */}
                 <div className="grid grid-cols-3 gap-2 mb-4">
                   <div className="p-2 rounded-lg bg-green-50 border border-green-200 text-center">
-                    <p className="text-[10px] uppercase text-green-700 font-semibold">Harmonické</p>
+                    <p className="text-[10px] uppercase text-green-700 font-semibold">{t('astrology.harmonicAspects')}</p>
                     <p className="text-2xl font-bold text-green-700">{harmonic}</p>
                   </div>
                   <div className="p-2 rounded-lg bg-rose-50 border border-rose-200 text-center">
-                    <p className="text-[10px] uppercase text-rose-700 font-semibold">Napäťové</p>
+                    <p className="text-[10px] uppercase text-rose-700 font-semibold">{t('astrology.tenseAspects')}</p>
                     <p className="text-2xl font-bold text-rose-700">{tense}</p>
                   </div>
                   <div className="p-2 rounded-lg bg-slate-50 border border-slate-200 text-center">
-                    <p className="text-[10px] uppercase text-slate-700 font-semibold">Neutrálne</p>
+                    <p className="text-[10px] uppercase text-slate-700 font-semibold">{t('astrology.neutralAspects')}</p>
                     <p className="text-2xl font-bold text-slate-700">{neutral}</p>
                   </div>
                 </div>
@@ -726,9 +729,9 @@ export function AstrologyPage() {
                         <div className="flex items-center justify-between gap-2 text-sm">
                           <div className="flex items-center gap-2">
                             <span className="text-base">{planetSymbols[a.planet1] || ''}</span>
-                            <strong className="text-slate-800">{a.planet1}</strong>
+                            <strong className="text-slate-800">{displayName(PLANET_DISPLAY, a.planet1, language)}</strong>
                             <span className={`text-base ${iconColor}`}>{a.symbol}</span>
-                            <strong className="text-slate-800">{a.planet2}</strong>
+                            <strong className="text-slate-800">{displayName(PLANET_DISPLAY, a.planet2, language)}</strong>
                             <span className="text-base">{planetSymbols[a.planet2] || ''}</span>
                           </div>
                           <span className="text-[10px] text-slate-500 shrink-0">orb {a.orb.toFixed(1)}°</span>
@@ -751,7 +754,7 @@ export function AstrologyPage() {
               onClick={() => setManualResult(null)}
               className="px-4 py-2 rounded-xl text-sm font-medium glass text-slate-400 hover:text-white"
             >
-              Nový výpočet
+              {t('common.newCalculation')}
             </button>
           )}
         </div>

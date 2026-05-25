@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSubject } from '../hooks/useSubject';
+import { useTranslation } from '../i18n/useTranslation';
 import { GlassCard } from '../components/GlassCard';
 import { DateInput } from '../components/DateInput';
 import { calculateKabalah, SEFIROT } from '../engine/kabalahEngine';
@@ -10,6 +11,7 @@ import { motion } from 'framer-motion';
 import { TreeOfLife } from '../components/TreeOfLife';
 
 export function KabalahPage() {
+  const { t, language } = useTranslation();
   const navigate = useNavigate();
   const profile = useSubject();
   const [manualResult, setManualResult] = useState<KabalahResult | null>(null);
@@ -37,25 +39,25 @@ export function KabalahPage() {
             onClick={() => navigate(`/clients/${profile.id}`)}
             className="text-sm text-indigo-600 hover:text-indigo-800 mb-2 inline-flex items-center gap-1"
           >
-            ← Späť na klienta {profile.name}
+            {t('clients.backToClient')} {profile.name}
           </button>
         )}
         <div className="flex items-center gap-3 flex-wrap">
-          <h1 className="font-serif text-3xl font-bold text-white">Kabala</h1>
+          <h1 className="font-serif text-3xl font-bold text-white">{t('kabalah.title')}</h1>
           {profile?.isClient && (
             <span className="text-xs px-3 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-700">
-              Klient: <strong>{profile.name}</strong>
+              {language === 'sk' ? 'Klient' : 'Client'}: <strong>{profile.name}</strong>
             </span>
           )}
         </div>
         <p className="text-slate-400 mt-1">
-          {profile?.isClient ? `Kabalistický rozbor klienta ${profile.name}` : 'Strom života a sefírotický systém'}
+          {profile?.isClient ? (language === 'sk' ? `Kabalistický rozbor klienta ${profile.name}` : `Kabbalistic analysis of client ${profile.name}`) : (language === 'sk' ? 'Strom života a sefírotický systém' : 'Tree of Life and the sefirotic system')}
         </p>
       </div>
 
       {!result && (
         <GlassCard>
-          <DateInput onSubmit={handleCalculate} label="Dátum narodenia" />
+          <DateInput onSubmit={handleCalculate} label={t('profile.birthDate')} />
         </GlassCard>
       )}
 
@@ -63,45 +65,64 @@ export function KabalahPage() {
         <div className="space-y-6">
           {/* Úvod do Kabaly */}
           <GlassCard>
-            <h3 className="font-medium text-white mb-3">Čo je Kabala a Strom života</h3>
+            <h3 className="font-medium text-white mb-3">{language === 'sk' ? 'Čo je Kabala a Strom života' : 'What is Kabbalah and the Tree of Life'}</h3>
             <div className="space-y-3 text-sm text-slate-700">
               <p>
-                <strong>Kabala</strong> je staroveká židovská mystická tradícia, ktorá popisuje, ako sa božská energia prejavuje v stvorení. Jej hlavný symbol – <strong>Strom života (Etz Chaim)</strong> – ukazuje 10 svetelných emanácií zvaných <strong>sefiroty</strong>, prepojených 22 cestami. Každá sefira je iná tvár Boha a zároveň archetyp v ľudskej psychike.
+                {language === 'sk'
+                  ? <><strong>Kabala</strong> je staroveká židovská mystická tradícia, ktorá popisuje, ako sa božská energia prejavuje v stvorení. Jej hlavný symbol – <strong>Strom života (Etz Chaim)</strong> – ukazuje 10 svetelných emanácií zvaných <strong>sefiroty</strong>, prepojených 22 cestami. Každá sefira je iná tvár Boha a zároveň archetyp v ľudskej psychike.</>
+                  : <><strong>Kabbalah</strong> is an ancient Jewish mystical tradition that describes how divine energy manifests in creation. Its main symbol – the <strong>Tree of Life (Etz Chaim)</strong> – shows 10 luminous emanations called <strong>sefirot</strong>, connected by 22 paths. Each sefira is a different face of God and simultaneously an archetype in the human psyche.</>
+                }
               </p>
               <p>
-                Strom čítame zhora nadol: od <strong>Keter</strong> (Koruna, čistá božská vôľa) cez postupne hutnejšie sefiroty až po <strong>Malchut</strong> (Kráľovstvo, hmotný svet). Cesta duše vedie obojstranne – energia zostupuje do hmoty <em>(blesk stvorenia)</em> a vedomie sa späť pozdvihuje k Zdroju <em>(cesta návratu)</em>.
+                {language === 'sk'
+                  ? <>Strom čítame zhora nadol: od <strong>Keter</strong> (Koruna, čistá božská vôľa) cez postupne hutnejšie sefiroty až po <strong>Malchut</strong> (Kráľovstvo, hmotný svet). Cesta duše vedie obojstranne – energia zostupuje do hmoty <em>(blesk stvorenia)</em> a vedomie sa späť pozdvihuje k Zdroju <em>(cesta návratu)</em>.</>
+                  : <>We read the Tree from top to bottom: from <strong>Keter</strong> (Crown, pure divine will) through progressively denser sefirot down to <strong>Malchut</strong> (Kingdom, the material world). The soul&apos;s path goes both ways – energy descends into matter <em>(the lightning flash of creation)</em> and consciousness ascends back to the Source <em>(the path of return)</em>.</>
+                }
               </p>
             </div>
           </GlassCard>
 
           {/* Tri piliere */}
           <GlassCard>
-            <h3 className="font-medium text-white mb-3">Tri piliere Stromu života</h3>
+            <h3 className="font-medium text-white mb-3">{language === 'sk' ? 'Tri piliere Stromu života' : 'Three Pillars of the Tree of Life'}</h3>
             <p className="text-xs text-slate-500 mb-3">
-              Sefiroty sú usporiadané do troch zvislých pilierov, ktoré reprezentujú tri základné polarity vedomia. Každá sefira nesie energiu svojho piliera.
+              {language === 'sk'
+                ? 'Sefiroty sú usporiadané do troch zvislých pilierov, ktoré reprezentujú tri základné polarity vedomia. Každá sefira nesie energiu svojho piliera.'
+                : 'The sefirot are arranged into three vertical pillars that represent three fundamental polarities of consciousness. Each sefira carries the energy of its pillar.'}
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div className="p-3 rounded-xl bg-blue-50 border border-blue-200">
-                <p className="text-xs text-blue-700 font-semibold mb-1">Pilier Milosrdenstva (vpravo)</p>
+                <p className="text-xs text-blue-700 font-semibold mb-1">{language === 'sk' ? 'Pilier Milosrdenstva (vpravo)' : 'Pillar of Mercy (right)'}</p>
                 <p className="text-xs text-slate-700">
-                  Expanzia, dávanie, mužský princíp, aktívna energia. <strong>Sefiroty:</strong> Chokmah (Múdrosť), Chesed (Milosrdenstvo), Necach (Víťazstvo).
+                  {language === 'sk'
+                    ? <><strong>Sefiroty:</strong> Chokmah (Múdrosť), Chesed (Milosrdenstvo), Necach (Víťazstvo). Expanzia, dávanie, mužský princíp, aktívna energia.</>
+                    : <><strong>Sefirot:</strong> Chokmah (Wisdom), Chesed (Mercy), Netzach (Victory). Expansion, giving, masculine principle, active energy.</>
+                  }
                 </p>
               </div>
               <div className="p-3 rounded-xl bg-amber-50 border border-amber-200">
-                <p className="text-xs text-amber-700 font-semibold mb-1">Pilier Stredu (uprostred)</p>
+                <p className="text-xs text-amber-700 font-semibold mb-1">{language === 'sk' ? 'Pilier Stredu (uprostred)' : 'Middle Pillar (center)'}</p>
                 <p className="text-xs text-slate-700">
-                  Rovnováha, vedomie, harmonizácia protikladov. <strong>Sefiroty:</strong> Keter (Koruna), Tiferet (Krása), Jesod (Základ), Malchut (Kráľovstvo).
+                  {language === 'sk'
+                    ? <><strong>Sefiroty:</strong> Keter (Koruna), Tiferet (Krása), Jesod (Základ), Malchut (Kráľovstvo). Rovnováha, vedomie, harmonizácia protikladov.</>
+                    : <><strong>Sefirot:</strong> Keter (Crown), Tiferet (Beauty), Yesod (Foundation), Malchut (Kingdom). Balance, consciousness, harmonization of opposites.</>
+                  }
                 </p>
               </div>
               <div className="p-3 rounded-xl bg-rose-50 border border-rose-200">
-                <p className="text-xs text-rose-700 font-semibold mb-1">Pilier Prísnosti (vľavo)</p>
+                <p className="text-xs text-rose-700 font-semibold mb-1">{language === 'sk' ? 'Pilier Prísnosti (vľavo)' : 'Pillar of Severity (left)'}</p>
                 <p className="text-xs text-slate-700">
-                  Forma, prijímanie, ženský princíp, pasívna/štruktúrujúca energia. <strong>Sefiroty:</strong> Binah (Porozumenie), Geburah (Sila), Hod (Sláva).
+                  {language === 'sk'
+                    ? <><strong>Sefiroty:</strong> Binah (Porozumenie), Geburah (Sila), Hod (Sláva). Forma, prijímanie, ženský princíp, pasívna/štruktúrujúca energia.</>
+                    : <><strong>Sefirot:</strong> Binah (Understanding), Geburah (Strength), Hod (Glory). Form, receiving, feminine principle, passive/structuring energy.</>
+                  }
                 </p>
               </div>
             </div>
             <p className="text-[11px] text-slate-500 mt-3 italic">
-              Zdravá psyché potrebuje všetky tri – príliš veľa milosrdenstva = roztečenie, príliš veľa prísnosti = krutosť, stred ich integruje.
+              {language === 'sk'
+                ? 'Zdravá psyché potrebuje všetky tri – príliš veľa milosrdenstva = roztečenie, príliš veľa prísnosti = krutosť, stred ich integruje.'
+                : 'A healthy psyche needs all three – too much mercy = dissolution, too much severity = cruelty, the middle integrates them.'}
             </p>
           </GlassCard>
 
@@ -118,21 +139,27 @@ export function KabalahPage() {
 
           {/* Tvoje čítanie */}
           <GlassCard glow>
-            <h3 className="font-medium text-white mb-3">Tvoje čítanie — ako pracovať s Kabalou</h3>
+            <h3 className="font-medium text-white mb-3">{t('kabalah.yourReading')}</h3>
             <div className="space-y-3 text-sm text-slate-300">
               <p>
-                Predstav si Strom života ako <strong>mapu tvojej duše</strong>. Máš v nej 10 „staníc" (sefír), z ktorých každá zastupuje inú kvalitu — od čistej inšpirácie hore až po konkrétne činy dole.
+                {language === 'sk'
+                  ? <>Predstav si Strom života ako <strong>mapu tvojej duše</strong>. Máš v nej 10 „staníc" (sefír), z ktorých každá zastupuje inú kvalitu — od čistej inšpirácie hore až po konkrétne činy dole.</>
+                  : <>Imagine the Tree of Life as a <strong>map of your soul</strong>. It has 10 "stations" (sefirot), each representing a different quality — from pure inspiration at the top to concrete actions at the bottom.</>
+                }
               </p>
               <p>
-                <strong>Tvoja hlavná stanica</strong> je <span className="text-indigo-300 font-medium">{result.primarySefira.name} ({result.primarySefira.meaning})</span> — to je téma, cez ktorú rastieš. Nie je to niečo, čo „máš" alebo „nemáš" — je to energia, ktorú sa učíš vedome používať.
+                {language === 'sk'
+                  ? <><strong>Tvoja hlavná stanica</strong> je <span className="text-indigo-300 font-medium">{result.primarySefira.name} ({result.primarySefira.meaning})</span> — to je téma, cez ktorú rastieš. Nie je to niečo, čo „máš" alebo „nemáš" — je to energia, ktorú sa učíš vedome používať.</>
+                  : <><strong>Your main station</strong> is <span className="text-indigo-300 font-medium">{result.primarySefira.name} ({result.primarySefira.meaning})</span> — this is the theme through which you grow. It is not something you "have" or "don&apos;t have" — it is an energy you are learning to consciously use.</>
+                }
               </p>
               <p>
-                <strong>Čo si z toho vziať:</strong>
+                <strong>{language === 'sk' ? 'Čo si z toho vziať:' : 'Key takeaways:'}</strong>
               </p>
               <ul className="space-y-1 ml-4">
-                <li className="flex items-start gap-2"><span className="text-emerald-400 shrink-0">→</span> Tvoj dar: {result.primarySefira.gift.toLowerCase()}</li>
-                <li className="flex items-start gap-2"><span className="text-amber-400 shrink-0">→</span> Tvoja výzva: {result.primarySefira.shadow.toLowerCase()}</li>
-                <li className="flex items-start gap-2"><span className="text-indigo-400 shrink-0">→</span> Praktický krok: {result.malchutAction.toLowerCase()}</li>
+                <li className="flex items-start gap-2"><span className="text-emerald-400 shrink-0">→</span> {language === 'sk' ? 'Tvoj dar' : 'Your gift'}: {result.primarySefira.gift.toLowerCase()}</li>
+                <li className="flex items-start gap-2"><span className="text-amber-400 shrink-0">→</span> {language === 'sk' ? 'Tvoja výzva' : 'Your challenge'}: {result.primarySefira.shadow.toLowerCase()}</li>
+                <li className="flex items-start gap-2"><span className="text-indigo-400 shrink-0">→</span> {language === 'sk' ? 'Praktický krok' : 'Practical step'}: {result.malchutAction.toLowerCase()}</li>
               </ul>
             </div>
           </GlassCard>
@@ -179,13 +206,13 @@ export function KabalahPage() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <GlassCard>
-              <h3 className="font-medium text-white mb-3">Primárna sefira: {result.primarySefira.name}</h3>
+              <h3 className="font-medium text-white mb-3">{t('kabalah.primarySefira')}: {result.primarySefira.name}</h3>
               <div className="space-y-3">
                 <div>
                   <p className="text-xs text-slate-400">Témy</p>
                   <div className="flex flex-wrap gap-1 mt-1">
-                    {result.primarySefira.themes.map(t => (
-                      <span key={t} className="text-xs px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300">{t}</span>
+                    {result.primarySefira.themes.map(th => (
+                      <span key={th} className="text-xs px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300">{th}</span>
                     ))}
                   </div>
                 </div>
@@ -209,13 +236,13 @@ export function KabalahPage() {
             </GlassCard>
 
             <GlassCard>
-              <h3 className="font-medium text-white mb-3">Sekundárna sefira: {result.secondarySefira.name}</h3>
+              <h3 className="font-medium text-white mb-3">{t('kabalah.secondarySefira')}: {result.secondarySefira.name}</h3>
               <div className="space-y-3">
                 <div>
                   <p className="text-xs text-slate-400">Témy</p>
                   <div className="flex flex-wrap gap-1 mt-1">
-                    {result.secondarySefira.themes.map(t => (
-                      <span key={t} className="text-xs px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300">{t}</span>
+                    {result.secondarySefira.themes.map(th => (
+                      <span key={th} className="text-xs px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300">{th}</span>
                     ))}
                   </div>
                 </div>
@@ -237,7 +264,10 @@ export function KabalahPage() {
             <p className="text-sm text-slate-700 mb-3">{result.integration}</p>
             <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
               <p className="text-xs text-slate-600">
-                <strong>Prečo cesta vždy končí v Malchut?</strong> Malchut (Kráľovstvo) je sefira hmotného sveta – fyzické telo, peniaze, každodenná realita. V Kabale platí, že akákoľvek duchovná energia má hodnotu len vtedy, keď sa zhmotní v Malchut. Preto je posledným krokom vašej cesty vždy <strong>konkrétna akcia v hmote</strong> (viď „Čin v Malchut" nižšie).
+                {language === 'sk'
+                  ? <><strong>Prečo cesta vždy končí v Malchut?</strong> Malchut (Kráľovstvo) je sefira hmotného sveta – fyzické telo, peniaze, každodenná realita. V Kabale platí, že akákoľvek duchovná energia má hodnotu len vtedy, keď sa zhmotní v Malchut. Preto je posledným krokom vašej cesty vždy <strong>konkrétna akcia v hmote</strong> (viď „Čin v Malchut" nižšie).</>
+                  : <><strong>Why does the path always end in Malchut?</strong> Malchut (Kingdom) is the sefira of the material world – the physical body, money, everyday reality. In Kabbalah, any spiritual energy has value only when it materializes in Malchut. That is why the last step of your path is always a <strong>concrete action in matter</strong> (see "Act in Malchut" below).</>
+                }
               </p>
             </div>
           </GlassCard>
@@ -309,7 +339,7 @@ export function KabalahPage() {
           </GlassCard>
 
           <GlassCard>
-            <h3 className="font-medium text-white mb-4">Strom života – 10 Sefír</h3>
+            <h3 className="font-medium text-white mb-4">{t('kabalah.treeOfLife')}</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {SEFIROT.map((sefira, idx) => (
                 <motion.div
@@ -339,7 +369,7 @@ export function KabalahPage() {
               onClick={() => setManualResult(null)}
               className="px-4 py-2 rounded-xl text-sm font-medium glass text-slate-400 hover:text-white"
             >
-              Nový výpočet
+              {t('common.newCalculation')}
             </button>
           )}
         </div>

@@ -2,6 +2,8 @@
 // Vychádza zo Steinovej tradície (kniha Numerológia: Čísla Lásky).
 // Vlastné syntézy, nie doslovné citácie.
 
+import type { Language } from '../store/useStore';
+
 export interface MissingNumberInfo {
   number: number;
   title: string;
@@ -9,7 +11,7 @@ export interface MissingNumberInfo {
   recommendation: string;
 }
 
-export const characterMissingNumbers: Record<number, MissingNumberInfo> = {
+const sk: Record<number, MissingNumberInfo> = {
   1: {
     number: 1,
     title: 'Bez 1 — slabšie sebavyjadrenie a iniciatíva',
@@ -83,6 +85,90 @@ export const characterMissingNumbers: Record<number, MissingNumberInfo> = {
       'Čítaj biografie ľudí z iných kultúr, sleduj dlhodobé trendy. Pýtaj sa „aký to bude mať dopad za 10 rokov?". Postupne sa rozvinie schopnosť vidieť celok, nie len kúsky.',
   },
 };
+
+const en: Record<number, MissingNumberInfo> = {
+  1: {
+    number: 1,
+    title: 'Without 1 — weaker self-expression and initiative',
+    description:
+      'You lack the natural energy of a pioneer. You may find it difficult to start things on your own, assert your own perspective or lead others. You tend to follow rather than initiate — which is not a weakness, just a different rhythm.',
+    recommendation:
+      'Practice small daily decisions without asking others. "Today I will choose what we do." Self-expression and your own voice build gradually.',
+  },
+  2: {
+    number: 2,
+    title: 'Without 2 — weaker intuition and sensitivity to others',
+    description:
+      'You lack innate empathy and subtlety for others\' moods. You may come across as more direct, but sometimes miss the emotional context of a situation. Reading between the lines is harder for you.',
+    recommendation:
+      'Consciously observe others\' body signals — facial expressions, posture, tone of voice. Ask "how do you feel?" instead of assuming. Intuition develops gradually.',
+  },
+  3: {
+    number: 3,
+    title: 'Without 3 — creativity needs stimulation',
+    description:
+      'You lack innate creative spark and ease of self-expression. You may have blocks around speaking about yourself, writing or art. Often connected to strict upbringing or fear of being judged.',
+    recommendation:
+      'Try creating a small thing daily — a sentence, a sketch, a melody — without self-criticism. It doesn\'t have to be "good", it just needs to exist. Creativity develops through practice, not talent.',
+  },
+  4: {
+    number: 4,
+    title: 'Without 4 — lacking natural discipline',
+    description:
+      'You lack an innate sense of structure, order and systematic work. You may tend to leave things unfinished, live in chaos or procrastinate. Practical matters are your challenge, not your strength.',
+    recommendation:
+      'External systems help — calendars, planners, rituals. What others do intuitively, you need to build consciously. Small daily habits produce big results.',
+  },
+  5: {
+    number: 5,
+    title: 'Without 5 — freedom is not an innate need',
+    description:
+      'You lack an innate desire for change and adventure. You tend to be more stable, predictable, and enjoy routine. Changes can throw you off, risk does not feel comfortable.',
+    recommendation:
+      'Consciously include small changes in life — a different route home, new food, an unknown person. Stability is your gift, but stagnation would steal your vitality. Micro-adventures help.',
+  },
+  6: {
+    number: 6,
+    title: 'Without 6 — love and home require conscious effort',
+    description:
+      'You lack the innate energy of a caretaker and creator of harmony. You may have difficulties with family roles, caring for loved ones or aesthetics of your surroundings. Responsibility may feel like a burden, not a joy.',
+    recommendation:
+      'Gradually discover service to others as a gift to yourself — cooking for someone, small gestures, decorating a home. True love is not sacrifice, it is flow.',
+  },
+  7: {
+    number: 7,
+    title: 'Without 7 — spirituality through external sources',
+    description:
+      'You lack innate quietude and depth of introspection. You tend to be more extroverted, action-oriented, and dislike spending time alone. Spiritual and philosophical questions do not attract you naturally — you prefer the concrete.',
+    recommendation:
+      'Try a short silent meditation (5 min) or a walk in the forest alone. You don\'t have to be a mystic — just occasionally stop and ask "why?", not just "what am I doing".',
+  },
+  8: {
+    number: 8,
+    title: 'Without 8 — strength and abundance as a lesson',
+    description:
+      'You lack the innate energy of manifestation and personal authority. You may have a complicated relationship with money, power or your own success. Sometimes you subconsciously sabotage or refuse it.',
+    recommendation:
+      'Work with beliefs about money and success. "I deserve abundance" is an important first step. Invest in your development, learn to ask for what you want. Strength is in service, not in hoarding.',
+  },
+  9: {
+    number: 9,
+    title: 'Without 9 — wisdom through a longer path',
+    description:
+      'You lack the innate capacity for broader perspective and universal wisdom. You tend to be more oriented toward detail and your own story than the whole. Philosophical connections reveal themselves gradually, through your own experience.',
+    recommendation:
+      'Read biographies of people from other cultures, follow long-term trends. Ask "what impact will this have in 10 years?". The ability to see the whole, not just pieces, develops gradually.',
+  },
+};
+
+const dicts: Record<string, Record<number, MissingNumberInfo>> = { sk, en };
+
+export function getMissingNumberInfo(num: number, lang: Language = 'sk'): MissingNumberInfo {
+  return dicts[lang]?.[num] ?? dicts.sk[num];
+}
+
+// Backward compat
+export const characterMissingNumbers = sk;
 
 /**
  * Vráti komentáre pre všetky chýbajúce čísla v Charakterovej mriežke.

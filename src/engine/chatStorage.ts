@@ -22,6 +22,7 @@ function openDB(): Promise<IDBDatabase> {
     req.onsuccess = () => {
       dbInstance = req.result;
       dbInstance.onclose = () => { dbInstance = null; dbPromise = null; };
+      dbInstance.onversionchange = () => { dbInstance?.close(); dbInstance = null; dbPromise = null; };
       resolve(dbInstance);
     };
     req.onerror = () => {
@@ -46,16 +47,22 @@ export async function loadChat(key: string): Promise<PersistedChat | null> {
   }
 }
 
-export async function saveChat(key: string, chat: PersistedChat): Promise<void> {
+export async function saveChat(key: string, chat: PersistedChat): Promise<boolean> {
   try {
     const db = await openDB();
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       const tx = db.transaction(STORE_NAME, 'readwrite');
       const request = tx.objectStore(STORE_NAME).put(chat, key);
-      request.onsuccess = () => resolve();
-      request.onerror = () => reject(request.error);
+      request.onsuccess = () => resolve(true);
+      request.onerror = () => {
+        console.warn('[chatStorage] Failed to save chat:', request.error);
+        resolve(false);
+      };
     });
-  } catch { /* ignore */ }
+  } catch (e) {
+    console.warn('[chatStorage] saveChat error (quota exceeded?):', e);
+    return false;
+  }
 }
 
 export async function clearChat(key: string): Promise<void> {
@@ -63,7 +70,9 @@ export async function clearChat(key: string): Promise<void> {
     const db = await openDB();
     const tx = db.transaction(STORE_NAME, 'readwrite');
     tx.objectStore(STORE_NAME).delete(key);
-  } catch { /* ignore */ }
+  } catch (e) {
+    console.warn('[chatStorage] clearChat error:', e);
+  }
 }
 
 export function migrateFromLocalStorage(key: string): PersistedChat | null {

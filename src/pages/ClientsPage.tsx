@@ -1,13 +1,15 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import { GlassCard } from '../components/GlassCard';
 import { motion } from 'framer-motion';
 import { searchCities, findCity } from '../data/cities';
 import { isValidDate, calculateLifePath } from '../engine/numerologyEngine';
+import { useTranslation } from '../i18n/useTranslation';
 import type { Client } from '../store/useStore';
 
 export function ClientsPage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { clients, addClient, updateClient, deleteClient, reports, deleteReport } = useStore();
   const [showForm, setShowForm] = useState(false);
@@ -38,11 +40,11 @@ export function ClientsPage() {
   const parseTags = (input: string): string[] =>
     input.split(',').map(t => t.trim()).filter(Boolean);
 
-  const allTags = (() => {
+  const allTags = useMemo(() => {
     const set = new Set<string>();
     clients.forEach(c => c.tags?.forEach(t => set.add(t)));
     return Array.from(set).sort();
-  })();
+  }, [clients]);
 
   const startEdit = (client: Client) => {
     setEditingClient(client);
@@ -63,18 +65,18 @@ export function ClientsPage() {
     e.preventDefault();
     setFormError('');
     if (!name.trim()) {
-      setFormError('Zadajte meno klienta.');
+      setFormError(t('validation.fillName'));
       return;
     }
     const dNum = parseInt(day);
     const mNum = parseInt(month);
     const yNum = parseInt(year);
     if (!dNum || !mNum || !yNum) {
-      setFormError('Vyplňte celý dátum narodenia.');
+      setFormError(t('validation.fillDate'));
       return;
     }
     if (!isValidDate(dNum, mNum, yNum)) {
-      setFormError(`Neplatný dátum: ${dNum}.${mNum}.${yNum}.`);
+      setFormError(`${t('validation.invalidDate')}: ${dNum}.${mNum}.${yNum}`);
       return;
     }
     const city = findCity(birthPlace);
@@ -104,7 +106,7 @@ export function ClientsPage() {
 
   const clientReports = (clientId: string) => reports.filter(r => r.clientId === clientId);
 
-  const filteredClients = (() => {
+  const filteredClients = useMemo(() => {
     let result = clients;
     if (activeTagFilter) {
       result = result.filter(c => c.tags?.includes(activeTagFilter));
@@ -112,25 +114,18 @@ export function ClientsPage() {
     const q = searchQuery.trim().toLowerCase();
     if (!q) return result;
     return result.filter(c => {
-      // Meno
       if (c.name.toLowerCase().includes(q)) return true;
-      // Dátum (D.M.RRRR alebo časti)
       const dateStr = `${c.birthDay}.${c.birthMonth}.${c.birthYear}`;
       if (dateStr.includes(q)) return true;
-      // Rok narodenia samostatne
       if (String(c.birthYear).includes(q)) return true;
-      // Životné číslo
       const lp = calculateLifePath(c.birthDay, c.birthMonth, c.birthYear);
       if (`zc ${lp.number}` === q || `žč ${lp.number}` === q || `${lp.number}` === q) return true;
-      // Miesto narodenia
       if (c.birthPlace && c.birthPlace.toLowerCase().includes(q)) return true;
-      // Poznámky
       if (c.notes && c.notes.toLowerCase().includes(q)) return true;
-      // Tagy
       if (c.tags?.some(t => t.toLowerCase().includes(q))) return true;
       return false;
     });
-  })();
+  }, [clients, activeTagFilter, searchQuery]);
 
   const toggleSelected = (id: string) => {
     setSelectedIds(prev => {
@@ -147,14 +142,14 @@ export function ClientsPage() {
 
   const bulkDelete = () => {
     if (selectedIds.size === 0) return;
-    if (!confirm(`Vymazať ${selectedIds.size} ${selectedIds.size === 1 ? 'klienta' : 'klientov'} a všetky ich výklady?`)) return;
+    if (!confirm(t('clients.deleteSelectedConfirm'))) return;
     selectedIds.forEach(id => deleteClient(id));
     exitBulkMode();
   };
 
   const bulkAddTag = () => {
     if (selectedIds.size === 0) return;
-    const tag = prompt('Pridať tag (jeden alebo viac oddelených čiarkou):');
+    const tag = prompt(t('clients.addTag'));
     if (!tag) return;
     const newTags = parseTags(tag);
     if (newTags.length === 0) return;
@@ -172,40 +167,40 @@ export function ClientsPage() {
     return (
       <div className="space-y-6">
         <div className="flex items-center gap-4">
-          <button onClick={() => setSelectedClient(null)} className="text-slate-400 hover:text-white">← Späť</button>
+          <button onClick={() => setSelectedClient(null)} className="text-slate-400 hover:text-white">{t('common.back')}</button>
           <h1 className="font-serif text-3xl font-bold text-white">{selectedClient.name}</h1>
         </div>
 
         <GlassCard>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             <div>
-              <p className="text-xs text-slate-400">Dátum narodenia</p>
+              <p className="text-xs text-slate-400">{t('clients.birthDate')}</p>
               <p className="text-white font-medium">{selectedClient.birthDay}.{selectedClient.birthMonth}.{selectedClient.birthYear}</p>
             </div>
             {selectedClient.birthHour !== undefined && (
               <div>
-                <p className="text-xs text-slate-400">Čas</p>
+                <p className="text-xs text-slate-400">{t('clients.time')}</p>
                 <p className="text-white font-medium">{selectedClient.birthHour}:{String(selectedClient.birthMinute || 0).padStart(2, '0')}</p>
               </div>
             )}
             <div>
-              <p className="text-xs text-slate-400">Pridaný</p>
+              <p className="text-xs text-slate-400">{t('clients.added')}</p>
               <p className="text-white font-medium">{new Date(selectedClient.createdAt).toLocaleDateString('sk-SK')}</p>
             </div>
             <div>
-              <p className="text-xs text-slate-400">Počet výkladov</p>
+              <p className="text-xs text-slate-400">{t('clients.readingCount')}</p>
               <p className="text-white font-medium">{cReports.length}</p>
             </div>
           </div>
           {selectedClient.notes && (
             <div className="mt-4 pt-4 border-t border-white/5">
-              <p className="text-xs text-slate-400 mb-1">Poznámky</p>
+              <p className="text-xs text-slate-400 mb-1">{t('clients.notesLabel')}</p>
               <p className="text-sm text-slate-300">{selectedClient.notes}</p>
             </div>
           )}
           {selectedClient.tags && selectedClient.tags.length > 0 && (
             <div className="mt-4 pt-4 border-t border-white/5">
-              <p className="text-xs text-slate-400 mb-2">Tagy</p>
+              <p className="text-xs text-slate-400 mb-2">{t('clients.tagsLabel')}</p>
               <div className="flex flex-wrap gap-1.5">
                 {selectedClient.tags.map(tag => (
                   <span key={tag} className="text-xs px-2 py-1 rounded-full bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">
@@ -222,47 +217,47 @@ export function ClientsPage() {
             onClick={() => navigate(`/numerology?client=${selectedClient.id}`)}
             className="px-4 py-2 rounded-xl text-sm bg-indigo-600 text-white hover:bg-indigo-500"
           >
-            Numerológia
+            {t('nav.numerology')}
           </button>
           <button
             onClick={() => navigate(`/astrology?client=${selectedClient.id}`)}
             className="px-4 py-2 rounded-xl text-sm bg-purple-600 text-white hover:bg-purple-500"
           >
-            Astrológia
+            {t('nav.astrology')}
           </button>
           <button
             onClick={() => navigate(`/human-design?client=${selectedClient.id}`)}
             className="px-4 py-2 rounded-xl text-sm bg-cyan-600 text-white hover:bg-cyan-500"
           >
-            Human Design
+            {t('nav.humanDesign')}
           </button>
           <button
             onClick={() => navigate(`/chakras?client=${selectedClient.id}`)}
             className="px-4 py-2 rounded-xl text-sm bg-green-600 text-white hover:bg-green-500"
           >
-            Čakry
+            {t('nav.chakras')}
           </button>
           <button
             onClick={() => navigate(`/relationships?client=${selectedClient.id}`)}
             className="px-4 py-2 rounded-xl text-sm bg-rose-600 text-white hover:bg-rose-500"
           >
-            Vzťahy
+            {t('nav.relationships')}
           </button>
         </div>
 
         {cReports.length > 0 && (
           <GlassCard>
             <div className="flex items-center justify-between mb-4">
-              <h3 className="font-medium text-white">História výkladov ({cReports.length})</h3>
+              <h3 className="font-medium text-white">{t('clients.history')} ({cReports.length})</h3>
               <button
                 onClick={() => {
-                  if (confirm(`Vymazať všetkých ${cReports.length} výkladov klienta?`)) {
+                  if (confirm(t('clients.deleteReadingsConfirm'))) {
                     cReports.forEach(r => deleteReport(r.id));
                   }
                 }}
                 className="text-xs text-red-400 hover:text-red-300 px-2 py-1 rounded border border-red-500/30 hover:bg-red-500/10"
               >
-                Vymazať všetky
+                {t('clients.deleteAll')}
               </button>
             </div>
             <div className="space-y-2">
@@ -274,10 +269,10 @@ export function ClientsPage() {
                   </div>
                   <button
                     onClick={() => {
-                      if (confirm('Vymazať tento výklad?')) deleteReport(report.id);
+                      if (confirm(t('clients.deleteReading'))) deleteReport(report.id);
                     }}
                     className="ml-3 text-red-400 hover:text-red-300 text-sm shrink-0"
-                    title="Vymazať výklad"
+                    title={t('clients.deleteReading')}
                   >
                     ✕
                   </button>
@@ -308,13 +303,13 @@ export function ClientsPage() {
             }}
             className="px-4 py-2 rounded-xl text-sm bg-indigo-600 text-white hover:bg-indigo-500"
           >
-            ↓ Export JSON
+            {t('clients.exportJson')}
           </button>
           <button
-            onClick={() => { if (confirm('Naozaj vymazať klienta a všetky jeho výklady?')) { deleteClient(selectedClient.id); setSelectedClient(null); } }}
+            onClick={() => { if (confirm(t('clients.deleteClientConfirm'))) { deleteClient(selectedClient.id); setSelectedClient(null); } }}
             className="px-4 py-2 rounded-xl text-sm text-red-300 border border-red-500/30 hover:bg-red-500/10"
           >
-            Vymazať klienta
+            {t('clients.deleteClient')}
           </button>
         </div>
       </div>
@@ -325,8 +320,8 @@ export function ClientsPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="font-serif text-3xl font-bold text-white">Klienti</h1>
-          <p className="text-slate-400 mt-1">Pridajte klienta (meno + dátum) → kliknite naň pre kompletný výklad. Čas a miesto sa dajú doplniť cez "Upraviť".</p>
+          <h1 className="font-serif text-3xl font-bold text-white">{t('clients.title')}</h1>
+          <p className="text-slate-400 mt-1">{t('clients.subtitle')}</p>
         </div>
         <div className="flex gap-2 shrink-0 flex-wrap">
           {clients.length > 0 && (
@@ -354,7 +349,7 @@ export function ClientsPage() {
             </button>
           )}
           <label className="px-4 py-2 rounded-xl text-sm border border-indigo-500/40 text-indigo-700 hover:bg-indigo-50 cursor-pointer">
-            ↑ Import
+            {t('clients.importClient')}
             <input
               type="file"
               accept=".json,application/json"
@@ -366,7 +361,7 @@ export function ClientsPage() {
                   const text = await file.text();
                   const data = JSON.parse(text);
                   if (!data.client || !data.client.name || !data.client.birthDay) {
-                    alert('Neplatný súbor – chýbajú údaje klienta.');
+                    alert(t('clients.importInvalidFile'));
                     return;
                   }
                   // Validácia + sanitizácia. Bránime zlým dátam aj prompt-injection
@@ -375,24 +370,24 @@ export function ClientsPage() {
                   // eslint-disable-next-line no-control-regex
                   const safeName = String(c.name || '').replace(/[\x00-\x1F\x7F\r\n]/g, '').trim().slice(0, 80);
                   if (!safeName || !/^[\p{L}\p{M}\d\s\-'.]+$/u.test(safeName)) {
-                    alert('Neplatné meno klienta.');
+                    alert(t('clients.importInvalidName'));
                     return;
                   }
                   const day = parseInt(String(c.birthDay), 10);
                   const month = parseInt(String(c.birthMonth), 10);
                   const year = parseInt(String(c.birthYear), 10);
                   if (!isValidDate(day, month, year)) {
-                    alert('Neplatný dátum narodenia.');
+                    alert(t('clients.importInvalidDate'));
                     return;
                   }
                   const hour = c.birthHour !== undefined ? parseInt(String(c.birthHour), 10) : undefined;
                   const minute = c.birthMinute !== undefined ? parseInt(String(c.birthMinute), 10) : undefined;
                   if (hour !== undefined && (hour < 0 || hour > 23 || isNaN(hour))) {
-                    alert('Neplatná hodina narodenia.');
+                    alert(t('clients.importInvalidHour'));
                     return;
                   }
                   if (minute !== undefined && (minute < 0 || minute > 59 || isNaN(minute))) {
-                    alert('Neplatná minúta narodenia.');
+                    alert(t('clients.importInvalidMinute'));
                     return;
                   }
                   // eslint-disable-next-line no-control-regex
@@ -420,10 +415,10 @@ export function ClientsPage() {
                     createdAt: new Date().toISOString(),
                   };
                   addClient(importedClient);
-                  alert(`Klient "${importedClient.name}" bol importovaný.`);
+                  alert(`${importedClient.name} ${t('clients.importSuccess')}`);
                 } catch (err) {
                   console.error(err);
-                  alert('Chyba pri čítaní súboru – nie je platný JSON.');
+                  alert(t('clients.importJsonError'));
                 } finally {
                   e.target.value = '';
                 }
@@ -435,7 +430,7 @@ export function ClientsPage() {
               onClick={() => navigate('/clients/compare')}
               className="px-4 py-2 rounded-xl text-sm border border-slate-300 text-slate-600 hover:bg-slate-50"
             >
-              ⇄ Porovnať
+              {t('clients.compare')}
             </button>
           )}
           {clients.length > 1 && (
@@ -443,14 +438,14 @@ export function ClientsPage() {
               onClick={() => bulkMode ? exitBulkMode() : setBulkMode(true)}
               className={`px-4 py-2 rounded-xl text-sm border ${bulkMode ? 'bg-amber-500/15 text-amber-700 border-amber-400' : 'border-slate-300 text-slate-600 hover:bg-slate-50'}`}
             >
-              {bulkMode ? '✕ Zrušiť výber' : '☑ Hromadne'}
+              {bulkMode ? t('clients.cancelSelection') : t('clients.bulkMode')}
             </button>
           )}
           <button
             onClick={() => setShowForm(!showForm)}
             className="px-4 py-2 rounded-xl text-sm bg-indigo-600 text-white hover:bg-indigo-500"
           >
-            {showForm ? 'Zrušiť' : '+ Nový klient'}
+            {showForm ? t('common.cancel') : t('clients.newClient')}
           </button>
         </div>
       </div>
@@ -459,36 +454,36 @@ export function ClientsPage() {
         <GlassCard>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm text-slate-400 mb-1">Meno klienta</label>
-              <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Meno a priezvisko" className="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white focus:outline-none focus:border-indigo-500/50" />
+              <label className="block text-sm text-slate-400 mb-1">{t('profile.name')}</label>
+              <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder={t('clients.namePlaceholder')} className="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white focus:outline-none focus:border-indigo-500/50" />
             </div>
             <div>
-              <label className="block text-sm text-slate-400 mb-1">Pohlavie</label>
+              <label className="block text-sm text-slate-400 mb-1">{t('profile.gender')}</label>
               <div className="grid grid-cols-2 gap-2">
-                <button type="button" onClick={() => setGender('male')} className={`py-2.5 rounded-xl text-sm border-2 transition-all ${gender === 'male' ? 'border-blue-500 bg-blue-50 text-blue-700 font-medium' : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'}`}>♂ Muž</button>
-                <button type="button" onClick={() => setGender('female')} className={`py-2.5 rounded-xl text-sm border-2 transition-all ${gender === 'female' ? 'border-rose-500 bg-rose-50 text-rose-700 font-medium' : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'}`}>♀ Žena</button>
+                <button type="button" onClick={() => setGender('male')} className={`py-2.5 rounded-xl text-sm border-2 transition-all ${gender === 'male' ? 'border-blue-500 bg-blue-50 text-blue-700 font-medium' : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'}`}>{t('common.male')}</button>
+                <button type="button" onClick={() => setGender('female')} className={`py-2.5 rounded-xl text-sm border-2 transition-all ${gender === 'female' ? 'border-rose-500 bg-rose-50 text-rose-700 font-medium' : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'}`}>{t('common.female')}</button>
               </div>
             </div>
             <div>
-              <label className="block text-sm text-slate-400 mb-1">Dátum narodenia</label>
+              <label className="block text-sm text-slate-400 mb-1">{t('profile.birthDate')}</label>
               <div className="flex gap-2">
-                <input type="number" placeholder="Deň" min={1} max={31} value={day} onChange={e => setDay(e.target.value)} className="w-20 px-3 py-3 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white text-center focus:outline-none focus:border-indigo-500/50" />
-                <input type="number" placeholder="Mesiac" min={1} max={12} value={month} onChange={e => setMonth(e.target.value)} className="w-24 px-3 py-3 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white text-center focus:outline-none focus:border-indigo-500/50" />
-                <input type="number" placeholder="Rok" min={1900} max={2100} value={year} onChange={e => setYear(e.target.value)} className="flex-1 px-3 py-3 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white text-center focus:outline-none focus:border-indigo-500/50" />
+                <input type="number" placeholder={t('profile.day')} min={1} max={31} value={day} onChange={e => setDay(e.target.value)} className="w-20 px-3 py-3 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white text-center focus:outline-none focus:border-indigo-500/50" />
+                <input type="number" placeholder={t('profile.month')} min={1} max={12} value={month} onChange={e => setMonth(e.target.value)} className="w-24 px-3 py-3 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white text-center focus:outline-none focus:border-indigo-500/50" />
+                <input type="number" placeholder={t('profile.year')} min={1900} max={2100} value={year} onChange={e => setYear(e.target.value)} className="flex-1 px-3 py-3 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white text-center focus:outline-none focus:border-indigo-500/50" />
               </div>
             </div>
             <div>
-              <label className="block text-sm text-slate-400 mb-1">Čas narodenia (voliteľné)</label>
+              <label className="block text-sm text-slate-400 mb-1">{`${t('profile.birthTime')} (${t('common.optional')})`}</label>
               <div className="flex gap-2 items-center">
-                <input type="number" placeholder="Hod" min={0} max={23} value={hour} onChange={e => setHour(e.target.value)} className="w-20 px-3 py-3 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white text-center focus:outline-none focus:border-indigo-500/50" />
+                <input type="number" placeholder={t('profile.hour')} min={0} max={23} value={hour} onChange={e => setHour(e.target.value)} className="w-20 px-3 py-3 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white text-center focus:outline-none focus:border-indigo-500/50" />
                 <span className="text-slate-500">:</span>
-                <input type="number" placeholder="Min" min={0} max={59} value={minute} onChange={e => setMinute(e.target.value)} className="w-20 px-3 py-3 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white text-center focus:outline-none focus:border-indigo-500/50" />
+                <input type="number" placeholder={t('profile.minute')} min={0} max={59} value={minute} onChange={e => setMinute(e.target.value)} className="w-20 px-3 py-3 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white text-center focus:outline-none focus:border-indigo-500/50" />
               </div>
             </div>
             <div>
-              <label className="block text-sm text-slate-400 mb-1">Miesto narodenia (voliteľné – pre astrológiu)</label>
+              <label className="block text-sm text-slate-400 mb-1">{`${t('profile.birthPlace')} (${t('common.optional')})`}</label>
               <div className="relative">
-                <input type="text" value={birthPlace} onChange={e => { setBirthPlace(e.target.value); setCitySuggestions(searchCities(e.target.value)); }} placeholder="Napr. Bratislava, Praha..." className="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white focus:outline-none focus:border-indigo-500/50" />
+                <input type="text" value={birthPlace} onChange={e => { setBirthPlace(e.target.value); setCitySuggestions(searchCities(e.target.value)); }} placeholder={t('profile.placePlaceholder')} className="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white focus:outline-none focus:border-indigo-500/50" />
                 {citySuggestions.length > 0 && (
                   <div className="absolute left-0 right-0 top-full mt-1 z-50 rounded-xl bg-white border border-slate-200 overflow-hidden shadow-lg">
                     {citySuggestions.map(city => (
@@ -501,21 +496,21 @@ export function ClientsPage() {
               </div>
             </div>
             <div>
-              <label className="block text-sm text-slate-400 mb-1">Poznámky</label>
-              <textarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="Voliteľné poznámky o klientovi..." rows={3} className="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white focus:outline-none focus:border-indigo-500/50 resize-none" />
+              <label className="block text-sm text-slate-400 mb-1">{t('clients.notesLabel')}</label>
+              <textarea value={notes} onChange={e => setNotes(e.target.value)} placeholder={t('clients.notesPlaceholder')} rows={3} className="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white focus:outline-none focus:border-indigo-500/50 resize-none" />
             </div>
             <div>
-              <label className="block text-sm text-slate-400 mb-1">Tagy (oddelené čiarkou)</label>
+              <label className="block text-sm text-slate-400 mb-1">{t('clients.tagsLabel')}</label>
               <input
                 type="text"
                 value={tagsInput}
                 onChange={e => setTagsInput(e.target.value)}
-                placeholder="napr. rodina, VIP, dieťa"
+                placeholder={t('clients.tagsPlaceholder')}
                 className="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white focus:outline-none focus:border-indigo-500/50"
               />
               {allTags.length > 0 && (
                 <div className="mt-2 flex flex-wrap gap-1">
-                  <span className="text-[10px] text-slate-500 uppercase mr-1 self-center">Existujúce:</span>
+                  <span className="text-[10px] text-slate-500 uppercase mr-1 self-center">{t('clients.existingTags')}</span>
                   {allTags.map(tag => (
                     <button
                       key={tag}
@@ -537,9 +532,9 @@ export function ClientsPage() {
               <p className="text-sm text-rose-600 px-1">{formError}</p>
             )}
             <button type="submit" className="w-full py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-medium hover:from-indigo-500 hover:to-violet-500 glow">
-              {editingClient ? 'Uložiť zmeny' : 'Pridať klienta'}
+              {editingClient ? t('clients.saveChanges') : t('clients.newClient')}
             </button>
-            {editingClient && <button type="button" onClick={() => { setShowForm(false); resetForm(); }} className="w-full py-2 text-sm text-slate-400">Zrušiť úpravy</button>}
+            {editingClient && <button type="button" onClick={() => { setShowForm(false); resetForm(); }} className="w-full py-2 text-sm text-slate-400">{t('clients.cancelEdit')}</button>}
           </form>
         </GlassCard>
       )}
@@ -547,9 +542,9 @@ export function ClientsPage() {
       {clients.length === 0 && !showForm && (
         <GlassCard>
           <div className="text-center py-8">
-            <p className="text-slate-400 mb-4">Zatiaľ nemáte žiadnych klientov</p>
+            <p className="text-slate-400 mb-4">{t('clients.noClients')}</p>
             <button onClick={() => setShowForm(true)} className="px-6 py-3 rounded-xl bg-indigo-600 text-white">
-              Pridať prvého klienta
+              {t('clients.addFirst')}
             </button>
           </div>
         </GlassCard>
@@ -562,7 +557,7 @@ export function ClientsPage() {
             type="text"
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
-            placeholder="Hľadať podľa mena, dátumu, ŽČ, miesta alebo poznámok..."
+            placeholder={t('clients.searchPlaceholder')}
             className="w-full px-4 py-3 pl-10 rounded-xl bg-white border border-slate-300 text-slate-800 text-sm focus:outline-none focus:border-indigo-400"
           />
           <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">⌕</span>
@@ -571,14 +566,14 @@ export function ClientsPage() {
               type="button"
               onClick={() => setSearchQuery('')}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-sm"
-              title="Vyčistiť"
+              title={t('common.delete')}
             >
               ✕
             </button>
           )}
           {searchQuery && (
             <p className="text-xs text-slate-500 mt-1 px-1">
-              Nájdených: {filteredClients.length} z {clients.length}
+              {t('clients.foundOf')}: {filteredClients.length} / {clients.length}
             </p>
           )}
         </div>
@@ -587,7 +582,7 @@ export function ClientsPage() {
       {/* Tag chip filtre */}
       {allTags.length > 0 && (
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-xs text-slate-500 uppercase">Filter podľa tagu:</span>
+          <span className="text-xs text-slate-500 uppercase">{t('clients.tagFilter')}</span>
           <button
             onClick={() => setActiveTagFilter(null)}
             className={`text-xs px-3 py-1 rounded-full border ${
@@ -596,7 +591,7 @@ export function ClientsPage() {
                 : 'border-slate-300 text-slate-600 hover:bg-slate-50'
             }`}
           >
-            Všetci ({clients.length})
+            {t('clients.allClients')} ({clients.length})
           </button>
           {allTags.map(tag => {
             const count = clients.filter(c => c.tags?.includes(tag)).length;
@@ -624,7 +619,7 @@ export function ClientsPage() {
           <div className="flex flex-wrap items-center gap-3 justify-between">
             <div className="flex items-center gap-3">
               <span className="text-sm text-slate-300">
-                Vybraných: <strong>{selectedIds.size}</strong> / {filteredClients.length}
+                <strong>{selectedIds.size}</strong> / {filteredClients.length}
               </span>
               <button
                 onClick={() => {
@@ -636,7 +631,7 @@ export function ClientsPage() {
                 }}
                 className="text-xs text-indigo-600 hover:text-indigo-800 underline"
               >
-                {selectedIds.size === filteredClients.length ? 'Zrušiť výber' : 'Vybrať všetkých'}
+                {selectedIds.size === filteredClients.length ? t('clients.cancelSelection') : t('clients.selectAll')}
               </button>
             </div>
             <div className="flex gap-2">
@@ -645,14 +640,14 @@ export function ClientsPage() {
                 disabled={selectedIds.size === 0}
                 className="px-3 py-1.5 rounded-lg text-xs bg-indigo-600 text-white hover:bg-indigo-500 disabled:opacity-40 disabled:cursor-not-allowed"
               >
-                + Pridať tag
+                {t('clients.addTag')}
               </button>
               <button
                 onClick={bulkDelete}
                 disabled={selectedIds.size === 0}
                 className="px-3 py-1.5 rounded-lg text-xs bg-red-600 text-white hover:bg-red-500 disabled:opacity-40 disabled:cursor-not-allowed"
               >
-                Vymazať vybrané
+                {t('clients.deleteSelected')}
               </button>
             </div>
           </div>
@@ -662,10 +657,10 @@ export function ClientsPage() {
       {clients.length > 0 && filteredClients.length === 0 && (
         <GlassCard>
           <p className="text-center text-slate-400 py-4">
-            Žiadny klient nezodpovedá filtrom.
+            {t('clients.noMatch')}
             {activeTagFilter && (
               <button onClick={() => setActiveTagFilter(null)} className="ml-2 text-indigo-600 underline">
-                Vyčistiť tag filter
+                {t('clients.clearFilter')}
               </button>
             )}
           </p>
@@ -720,8 +715,8 @@ export function ClientsPage() {
                       </div>
                       {!bulkMode && (
                         <div className="text-right flex flex-col items-end gap-1 shrink-0">
-                          <span className="text-xs text-indigo-300">{clientReports(client.id).length} výkladov</span>
-                          <button onClick={(e) => { e.stopPropagation(); startEdit(client); }} className="text-xs px-2 py-1 rounded-lg border border-amber-300 text-amber-600 hover:bg-amber-50">Upraviť</button>
+                          <span className="text-xs text-indigo-300">{clientReports(client.id).length} {t('clients.readings')}</span>
+                          <button onClick={(e) => { e.stopPropagation(); startEdit(client); }} className="text-xs px-2 py-1 rounded-lg border border-amber-300 text-amber-600 hover:bg-amber-50">{t('clients.editClient')}</button>
                         </div>
                       )}
                     </div>

@@ -2,6 +2,8 @@
 // Každá karta má hlavnú radu (advice) + pole alternatívnych rád (advices).
 // getDailyTarot rotuje cez advices podľa dňa v roku.
 
+import type { Language } from '../store/useStore';
+
 export interface TarotCard {
   number: number;
   name: string;
@@ -13,7 +15,7 @@ export interface TarotCard {
   advices: string[];
 }
 
-export const TAROT_CARDS: TarotCard[] = [
+const skCards: TarotCard[] = [
   {
     number: 0,
     name: 'Blázon',
@@ -522,6 +524,518 @@ export const TAROT_CARDS: TarotCard[] = [
   },
 ];
 
+const enCards: TarotCard[] = [
+  {
+    number: 0,
+    name: 'The Fool',
+    arcana: 'major',
+    symbol: '🃏',
+    meaning: 'New beginning, spontaneity, innocence. A leap into the unknown with trust.',
+    shadow: 'Irresponsibility, naivety, recklessness.',
+    advice: 'Leap. You don\'t need a plan — trust the process and begin.',
+    advices: [
+      'Leap. You don\'t need a plan — trust the process and begin.',
+      'Do something today you\'ve never tried before.',
+      'Drop one "I must" and replace it with "I want."',
+      'Allow yourself to be a beginner. Inexperience is your advantage.',
+      'Leave the old path — the new one opens only when you release the familiar.',
+      'Don\'t plan today. Respond to what life brings you.',
+      'That crazy idea that comes to you today is worth trying.',
+      'Lightness is not immaturity. Play with full seriousness.',
+      'That unnecessary baggage slows you down. Leave it here and move on.',
+      'Say "yes" to the first opportunity that knocks today.',
+      'Fear of falling keeps you in place. One step — and you\'re already flying.',
+      'Choose curiosity over safety.',
+    ],
+  },
+  {
+    number: 1,
+    name: 'The Magician',
+    arcana: 'major',
+    symbol: '🪄',
+    meaning: 'Beginning, will, manifestation. You have all the tools — just use them.',
+    shadow: 'Manipulation, self-deception, overconfidence.',
+    advice: 'Today you have all the tools — use them consciously.',
+    advices: [
+      'Today you have all the tools — use them consciously.',
+      'Initiate. Don\'t wait. Your intention is stronger than obstacles today.',
+      'Focus your energy on one aim — distractions weaken you.',
+      'Words carry weight today. Say aloud what you want to create.',
+      'Connect thinking with action. Theory without practice is a waste today.',
+      'You are a channel, not the source. Let a greater force flow through you.',
+      'Use what you have at hand — you don\'t need to wait for perfect conditions.',
+      'Your will is clear today. Align all decisions accordingly.',
+      'Communicate directly. Clear words are your magic today.',
+      'Start the project you\'ve been waiting for. Today is the right day.',
+      'Think about what result you want to see in a month — and act on it now.',
+      'Unite four elements: thought, emotion, word, and action. That\'s when things happen.',
+    ],
+  },
+  {
+    number: 2,
+    name: 'The High Priestess',
+    arcana: 'major',
+    symbol: '🌙',
+    meaning: 'Intuition, inner wisdom, the subconscious. Quiet truth speaks through your sensitivity.',
+    shadow: 'Secrecy, isolation, ignoring reality.',
+    advice: 'Listen to your intuition. Today is not a day for rational calculations.',
+    advices: [
+      'Listen to your intuition. Today is not a day for rational calculations.',
+      'You already know the answer — you just don\'t want to admit it.',
+      'Last night\'s dreams carry a message. Return to them.',
+      'Don\'t push for a solution. Let the subconscious work.',
+      'Silence is your ally today. Seek it deliberately.',
+      'Trust your first feeling — before the mind over-analyzes it.',
+      'Follow what attracts you without logical reason. There\'s a clue in it.',
+      'Today perceive more, speak less. Information comes through atmosphere.',
+      'Write down three words that come to mind in the morning — you\'ll understand why by evening.',
+      'The secret you hold protects you. Don\'t share it prematurely.',
+      'Read between the lines. What wasn\'t said matters more.',
+      'The lunar cycle affects your perception — notice it today.',
+    ],
+  },
+  {
+    number: 3,
+    name: 'The Empress',
+    arcana: 'major',
+    symbol: '👑',
+    meaning: 'Fertility, creativity, abundance. Create and harvest the fruits.',
+    shadow: 'Material obsession, excessive pampering.',
+    advice: 'Create with love. Let your creativity flow into everything you do today.',
+    advices: [
+      'Create with love. Let your creativity flow into everything you do today.',
+      'Treat yourself to a sensory pleasure — good food, nature, beauty.',
+      'Nurture something alive — a plant, a relationship, a project. Grow it.',
+      'Abundance begins with gratitude. Name three things you have.',
+      'Your body is telling you what it needs today. Listen to it.',
+      'Break through creative block by starting — even imperfectly.',
+      'Allow yourself to be soft today. Strength doesn\'t have to be hard.',
+      'Something in your life is ripening. Be patient — the harvest will come.',
+      'Choose beauty over efficiency. At least in one thing.',
+      'A hug, a touch, closeness — that\'s the language you speak best today.',
+      'What would you create today if you weren\'t afraid of judgment?',
+      'Nature will remind you of your rhythm. Go outside for at least 15 minutes.',
+    ],
+  },
+  {
+    number: 4,
+    name: 'The Emperor',
+    arcana: 'major',
+    symbol: '🏛️',
+    meaning: 'Structure, authority, stability. Build foundations.',
+    shadow: 'Tyranny, rigidity, hostility to change.',
+    advice: 'Be organized and disciplined. Structure will bring you peace today.',
+    advices: [
+      'Be organized and disciplined. Structure will bring you peace today.',
+      'Set one clear boundary — and maintain it all day.',
+      'The decision you\'re postponing is costing you energy. Decide now.',
+      'Step into a leadership role. People around you need direction today.',
+      'A plan on paper is stronger than a plan in your head. Write it down.',
+      'Finishing one unfinished thing is more valuable than three new beginnings.',
+      'Your authority grows from integrity, not volume.',
+      'Check the foundation — finances, health, housing. Where is the crack?',
+      'Be a parent to your inner child today. Protect it with rules.',
+      'Chaos around you doesn\'t have to be chaos within you. Hold your center.',
+      'Practical help is more valuable today than empathetic words.',
+      'What would your future self appreciate you doing today? Do it.',
+    ],
+  },
+  {
+    number: 5,
+    name: 'The Hierophant',
+    arcana: 'major',
+    symbol: '⚖️',
+    meaning: 'Tradition, learning, spiritual authority, higher values.',
+    shadow: 'Dogma, blind obedience, undigested beliefs.',
+    advice: 'Seek a teacher or tradition that offers you wisdom today.',
+    advices: [
+      'Seek a teacher or tradition that offers you wisdom today.',
+      'Open the book you\'ve been putting off. The first sentence is the answer.',
+      'Share what you know. Teaching others strengthens your own knowledge.',
+      'A ritual — even a simple one — gives the day a sense of sacredness. Create one.',
+      'A childhood habit you discarded may be worth reconsidering.',
+      'Who is your mentor? If you don\'t have one, look for one today.',
+      'Rules exist for a reason. Before you break them, understand why they exist.',
+      'Spiritual practice is not an escape. It\'s training for reality.',
+      'Today ask rather than assert. Questions are more powerful today.',
+      'Examine one of your beliefs — is it truly yours, or inherited?',
+      'Ethics is not a limitation. It\'s a compass in the fog.',
+      'Connection with community will strengthen you more than solitude today.',
+    ],
+  },
+  {
+    number: 6,
+    name: 'The Lovers',
+    arcana: 'major',
+    symbol: '💕',
+    meaning: 'Choice, partnership, harmony. A heart-level decision.',
+    shadow: 'Indecision, compromise out of fear, superficial love.',
+    advice: 'Decide from the heart. Today\'s choice has a long-term impact.',
+    advices: [
+      'Decide from the heart. Today\'s choice has a long-term impact.',
+      'Tell someone what they mean to you. Today. With words.',
+      'A choice between two paths? Pick the one where you feel expansion in your chest.',
+      'Harmony in a relationship doesn\'t mean no conflict — it means honesty.',
+      'What would you choose if no one was watching? That\'s your true choice.',
+      'Focus on quality of connection today, not quantity of contacts.',
+      'The opposite that irritates you in another is a mirror of your suppressed part.',
+      'Love is not a feeling — it\'s a decision you make again every day.',
+      'If you stand at a crossroads, ask: "Where will I be happier in 5 years?"',
+      'Today\'s compromise won\'t kill you — but a long-term one will. Distinguish them.',
+      'Intimate connection requires vulnerability. Courage to open up is your strength today.',
+      'Look at the relationship you\'re in. What can you give — not demand?',
+    ],
+  },
+  {
+    number: 7,
+    name: 'The Chariot',
+    arcana: 'major',
+    symbol: '🏆',
+    meaning: 'Victory, courage, control, direction. Hold the reins firmly.',
+    shadow: 'Aggression, excessive ambition, loss of direction.',
+    advice: 'Give clear direction to your energy. You win when opposites are in balance.',
+    advices: [
+      'Give clear direction to your energy. You win when opposites are in balance.',
+      'Hold your course even in headwinds. Discipline decides today.',
+      'Don\'t complain about obstacles — drive around them. There\'s always a way.',
+      'Your will is today\'s engine. Aim it and don\'t let go of the wheel.',
+      'You compete only with yourself. Yesterday\'s version of you is your only rival.',
+      'Stop waiting for permission. Go — even without approval from others.',
+      'Conflicting desires tearing you apart? Find the one goal that unites them.',
+      'Victory today looks different than expected. Be open to its form.',
+      'Speed without direction is chaos. Slow down for a second and aim.',
+      'Say "no" to what pulls you away from the main goal. Without guilt.',
+      'Self-discipline is not punishment — it\'s a gift you give your future self.',
+      'Today you are moving forward. Even a small step is movement — and that\'s enough.',
+    ],
+  },
+  {
+    number: 8,
+    name: 'Strength',
+    arcana: 'major',
+    symbol: '🦁',
+    meaning: 'Inner strength, compassion, mastering instincts through love, not force.',
+    shadow: 'Self-doubt, suppressing instincts, weakness.',
+    advice: 'Be gently strong. Inner stability will overcome any external challenge.',
+    advices: [
+      'Be gently strong. Inner stability will overcome any external challenge.',
+      'The fear you feel is not an enemy — it\'s a dog that wants to be tamed.',
+      'Patience is your superpower today. Results will come.',
+      'Don\'t force where a gentle touch will do. Less is more today.',
+      'Your vulnerability is not weakness — it\'s a gateway to authentic strength.',
+      'The anger you feel carries a message. Listen to it before you react.',
+      'You are stronger than you think. Today you\'ll prove it — to yourself and the world.',
+      'True courage is staying open where you want to close down.',
+      'Tame your dark side — not by suppression, but by understanding.',
+      'Hold on a little longer. What tests you now is preparing you for something greater.',
+      'Respond with calm where others would shout. That\'s your strength today.',
+      'Kindness to yourself is not selfishness. Give yourself what you need today.',
+    ],
+  },
+  {
+    number: 9,
+    name: 'The Hermit',
+    arcana: 'major',
+    symbol: '🕯️',
+    meaning: 'Introspection, seeking truth in solitude, inner guidance.',
+    shadow: 'Isolation, melancholy, distrust of people.',
+    advice: 'Withdraw into silence. The answer comes when you stop seeking.',
+    advices: [
+      'Withdraw into silence. The answer comes when you stop seeking.',
+      'Solitude is not loneliness. Today it\'s your healing space.',
+      'Lower the noise around you — turn off notifications, music, news. Listen.',
+      'Wisdom is born in the silence between words. Seek it there.',
+      'Today you don\'t need anyone\'s advice. You yourself know best.',
+      'Go for a walk alone. Without headphones. Just you and your thoughts.',
+      'Light a candle and ask yourself one question. The answer will come by evening.',
+      'Your lamp shines for others too — but first you must find your own path.',
+      'A journal is more powerful today than conversation. Write.',
+      'Distance from the situation gives you perspective you can\'t see up close.',
+      'What seems like stagnation is maturation. Trust it.',
+      'Depth is rarer than breadth. Today go deep into one thing.',
+    ],
+  },
+  {
+    number: 10,
+    name: 'Wheel of Fortune',
+    arcana: 'major',
+    symbol: '☸️',
+    meaning: 'Cycles, change, destiny, fortune and misfortune. Everything turns.',
+    shadow: 'Passivity, belief in fate without action, instability.',
+    advice: 'Change is here. Don\'t cling to the old — the current carries you in the right direction.',
+    advices: [
+      'Change is here. Don\'t cling to the old — the current carries you in the right direction.',
+      'What looks like bad luck today will reveal itself as a blessing in a month.',
+      'The wheel turns. If you\'re up — be humble. If down — be patient.',
+      'Today\'s lucky "coincidence" is no coincidence. Notice it and act.',
+      'The cycle repeats until you learn the lesson. What keeps repeating in your life?',
+      'Release control. Some things must resolve themselves.',
+      'Today is a turning point. A small decision can change the entire direction.',
+      'What seemed unsolvable last year is now behind you. Remember that.',
+      'Adaptability is more important today than any plan.',
+      'Fate and free will are not opposites. Seize the opportunity that arrives.',
+      'If you feel restless — something new is being born. Don\'t suppress it.',
+      'Nothing lasts forever — neither good nor bad. Enjoy the present.',
+    ],
+  },
+  {
+    number: 11,
+    name: 'Justice',
+    arcana: 'major',
+    symbol: '⚖️',
+    meaning: 'Balance, truth, accountability for consequences. Karma in action.',
+    shadow: 'Harsh judgment, cold logic without heart, misalignment.',
+    advice: 'Be fair — to yourself and to others. Truth wins today.',
+    advices: [
+      'Be fair — to yourself and to others. Truth wins today.',
+      'A consequence of an old decision shows itself today. Accept it without blame.',
+      'Can you balance what\'s tilted? Look at where you give too much and where too little.',
+      'A lie — even a "merciful" one — costs you more than the truth today.',
+      'Responsibility is not a burden. It\'s the knowledge that you have power to change things.',
+      'Objectivity will help you more than empathy today. Look at the facts.',
+      'If you wait for justice from outside — start creating it yourself.',
+      'Work-rest balance: where are you today? Adjust it.',
+      'A contract, agreement, or commitment — honor it. Integrity is your foundation.',
+      'Stopping comparison with others is an act of justice toward yourself.',
+      'What would you advise your best friend in your situation? Advise yourself the same.',
+      'Today decide like a judge — with wisdom, not emotion.',
+    ],
+  },
+  {
+    number: 12,
+    name: 'The Hanged Man',
+    arcana: 'major',
+    symbol: '🙃',
+    meaning: 'Pause, new perspective, sacrifice for higher knowledge.',
+    shadow: 'Martyrdom, stagnation, refusal to act.',
+    advice: 'Flip your perspective. The problem you\'re solving looks different from the other side.',
+    advices: [
+      'Flip your perspective. The problem you\'re solving looks different from the other side.',
+      'Don\'t act. Waiting is an active strategy today, not passivity.',
+      'Sacrifice the small ego for a greater principle. What must you release?',
+      'The situation won\'t change until you change your angle of view. Try the opposite.',
+      'What looks like loss is an investment. You\'ll see the return later.',
+      'Hanging upside down? Good. From this position you see things others can\'t.',
+      'Release the need to be right. Let yourself be taught by an unexpected source.',
+      'A pause is not defeat. It\'s recharging before the next step.',
+      'Today you won\'t get what you want — but what you need. Accept it.',
+      'Explore discomfort instead of running from it.',
+      'Surrender is not resignation. It\'s trust in a process larger than you.',
+      'What if the situation where you feel trapped is your best teacher?',
+    ],
+  },
+  {
+    number: 13,
+    name: 'Death',
+    arcana: 'major',
+    symbol: '💀',
+    meaning: 'Transformation, ending and new beginning. Inevitable change.',
+    shadow: 'Fear of change, clinging to the dead, stagnation.',
+    advice: 'Let die what no longer serves you. Make room for the new.',
+    advices: [
+      'Let die what no longer serves you. Make room for the new.',
+      'An ending is not failure — it\'s completion. Close the chapter consciously.',
+      'Throw away, donate, or delete one thing that pulls you into the past.',
+      'Grieving the old is normal. But refusing to live because of it — that\'s not.',
+      'Transformation hurts only when you resist it.',
+      'Who will you be when you release the identity you\'re clinging to?',
+      'An old behavior pattern ends definitively today. Replace it with a conscious choice.',
+      'Death of the old self is birth of the new. Breathe through the transition.',
+      'What in your life is already dead but you keep feeding it?',
+      'A farewell is not defeat. It\'s an act of maturity and self-determination.',
+      'Today is the last day of something old. Tomorrow you begin differently.',
+      'Nature knows no death — only transformation of form. Neither do you.',
+    ],
+  },
+  {
+    number: 14,
+    name: 'Temperance',
+    arcana: 'major',
+    symbol: '⏳',
+    meaning: 'Balance, patience, blending opposites, the middle way.',
+    shadow: 'Extremes, impatience, inner conflict.',
+    advice: 'Seek the middle path. Extremes won\'t move you forward today — balance will.',
+    advices: [
+      'Seek the middle path. Extremes won\'t move you forward today — balance will.',
+      'Mix two things that seem incompatible. The result will surprise you.',
+      'Patience — not speed — is the key to results today.',
+      'Give equal time to work and rest. Don\'t sacrifice one for the other.',
+      'Compromise is not weakness. It\'s the art of seeing the whole.',
+      'Body and mind need synchronization. Which are you neglecting?',
+      'What broke slowly won\'t heal quickly. Give the process time.',
+      'Integration of opposites: be strict AND kind. Both at once.',
+      'Cook slowly today. High heat burns food — a low flame brings it to perfection.',
+      'Alchemy of the day: transform frustration into patience, fear into curiosity.',
+      'When you don\'t know if yes or no — the answer is "not yet." Wait.',
+      'Balance isn\'t found — it\'s created. Actively. Every day anew.',
+    ],
+  },
+  {
+    number: 15,
+    name: 'The Devil',
+    arcana: 'major',
+    symbol: '😈',
+    meaning: 'Attachment, shadow, illusion of captivity. A chain you put on yourself.',
+    shadow: 'Addiction, manipulation, materialism.',
+    advice: 'Look at what holds you captive. The chain is looser than you think.',
+    advices: [
+      'Look at what holds you captive. The chain is looser than you think.',
+      'Addiction isn\'t just substances. Habits, relationships, thoughts — what\'s yours?',
+      'Acknowledge your shadow side today. Suppressed, it grows. Recognized, it loses power.',
+      'Comfort keeps you in the cage. Discomfort is the way out.',
+      'Are you in a golden cage? Money, status, security — if they don\'t fulfill you, they\'re a prison.',
+      'Humor and perspective are weapons against your own shadow. Laugh at yourself.',
+      'Who or what controls your attention? Conscious reclaiming of power starts with awareness.',
+      'Consciously refuse one temptation today. Not from morality — from power over yourself.',
+      'Fear paralyzes you? Look it straight in the face. It\'s smaller than it seems.',
+      'Your shadow is not an enemy — it\'s untapped potential.',
+      'If you must do something secretly — ask yourself why. Secrecy is a signal.',
+      'Freedom begins with the word "no." To whom or what will you say it today?',
+    ],
+  },
+  {
+    number: 16,
+    name: 'The Tower',
+    arcana: 'major',
+    symbol: '🗼',
+    meaning: 'Sudden change, collapse of illusions, lightning of truth. Fall of old structures.',
+    shadow: 'Destruction, catastrophism, denial of reality.',
+    advice: 'If something is falling, let it fall. You\'ll build something better on the ruins.',
+    advices: [
+      'If something is falling, let it fall. You\'ll build something better on the ruins.',
+      'Today\'s shock is not punishment — it\'s an awakening. Take it as a gift.',
+      'The illusion you maintained may shatter today. That\'s liberation.',
+      'Plans change. Adapt instead of sulking.',
+      'Something you considered stable is shaking. The foundation is within you, not in it.',
+      'Lightning illuminates what you didn\'t want to see. Now you know — act accordingly.',
+      'Ego falls harder than spirit. Let it. Spirit always rises.',
+      'Crisis is opportunity. What new thing can you build in the freed-up space?',
+      'Don\'t hold up the facade today. Authenticity is stronger than a perfect image.',
+      'If you fear change — it fears you even more. You are stronger.',
+      'What seems like catastrophe is a course correction. Trust.',
+      'Old walls fall so you can see the sky. Look up.',
+    ],
+  },
+  {
+    number: 17,
+    name: 'The Star',
+    arcana: 'major',
+    symbol: '⭐',
+    meaning: 'Hope, inspiration, inner peace after the storm. A star shines in the dark.',
+    shadow: 'Naive optimism, disconnection from reality, passivity.',
+    advice: 'Hope is not naivety — it\'s strength. Trust that things will work out.',
+    advices: [
+      'Hope is not naivety — it\'s strength. Trust that things will work out.',
+      'After the storm, a star emerges. If you survived yesterday — today you shine.',
+      'Share your gift. The world needs you exactly as you are today.',
+      'Visualize the ideal outcome. Imagination is your map today.',
+      'Heal. Today is a day for regeneration — physical and mental.',
+      'Inspiration arrives unexpectedly. Be open — perhaps through a song, an image, or a stranger.',
+      'You\'re on the right path, even if it doesn\'t feel like it. The star shines behind clouds too.',
+      'Clean water — drink it, immerse in it, imagine it. Purification is today\'s theme.',
+      'Your wounds are your qualifications. What you\'ve been through helps others.',
+      'Trust in life is not naivety — it\'s courage born from experience.',
+      'Allow yourself to dream today. Dreams are seeds of tomorrow\'s reality.',
+      'Peace after crisis is sacred space. Use it for a new intention.',
+    ],
+  },
+  {
+    number: 18,
+    name: 'The Moon',
+    arcana: 'major',
+    symbol: '🌑',
+    meaning: 'Illusions, fear, subconscious patterns. A path through darkness.',
+    shadow: 'Deception, anxiety, paranoia, shadow denial.',
+    advice: 'Not everything is as it seems today. Don\'t trust first impressions — dig deeper.',
+    advices: [
+      'Not everything is as it seems today. Don\'t trust first impressions — dig deeper.',
+      'The fear you feel is old. It\'s not from today — it\'s from the past. Distinguish it.',
+      'Dreams and night visions carry a message. Write them down first thing in the morning.',
+      'Uncertainty is a signal — don\'t make big decisions today. Wait for clarity.',
+      'Your imagination is deceiving you today. Verify facts before taking action.',
+      'Subconscious patterns are driving you on autopilot. Switch to manual mode today.',
+      'Darkness is not the enemy — it\'s the space where new things are born. Stay in it.',
+      'If you\'re afraid — name the fear aloud. It loses power when given a name.',
+      'Intuition and paranoia look the same. Distinguish them by whether they contract or expand you.',
+      'The path through darkness is a legitimate path. You don\'t always have to be in the light.',
+      'Today observe what happens on the periphery. What\'s important is not in the spotlight.',
+      'Moonlight distorts. Wait until morning before passing judgment.',
+    ],
+  },
+  {
+    number: 19,
+    name: 'The Sun',
+    arcana: 'major',
+    symbol: '☀️',
+    meaning: 'Joy, vitality, clarity, success. Light after darkness.',
+    shadow: 'Superficial optimism, burnout, excessive extroversion.',
+    advice: 'Shine today. Your energy is contagious — share it with others.',
+    advices: [
+      'Shine today. Your energy is contagious — share it with others.',
+      'Simple joys — sun on your face, a child\'s laughter — are today\'s medicine.',
+      'Clarity of thinking is your advantage. Use it for important decisions.',
+      'Be visible. Today is not a day to hide in the background.',
+      'Celebrate a small victory. You don\'t need to wait for a big success.',
+      'Your inner child wants attention. What would make you happy as a 7-year-old?',
+      'The energy you have today is precious. Invest it wisely — not scattered.',
+      'Go out in the sun. Literally. Vitamin D and light change your mood in 15 minutes.',
+      'Authenticity is magnetic. The more you are yourself, the more you attract.',
+      'Today is a day for playing, not worrying. Lightness is not superficiality.',
+      'Brighten someone\'s day. A compliment, help, a smile — a little goes a long way.',
+      'The success that comes today, you deserve. Accept it without false modesty.',
+    ],
+  },
+  {
+    number: 20,
+    name: 'Judgement',
+    arcana: 'major',
+    symbol: '📯',
+    meaning: 'Awakening, calling, life review. The trumpet calls to something new.',
+    shadow: 'Self-condemnation, inability to forgive, rigid judgment.',
+    advice: 'Do you hear the call? Something higher summons you today. Answer.',
+    advices: [
+      'Do you hear the call? Something higher summons you today. Answer.',
+      'Forgive yourself an old mistake. You\'ve held it longer than it deserves.',
+      'Look back at your journey — not with regret, but appreciation. You\'ve come far enough.',
+      'Today is the day for a big decision you\'ve been postponing. The trumpet has sounded.',
+      'Who you were, you no longer are. Who you are today — choose consciously.',
+      'Self-evaluation without self-condemnation: what did you learn in the past year?',
+      'The calling comes from within. Don\'t make it dependent on external validation.',
+      'Close an old account — an apology, forgiveness, a farewell. Release it.',
+      'Your life purpose is seeking you just as much as you seek it.',
+      'Today assess: what works and what doesn\'t? Be brutally honest with yourself.',
+      'Awakening only hurts the sleep, not you. Keep waking up.',
+      'Resurrection: revive what you buried prematurely. Maybe it still lives.',
+    ],
+  },
+  {
+    number: 21,
+    name: 'The World',
+    arcana: 'major',
+    symbol: '🌍',
+    meaning: 'Completion, integration, fulfillment. The whole is complete.',
+    shadow: 'Fear of completion, inability to close, stagnation after success.',
+    advice: 'Something in your life is completing right now. Celebrate it and prepare for the next cycle.',
+    advices: [
+      'Something in your life is completing right now. Celebrate it and prepare for the next cycle.',
+      'Finish one thing — fully, properly, to the last detail. Then celebrate.',
+      'You\'re at the end of a cycle. What did you learn? Summarize it.',
+      'Integration means: everything you went through has meaning. Even the pain.',
+      'The World\'s dance: move with joy today. Your body wants to celebrate.',
+      'The entire world is your classroom. Today\'s lesson awaits outside — go.',
+      'The circle is closing. Give thanks for the journey and open a new gate.',
+      'You are complete — even without a partner, success, or validation. Right now.',
+      'Look at your life from above — like a map. Do you see patterns?',
+      'Allow yourself the feeling of fulfillment. You don\'t need to immediately seek the next goal.',
+      'The world says "yes" to you today. Accept it without conditions.',
+      'An ending is a beginning. The spiral turns higher — you are ready.',
+    ],
+  },
+];
+
+// Backward compat export
+export const TAROT_CARDS = skCards;
+
 // Tematicky príbuzné karty per ODV (2-3 karty rotujú)
 const TAROT_GROUPS_BY_ODV: Record<number, number[]> = {
   1: [1, 0, 7],    // Mág, Blázon, Voz — iniciatíva, začiatky, pohyb vpred
@@ -548,16 +1062,21 @@ export const TAROT_BY_ODV: Record<number, TarotCard> = {
   9: TAROT_CARDS[9],
 };
 
+function getCardsByLang(lang: Language): TarotCard[] {
+  return lang === 'en' ? enCards : skCards;
+}
+
 /**
  * Vráti dennú tarot kartu pre dané ODV číslo (1-9).
  * Rotuje cez skupinu 2-3 tematicky príbuzných kariet + ich advices.
  */
-export function getDailyTarot(odv: number): TarotCard & { dailyAdvice: string } {
+export function getDailyTarot(odv: number, lang: Language = 'sk'): TarotCard & { dailyAdvice: string } {
+  const cards = getCardsByLang(lang);
   const group = TAROT_GROUPS_BY_ODV[odv] || TAROT_GROUPS_BY_ODV[1];
   const dayOfYear = Math.floor(
     (Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000
   );
-  const card = TAROT_CARDS[group[dayOfYear % group.length]];
+  const card = cards[group[dayOfYear % group.length]];
   const adviceIndex = Math.floor(dayOfYear / group.length) % card.advices.length;
 
   return {
@@ -570,12 +1089,13 @@ export function getDailyTarot(odv: number): TarotCard & { dailyAdvice: string } 
  * Vráti mesačnú tarot kartu podľa OMV (1-9).
  * Rotuje cez rok — každý mesiac s rovnakým OMV dostane inú kartu.
  */
-export function getMonthlyTarot(omv: number): TarotCard & { monthlyAdvice: string } {
+export function getMonthlyTarot(omv: number, lang: Language = 'sk'): TarotCard & { monthlyAdvice: string } {
+  const cards = getCardsByLang(lang);
   const group = TAROT_GROUPS_BY_ODV[omv] || TAROT_GROUPS_BY_ODV[1];
   const now = new Date();
   const monthIndex = now.getMonth();
   // Offset od dennej aby nebola rovnaká karta
-  const card = TAROT_CARDS[group[(monthIndex + 1) % group.length]];
+  const card = cards[group[(monthIndex + 1) % group.length]];
   const adviceIndex = monthIndex % card.advices.length;
   return { ...card, monthlyAdvice: card.advices[adviceIndex] };
 }
@@ -584,13 +1104,14 @@ export function getMonthlyTarot(omv: number): TarotCard & { monthlyAdvice: strin
  * Vráti dennú kartu z celej veľkej arkány (0-21) podľa dňa v roku.
  * Rotuje aj kartu aj radu.
  */
-export function getDailyMajorArcana(): TarotCard & { dailyAdvice: string } {
+export function getDailyMajorArcana(lang: Language = 'sk'): TarotCard & { dailyAdvice: string } {
+  const cards = getCardsByLang(lang);
   const dayOfYear = Math.floor(
     (Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000
   );
-  const cardIndex = dayOfYear % TAROT_CARDS.length;
-  const card = TAROT_CARDS[cardIndex];
-  const adviceIndex = Math.floor(dayOfYear / TAROT_CARDS.length) % card.advices.length;
+  const cardIndex = dayOfYear % cards.length;
+  const card = cards[cardIndex];
+  const adviceIndex = Math.floor(dayOfYear / cards.length) % card.advices.length;
 
   return {
     ...card,

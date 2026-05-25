@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
+import { useTranslation } from '../i18n/useTranslation';
 import { calculateFullNumerology, getGridCount, reduceToSingle } from '../engine/numerologyEngine';
 import { calculateDevelopmentalNumerology } from '../engine/developmentalNumerologyEngine';
 import { calculateAstrology } from '../engine/astrologyEngine';
@@ -17,6 +18,7 @@ import { SkeletonClientDashboard } from '../components/Skeleton';
 import { getTimezoneFromCoords } from '../data/cities';
 
 export function ClientDashboard() {
+  const { t } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
   const { clients, addReport, reports } = useStore();
@@ -53,15 +55,15 @@ export function ClientDashboard() {
     if (!client || !computedResults) return;
     const today = new Date().toISOString().split('T')[0];
     if (reports.some(r => r.clientId === client.id && r.createdAt.startsWith(today))) {
-      alert('Návšteva pre tento deň je už zaznamenaná.');
+      alert(t('clients.visitAlreadyRecorded'));
       return;
     }
     addReport({
       id: crypto.randomUUID(),
       profileId: '',
       clientId: client.id,
-      type: 'Kompletný výklad',
-      title: `Výklad pre ${client.name}`,
+      type: t('clients.completeReading'),
+      title: `${t('clients.readingFor')} ${client.name}`,
       data: { lifePathNumber: computedResults.numerology.lifePathNumber, hdType: computedResults.humanDesign.type },
       createdAt: new Date().toISOString(),
     });
@@ -70,8 +72,8 @@ export function ClientDashboard() {
   if (!client) {
     return (
       <div className="text-center py-20">
-        <p className="text-slate-400">Klient nebol nájdený</p>
-        <button onClick={() => navigate('/clients')} className="mt-4 px-4 py-2 rounded-xl bg-indigo-600 text-white">Späť na klientov</button>
+        <p className="text-slate-400">{t('clients.notFound')}</p>
+        <button onClick={() => navigate('/clients')} className="mt-4 px-4 py-2 rounded-xl bg-indigo-600 text-white">{t('clients.backToClients')}</button>
       </div>
     );
   }
@@ -83,7 +85,7 @@ export function ClientDashboard() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
-        <button onClick={() => navigate('/clients')} className="text-slate-400 hover:text-white text-sm">← Klienti</button>
+        <button onClick={() => navigate('/clients')} className="text-slate-400 hover:text-white text-sm">{t('clients.backToClients')}</button>
         <div>
           <h1 className="font-serif text-2xl lg:text-3xl font-bold text-white">{client.name}</h1>
           <p className="text-slate-400 text-sm">{client.birthDay}.{client.birthMonth}.{client.birthYear}{client.birthHour !== undefined ? ` ${client.birthHour}:${String(client.birthMinute || 0).padStart(2, '0')}` : ''}</p>
@@ -92,20 +94,20 @@ export function ClientDashboard() {
 
       {/* Quick summary — 3 najdôležitejšie veci na konzultáciu */}
       <div className="p-4 rounded-xl bg-gradient-to-r from-indigo-500/10 to-violet-500/10 border border-indigo-500/20">
-        <p className="text-xs text-indigo-400 font-semibold uppercase tracking-wide mb-3">3 veci na konzultáciu</p>
+        <p className="text-xs text-indigo-400 font-semibold uppercase tracking-wide mb-3">{t('clients.consultTips')}</p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="p-3 rounded-lg bg-white/5">
-            <p className="text-xs text-slate-500 mb-0.5">Kto je v jadre</p>
+            <p className="text-xs text-slate-500 mb-0.5">{t('clients.coreIdentity')}</p>
             <p className="text-sm font-medium text-indigo-900">ŽČ {numerology.lifePathNumber} — {humanDesign.type}</p>
             <p className="text-[11px] text-slate-500 mt-1">Stratégia: „{humanDesign.strategy.toLowerCase()}"</p>
           </div>
           <div className="p-3 rounded-lg bg-white/5">
-            <p className="text-xs text-slate-500 mb-0.5">Ako rozhoduje</p>
+            <p className="text-xs text-slate-500 mb-0.5">{t('clients.howDecides')}</p>
             <p className="text-sm font-medium text-indigo-900">{humanDesign.authority}</p>
             <p className="text-[11px] text-slate-500 mt-1">Nie-ja téma: „{humanDesign.notSelfTheme.toLowerCase()}"</p>
           </div>
           <div className="p-3 rounded-lg bg-white/5">
-            <p className="text-xs text-slate-500 mb-0.5">Aktuálna energia</p>
+            <p className="text-xs text-slate-500 mb-0.5">{t('clients.currentEnergy')}</p>
             <p className="text-sm font-medium text-indigo-900">{astrology.sunSign.name} / {astrology.moonSign.name}</p>
             <p className="text-[11px] text-slate-500 mt-1">Element: {astrology.dominantElement}</p>
           </div>
@@ -115,12 +117,12 @@ export function ClientDashboard() {
       {/* Záznam návštevy + časová os — história konzultácií */}
       <div className="p-4 rounded-xl bg-slate-500/5 border border-slate-500/20">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="font-medium text-white">Návštevy klienta</h3>
+          <h3 className="font-medium text-white">{t('clients.visits')}</h3>
           <button
             onClick={recordVisit}
             className="px-3 py-1.5 rounded-lg text-xs font-medium bg-indigo-600 text-white hover:bg-indigo-500 transition-colors"
           >
-            + Zaznamenať dnešnú návštevu
+            {t('clients.recordVisit')}
           </button>
         </div>
       </div>
@@ -132,7 +134,7 @@ export function ClientDashboard() {
           <div className="p-4 rounded-xl bg-slate-500/5 border border-slate-500/20">
             <details>
               <summary className="cursor-pointer hover:text-indigo-300 transition-colors">
-                <span className="font-medium text-white">Časová os ({clientReports.length} návštev)</span>
+                <span className="font-medium text-white">{t('clients.timeline')} ({clientReports.length})</span>
               </summary>
               <div className="mt-3 space-y-2">
                 {clientReports.slice(0, 20).map(r => {

@@ -1,3 +1,5 @@
+import type { Language } from '../store/useStore';
+
 export interface BachFlower {
   name: string;
   latinName: string;
@@ -7,7 +9,7 @@ export interface BachFlower {
   affirmation: string;
 }
 
-export const BACH_FLOWERS_BY_CHAKRA: Record<number, BachFlower[]> = {
+const sk: Record<number, BachFlower[]> = {
   1: [
     {
       name: 'Mimulus',
@@ -159,3 +161,167 @@ export const BACH_FLOWERS_BY_CHAKRA: Record<number, BachFlower[]> = {
     },
   ],
 };
+
+const en: Record<number, BachFlower[]> = {
+  1: [
+    {
+      name: 'Mimulus',
+      latinName: 'Mimulus guttatus',
+      chakra: 1,
+      emotionalState: 'Specific fears — fear of poverty, illness, loneliness',
+      helps: 'Gives courage to face known fears with calm and trust',
+      affirmation: 'I face life with courage. I am safe.',
+    },
+    {
+      name: 'Rock Rose',
+      latinName: 'Helianthemum nummularium',
+      chakra: 1,
+      emotionalState: 'Acute terror, panic, helplessness in crisis',
+      helps: 'Brings inner strength and peace even in extreme situations',
+      affirmation: 'Even in the storm I find inner peace and strength to act.',
+    },
+    {
+      name: 'Aspen',
+      latinName: 'Populus tremula',
+      chakra: 1,
+      emotionalState: 'Vague fears, premonitions, anxiety without obvious cause',
+      helps: 'Transforms dark premonitions into trust in the unknown',
+      affirmation: 'I trust life. The unknown brings me growth.',
+    },
+  ],
+  2: [
+    {
+      name: 'Cherry Plum',
+      latinName: 'Prunus cerasifera',
+      chakra: 2,
+      emotionalState: 'Fear of losing control, of emotional outbursts, of "going crazy"',
+      helps: 'Helps integrate intense emotions without fear of their power',
+      affirmation: 'My emotions are my strength. I trust their flow.',
+    },
+    {
+      name: 'Crab Apple',
+      latinName: 'Malus pumila',
+      chakra: 2,
+      emotionalState: 'Feeling of impurity, body shame, self-disgust',
+      helps: 'Brings acceptance of one\'s body and sexuality without guilt',
+      affirmation: 'I accept my body with love. I am pure just as I am.',
+    },
+  ],
+  3: [
+    {
+      name: 'Larch',
+      latinName: 'Larix decidua',
+      chakra: 3,
+      emotionalState: 'Lack of self-confidence, expecting failure in advance',
+      helps: 'Builds courage to take risks and trust one\'s own abilities',
+      affirmation: 'I am capable. I have everything I need to succeed.',
+    },
+    {
+      name: 'Centaury',
+      latinName: 'Centaurium umbellatum',
+      chakra: 3,
+      emotionalState: 'Inability to say no, serving others at own expense',
+      helps: 'Strengthens personal will and ability to set healthy boundaries',
+      affirmation: 'My needs are equally important. I say NO with love.',
+    },
+    {
+      name: 'Cerato',
+      latinName: 'Ceratostigma willmottiana',
+      chakra: 3,
+      emotionalState: 'Distrust of own intuition, constantly seeking advice from others',
+      helps: 'Strengthens inner voice and trust in own judgment',
+      affirmation: 'I trust my inner guidance. I know what is right for me.',
+    },
+  ],
+  4: [
+    {
+      name: 'Holly',
+      latinName: 'Ilex aquifolium',
+      chakra: 4,
+      emotionalState: 'Jealousy, envy, suspicion, anger toward loved ones',
+      helps: 'Opens the heart to unconditional love and generosity',
+      affirmation: 'My heart is open. I love without conditions.',
+    },
+    {
+      name: 'Chicory',
+      latinName: 'Cichorium intybus',
+      chakra: 4,
+      emotionalState: 'Possessive love, emotional manipulation, demanding attention',
+      helps: 'Teaches to love freely, without attachment and expectations',
+      affirmation: 'I love freely. I give without expecting return.',
+    },
+    {
+      name: 'Willow',
+      latinName: 'Salix vitellina',
+      chakra: 4,
+      emotionalState: 'Bitterness, feeling like a victim of fate, resentment',
+      helps: 'Brings forgiveness and taking responsibility for one\'s own life',
+      affirmation: 'I take responsibility for my life. I forgive and move forward.',
+    },
+  ],
+  5: [
+    {
+      name: 'Agrimony',
+      latinName: 'Agrimonia eupatoria',
+      chakra: 5,
+      emotionalState: 'Hiding suffering behind a smile, avoiding confrontation',
+      helps: 'Courage to be authentic and express true feelings',
+      affirmation: 'I express truth with gentleness. My authenticity heals.',
+    },
+    {
+      name: 'Water Violet',
+      latinName: 'Hottonia palustris',
+      chakra: 5,
+      emotionalState: 'Pride, isolation, inability to ask for help',
+      helps: 'Opens communication and willingness to share with others',
+      affirmation: 'I share with others. There is strength in connection.',
+    },
+  ],
+  6: [
+    {
+      name: 'Clematis',
+      latinName: 'Clematis vitalba',
+      chakra: 6,
+      emotionalState: 'Daydreaming, absence, escape into fantasy',
+      helps: 'Grounding visionary energy into the present moment',
+      affirmation: 'I am fully present. I realize my visions here and now.',
+    },
+    {
+      name: 'Wild Oat',
+      latinName: 'Bromus ramosus',
+      chakra: 6,
+      emotionalState: 'Uncertainty about life direction, scattered interests',
+      helps: 'Clarity of inner calling and direction of energy',
+      affirmation: 'I see my life direction clearly. I follow the inner calling.',
+    },
+  ],
+  7: [
+    {
+      name: 'Rock Water',
+      latinName: 'Aqua petra',
+      chakra: 7,
+      emotionalState: 'Spiritual rigidity, strict self-denial, joyless asceticism',
+      helps: 'Flexibility on the spiritual path, joy in practice',
+      affirmation: 'My spiritual path is joyful. I embrace life in fullness.',
+    },
+    {
+      name: 'Vine',
+      latinName: 'Vitis vinifera',
+      chakra: 7,
+      emotionalState: 'Spiritual superiority, dogmatism, imposing own path on others',
+      helps: 'Humility and respect for the unique path of every person',
+      affirmation: 'I lead by example, not by force. Everyone has their own path.',
+    },
+  ],
+};
+
+export const BACH_FLOWERS_BY_CHAKRA: Record<number, BachFlower[]> = sk;
+
+export function getBachFlowersByChakra(chakra: number, lang: Language = 'sk'): BachFlower[] {
+  return lang === 'en' ? (en[chakra] || []) : (sk[chakra] || []);
+}
+
+export function getAllBachFlowers(lang: Language = 'sk'): BachFlower[] {
+  const data = lang === 'en' ? en : sk;
+  return Object.values(data).flat();
+}

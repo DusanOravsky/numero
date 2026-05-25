@@ -1,10 +1,8 @@
 import { useStore } from '../store/useStore';
-import { translate, type TranslationKey } from './translations';
+import { translate, type TranslationKey } from './registry';
 
-/**
- * Hook na preklad.
- * Použitie: const { t } = useTranslation(); ... t('nav.dashboard')
- */
+export type { TranslationKey };
+
 export function useTranslation() {
   const language = useStore(s => s.language);
   return {

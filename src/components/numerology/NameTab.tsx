@@ -3,6 +3,7 @@ import { GlassCard } from '../GlassCard';
 import { EnergyCard } from '../EnergyCard';
 import { calculateNameNumerology } from '../../engine/nameNumerologyEngine';
 import type { NameNumerologyResult } from '../../engine/nameNumerologyEngine';
+import { useTranslation } from '../../i18n/useTranslation';
 
 interface NameTabProps {
   defaultName?: string;
@@ -10,6 +11,7 @@ interface NameTabProps {
 }
 
 export function NameTab({ defaultName, storageKey }: NameTabProps) {
+  const { t } = useTranslation();
   const persistKey = storageKey ? `name-num-${storageKey}` : null;
 
   const [nameInput, setNameInput] = useState(() => {
@@ -39,18 +41,18 @@ export function NameTab({ defaultName, storageKey }: NameTabProps) {
   return (
     <div className="space-y-4">
       <GlassCard>
-        <h3 className="font-medium text-white mb-3">Numerológia mena</h3>
-        <p className="text-sm text-slate-400 mb-4">Zadajte celé meno (krstné + priezvisko) pre výpočet čísla výrazu, duše a osobnosti.</p>
+        <h3 className="font-medium text-white mb-3">{t('numerology.nameAnalysis')}</h3>
+        <p className="text-sm text-slate-400 mb-4">{t('numerology.nameDesc')}</p>
         <form onSubmit={(e) => { e.preventDefault(); if (nameInput.trim()) setNameResult(calculateNameNumerology(nameInput)); }} className="flex gap-3">
           <input
             type="text"
             value={nameInput}
             onChange={e => setNameInput(e.target.value)}
-            placeholder="Meno a priezvisko"
+            placeholder={t('numerology.namePlaceholder')}
             className="flex-1 px-4 py-3 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white focus:outline-none focus:border-indigo-500/50"
           />
           <button type="submit" className="px-6 py-3 rounded-xl bg-indigo-600 text-white font-medium hover:bg-indigo-500">
-            Vypočítať
+            {t('common.calculate')}
           </button>
         </form>
       </GlassCard>
@@ -58,13 +60,13 @@ export function NameTab({ defaultName, storageKey }: NameTabProps) {
       {nameResult && (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <EnergyCard title="Číslo výrazu" value={nameResult.expressionNumber} subtitle="Celé meno – životná cesta" icon="✦" color="indigo" delay={0.1} />
-            <EnergyCard title="Číslo duše" value={nameResult.soulNumber} subtitle="Samohlásky – vnútorná túžba" icon="♡" color="rose" delay={0.2} />
-            <EnergyCard title="Číslo osobnosti" value={nameResult.personalityNumber} subtitle="Spoluhlásky – vonkajší prejav" icon="◎" color="cyan" delay={0.3} />
+            <EnergyCard title={t('numerology.expressionNumber')} value={nameResult.expressionNumber} subtitle="Celé meno – životná cesta" icon="✦" color="indigo" delay={0.1} />
+            <EnergyCard title={t('numerology.soulNumber')} value={nameResult.soulNumber} subtitle="Samohlásky – vnútorná túžba" icon="♡" color="rose" delay={0.2} />
+            <EnergyCard title={t('numerology.personalityNumber')} value={nameResult.personalityNumber} subtitle="Spoluhlásky – vonkajší prejav" icon="◎" color="cyan" delay={0.3} />
           </div>
 
           <GlassCard>
-            <h4 className="text-sm text-slate-400 mb-3">Rozklad písmen</h4>
+            <h4 className="text-sm text-slate-400 mb-3">{t('numerology.letterBreakdown')}</h4>
             <div className="flex flex-wrap gap-1">
               {nameResult.letters.map((l, i) => (
                 <div key={i} className={`w-8 h-10 rounded-lg flex flex-col items-center justify-center text-xs ${l.isVowel ? 'bg-rose-500/20 border border-rose-500/30' : 'bg-indigo-500/20 border border-indigo-500/30'}`}>
@@ -74,8 +76,8 @@ export function NameTab({ defaultName, storageKey }: NameTabProps) {
               ))}
             </div>
             <div className="flex gap-4 mt-3 text-xs">
-              <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-rose-500/30"></span> Samohlásky (duša)</span>
-              <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-indigo-500/30"></span> Spoluhlásky (osobnosť)</span>
+              <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-rose-500/30"></span> {t('numerology.vowels')}</span>
+              <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-indigo-500/30"></span> {t('numerology.consonants')}</span>
             </div>
           </GlassCard>
 
@@ -132,7 +134,7 @@ export function NameTab({ defaultName, storageKey }: NameTabProps) {
           {/* Karmic Lessons */}
           {nameResult.karmicLessons.length > 0 && (
             <GlassCard>
-              <h4 className="font-medium text-white mb-2">Karmické lekcie ({nameResult.karmicLessons.length})</h4>
+              <h4 className="font-medium text-white mb-2">{t('numerology.karmicLessons')} ({nameResult.karmicLessons.length})</h4>
               <p className="text-xs text-slate-500 mb-3">
                 Čísla 1–9 ktoré v mene <strong>vôbec nie sú zastúpené</strong> — vrodené slabiny, ktoré sa duša učí v tomto živote.
               </p>
@@ -153,7 +155,7 @@ export function NameTab({ defaultName, storageKey }: NameTabProps) {
 
           {/* Cornerstone / Capstone / First Vowel */}
           <GlassCard>
-            <h4 className="font-medium text-white mb-2">Kľúčové písmená</h4>
+            <h4 className="font-medium text-white mb-2">{t('numerology.keyLetters')}</h4>
             <p className="text-xs text-slate-500 mb-3">
               Prvé písmeno (Cornerstone) charakterizuje váš prístup k novým situáciám, posledné (Capstone) postoj k dokončovaniu, prvá samohláska okamžitú emocionálnu reakciu.
             </p>

@@ -14,6 +14,7 @@ import {
   clearChat as idbClear,
   migrateFromLocalStorage,
 } from '../engine/chatStorage';
+import { useTranslation } from '../i18n/useTranslation';
 
 interface Props {
   context: ProfileContext;
@@ -61,7 +62,9 @@ function renderMarkdown(text: string): React.ReactNode {
   });
 }
 
-export function AIChat({ context, title = 'AI integrálny výklad', initialUserMessage, storageKey }: Props) {
+export function AIChat({ context, title, initialUserMessage, storageKey }: Props) {
+  const { t } = useTranslation();
+  const resolvedTitle = title ?? t('ai.title');
   const keyAvailable = hasApiKey();
   const persistKey = storageKey || `${context.name}-${context.birth.day}-${context.birth.month}-${context.birth.year}`;
 
@@ -147,7 +150,7 @@ export function AIChat({ context, title = 'AI integrálny výklad', initialUserM
             output: prev.output + (chunk.outputTokens || 0),
           }));
         } else if (chunk.type === 'error') {
-          setError(chunk.error || 'Neznáma chyba');
+          setError(chunk.error || t('ai.unknownError'));
           setStreaming(false);
           setStreamingText('');
           // Vrátime user správu ak AI zlyhalo — používateľ ju môže opraviť
@@ -162,7 +165,7 @@ export function AIChat({ context, title = 'AI integrálny výklad', initialUserM
   const cancelStream = () => {
     abortRef.current?.abort();
     if (streamingText) {
-      setMessages(prev => [...prev, { id: crypto.randomUUID(), role: 'assistant', content: streamingText + '\n\n*(prerušené)*' }]);
+      setMessages(prev => [...prev, { id: crypto.randomUUID(), role: 'assistant', content: streamingText + '\n\n' + t('ai.interrupted') }]);
     }
     setStreamingText('');
     setStreaming(false);
@@ -173,7 +176,7 @@ export function AIChat({ context, title = 'AI integrálny výklad', initialUserM
   };
 
   const resetChat = () => {
-    if (!confirm('Vymazať celý rozhovor a začať odznova?')) return;
+    if (!confirm(t('ai.clearConfirm'))) return;
     setMessages([]);
     setStreamingText('');
     setError('');
@@ -184,8 +187,8 @@ export function AIChat({ context, title = 'AI integrálny výklad', initialUserM
   if (loading) {
     return (
       <GlassCard>
-        <h3 className="font-medium text-white mb-2">{title}</h3>
-        <p className="text-xs text-slate-500 animate-pulse">Načítavam históriu...</p>
+        <h3 className="font-medium text-white mb-2">{resolvedTitle}</h3>
+        <p className="text-xs text-slate-500 animate-pulse">{t('ai.loadingHistory')}</p>
       </GlassCard>
     );
   }
@@ -194,7 +197,7 @@ export function AIChat({ context, title = 'AI integrálny výklad', initialUserM
     if (messages.length > 0) {
       return (
         <GlassCard>
-          <h3 className="font-medium text-white mb-2">{title} <span className="text-xs text-slate-500 font-normal">(uložený výklad)</span></h3>
+          <h3 className="font-medium text-white mb-2">{resolvedTitle} <span className="text-xs text-slate-500 font-normal">{t('ai.savedReading')}</span></h3>
           <div ref={scrollRef} className="max-h-[400px] overflow-y-auto space-y-3 mb-3">
             {messages.filter(m => m.role === 'assistant').map((m, i) => (
               <div key={i} className="p-3 rounded-xl bg-indigo-500/10 border border-indigo-500/20">
@@ -203,23 +206,23 @@ export function AIChat({ context, title = 'AI integrálny výklad', initialUserM
             ))}
           </div>
           <p className="text-[11px] text-slate-500 italic">
-            Offline / bez API kľúča — zobrazuje sa posledný uložený výklad. Pre nový výklad pridaj API kľúč v Nastaveniach.
+            {t('ai.offlineHint')}
           </p>
         </GlassCard>
       );
     }
     return (
       <GlassCard>
-        <h3 className="font-medium text-white mb-2">{title}</h3>
+        <h3 className="font-medium text-white mb-2">{resolvedTitle}</h3>
         <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30">
           <p className="text-sm text-amber-700 mb-2">
-            <strong>AI výklad nie je aktivovaný.</strong>
+            <strong>{t('ai.notActivated')}</strong>
           </p>
           <p className="text-xs text-slate-400">
-            Pre vygenerovanie integratívneho výkladu cez Claude AI zadaj svoj Anthropic API kľúč v <strong>Nastaveniach → AI integrácia</strong>. Kľúč zostáva lokálne na tvojom zariadení a posiela sa iba na api.anthropic.com.
+            {t('ai.notActivatedDesc')}
           </p>
           <p className="text-[11px] text-slate-500 mt-2">
-            API kľúč získaš na <span className="font-mono">console.anthropic.com</span>. Cena výkladu: ~$0.003-0.04 podľa modelu.
+            {t('ai.apiKeyHint')}
           </p>
         </div>
       </GlassCard>
@@ -229,7 +232,7 @@ export function AIChat({ context, title = 'AI integrálny výklad', initialUserM
   return (
     <GlassCard>
       <div className="flex items-center justify-between mb-3">
-        <h3 className="font-medium text-white">{title}</h3>
+        <h3 className="font-medium text-white">{resolvedTitle}</h3>
         <span className="text-[11px] text-slate-500 italic">Powered by Claude</span>
       </div>
 
@@ -243,10 +246,10 @@ export function AIChat({ context, title = 'AI integrálny výklad', initialUserM
             onClick={startConversation}
             className="px-6 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-medium hover:from-indigo-500 hover:to-violet-500 glow"
           >
-            ✦ Vytvoriť AI výklad
+            {t('ai.createReading')}
           </button>
           <p className="text-[11px] text-slate-500 mt-3 italic">
-            Výpočet trvá 5-15 sekúnd, cena ~$0.003-0.04 podľa zvoleného modelu.
+            {t('ai.readingTime')}
           </p>
         </div>
       )}
@@ -267,7 +270,7 @@ export function AIChat({ context, title = 'AI integrálny výklad', initialUserM
               }`}
             >
               <p className="text-[10px] uppercase mb-1 opacity-60 text-slate-400">
-                {m.role === 'user' ? 'Vy' : '✦ AI'}
+                {m.role === 'user' ? t('ai.you') : t('ai.assistant')}
               </p>
               <div className="text-sm leading-relaxed">
                 {m.role === 'assistant' ? renderMarkdown(m.content) : <p className="text-slate-200">{m.content}</p>}
@@ -283,12 +286,12 @@ export function AIChat({ context, title = 'AI integrálny výklad', initialUserM
                   animate={{ opacity: [1, 0.3, 1] }}
                   transition={{ duration: 1.5, repeat: Infinity }}
                 >
-                  ✦ AI píše…
+                  {t('ai.writing')}
                 </motion.span>
               </p>
               <div className="text-sm leading-relaxed min-h-[2rem]">
                 {streamingText ? renderMarkdown(streamingText) : (
-                  <p className="text-slate-500 italic">Pripravujem odpoveď…</p>
+                  <p className="text-slate-500 italic">{t('ai.preparing')}</p>
                 )}
               </div>
             </div>
@@ -299,7 +302,7 @@ export function AIChat({ context, title = 'AI integrálny výklad', initialUserM
       {/* Error */}
       {error && (
         <div className="mt-3 p-3 rounded-xl bg-rose-500/10 border border-rose-500/30">
-          <p className="text-sm text-rose-300"><strong>Chyba:</strong> {error}</p>
+          <p className="text-sm text-rose-300"><strong>{t('ai.errorLabel')}</strong> {error}</p>
         </div>
       )}
 
@@ -311,7 +314,7 @@ export function AIChat({ context, title = 'AI integrálny výklad', initialUserM
               onClick={cancelStream}
               className="w-full px-4 py-2 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 hover:bg-rose-500/20"
             >
-              ⏸ Zastaviť generovanie
+              {t('ai.stopGeneration')}
             </button>
           ) : (
             <form
@@ -327,7 +330,7 @@ export function AIChat({ context, title = 'AI integrálny výklad', initialUserM
                     sendMessage(userInput);
                   }
                 }}
-                placeholder="Spýtaj sa AI na čokoľvek z tvojho profilu… (Enter = odoslať, Shift+Enter = nový riadok)"
+                placeholder={t('ai.inputPlaceholder')}
                 rows={2}
                 className="flex-1 px-3 py-2 rounded-xl bg-slate-800/50 border border-indigo-500/30 text-white text-sm focus:outline-none focus:border-indigo-500 resize-none"
               />

@@ -18,17 +18,20 @@ import { calculateDevelopmentalNumerology } from '../engine/developmentalNumerol
 import type { DevelopmentalNumerologyResult } from '../engine/developmentalNumerologyEngine';
 import { deriveEnneagramType } from '../engine/enneagramEngine';
 import type { EnneagramResult } from '../engine/enneagramEngine';
-import { enneagramTypes } from '../data/enneagram';
 import { deriveDosha } from '../engine/ayurvedaEngine';
 import type { DoshaProfile } from '../data/ayurveda';
-import { DOSHA_INFO } from '../data/ayurveda';
+import { getDoshaInfo } from '../data/ayurveda';
 import { deriveTCMElement } from '../engine/tcmEngine';
 import type { TCMResult } from '../engine/tcmEngine';
-import { TCM_ELEMENTS } from '../data/tcm';
-import lifePathsData from '../data/lifePaths.json';
-import { orvDescriptions } from '../data/orvDescriptions';
+import { getTCMElement } from '../data/tcm';
+import lifePathsData from '../data/lifePaths';
+import { getOrvDescription } from '../data/orvDescriptions';
 import { getGeneKeyByGate } from '../data/geneKeys';
-import { ETIKOTERAPIA_BY_CHAKRA } from '../data/etikoterapia';
+import { getEtikoterapiaForChakra } from '../data/etikoterapia';
+import { useTranslation } from '../i18n/useTranslation';
+import { displayName, ZODIAC_DISPLAY, ELEMENT_DISPLAY, HD_TYPE_DISPLAY, HD_AUTHORITY_DISPLAY, HD_CENTER_DISPLAY } from '../i18n/entityNames';
+import { getEnneagramType } from '../data/enneagram';
+import { getPlaneName } from '../data/planes';
 
 const lifePaths = lifePathsData as Record<string, { title: string; keywords: string[]; description: string; gift: string; shadow: string }>;
 
@@ -55,6 +58,7 @@ interface AllResults {
 }
 
 export function SharedView() {
+  const { t, language } = useTranslation();
   const [clientData, setClientData] = useState<ClientData | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -150,8 +154,8 @@ export function SharedView() {
   return (
     <div className="max-w-4xl mx-auto p-4 lg:p-8 space-y-6">
       <div className="text-center mb-8">
-        <h1 className="font-serif text-2xl lg:text-3xl font-bold text-slate-800">Integralna mapa bytia</h1>
-        <p className="text-slate-500 text-sm mt-1">Zdielany vyklad</p>
+        <h1 className="font-serif text-2xl lg:text-3xl font-bold text-slate-800">{t('summary.integralMap')}</h1>
+        <p className="text-slate-500 text-sm mt-1">{t('summary.sharedReading')}</p>
       </div>
 
       <div className="text-center">
@@ -164,39 +168,42 @@ export function SharedView() {
 
       {/* Integralny sumar */}
       <GlassCard glow>
-        <h2 className="font-serif text-xl font-bold text-indigo-600 mb-4">Integralny suhrn osobnosti</h2>
+        <h2 className="font-serif text-xl font-bold text-indigo-600 mb-4">{t('summary.title')}</h2>
         <div className="space-y-4 text-sm leading-relaxed text-slate-700">
           <p>
             <strong>{clientData.name}</strong> nesie zivotne cislo <strong>{numerology.lifePathNumber}</strong> z {numerology.lifePathFrom} ({lpInfo?.title || ''}).
             {lpInfo?.description || ''}
           </p>
           <p className="border-l-2 border-indigo-200 pl-3">
-            <strong>Dar:</strong> {lpInfo?.gift || '-'}.<br/>
-            <strong>Tien:</strong> {lpInfo?.shadow || '-'}.
+            <strong>{t('summary.gift')}:</strong> {lpInfo?.gift || '-'}.<br/>
+            <strong>{t('summary.shadowLabel')}:</strong> {lpInfo?.shadow || '-'}.
           </p>
           <p>
-            <strong>Astrologia:</strong> Slnko v <strong>{astrology.sunSign.name}</strong> ({astrology.sunSign.element}),
-            Mesiac v <strong>{astrology.moonSign.name}</strong> ({astrology.moonSign.element}),
-            Ascendent v <strong>{astrology.ascendant.name}</strong> ({astrology.ascendant.element}).
-            Dominantny zivel: <strong>{astrology.dominantElement}</strong>.
+            <strong>{language === 'sk' ? 'Astrológia:' : 'Astrology:'}</strong> {language === 'sk' ? 'Slnko v' : 'Sun in'} <strong>{astrology.sunSign.name}</strong> ({astrology.sunSign.element}),
+            {language === 'sk' ? 'Mesiac v' : 'Moon in'} <strong>{astrology.moonSign.name}</strong> ({astrology.moonSign.element}),
+            {language === 'sk' ? 'Ascendent v' : 'Ascendant in'} <strong>{astrology.ascendant.name}</strong> ({astrology.ascendant.element}).
+            {language === 'sk' ? 'Dominantný živel' : 'Dominant element'}: <strong>{astrology.dominantElement}</strong>.
           </p>
           <p>
-            V <strong>Human Design</strong> je typ <strong>{humanDesign.type}</strong> s <strong>{humanDesign.authority}</strong> autoritou.
-            Strategia: <strong>{humanDesign.strategy}</strong>.
-            Profil <strong>{humanDesign.profile.line1}/{humanDesign.profile.line2}</strong> ({humanDesign.profile.name}).
+            {language === 'sk'
+              ? <>V <strong>Human Design</strong> je typ <strong>{humanDesign.type}</strong> s <strong>{humanDesign.authority}</strong> autoritou.</>
+              : <>In <strong>Human Design</strong>, the type is <strong>{humanDesign.type}</strong> with <strong>{humanDesign.authority}</strong> authority.</>
+            }
+            {' '}{language === 'sk' ? 'Stratégia' : 'Strategy'}: <strong>{humanDesign.strategy}</strong>.
+            {language === 'sk' ? 'Profil' : 'Profile'} <strong>{humanDesign.profile.line1}/{humanDesign.profile.line2}</strong> ({humanDesign.profile.name}).
           </p>
 
           {(() => {
             const sunGate = humanDesign.personalityGates.find(g => g.planet === 'Slnko')?.gate;
             const earthGate = humanDesign.personalityGates.find(g => g.planet === 'Zem')?.gate;
-            const topGeneKeys = [sunGate, earthGate].filter((g): g is number => g !== undefined).map(g => getGeneKeyByGate(g)).filter(Boolean);
+            const topGeneKeys = [sunGate, earthGate].filter((g): g is number => g !== undefined).map(g => getGeneKeyByGate(g, language)).filter(Boolean);
             if (topGeneKeys.length === 0) return null;
             return (
               <div className="border-l-2 border-purple-200 pl-3 space-y-2">
-                <p><strong>Genove kluce:</strong></p>
+                <p><strong>{language === 'sk' ? 'Génové kľúče:' : 'Gene Keys:'}</strong></p>
                 {topGeneKeys.map((gk) => (
                   <p key={gk!.gate} className="text-sm">
-                    <strong>Brana {gk!.gate}</strong>: {gk!.shadow} (tien) &rarr; {gk!.gift} (dar) &rarr; {gk!.siddhi} (siddhi)
+                    <strong>{language === 'sk' ? 'Brána' : 'Gate'} {gk!.gate}</strong>: {gk!.shadow} ({language === 'sk' ? 'tieň' : 'shadow'}) &rarr; {gk!.gift} ({language === 'sk' ? 'dar' : 'gift'}) &rarr; {gk!.siddhi} (siddhi)
                   </p>
                 ))}
               </div>
@@ -204,11 +211,11 @@ export function SharedView() {
           })()}
 
           <p>
-            <strong>Aktualne obdobie:</strong> Osobny rok <strong>{numerology.orv}</strong> ({orvDescriptions[numerology.orv]?.title || ''}).
-            VDD: <strong>{numerology.vdd}</strong> rokov.
+            <strong>{language === 'sk' ? 'Aktuálne obdobie:' : 'Current period:'}</strong> {language === 'sk' ? 'Osobný rok' : 'Personal year'} <strong>{numerology.orv}</strong> ({getOrvDescription(numerology.orv, language)?.title || ''}).
+            VDD: <strong>{numerology.vdd}</strong> {language === 'sk' ? 'rokov' : 'years'}.
           </p>
           <p>
-            <strong>Kabala:</strong> {kabalah.primarySefira.name} ({kabalah.primarySefira.meaning}).
+            <strong>{language === 'sk' ? 'Kabala:' : 'Kabbalah:'}</strong> {kabalah.primarySefira.name} ({kabalah.primarySefira.meaning}).
           </p>
           <p>
             <strong>Theta Healing:</strong> "{theta.primaryBeliefs[0]?.belief}" ({theta.primaryBeliefs[0]?.origin}).
@@ -218,10 +225,10 @@ export function SharedView() {
 
       {/* Numerologia */}
       <GlassCard>
-        <h3 className="font-serif text-lg font-bold text-indigo-600 mb-3">Numerologia</h3>
+        <h3 className="font-serif text-lg font-bold text-indigo-600 mb-3">{t('numerology.title')}</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <p className="text-xs text-slate-400">Zivotne cislo</p>
+            <p className="text-xs text-slate-400">{t('numerology.lifePath')}</p>
             <p className="text-3xl font-serif font-bold">{numerology.lifePathNumber}</p>
             <p className="text-sm text-indigo-500">z {numerology.lifePathFrom}</p>
             <div className="mt-3 text-xs text-slate-500">
@@ -231,52 +238,52 @@ export function SharedView() {
           </div>
           <NumerologyGrid grid={numerology.grid} />
         </div>
-        {numerology.fullPlanes.length > 0 && <p className="text-xs text-green-600 mt-3">Plne roviny: {numerology.fullPlanes.join(', ')}</p>}
-        {numerology.emptyPlanes.length > 0 && <p className="text-xs text-amber-600 mt-1">Prazdne roviny: {numerology.emptyPlanes.join(', ')}</p>}
-        {numerology.isolatedNumbers.length > 0 && <p className="text-xs text-rose-600 mt-1">Izolovane cisla: {numerology.isolatedNumbers.join(', ')}</p>}
+        {numerology.fullPlanes.length > 0 && <p className="text-xs text-green-600 mt-3">{t('numerology.fullPlanes')}: {numerology.fullPlanes.map(p => getPlaneName(p, language)).join(', ')}</p>}
+        {numerology.emptyPlanes.length > 0 && <p className="text-xs text-amber-600 mt-1">{t('numerology.emptyPlanes')}: {numerology.emptyPlanes.map(p => getPlaneName(p, language)).join(', ')}</p>}
+        {numerology.isolatedNumbers.length > 0 && <p className="text-xs text-rose-600 mt-1">{t('numerology.isolated')}: {numerology.isolatedNumbers.join(', ')}</p>}
       </GlassCard>
 
       {/* Astrologia */}
       <GlassCard>
-        <h3 className="font-serif text-lg font-bold text-cyan-700 mb-3">Astrologia</h3>
+        <h3 className="font-serif text-lg font-bold text-cyan-700 mb-3">{t('astrology.title')}</h3>
         <div className="grid grid-cols-3 gap-3 text-center">
           <div>
-            <p className="text-xs text-slate-400">Slnko</p>
-            <p className="text-sm font-bold">{astrology.sunSign.symbol} {astrology.sunSign.name}</p>
-            <p className="text-xs text-slate-500">{astrology.sunSign.element}</p>
+            <p className="text-xs text-slate-400">{t('astrology.sun')}</p>
+            <p className="text-sm font-bold">{astrology.sunSign.symbol} {displayName(ZODIAC_DISPLAY, astrology.sunSign.name, language)}</p>
+            <p className="text-xs text-slate-500">{displayName(ELEMENT_DISPLAY, astrology.sunSign.element, language)}</p>
           </div>
           <div>
-            <p className="text-xs text-slate-400">Mesiac</p>
-            <p className="text-sm font-bold">{astrology.moonSign.symbol} {astrology.moonSign.name}</p>
-            <p className="text-xs text-slate-500">{astrology.moonSign.element}</p>
+            <p className="text-xs text-slate-400">{t('astrology.moon')}</p>
+            <p className="text-sm font-bold">{astrology.moonSign.symbol} {displayName(ZODIAC_DISPLAY, astrology.moonSign.name, language)}</p>
+            <p className="text-xs text-slate-500">{displayName(ELEMENT_DISPLAY, astrology.moonSign.element, language)}</p>
           </div>
           <div>
-            <p className="text-xs text-slate-400">Ascendent</p>
-            <p className="text-sm font-bold">{astrology.ascendant.symbol} {astrology.ascendant.name}</p>
-            <p className="text-xs text-slate-500">{astrology.ascendant.element}</p>
+            <p className="text-xs text-slate-400">{t('astrology.ascendant')}</p>
+            <p className="text-sm font-bold">{astrology.ascendant.symbol} {displayName(ZODIAC_DISPLAY, astrology.ascendant.name, language)}</p>
+            <p className="text-xs text-slate-500">{displayName(ELEMENT_DISPLAY, astrology.ascendant.element, language)}</p>
           </div>
         </div>
-        <p className="text-xs text-slate-500 mt-3">Dominantny zivel: {astrology.dominantElement} | Kvalita: {astrology.dominantQuality}</p>
+        <p className="text-xs text-slate-500 mt-3">{t('astrology.dominantElement')}: {displayName(ELEMENT_DISPLAY, astrology.dominantElement, language)} | {t('astrology.dominantQuality')}: {astrology.dominantQuality}</p>
       </GlassCard>
 
       {/* Human Design */}
       <GlassCard>
-        <h3 className="font-serif text-lg font-bold text-purple-700 mb-3">Human Design</h3>
+        <h3 className="font-serif text-lg font-bold text-purple-700 mb-3">{t('hd.title')}</h3>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
-          <div><p className="text-xs text-slate-400">Typ</p><p className="font-bold">{humanDesign.type}</p></div>
-          <div><p className="text-xs text-slate-400">Autorita</p><p className="font-medium">{humanDesign.authority}</p></div>
-          <div><p className="text-xs text-slate-400">Profil</p><p className="font-medium">{humanDesign.profile.line1}/{humanDesign.profile.line2}</p></div>
-          <div><p className="text-xs text-slate-400">Strategia</p><p className="font-medium">{humanDesign.strategy}</p></div>
+          <div><p className="text-xs text-slate-400">{t('hd.type')}</p><p className="font-bold">{displayName(HD_TYPE_DISPLAY, humanDesign.type, language)}</p></div>
+          <div><p className="text-xs text-slate-400">{t('hd.authority')}</p><p className="font-medium">{displayName(HD_AUTHORITY_DISPLAY, humanDesign.authority, language)}</p></div>
+          <div><p className="text-xs text-slate-400">{t('hd.profile')}</p><p className="font-medium">{humanDesign.profile.line1}/{humanDesign.profile.line2}</p></div>
+          <div><p className="text-xs text-slate-400">{t('hd.strategy')}</p><p className="font-medium">{humanDesign.strategy}</p></div>
         </div>
         <div className="mt-3 flex flex-wrap gap-1">
-          {humanDesign.definedCenters.map(c => <span key={c} className="text-xs px-2 py-0.5 rounded-full bg-green-500/10 text-green-700">{c}</span>)}
-          {humanDesign.openCenters.map(c => <span key={c} className="text-xs px-2 py-0.5 rounded-full bg-slate-100 text-slate-500">{c}</span>)}
+          {humanDesign.definedCenters.map(c => <span key={c} className="text-xs px-2 py-0.5 rounded-full bg-green-500/10 text-green-700">{displayName(HD_CENTER_DISPLAY, c, language)}</span>)}
+          {humanDesign.openCenters.map(c => <span key={c} className="text-xs px-2 py-0.5 rounded-full bg-slate-100 text-slate-500">{displayName(HD_CENTER_DISPLAY, c, language)}</span>)}
         </div>
       </GlassCard>
 
       {/* Cakry + Etikoterapia */}
       <GlassCard>
-        <h3 className="font-serif text-lg font-bold text-green-700 mb-3">Čakry</h3>
+        <h3 className="font-serif text-lg font-bold text-green-700 mb-3">{t('chakras.title')}</h3>
         <ChakraWheel chakras={chakras} />
         {(() => {
           const blocked = chakras.filter(c => c.status === 'blocked');
@@ -285,7 +292,7 @@ export function SharedView() {
             <div className="mt-4 space-y-2">
               <p className="text-xs text-slate-500 font-medium uppercase">Etikoterapia — blokované čakry</p>
               {blocked.map(c => {
-                const etiko = ETIKOTERAPIA_BY_CHAKRA[c.chakra.number];
+                const etiko = getEtikoterapiaForChakra(c.chakra.number, language);
                 if (!etiko) return null;
                 return (
                   <div key={c.chakra.number} className="p-2 rounded-lg bg-rose-50 border border-rose-200">
@@ -302,7 +309,7 @@ export function SharedView() {
 
       {/* Kabala */}
       <GlassCard>
-        <h3 className="font-serif text-lg font-bold text-amber-700 mb-3">Kabala</h3>
+        <h3 className="font-serif text-lg font-bold text-amber-700 mb-3">{t('kabalah.title')}</h3>
         <div className="grid grid-cols-2 gap-4">
           <div>
             <p className="text-xs text-slate-400">Primarna sefira</p>
@@ -319,7 +326,7 @@ export function SharedView() {
 
       {/* Theta Healing */}
       <GlassCard>
-        <h3 className="font-serif text-lg font-bold text-teal-700 mb-3">Theta Healing</h3>
+        <h3 className="font-serif text-lg font-bold text-teal-700 mb-3">{t('theta.title')}</h3>
         <div className="space-y-2">
           {theta.primaryBeliefs.map((b, i) => (
             <div key={i} className="p-3 rounded-xl bg-red-500/10 border border-red-500/20">
@@ -332,7 +339,7 @@ export function SharedView() {
 
       {/* Vyvojova numerologia (K1-K4) */}
       <GlassCard>
-        <h3 className="font-serif text-lg font-bold text-violet-700 mb-3">Vyvojova numerologia (K1-K4)</h3>
+        <h3 className="font-serif text-lg font-bold text-violet-700 mb-3">{t('dev.title')} (K1-K4)</h3>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
           <div className="p-3 rounded-xl bg-violet-50 border border-violet-200">
             <p className="text-xs text-violet-700 font-semibold">K1 — Psychika</p>
@@ -363,30 +370,30 @@ export function SharedView() {
 
       {/* Enneagram */}
       <GlassCard>
-        <h3 className="font-serif text-lg font-bold text-emerald-700 mb-3">Enneagram</h3>
+        <h3 className="font-serif text-lg font-bold text-emerald-700 mb-3">{t('numerology.enneagramTitle')}</h3>
         {(() => {
-          const type = enneagramTypes[enneagram.coreType];
+          const type = getEnneagramType(enneagram.coreType, language);
           if (!type) return <p className="text-sm text-slate-500">Typ nedostupny</p>;
           return (
             <div className="space-y-3 text-sm">
               <div>
-                <p className="text-xs text-slate-400">Hlavny typ</p>
+                <p className="text-xs text-slate-400">{t('hd.yourType')}</p>
                 <p className="text-xl font-bold text-slate-800">{enneagram.coreType} — {type.name}</p>
                 <p className="text-xs text-slate-500 italic mt-0.5">{type.subtitle}</p>
-                <p className="text-sm text-slate-600 mt-1"><strong>Motivacia:</strong> {type.motivation}</p>
+                <p className="text-sm text-slate-600 mt-1"><strong>{t('numerology.enneagramMotivation')}:</strong> {type.motivation}</p>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div className="p-2 rounded-lg bg-emerald-50 border border-emerald-200">
-                  <p className="text-xs text-emerald-700 font-semibold">Integracia (rast)</p>
-                  <p className="text-sm">→ Typ {enneagram.integrationDirection} ({enneagramTypes[enneagram.integrationDirection]?.name})</p>
+                  <p className="text-xs text-emerald-700 font-semibold">{t('numerology.enneagramIntegration')}</p>
+                  <p className="text-sm">→ Typ {enneagram.integrationDirection} ({getEnneagramType(enneagram.integrationDirection, language)?.name})</p>
                 </div>
                 <div className="p-2 rounded-lg bg-rose-50 border border-rose-200">
-                  <p className="text-xs text-rose-700 font-semibold">Stres (dezintegracia)</p>
-                  <p className="text-sm">→ Typ {enneagram.disintegrationDirection} ({enneagramTypes[enneagram.disintegrationDirection]?.name})</p>
+                  <p className="text-xs text-rose-700 font-semibold">{t('numerology.enneagramDisintegration')}</p>
+                  <p className="text-sm">→ Typ {enneagram.disintegrationDirection} ({getEnneagramType(enneagram.disintegrationDirection, language)?.name})</p>
                 </div>
               </div>
               {enneagram.dominantWing && (
-                <p className="text-xs text-slate-500">Dominantne kridlo: <strong>{enneagram.coreType}w{enneagram.dominantWing}</strong></p>
+                <p className="text-xs text-slate-500">{t('numerology.enneagramWing')}: <strong>{enneagram.coreType}w{enneagram.dominantWing}</strong></p>
               )}
             </div>
           );
@@ -397,8 +404,8 @@ export function SharedView() {
       <GlassCard>
         <h3 className="font-serif text-lg font-bold text-orange-700 mb-3">Ayurveda — dosa</h3>
         {(() => {
-          const primary = DOSHA_INFO[dosha.primary];
-          const secondary = dosha.secondary ? DOSHA_INFO[dosha.secondary] : null;
+          const primary = getDoshaInfo(dosha.primary, language);
+          const secondary = dosha.secondary ? getDoshaInfo(dosha.secondary, language) : null;
           return (
             <div className="space-y-3 text-sm">
               <div>
@@ -424,7 +431,7 @@ export function SharedView() {
       <GlassCard>
         <h3 className="font-serif text-lg font-bold text-emerald-700 mb-3">TCM — 5 elementov</h3>
         {(() => {
-          const primary = TCM_ELEMENTS[tcm.primary];
+          const primary = getTCMElement(tcm.primary, language);
           return (
             <div className="space-y-3 text-sm">
               <div>
@@ -448,7 +455,7 @@ export function SharedView() {
       {/* Jazyky lasky */}
       {numerology.loveLanguages.length > 0 && (
         <GlassCard>
-          <h3 className="font-serif text-lg font-bold text-pink-700 mb-3">Jazyky lasky</h3>
+          <h3 className="font-serif text-lg font-bold text-pink-700 mb-3">{t('summary.loveLanguages')}</h3>
           <div className="space-y-2">
             {numerology.loveLanguages.slice(0, 3).map((ll, i) => (
               <div key={i} className="flex items-center gap-3 p-2 rounded-lg bg-pink-50 border border-pink-200">
@@ -462,7 +469,7 @@ export function SharedView() {
       )}
 
       <div className="text-center pt-4 pb-8">
-        <p className="text-xs text-slate-400">Integralna mapa bytia | Vygenerovane: {new Date().toLocaleDateString('sk-SK')}</p>
+        <p className="text-xs text-slate-400">{t('summary.integralMap')} | {new Date().toLocaleDateString(language === 'en' ? 'en-US' : 'sk-SK')}</p>
       </div>
     </div>
   );

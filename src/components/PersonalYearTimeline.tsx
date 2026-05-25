@@ -1,7 +1,8 @@
 import { motion } from 'framer-motion';
 import { GlassCard } from './GlassCard';
 import { calculateORV } from '../engine/numerologyEngine';
-import { orvDescriptions } from '../data/orvDescriptions';
+import { getOrvDescription } from '../data/orvDescriptions';
+import { useTranslation } from '../i18n/useTranslation';
 
 interface Props {
   birthDay: number;
@@ -24,6 +25,7 @@ export function PersonalYearTimeline({
   yearsBack = 5,
   yearsAhead = 5,
 }: Props) {
+  const { language } = useTranslation();
   const today = new Date();
   const currentYear = today.getFullYear();
   const currentMonth = today.getMonth() + 1;
@@ -63,7 +65,7 @@ export function PersonalYearTimeline({
 
       <div className="space-y-2">
         {rows.map(r => {
-          const desc = orvDescriptions[r.orv];
+          const desc = getOrvDescription(r.orv, language);
           const colorCls = orvColor[r.orv] || 'bg-slate-500/10 text-slate-700 border-slate-300';
           return (
             <motion.div

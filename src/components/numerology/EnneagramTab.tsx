@@ -2,7 +2,8 @@ import { GlassCard } from '../GlassCard';
 import type { NumerologyResult } from '../../engine/numerologyEngine';
 import type { DevelopmentalNumerologyResult } from '../../engine/developmentalNumerologyEngine';
 import type { EnneagramResult } from '../../engine/enneagramEngine';
-import { enneagramTypes } from '../../data/enneagram';
+import { getEnneagramType } from '../../data/enneagram';
+import { useTranslation } from '../../i18n/useTranslation';
 
 interface EnneagramTabProps {
   result: NumerologyResult;
@@ -12,12 +13,13 @@ interface EnneagramTabProps {
 }
 
 export function EnneagramTab({ result, enneagramResult, devResult, numerologyMethod }: EnneagramTabProps) {
-  const typeData = enneagramTypes[enneagramResult.coreType];
+  const { t, language } = useTranslation();
+  const typeData = getEnneagramType(enneagramResult.coreType, language);
   if (!typeData) return null;
 
-  const integrationData = enneagramTypes[enneagramResult.integrationDirection];
-  const disintegrationData = enneagramTypes[enneagramResult.disintegrationDirection];
-  const wingData = enneagramResult.dominantWing ? enneagramTypes[enneagramResult.dominantWing] : null;
+  const integrationData = getEnneagramType(enneagramResult.integrationDirection, language);
+  const disintegrationData = getEnneagramType(enneagramResult.disintegrationDirection, language);
+  const wingData = enneagramResult.dominantWing ? getEnneagramType(enneagramResult.dominantWing, language) : null;
 
   return (
     <div className="space-y-6">
@@ -45,7 +47,7 @@ export function EnneagramTab({ result, enneagramResult, devResult, numerologyMet
 
       {/* Tvoje čítanie — personalizovaný sprievodca */}
       <GlassCard glow>
-        <h3 className="font-medium text-white mb-3">Tvoje čítanie — ako pracovať s Archetypom a Enneagramom</h3>
+        <h3 className="font-medium text-white mb-3">{t('numerology.enneagramYourReading')}</h3>
         <div className="space-y-3 text-sm text-slate-300">
           <p>
             Si typ <strong className="text-white">{enneagramResult.coreType} — {typeData.name}</strong>.
@@ -90,7 +92,7 @@ export function EnneagramTab({ result, enneagramResult, devResult, numerologyMet
               ↑
             </div>
             <div>
-              <p className="text-xs text-emerald-400 uppercase mb-1">Základná motivácia</p>
+              <p className="text-xs text-emerald-400 uppercase mb-1">{t('numerology.enneagramMotivation')}</p>
               <p className="text-sm text-slate-300">{typeData.motivation}</p>
               <p className="text-xs text-slate-500 mt-2 italic">Toto ťa nevedome poháňa — vo vzťahoch, práci, rozhodnutiach.</p>
             </div>
@@ -102,7 +104,7 @@ export function EnneagramTab({ result, enneagramResult, devResult, numerologyMet
               ↓
             </div>
             <div>
-              <p className="text-xs text-rose-400 uppercase mb-1">Základný strach</p>
+              <p className="text-xs text-rose-400 uppercase mb-1">{t('numerology.enneagramFear')}</p>
               <p className="text-sm text-slate-300">{typeData.fear}</p>
               <p className="text-xs text-slate-500 mt-2 italic">Keď si pod tlakom, tento strach riadi tvoje reakcie.</p>
             </div>
@@ -113,7 +115,7 @@ export function EnneagramTab({ result, enneagramResult, devResult, numerologyMet
       {/* Silné a slabé stránky */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <GlassCard>
-          <h4 className="text-sm text-emerald-400 uppercase mb-3">Silné stránky</h4>
+          <h4 className="text-sm text-emerald-400 uppercase mb-3">{t('numerology.enneagramStrengths')}</h4>
           <ul className="space-y-2">
             {typeData.strengths.map((s, i) => (
               <li key={i} className="flex items-start gap-2 text-sm text-slate-300">
@@ -124,7 +126,7 @@ export function EnneagramTab({ result, enneagramResult, devResult, numerologyMet
           </ul>
         </GlassCard>
         <GlassCard>
-          <h4 className="text-sm text-amber-400 uppercase mb-3">Výzvy</h4>
+          <h4 className="text-sm text-amber-400 uppercase mb-3">{t('numerology.enneagramChallenges')}</h4>
           <ul className="space-y-2">
             {typeData.weaknesses.map((w, i) => (
               <li key={i} className="flex items-start gap-2 text-sm text-slate-300">
@@ -138,7 +140,7 @@ export function EnneagramTab({ result, enneagramResult, devResult, numerologyMet
 
       {/* Integrácia / Dezintegrácia — smery rastu a stresu */}
       <GlassCard>
-        <h3 className="font-medium text-white mb-2">Smery rastu a stresu</h3>
+        <h3 className="font-medium text-white mb-2">{t('numerology.enneagramGrowthDirections')}</h3>
         <p className="text-xs text-slate-500 mb-4">
           Enneagram nie je statický — ukazuje kam sa posúvaš keď rastieš (integrácia) a kam skĺzneš pod tlakom (dezintegrácia). Toto je mapa tvojho vnútorného pohybu.
         </p>
@@ -176,13 +178,13 @@ export function EnneagramTab({ result, enneagramResult, devResult, numerologyMet
 
       {/* Krídla */}
       <GlassCard>
-        <h3 className="font-medium text-white mb-2">Krídla</h3>
+        <h3 className="font-medium text-white mb-2">{t('numerology.enneagramWings')}</h3>
         <p className="text-xs text-slate-500 mb-4">
           Krídla sú dva susedné typy ({enneagramResult.wing1} a {enneagramResult.wing2}), ktoré farbia tvoj hlavný typ. Jedno krídlo je zvyčajne silnejšie — pridáva ti dodatočné vlastnosti.
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {[enneagramResult.wing1, enneagramResult.wing2].map(wingNum => {
-            const wData = enneagramTypes[wingNum];
+            const wData = getEnneagramType(wingNum, language);
             const isDominant = enneagramResult.dominantWing === wingNum;
             return (
               <div
@@ -214,29 +216,31 @@ export function EnneagramTab({ result, enneagramResult, devResult, numerologyMet
 
       {/* Cesta rastu */}
       <GlassCard>
-        <h3 className="font-medium text-white mb-2">Praktická cesta rastu</h3>
+        <h3 className="font-medium text-white mb-2">{t('numerology.enneagramGrowthPath')}</h3>
         <p className="text-sm text-slate-300">{typeData.growthPath}</p>
       </GlassCard>
 
       {/* Prepojenie s numerológiou */}
       <GlassCard>
-        <h3 className="font-medium text-white mb-2">Prepojenie s numerológiou</h3>
+        <h3 className="font-medium text-white mb-2">{t('numerology.enneagramNumerologyLink')}</h3>
         <p className="text-xs text-slate-500 mb-3">
-          Enneagram a numerológia zdieľajú 9 základných energií. Tvoj archetyp je odvodený z tvojich numerologických čísel — nie je to náhoda, ale synergia dvoch systémov.
+          {language === 'sk'
+            ? 'Enneagram a numerológia zdieľajú 9 základných energií. Tvoj archetyp je odvodený z tvojich numerologických čísel — nie je to náhoda, ale synergia dvoch systémov.'
+            : 'Enneagram and numerology share 9 fundamental energies. Your archetype is derived from your numerological numbers — this is not a coincidence, but a synergy of two systems.'}
         </p>
         <div className="p-3 rounded-xl bg-indigo-50 border border-indigo-200 text-xs text-slate-700 space-y-1">
           {numerologyMethod === 'characterological' ? (
             <>
-              <p><strong>Životné číslo {result.lifePathNumber}</strong> → Enneagram typ {enneagramResult.coreType} ({typeData.name})</p>
-              <p><strong>Mriežka energií</strong> → Určuje dominantné krídlo (podľa zastúpenia čísel {enneagramResult.wing1} a {enneagramResult.wing2})</p>
+              <p><strong>{language === 'sk' ? `Životné číslo ${result.lifePathNumber}` : `Life path number ${result.lifePathNumber}`}</strong> → {language === 'sk' ? 'Enneagram typ' : 'Enneagram type'} {enneagramResult.coreType} ({typeData.name})</p>
+              <p><strong>{language === 'sk' ? 'Mriežka energií' : 'Energy grid'}</strong> → {language === 'sk' ? `Určuje dominantné krídlo (podľa zastúpenia čísel ${enneagramResult.wing1} a ${enneagramResult.wing2})` : `Determines the dominant wing (based on presence of numbers ${enneagramResult.wing1} and ${enneagramResult.wing2})`}</p>
             </>
           ) : devResult ? (
             <>
-              <p><strong>K3 životné poslanie ({devResult.circled[2].value})</strong> → Enneagram typ {enneagramResult.coreType} ({typeData.name})</p>
-              <p><strong>K1 ({devResult.circled[0].value}) + K4 ({devResult.circled[3].value})</strong> → Určujú dominantné krídlo</p>
+              <p><strong>{language === 'sk' ? `K3 životné poslanie (${devResult.circled[2].value})` : `K3 life purpose (${devResult.circled[2].value})`}</strong> → {language === 'sk' ? 'Enneagram typ' : 'Enneagram type'} {enneagramResult.coreType} ({typeData.name})</p>
+              <p><strong>K1 ({devResult.circled[0].value}) + K4 ({devResult.circled[3].value})</strong> → {language === 'sk' ? 'Určujú dominantné krídlo' : 'Determine the dominant wing'}</p>
             </>
           ) : null}
-          <p className="mt-2 italic text-slate-500">Oba systémy potvrdzujú tú istú základnú tému — numerológia cez čísla, enneagram cez motivácie.</p>
+          <p className="mt-2 italic text-slate-500">{language === 'sk' ? 'Oba systémy potvrdzujú tú istú základnú tému — numerológia cez čísla, enneagram cez motivácie.' : 'Both systems confirm the same fundamental theme — numerology through numbers, enneagram through motivations.'}</p>
         </div>
       </GlassCard>
 
@@ -244,11 +248,11 @@ export function EnneagramTab({ result, enneagramResult, devResult, numerologyMet
       <GlassCard>
         <details>
           <summary className="text-sm font-medium text-indigo-700 cursor-pointer hover:text-indigo-800 select-none">
-            Prehľad všetkých 9 enneagram typov
+            {t('numerology.enneagramAllTypes')}
           </summary>
           <div className="space-y-2 mt-4">
             {[1, 2, 3, 4, 5, 6, 7, 8, 9].map(n => {
-              const t = enneagramTypes[n];
+              const eType = getEnneagramType(n, language);
               const isCurrent = n === enneagramResult.coreType;
               return (
                 <div
@@ -260,10 +264,10 @@ export function EnneagramTab({ result, enneagramResult, devResult, numerologyMet
                       {n}
                     </div>
                     <div className="flex-1">
-                      <p className={`text-sm font-medium ${isCurrent ? 'text-white' : 'text-slate-300'}`}>{t.name}</p>
-                      <p className="text-xs text-slate-400">{t.subtitle}</p>
+                      <p className={`text-sm font-medium ${isCurrent ? 'text-white' : 'text-slate-300'}`}>{eType.name}</p>
+                      <p className="text-xs text-slate-400">{eType.subtitle}</p>
                     </div>
-                    {isCurrent && <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-500/30 text-emerald-300">Tvoj typ</span>}
+                    {isCurrent && <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-500/30 text-emerald-300">{t('numerology.enneagramYourType')}</span>}
                   </div>
                 </div>
               );

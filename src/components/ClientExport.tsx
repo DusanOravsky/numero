@@ -11,7 +11,7 @@ import type { KabalahResult } from '../engine/kabalahEngine';
 import type { ThetaHealingResult } from '../engine/thetaHealingEngine';
 import { calculatePartnerCompatibility } from '../engine/compatibilityEngine';
 import { deriveEnneagramType } from '../engine/enneagramEngine';
-import { enneagramTypes } from '../data/enneagram';
+import { getEnneagramType } from '../data/enneagram';
 import { evaluateChakras } from '../engine/chakraEngine';
 import { deriveDosha } from '../engine/ayurvedaEngine';
 import { deriveTCMElement } from '../engine/tcmEngine';
@@ -20,13 +20,14 @@ import { calculateBiorhythm } from '../engine/biorhythmEngine';
 import { deriveArchetype } from '../engine/archetypeEngine';
 import { calculateKua } from '../engine/kuaEngine';
 import { getDailyCrystal, getZodiacCrystals, getBlockedChakraCrystals } from '../data/crystals';
-import { planetInSignDescriptions, cycleVibrationDescriptions } from '../data/planetSignDescriptions';
+import { getPlanetSignDescription, getCycleVibrationDescription } from '../data/planetSignDescriptions';
 import { getGeneKeyByGate } from '../data/geneKeys';
-import { orvDescriptions } from '../data/orvDescriptions';
-import { omvDescriptions } from '../data/omvDescriptions';
-import { odvDescriptions } from '../data/odvDescriptions';
+import { getOrvDescription } from '../data/orvDescriptions';
+import { getOmvDescription } from '../data/omvDescriptions';
+import { getOdvDescription } from '../data/odvDescriptions';
+import { useTranslation } from '../i18n/useTranslation';
 import { getGridCount } from '../engine/numerologyEngine';
-import lifePathsData from '../data/lifePaths.json';
+import lifePathsData from '../data/lifePaths';
 import { useStore } from '../store/useStore';
 
 const lifePaths = lifePathsData as Record<string, { title: string; keywords: string[]; description: string; gift: string; shadow: string; recommendation?: string }>;
@@ -54,6 +55,7 @@ interface ClientExportProps {
 }
 
 export function ClientExport({ client, numerology, astrology, humanDesign, kabalah, theta }: ClientExportProps) {
+  const { language } = useTranslation();
   const [shareMsg, setShareMsg] = useState('');
   const [showQR, setShowQR] = useState(false);
   const { clients } = useStore();
@@ -316,7 +318,7 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
 
               addBoldLine('Karmické cykly:');
               numerology.karmicTriangles.forEach(t => {
-                addLine(`  ${t.label}: ${t.fromAge}–${t.toAge || '...'} r. | Vibrácia ${t.vibration} — ${cycleVibrationDescriptions[t.vibration] || ''}`);
+                addLine(`  ${t.label}: ${t.fromAge}–${t.toAge || '...'} r. | Vibrácia ${t.vibration} — ${getCycleVibrationDescription(t.vibration, language) || ''}`);
               });
               addSpace();
 
@@ -358,7 +360,7 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
               // === GENE KEYS ===
               const sunGate = humanDesign.personalityGates.find(g => g.planet === 'Slnko')?.gate;
               const earthGate = humanDesign.personalityGates.find(g => g.planet === 'Zem')?.gate;
-              const topGeneKeys = [sunGate, earthGate].filter((g): g is number => g !== undefined).map(g => getGeneKeyByGate(g)).filter(Boolean);
+              const topGeneKeys = [sunGate, earthGate].filter((g): g is number => g !== undefined).map(g => getGeneKeyByGate(g, language)).filter(Boolean);
               if (topGeneKeys.length > 0) {
                 addSection('GÉNOVÉ KĽÚČE', 'purple');
                 addInterpretation(
@@ -379,8 +381,8 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
 
               // === ASTROLÓGIA ===
               addSection('ASTROLÓGIA', 'cyan');
-              addLine(`Slnko: ${astrology.sunSign.name} (${astrology.sunSign.element}) — ${planetInSignDescriptions['Slnko']?.[astrology.sunSign.name] || ''}`);
-              addLine(`Mesiac: ${astrology.moonSign.name} (${astrology.moonSign.element}) — ${planetInSignDescriptions['Mesiac']?.[astrology.moonSign.name] || ''}`);
+              addLine(`Slnko: ${astrology.sunSign.name} (${astrology.sunSign.element}) — ${getPlanetSignDescription('Slnko', astrology.sunSign.name, language) || ''}`);
+              addLine(`Mesiac: ${astrology.moonSign.name} (${astrology.moonSign.element}) — ${getPlanetSignDescription('Mesiac', astrology.moonSign.name, language) || ''}`);
               addLine(`Ascendent: ${astrology.ascendant.name} (${astrology.ascendant.element})`);
               addLine(`Dominantný živel: ${astrology.dominantElement} | Kvalita: ${astrology.dominantQuality}`);
               addSpace();
@@ -524,7 +526,7 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
               const enneagram = deriveEnneagramType(numerology, devNumForEnneagram, 'developmental');
               if (enneagram) {
                 addSection('ENNEAGRAM', 'emerald');
-                const coreType = enneagramTypes[enneagram.coreType];
+                const coreType = getEnneagramType(enneagram.coreType, language);
                 addBoldLine(`Typ ${enneagram.coreType} — ${coreType?.name || ''}`);
                 if (coreType?.motivation) addLine(coreType.motivation.slice(0, 200));
                 addLine(`Krídlo: ${enneagram.dominantWing || enneagram.wing1} | Integrácia → ${enneagram.integrationDirection} | Stres → ${enneagram.disintegrationDirection}`);
@@ -581,14 +583,14 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
 
               // === ORV / OMV / ODV S POPISMI ===
               addSection('OSOBNÉ VIBRÁCIE', 'indigo');
-              addBoldLine(`ORV ${numerology.orv} — ${orvDescriptions[numerology.orv]?.title || ''}`);
-              addLine(orvDescriptions[numerology.orv]?.advice || '');
+              addBoldLine(`ORV ${numerology.orv} — ${getOrvDescription(numerology.orv, language)?.title || ''}`);
+              addLine(getOrvDescription(numerology.orv, language)?.advice || '');
               addSpace();
-              addBoldLine(`OMV ${numerology.omv} — ${omvDescriptions[numerology.omv]?.title || ''}`);
-              addLine(omvDescriptions[numerology.omv]?.advice || '');
+              addBoldLine(`OMV ${numerology.omv} — ${getOmvDescription(numerology.omv, language)?.title || ''}`);
+              addLine(getOmvDescription(numerology.omv, language)?.advice || '');
               addSpace();
-              addBoldLine(`ODV ${numerology.odv} — ${odvDescriptions[numerology.odv]?.title || ''}`);
-              addLine(odvDescriptions[numerology.odv]?.advice || '');
+              addBoldLine(`ODV ${numerology.odv} — ${getOdvDescription(numerology.odv, language)?.title || ''}`);
+              addLine(getOdvDescription(numerology.odv, language)?.advice || '');
               addSpace();
 
               // === BIORYTMUS ===
@@ -614,20 +616,20 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
 
               // === KRISTALOTERAPIA ===
               addSection('KRISTALOTERAPIA', 'violet');
-              const zodiacCrystals = getZodiacCrystals(astrology.sunSign.name);
+              const zodiacCrystals = getZodiacCrystals(astrology.sunSign.name, language);
               if (zodiacCrystals.length > 0) {
                 addBoldLine(`Kryštály pre ${astrology.sunSign.name}:`);
                 zodiacCrystals.forEach(c => addLine(`  ${c.name} — ${c.properties}`));
                 addSpace();
               }
               const blockedChakraNums = chakras.filter(c => c.status === 'blocked').map(c => c.chakra?.number).filter((n): n is number => n !== undefined);
-              const healingCrystals = getBlockedChakraCrystals(blockedChakraNums);
+              const healingCrystals = getBlockedChakraCrystals(blockedChakraNums, language);
               if (healingCrystals.length > 0) {
                 addBoldLine('Pre blokované čakry:');
                 healingCrystals.forEach(c => addLine(`  ${c.name} (čakra ${c.chakra}) — ${c.usage}`));
                 addSpace();
               }
-              const dailyCrystal = getDailyCrystal(numerology.odv);
+              const dailyCrystal = getDailyCrystal(numerology.odv, language);
               addLine(`Kryštál dňa (ODV ${numerology.odv}): ${dailyCrystal.name} — ${dailyCrystal.properties}`);
               addSpace();
 

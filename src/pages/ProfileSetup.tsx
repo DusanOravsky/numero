@@ -4,8 +4,10 @@ import { useStore } from '../store/useStore';
 import { GlassCard } from '../components/GlassCard';
 import { searchCities, findCity } from '../data/cities';
 import { isValidDate } from '../engine/numerologyEngine';
+import { useTranslation } from '../i18n/useTranslation';
 
 export function ProfileSetup() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { addProfile, setActiveProfile, profiles } = useStore();
   const [name, setName] = useState('');
@@ -26,15 +28,15 @@ export function ProfileSetup() {
     const m = parseInt(month);
     const y = parseInt(year);
     if (!name.trim()) {
-      setError('Zadajte meno.');
+      setError(t('validation.fillName'));
       return;
     }
     if (!d || !m || !y) {
-      setError('Vyplňte celý dátum narodenia.');
+      setError(t('validation.fillDate'));
       return;
     }
     if (!isValidDate(d, m, y)) {
-      setError(`Neplatný dátum: ${d}.${m}.${y}.`);
+      setError(`${t('validation.invalidDate')}: ${d}.${m}.${y}`);
       return;
     }
 
@@ -63,7 +65,7 @@ export function ProfileSetup() {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="font-serif text-3xl font-bold bg-gradient-to-r from-indigo-400 via-violet-400 to-purple-400 bg-clip-text text-transparent">
-            {profiles.length === 0 ? 'Vitajte' : 'Nový profil'}
+            {profiles.length === 0 ? t('profile.welcome') : t('profile.newProfile')}
           </h1>
           <p className="text-slate-400 mt-2">
             Stačí zadať meno a dátum narodenia – všetky sekcie sa automaticky vypočítajú. Čas a miesto narodenia sú voliteľné (spresňujú astrológiu a Human Design) a dajú sa doplniť aj neskôr.
@@ -73,30 +75,30 @@ export function ProfileSetup() {
         <GlassCard>
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-sm text-slate-400 mb-2">Meno</label>
+              <label className="block text-sm text-slate-400 mb-2">{t('profile.name')}</label>
               <input
                 type="text"
                 value={name}
                 onChange={e => setName(e.target.value)}
-                placeholder="Vaše meno"
+                placeholder={t('profile.namePlaceholder')}
                 className="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30"
               />
             </div>
 
             <div>
-              <label className="block text-sm text-slate-400 mb-2">Pohlavie (pre presný výklad polarity ega)</label>
+              <label className="block text-sm text-slate-400 mb-2">{t('profile.gender')} ({t('profile.genderHint')})</label>
               <div className="grid grid-cols-2 gap-2">
-                <button type="button" onClick={() => setGender('male')} className={`py-2.5 rounded-xl text-sm border-2 transition-all ${gender === 'male' ? 'border-blue-500 bg-blue-50 text-blue-700 font-medium' : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'}`}>♂ Muž</button>
-                <button type="button" onClick={() => setGender('female')} className={`py-2.5 rounded-xl text-sm border-2 transition-all ${gender === 'female' ? 'border-rose-500 bg-rose-50 text-rose-700 font-medium' : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'}`}>♀ Žena</button>
+                <button type="button" onClick={() => setGender('male')} className={`py-2.5 rounded-xl text-sm border-2 transition-all ${gender === 'male' ? 'border-blue-500 bg-blue-50 text-blue-700 font-medium' : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'}`}>{t('common.male')}</button>
+                <button type="button" onClick={() => setGender('female')} className={`py-2.5 rounded-xl text-sm border-2 transition-all ${gender === 'female' ? 'border-rose-500 bg-rose-50 text-rose-700 font-medium' : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'}`}>{t('common.female')}</button>
               </div>
             </div>
 
             <div>
-              <label className="block text-sm text-slate-400 mb-2">Dátum narodenia</label>
+              <label className="block text-sm text-slate-400 mb-2">{t('profile.birthDate')}</label>
               <div className="flex gap-3">
                 <input
                   type="number"
-                  placeholder="Deň"
+                  placeholder={t('profile.day')}
                   min={1}
                   max={31}
                   value={day}
@@ -105,7 +107,7 @@ export function ProfileSetup() {
                 />
                 <input
                   type="number"
-                  placeholder="Mesiac"
+                  placeholder={t('profile.month')}
                   min={1}
                   max={12}
                   value={month}
@@ -114,7 +116,7 @@ export function ProfileSetup() {
                 />
                 <input
                   type="number"
-                  placeholder="Rok"
+                  placeholder={t('profile.year')}
                   min={1900}
                   max={2100}
                   value={year}
@@ -125,11 +127,11 @@ export function ProfileSetup() {
             </div>
 
             <div>
-              <label className="block text-sm text-slate-400 mb-2">Čas narodenia (voliteľné)</label>
+              <label className="block text-sm text-slate-400 mb-2">{t('profile.birthTime')} ({t('common.optional')})</label>
               <div className="flex gap-3 items-center">
                 <input
                   type="number"
-                  placeholder="Hod"
+                  placeholder={t('profile.hour')}
                   min={0}
                   max={23}
                   value={hour}
@@ -139,30 +141,30 @@ export function ProfileSetup() {
                 <span className="text-slate-500">:</span>
                 <input
                   type="number"
-                  placeholder="Min"
+                  placeholder={t('profile.minute')}
                   min={0}
                   max={59}
                   value={minute}
                   onChange={e => setMinute(e.target.value)}
                   className="w-20 px-3 py-3 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white text-center focus:outline-none focus:border-indigo-500/50"
                 />
-                <span className="text-xs text-slate-500">Pre presnejší HD a ascendent</span>
+                <span className="text-xs text-slate-500">{t('profile.timeHint')}</span>
               </div>
               {(!hour || !minute) && (
                 <p className="text-[11px] text-amber-700 mt-2 leading-relaxed">
-                  ⚠ Bez presného času sa Mesiac môže pohnúť o znamenie a ascendent o ~1 znamenie za 2 hodiny. Ak nepoznáš čas, použi <strong>12:00</strong>.
+                  ⚠ {t('profile.timeWarning')}
                 </p>
               )}
             </div>
 
             <div>
-              <label className="block text-sm text-slate-400 mb-2">Miesto narodenia (pre astrológiu)</label>
+              <label className="block text-sm text-slate-400 mb-2">{t('profile.birthPlace')} ({t('profile.placeHint')})</label>
               <div className="relative">
                 <input
                   type="text"
                   value={birthPlace}
                   onChange={e => { setBirthPlace(e.target.value); setCitySuggestions(searchCities(e.target.value)); }}
-                  placeholder="Napr. Bratislava, Praha..."
+                  placeholder={t('profile.placePlaceholder')}
                   className="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-indigo-500/20 text-white focus:outline-none focus:border-indigo-500/50"
                 />
                 {citySuggestions.length > 0 && (
@@ -180,7 +182,7 @@ export function ProfileSetup() {
                   </div>
                 )}
               </div>
-              <p className="text-xs text-slate-500 mt-1">Dôležité pre presný ascendent a astrologické domy</p>
+              <p className="text-xs text-slate-500 mt-1">{t('profile.placeHint')}</p>
             </div>
 
             {error && (
@@ -190,13 +192,13 @@ export function ProfileSetup() {
               type="submit"
               className="w-full py-4 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-medium text-lg hover:from-indigo-500 hover:to-violet-500 transition-all duration-300 glow mt-4"
             >
-              Vytvoriť profil
+              {t('profile.create')}
             </button>
           </form>
         </GlassCard>
 
         <p className="text-center text-xs text-slate-500 mt-6">
-          Všetky údaje zostávajú lokálne vo vašom zariadení.
+          {t('profile.localData')}
         </p>
       </div>
     </div>

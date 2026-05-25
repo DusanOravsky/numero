@@ -1,11 +1,12 @@
-import { lazy, Suspense } from 'react';
-import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
+import { lazy, Suspense, useState } from 'react';
+import { BrowserRouter, MemoryRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { PWAPrompts } from './components/PWAPrompts';
 import { OnboardingTour } from './components/OnboardingTour';
 import { useTheme } from './hooks/useTheme';
 import { useStore } from './store/useStore';
+import { useTranslation } from './i18n/useTranslation';
 import { MainLayout } from './layouts/MainLayout';
 import { Dashboard } from './pages/Dashboard';
 
@@ -28,11 +29,12 @@ const SharedView = lazy(() => import('./pages/SharedView').then(m => ({ default:
 const ModalityPage = lazy(() => import('./pages/ModalityPage').then(m => ({ default: m.ModalityPage })));
 
 function PageFallback() {
+  const { t } = useTranslation();
   return (
     <div className="min-h-[60vh] flex items-center justify-center">
       <div className="text-center">
         <div className="inline-block w-10 h-10 rounded-full border-4 border-indigo-200 border-t-indigo-600 animate-spin" />
-        <p className="text-sm text-slate-500 mt-3">Načítavam…</p>
+        <p className="text-sm text-slate-500 mt-3">{t('common.loading')}</p>
       </div>
     </div>
   );
@@ -41,11 +43,9 @@ function PageFallback() {
 function AnimatedRoutes() {
   const location = useLocation();
   useTheme();
-  const profiles = useStore(s => s.profiles);
-  // Onboarding sa zobrazí len ak používateľ má profil A ešte tour nebol dokončený.
-  // Druhú podmienku kontroluje OnboardingTour samotný cez useEffect, ale gating tu
-  // šetrí mount/unmount na každú navigáciu.
-  const showOnboarding = profiles.length > 0 && !localStorage.getItem('onboarding-completed');
+  const hasProfiles = useStore(s => s.profiles.length > 0);
+  const [onboardingDone] = useState(() => !!localStorage.getItem('onboarding-completed'));
+  const showOnboarding = hasProfiles && !onboardingDone;
 
   return (
     <AnimatePresence mode="wait">
@@ -178,9 +178,11 @@ export default function App() {
   if (hash.startsWith('#/shared')) {
     return (
       <ErrorBoundary>
-        <Suspense fallback={<PageFallback />}>
-          <SharedView />
-        </Suspense>
+        <MemoryRouter>
+          <Suspense fallback={<PageFallback />}>
+            <SharedView />
+          </Suspense>
+        </MemoryRouter>
       </ErrorBoundary>
     );
   }

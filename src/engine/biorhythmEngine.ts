@@ -8,8 +8,9 @@ export interface BiorhythmResult {
 }
 
 function daysSinceBirth(birthDay: number, birthMonth: number, birthYear: number, date: Date = new Date()): number {
-  const birth = new Date(birthYear, birthMonth - 1, birthDay);
-  return Math.floor((date.getTime() - birth.getTime()) / 86400000);
+  const birthUTC = Date.UTC(birthYear, birthMonth - 1, birthDay);
+  const dateUTC = Date.UTC(date.getFullYear(), date.getMonth(), date.getDate());
+  return Math.floor((dateUTC - birthUTC) / 86400000);
 }
 
 function getPhase(value: number): 'high' | 'low' | 'critical' {

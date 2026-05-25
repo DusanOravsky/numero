@@ -112,7 +112,7 @@ export function generateInterpretation(
       description: 'Dominantný vzdušný živel prináša intelektuálnu hĺbku, komunikačný talent a slobodomyseľnosť.',
     },
     {
-      condition: humanDesign?.openCenters.includes('G centrum') ?? false,
+      condition: humanDesign?.openCenters.includes('G') ?? false,
       theme: 'Hľadanie identity',
       weight: 7,
       source: 'Human Design',

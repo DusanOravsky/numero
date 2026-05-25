@@ -1,4 +1,13 @@
-export const odvDescriptions: Record<number, { title: string; theme: string; advice: string; keywords: string[] }> = {
+import type { Language } from '../store/useStore';
+
+interface OdvDescription {
+  title: string;
+  theme: string;
+  advice: string;
+  keywords: string[];
+}
+
+const sk: Record<number, OdvDescription> = {
   1: {
     title: 'Deň nových začiatkov',
     theme: 'Iniciatíva, odvaha, prvý krok',
@@ -54,3 +63,69 @@ export const odvDescriptions: Record<number, { title: string; theme: string; adv
     keywords: ['uzatváranie', 'odpustenie', 'dokončenie', 'súcit', 'uvoľnenie'],
   },
 };
+
+const en: Record<number, OdvDescription> = {
+  1: {
+    title: 'Day of new beginnings',
+    theme: 'Initiative, courage, first step',
+    advice: 'Today is the ideal time to start something new — a project, conversation, decision. Don\'t put off until tomorrow what you feel today.',
+    keywords: ['beginning', 'courage', 'action', 'initiative', 'decision'],
+  },
+  2: {
+    title: 'Day of cooperation and patience',
+    theme: 'Relationships, diplomacy, listening',
+    advice: 'Slow down. Today it\'s more important to listen than to speak. Pay attention to relationships and small details. Seek allies.',
+    keywords: ['cooperation', 'patience', 'intuition', 'relationships', 'gentleness'],
+  },
+  3: {
+    title: 'Day of creativity and communication',
+    theme: 'Self-expression, joy, sharing',
+    advice: 'Create, speak, share. Today\'s energy is light and supports creativity. Write a message, call, draw. Be visible.',
+    keywords: ['creativity', 'communication', 'joy', 'lightness', 'sharing'],
+  },
+  4: {
+    title: 'Day of work and order',
+    theme: 'Discipline, organization, completion',
+    advice: 'A practical day. Finish something in progress, tidy up, sort out paperwork. Small disciplined steps bring big results today.',
+    keywords: ['discipline', 'order', 'completion', 'work', 'stability'],
+  },
+  5: {
+    title: 'Day of change and freedom',
+    theme: 'Flexibility, unexpected, adventure',
+    advice: 'Expect the unexpected — and welcome it. Today is for spontaneity. Change your routine, try a new path, say yes.',
+    keywords: ['change', 'freedom', 'spontaneity', 'adaptability', 'energy'],
+  },
+  6: {
+    title: 'Day of love and harmony',
+    theme: 'Family, care, beauty',
+    advice: 'Devote yourself to loved ones. Create something beautiful — in space, in a relationship, in yourself. If something is in disharmony, today is the time to tune it.',
+    keywords: ['love', 'harmony', 'care', 'beauty', 'home'],
+  },
+  7: {
+    title: 'Day of inner silence',
+    theme: 'Introspection, reflection, rest',
+    advice: 'Withdraw inward. Today is not for big outward actions — rather for thinking, reading, meditation. Listen to your inner wisdom.',
+    keywords: ['introspection', 'silence', 'reflection', 'wisdom', 'rest'],
+  },
+  8: {
+    title: 'Day of manifestation and power',
+    theme: 'Authority, results, courage to act',
+    advice: 'Act with authority. Today carries manifestation energy — ask for what you need, present yourself, make financial decisions.',
+    keywords: ['manifestation', 'power', 'authority', 'results', 'courage'],
+  },
+  9: {
+    title: 'Day of closure and forgiveness',
+    theme: 'Completion, letting go, compassion',
+    advice: 'Let go of what weighs you down. Today is for finishing, forgiving, and releasing. Don\'t start new things — close the old with gratitude.',
+    keywords: ['closure', 'forgiveness', 'completion', 'compassion', 'release'],
+  },
+};
+
+const dictionaries: Record<Language, Record<number, OdvDescription>> = { sk, en };
+
+export function getOdvDescription(odv: number, lang: Language = 'sk'): OdvDescription {
+  return dictionaries[lang]?.[odv] ?? dictionaries.sk[odv];
+}
+
+// Backward compat — deprecated, use getOdvDescription(odv, lang) instead
+export const odvDescriptions = sk;

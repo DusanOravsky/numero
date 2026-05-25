@@ -233,8 +233,7 @@ function getMoonPhase(date: Date): string {
   return 'Nov';
 }
 
-function getTimezoneOffset(day: number, month: number, year: number, baseOffset: number): number {
-  // CET/CEST: Československo nemalo letný čas pred 1979
+function getTimezoneOffset(day: number, month: number, year: number, baseOffset: number, hour: number = 12): number {
   if (baseOffset === 1 || baseOffset === 2) {
     if (year < 1979) return 1;
     const marchLast = new Date(year, 2, 31);
@@ -244,7 +243,9 @@ function getTimezoneOffset(day: number, month: number, year: number, baseOffset:
     const dayOfYear = Math.floor((new Date(year, month - 1, day).getTime() - new Date(year, 0, 1).getTime()) / 86400000) + 1;
     const marchSundayDOY = Math.floor((new Date(year, 2, marchSunday).getTime() - new Date(year, 0, 1).getTime()) / 86400000) + 1;
     const octSundayDOY = Math.floor((new Date(year, 9, octSunday).getTime() - new Date(year, 0, 1).getTime()) / 86400000) + 1;
-    if (dayOfYear >= marchSundayDOY && dayOfYear < octSundayDOY) return 2; // CEST
+    if (dayOfYear === marchSundayDOY) return hour >= 2 ? 2 : 1;
+    if (dayOfYear === octSundayDOY) return hour >= 3 ? 1 : 2;
+    if (dayOfYear > marchSundayDOY && dayOfYear < octSundayDOY) return 2; // CEST
     return 1; // CET
   }
   return baseOffset;
@@ -256,8 +257,7 @@ function _calculateAstrologyImpl(
   latitude: number = 48.15, longitude: number = 17.11,
   timezoneOffsetHours: number = 1
 ): AstrologyResult {
-  // Auto-detect summer/winter time for CET/CEST
-  const tz = getTimezoneOffset(day, month, year, timezoneOffsetHours);
+  const tz = getTimezoneOffset(day, month, year, timezoneOffsetHours, hour);
   const utcHour = hour - tz;
   const date = new Date(Date.UTC(year, month - 1, day, utcHour, minute));
 
@@ -431,7 +431,7 @@ export function calculateProgressions(
   targetAge: number,
   timezoneOffsetHours: number = 1
 ): ProgressedPosition[] {
-  const tz = getTimezoneOffset(birthDay, birthMonth, birthYear, timezoneOffsetHours);
+  const tz = getTimezoneOffset(birthDay, birthMonth, birthYear, timezoneOffsetHours, birthHour);
   const utcHour = birthHour - tz;
   const birthDate = new Date(Date.UTC(birthYear, birthMonth - 1, birthDay, utcHour, birthMinute));
   // Progressed date = birth + N days (where N = age in years)
@@ -492,7 +492,7 @@ export function calculateSolarReturn(
   targetYear?: number,
   timezoneOffsetHours: number = 1
 ): { date: Date; result: AstrologyResult; ageAtReturn: number } | null {
-  const tz = getTimezoneOffset(birthDay, birthMonth, birthYear, timezoneOffsetHours);
+  const tz = getTimezoneOffset(birthDay, birthMonth, birthYear, timezoneOffsetHours, birthHour);
   const utcHour = birthHour - tz;
   const birthDate = new Date(Date.UTC(birthYear, birthMonth - 1, birthDay, utcHour, birthMinute));
   const natalSunLon = getSunLongitude(birthDate);

@@ -8,28 +8,30 @@ import type { ThetaHealingResult } from '../engine/thetaHealingEngine';
 import { reduceToSingle } from '../engine/numerologyEngine';
 import { calculateDevelopmentalNumerology } from '../engine/developmentalNumerologyEngine';
 import { deriveEnneagramType } from '../engine/enneagramEngine';
-import { enneagramTypes } from '../data/enneagram';
+import { getEnneagramType } from '../data/enneagram';
 import { deriveDosha } from '../engine/ayurvedaEngine';
 import { deriveTCMElement } from '../engine/tcmEngine';
-import { DOSHA_INFO } from '../data/ayurveda';
-import { TCM_ELEMENTS } from '../data/tcm';
+import { getDoshaInfo } from '../data/ayurveda';
+import { getTCMElement } from '../data/tcm';
 import { useStore } from '../store/useStore';
 import { calculateChineseZodiac } from '../engine/chineseZodiacEngine';
-import { CHINESE_ANIMALS } from '../data/chineseZodiac';
+import { getChineseAnimalInfo } from '../data/chineseZodiac';
 import { evaluateChakras } from '../engine/chakraEngine';
 import { getGridCount } from '../engine/numerologyEngine';
-import { planetInSignDescriptions } from '../data/planetSignDescriptions';
-import { orvDescriptions } from '../data/orvDescriptions';
+import { getPlanetSignDescription } from '../data/planetSignDescriptions';
+import { getOrvDescription } from '../data/orvDescriptions';
 import { getGeneKeyByGate } from '../data/geneKeys';
-import { developmentalMeanings } from '../data/developmentalMeanings';
-import { loveLanguageDescriptions } from '../data/orvDescriptions';
+import { useTranslation } from '../i18n/useTranslation';
+import { displayName, ZODIAC_DISPLAY, ELEMENT_DISPLAY, HD_TYPE_DISPLAY, HD_AUTHORITY_DISPLAY, HD_CENTER_DISPLAY } from '../i18n/entityNames';
+import { getCellMeaning } from '../data/developmentalMeanings';
+import { getLoveLanguageDescription } from '../data/orvDescriptions';
 import { deriveArchetype } from '../engine/archetypeEngine';
 import { calculateBiorhythm } from '../engine/biorhythmEngine';
 import { calculateKua } from '../engine/kuaEngine';
 import { getDailyCrystal, getZodiacCrystals } from '../data/crystals';
-import { omvDescriptions } from '../data/omvDescriptions';
-import { odvDescriptions } from '../data/odvDescriptions';
-import lifePathsData from '../data/lifePaths.json';
+import { getOmvDescription } from '../data/omvDescriptions';
+import { getOdvDescription } from '../data/odvDescriptions';
+import lifePathsData from '../data/lifePaths';
 
 const lifePaths = lifePathsData as Record<string, { title: string; keywords: string[]; description: string; gift: string; shadow: string }>;
 
@@ -50,6 +52,7 @@ interface ClientSummaryProps {
 }
 
 export function ClientSummary({ clientName, birthDay, birthMonth, birthYear, numerology, astrology, humanDesign, kabalah, theta, respectMethodPreference = true }: ClientSummaryProps) {
+  const { t, language } = useTranslation();
   const storedMethod = useStore(s => s.numerologyMethod);
   const showBoth = !respectMethodPreference;
   const showCharacter = showBoth || storedMethod === 'characterological';
@@ -72,25 +75,25 @@ export function ClientSummary({ clientName, birthDay, birthMonth, birthYear, num
   const devMissing = devSorted.filter(x => x.count === 0).slice(0, 3);
 
   const enneagram = deriveEnneagramType(numerology, devNumerology, storedMethod);
-  const enneagramType = enneagramTypes[enneagram.coreType];
-  const enneagramIntegration = enneagramTypes[enneagram.integrationDirection];
-  const enneagramDisintegration = enneagramTypes[enneagram.disintegrationDirection];
+  const enneagramType = getEnneagramType(enneagram.coreType, language);
+  const enneagramIntegration = getEnneagramType(enneagram.integrationDirection, language);
+  const enneagramDisintegration = getEnneagramType(enneagram.disintegrationDirection, language);
 
   const doshaProfile = deriveDosha(numerology, astrology, humanDesign);
-  const primaryDosha = DOSHA_INFO[doshaProfile.primary];
+  const primaryDosha = getDoshaInfo(doshaProfile.primary, language);
   const tcmResult = deriveTCMElement(numerology, astrology);
-  const primaryTCM = TCM_ELEMENTS[tcmResult.primary];
+  const primaryTCM = getTCMElement(tcmResult.primary, language);
 
   return (
     <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
       <GlassCard glow>
-        <h2 className="font-serif text-xl font-bold text-indigo-600 mb-4">Integrálny súhrn osobnosti</h2>
+        <h2 className="font-serif text-xl font-bold text-indigo-600 mb-4">{t('summary.title')}</h2>
 
         {/* Tvoje čítanie — ako pracovať s integrálnym súhrnom */}
         <details className="mb-5 rounded-xl border border-indigo-200 bg-white overflow-hidden">
           <summary className="p-4 cursor-pointer hover:bg-indigo-50/50 transition-colors">
-            <span className="font-medium text-indigo-800">Ako čítať tento súhrn</span>
-            <span className="text-xs text-indigo-500 ml-2">— personalizovaný sprievodca</span>
+            <span className="font-medium text-indigo-800">{t('summary.howToRead')}</span>
+            <span className="text-xs text-indigo-500 ml-2">— {t('summary.guide')}</span>
           </summary>
           <div className="px-4 pb-4 space-y-3">
             <p className="text-xs text-slate-600">
@@ -99,7 +102,7 @@ export function ClientSummary({ clientName, birthDay, birthMonth, birthYear, num
             </p>
 
             <div className="p-3 rounded-lg bg-violet-50 border border-violet-200">
-              <p className="text-xs font-semibold text-violet-800 mb-1">1. Kto si v jadre</p>
+              <p className="text-xs font-semibold text-violet-800 mb-1">1. {t('summary.whoYouAre')}</p>
               <p className="text-xs text-slate-700">
                 Životné číslo <strong>{numerology.lifePathNumber}</strong> ({lpInfo?.title || ''})
                 + Enneagram typ <strong>{enneagram.coreType}</strong> ({enneagramType?.name || ''})
@@ -108,18 +111,18 @@ export function ClientSummary({ clientName, birthDay, birthMonth, birthYear, num
             </div>
 
             <div className="p-3 rounded-lg bg-indigo-50 border border-indigo-200">
-              <p className="text-xs font-semibold text-indigo-800 mb-1">2. Ako správne fungovať</p>
+              <p className="text-xs font-semibold text-indigo-800 mb-1">2. {t('summary.howToFunction')}</p>
               <p className="text-xs text-slate-700">
-                HD typ <strong>{humanDesign.type}</strong> + stratégia „{humanDesign.strategy.toLowerCase()}"
-                + autorita <strong>{humanDesign.authority}</strong> — toto je tvoj denný „operačný systém".
+                HD typ <strong>{displayName(HD_TYPE_DISPLAY, humanDesign.type, language)}</strong> + stratégia „{humanDesign.strategy.toLowerCase()}"
+                + autorita <strong>{displayName(HD_AUTHORITY_DISPLAY, humanDesign.authority, language)}</strong> — toto je tvoj denný „operačný systém".
                 Keď cítiš {humanDesign.notSelfTheme.toLowerCase()}, niečo nie je pre teba.
               </p>
             </div>
 
             <div className="p-3 rounded-lg bg-amber-50 border border-amber-200">
-              <p className="text-xs font-semibold text-amber-800 mb-1">3. Kam smeruješ</p>
+              <p className="text-xs font-semibold text-amber-800 mb-1">3. {t('summary.whereGoing')}</p>
               <p className="text-xs text-slate-700">
-                Severný uzol v <strong>{astrology.northNode.name}</strong> (životná evolúcia)
+                Severný uzol v <strong>{displayName(ZODIAC_DISPLAY, astrology.northNode.name, language)}</strong> (životná evolúcia)
                 + Enneagram integrácia smerom k typu <strong>{enneagram.integrationDirection}</strong> ({enneagramIntegration?.name || ''})
                 — to je tvoj smer rastu.
               </p>
@@ -141,18 +144,18 @@ export function ClientSummary({ clientName, birthDay, birthMonth, birthYear, num
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div className="text-center">
               <p className="text-2xl font-serif font-bold text-indigo-700">{numerology.lifePathNumber}</p>
-              <p className="text-xs text-slate-700 font-medium">{lpInfo?.title || 'Životné číslo'}</p>
-              <p className="text-[10px] text-slate-500 mt-0.5">Kto si v jadre</p>
+              <p className="text-xs text-slate-700 font-medium">{lpInfo?.title || t('numerology.lifePath')}</p>
+              <p className="text-[10px] text-slate-500 mt-0.5">{t('summary.whoYouAre')}</p>
             </div>
             <div className="text-center">
-              <p className="text-2xl font-serif font-bold text-indigo-700">{humanDesign.type}</p>
+              <p className="text-2xl font-serif font-bold text-indigo-700">{displayName(HD_TYPE_DISPLAY, humanDesign.type, language)}</p>
               <p className="text-xs text-slate-700 font-medium">{humanDesign.strategy}</p>
-              <p className="text-[10px] text-slate-500 mt-0.5">Ako správne fungovať</p>
+              <p className="text-[10px] text-slate-500 mt-0.5">{t('summary.howToFunction')}</p>
             </div>
             <div className="text-center">
               <p className="text-2xl font-serif font-bold text-indigo-700">{astrology.sunSign.symbol}</p>
-              <p className="text-xs text-slate-700 font-medium">{astrology.sunSign.name} / {astrology.moonSign.name} / {astrology.ascendant.name}</p>
-              <p className="text-[10px] text-slate-500 mt-0.5">Slnko / Mesiac / Asc</p>
+              <p className="text-xs text-slate-700 font-medium">{displayName(ZODIAC_DISPLAY, astrology.sunSign.name, language)} / {displayName(ZODIAC_DISPLAY, astrology.moonSign.name, language)} / {displayName(ZODIAC_DISPLAY, astrology.ascendant.name, language)}</p>
+              <p className="text-[10px] text-slate-500 mt-0.5">{t('astrology.sun')} / {t('astrology.moon')} / Asc</p>
             </div>
           </div>
         </div>
@@ -164,8 +167,8 @@ export function ClientSummary({ clientName, birthDay, birthMonth, birthYear, num
           </p>
 
           <p className="border-l-2 border-indigo-200 pl-3">
-            <strong>Dar:</strong> {lpInfo?.gift || '-'}.<br/>
-            <strong>Tieň:</strong> {lpInfo?.shadow || '-'}.
+            <strong>{t('summary.gift')}:</strong> {lpInfo?.gift || '-'}.<br/>
+            <strong>{t('summary.shadowLabel')}:</strong> {lpInfo?.shadow || '-'}.
           </p>
 
           {/* Enneagram archetyp */}
@@ -176,15 +179,15 @@ export function ClientSummary({ clientName, birthDay, birthMonth, birthYear, num
               </p>
               <p className="text-xs text-slate-700">
                 {enneagramType.subtitle}.{' '}
-                <strong>Motivácia:</strong> {enneagramType.motivation.toLowerCase()}.{' '}
-                <strong>Strach:</strong> {enneagramType.fear.toLowerCase()}.
+                <strong>{language === 'sk' ? 'Motivácia' : 'Motivation'}:</strong> {enneagramType.motivation.toLowerCase()}.{' '}
+                <strong>{language === 'sk' ? 'Strach' : 'Fear'}:</strong> {enneagramType.fear.toLowerCase()}.
                 {enneagram.dominantWing && (
-                  <> Dominantné krídlo: <strong>{enneagram.dominantWing}w</strong> ({enneagramTypes[enneagram.dominantWing]?.name}).</>
+                  <> {language === 'sk' ? 'Dominantné krídlo' : 'Dominant wing'}: <strong>{enneagram.dominantWing}w</strong> ({getEnneagramType(enneagram.dominantWing, language)?.name}).</>
                 )}
               </p>
               <p className="text-xs text-slate-700">
-                <strong>Rast (→{enneagram.integrationDirection}):</strong> {enneagramIntegration?.name} — {enneagramType.growthPath.split('.')[0]}.{' '}
-                <strong>Stres (→{enneagram.disintegrationDirection}):</strong> {enneagramDisintegration?.name}.
+                <strong>{language === 'sk' ? 'Rast' : 'Growth'} (→{enneagram.integrationDirection}):</strong> {enneagramIntegration?.name} — {enneagramType.growthPath.split('.')[0]}.{' '}
+                <strong>{language === 'sk' ? 'Stres' : 'Stress'} (→{enneagram.disintegrationDirection}):</strong> {enneagramDisintegration?.name}.
               </p>
             </div>
           )}
@@ -196,9 +199,9 @@ export function ClientSummary({ clientName, birthDay, birthMonth, birthYear, num
                 Ayurvéda & TCM
               </p>
               <p className="text-xs text-slate-700">
-                <strong>Dóša:</strong> {primaryDosha.name} ({primaryDosha.element}) — {primaryDosha.mind.toLowerCase()}.
-                {doshaProfile.secondary && <> Sekundárna: {DOSHA_INFO[doshaProfile.secondary]?.name}.</>}
-                {' '}<strong>TCM element:</strong> {primaryTCM.name} (orgán: {primaryTCM.organ}, emócia: {primaryTCM.emotion}, cnosť: {primaryTCM.virtue}).
+                <strong>{language === 'sk' ? 'Dóša' : 'Dosha'}:</strong> {primaryDosha.name} ({primaryDosha.element}) — {primaryDosha.mind.toLowerCase()}.
+                {doshaProfile.secondary && <> {language === 'sk' ? 'Sekundárna' : 'Secondary'}: {getDoshaInfo(doshaProfile.secondary, language)?.name}.</>}
+                {' '}<strong>{language === 'sk' ? 'TCM element' : 'TCM element'}:</strong> {primaryTCM.name} ({language === 'sk' ? 'orgán' : 'organ'}: {primaryTCM.organ}, {language === 'sk' ? 'emócia' : 'emotion'}: {primaryTCM.emotion}, {language === 'sk' ? 'cnosť' : 'virtue'}: {primaryTCM.virtue}).
               </p>
             </div>
           )}
@@ -207,21 +210,21 @@ export function ClientSummary({ clientName, birthDay, birthMonth, birthYear, num
           {showCharacter && (
             <div className="rounded-xl border border-blue-200 bg-blue-50/40 p-4 space-y-2">
               <p className="text-xs text-blue-700 font-semibold uppercase tracking-wide">
-                Charakterová mriežka (vrodené kvality)
+                {language === 'sk' ? 'Charakterová mriežka (vrodené kvality)' : 'Characterological grid (innate qualities)'}
               </p>
               <p className="text-xs text-slate-700">
                 {numerology.fullPlanes.length > 0 && (
-                  <><strong>Plné roviny:</strong> {numerology.fullPlanes.join(', ')}. Tieto kvality má od narodenia. </>
+                  <><strong>{language === 'sk' ? 'Plné roviny' : 'Full planes'}:</strong> {numerology.fullPlanes.join(', ')}. {language === 'sk' ? 'Tieto kvality má od narodenia.' : 'These qualities are innate.'} </>
                 )}
                 {numerology.emptyPlanes.length > 0 && (
-                  <><strong>Prázdne roviny:</strong> {numerology.emptyPlanes.join(', ')}. Tu sa učí. </>
+                  <><strong>{language === 'sk' ? 'Prázdne roviny' : 'Empty planes'}:</strong> {numerology.emptyPlanes.join(', ')}. {language === 'sk' ? 'Tu sa učí.' : 'Learning areas.'} </>
                 )}
                 {numerology.isolatedNumbers.length > 0 && (
-                  <><strong>Izolované:</strong> {numerology.isolatedNumbers.join(', ')} – energie odrezané od zvyšku, vyžadujú vedomú integráciu. </>
+                  <><strong>{language === 'sk' ? 'Izolované' : 'Isolated'}:</strong> {numerology.isolatedNumbers.join(', ')} – {language === 'sk' ? 'energie odrezané od zvyšku, vyžadujú vedomú integráciu.' : 'energies cut off from the rest, requiring conscious integration.'} </>
                 )}
               </p>
               <p className="text-[11px] text-slate-500 italic">
-                Zdroj: Robin Steinová – Numerológia: Čísla Lásky
+                {language === 'sk' ? 'Zdroj: Robin Steinová – Numerológia: Čísla Lásky' : 'Source: Robin Steinová – Numerology: Numbers of Love'}
               </p>
             </div>
           )}
@@ -235,13 +238,13 @@ export function ClientSummary({ clientName, birthDay, birthMonth, birthYear, num
                 {devStrong.length > 0 && (
                   <>
                     <strong>Silné oblasti:</strong>{' '}
-                    {devStrong.map(s => `${s.num} (${developmentalMeanings[s.num]?.theme.split(' – ')[0]}, ${s.count}×)`).join('; ')}.{' '}
+                    {devStrong.map(s => `${s.num} (${getCellMeaning(s.num, language)?.theme.split(' – ')[0]}, ${s.count}×)`).join('; ')}.{' '}
                   </>
                 )}
                 {devMissing.length > 0 && (
                   <>
                     <strong>Životné úlohy (chýbajúce):</strong>{' '}
-                    {devMissing.map(s => developmentalMeanings[s.num]?.theme.split(' – ')[0]).filter(Boolean).join(', ')}.{' '}
+                    {devMissing.map(s => getCellMeaning(s.num, language)?.theme.split(' – ')[0]).filter(Boolean).join(', ')}.{' '}
                   </>
                 )}
                 {devNumerology.circled.length > 0 && (
@@ -273,12 +276,12 @@ export function ClientSummary({ clientName, birthDay, birthMonth, birthYear, num
           )}
 
           <p>
-            <strong>Astrológia</strong> dopĺňa tento obraz: Slnko v <strong>{astrology.sunSign.name}</strong> ({astrology.sunSign.element}) –
-            {planetInSignDescriptions['Slnko']?.[astrology.sunSign.name] || ''}{' '}
-            Mesiac v <strong>{astrology.moonSign.name}</strong> ({astrology.moonSign.element}) odhaľuje emočný svet –
-            {planetInSignDescriptions['Mesiac']?.[astrology.moonSign.name] || ''}{' '}
-            Ascendent v <strong>{astrology.ascendant.name}</strong> určuje, ako ho vnímajú ostatní pri prvom kontakte.
-            Dominantný živel je <strong>{astrology.dominantElement}</strong>, čo {
+            <strong>Astrológia</strong> dopĺňa tento obraz: Slnko v <strong>{displayName(ZODIAC_DISPLAY, astrology.sunSign.name, language)}</strong> ({displayName(ELEMENT_DISPLAY, astrology.sunSign.element, language)}) –
+            {getPlanetSignDescription('Slnko', astrology.sunSign.name, language) || ''}{' '}
+            Mesiac v <strong>{displayName(ZODIAC_DISPLAY, astrology.moonSign.name, language)}</strong> ({displayName(ELEMENT_DISPLAY, astrology.moonSign.element, language)}) odhaľuje emočný svet –
+            {getPlanetSignDescription('Mesiac', astrology.moonSign.name, language) || ''}{' '}
+            Ascendent v <strong>{displayName(ZODIAC_DISPLAY, astrology.ascendant.name, language)}</strong> určuje, ako ho vnímajú ostatní pri prvom kontakte.
+            Dominantný živel je <strong>{displayName(ELEMENT_DISPLAY, astrology.dominantElement, language)}</strong>, čo {
               astrology.dominantElement === 'Oheň' ? 'prináša dynamiku, vášeň a akčnosť' :
               astrology.dominantElement === 'Zem' ? 'prináša praktickosť, spoľahlivosť a zmysel pre realitu' :
               astrology.dominantElement === 'Vzduch' ? 'prináša intelekt, komunikačný talent a slobodomyseľnosť' :
@@ -287,7 +290,7 @@ export function ClientSummary({ clientName, birthDay, birthMonth, birthYear, num
           </p>
 
           <p>
-            V <strong>Human Design</strong> je typ <strong>{humanDesign.type}</strong> s <strong>{humanDesign.authority}</strong> autoritou.
+            V <strong>Human Design</strong> je typ <strong>{displayName(HD_TYPE_DISPLAY, humanDesign.type, language)}</strong> s <strong>{displayName(HD_AUTHORITY_DISPLAY, humanDesign.authority, language)}</strong> autoritou.
             {humanDesign.type === 'Generátor' ? ' Ako Generátor má obrovskú životnú energiu, ale musí čakať na správne podnety – nie iniciovať z hlavy. Keď reaguje na to, čo ho naozaj "zapne", je neúnavný.' :
              humanDesign.type === 'Manifestujúci Generátor' ? ' Kombinuje energiu Generátora s iniciatívou Manifestora – je rýchly, multi-talentovaný, ale musí reagovať AJ informovať okolie.' :
              humanDesign.type === 'Manifestor' ? ' Ako Manifestor je tu aby začínal a inicioval. Musí informovať ostatných pred konaním, čím redukuje odpor okolia.' :
@@ -302,14 +305,14 @@ export function ClientSummary({ clientName, birthDay, birthMonth, birthYear, num
             {humanDesign.definedCenters.length >= 6 ? 'Väčšina centier je definovaná – má konzistentnú a spoľahlivú energiu vo väčšine oblastí života.' :
              humanDesign.definedCenters.length >= 4 ? 'Vyvážený počet definovaných a otvorených centier – kombinácia stability a flexibility.' :
              'Väčšina centier je otvorená – je vysoko adaptabilný a citlivý na prostredie, ale musí rozlišovať čo je jeho a čo absorbuje od iných.'}
-            {' '}Definované: {humanDesign.definedCenters.join(', ')}.
-            Otvorené (oblasti múdrosti): {humanDesign.openCenters.join(', ')}.
+            {' '}Definované: {humanDesign.definedCenters.map(c => displayName(HD_CENTER_DISPLAY, c, language)).join(', ')}.
+            Otvorené (oblasti múdrosti): {humanDesign.openCenters.map(c => displayName(HD_CENTER_DISPLAY, c, language)).join(', ')}.
           </p>
 
           {(() => {
             const sunGate = humanDesign.personalityGates.find(g => g.planet === 'Slnko')?.gate;
             const earthGate = humanDesign.personalityGates.find(g => g.planet === 'Zem')?.gate;
-            const topGeneKeys = [sunGate, earthGate].filter((g): g is number => g !== undefined).map(g => getGeneKeyByGate(g)).filter(Boolean);
+            const topGeneKeys = [sunGate, earthGate].filter((g): g is number => g !== undefined).map(g => getGeneKeyByGate(g, language)).filter(Boolean);
             if (topGeneKeys.length === 0) return null;
             return (
               <div className="border-l-2 border-purple-200 pl-3 space-y-3">
@@ -342,7 +345,7 @@ export function ClientSummary({ clientName, birthDay, birthMonth, birthYear, num
           {numerology.loveLanguages && numerology.loveLanguages.length > 0 && (
             <div className="rounded-xl border border-rose-200 bg-rose-50/40 p-4 space-y-3">
               <p className="font-medium text-slate-800 flex items-center gap-2">
-                <span className="text-rose-500">♡</span> Jazyky lásky
+                <span className="text-rose-500">♡</span> {t('summary.loveLanguages')}
               </p>
               <p className="text-xs text-slate-600">
                 Numerologický rebríček toho, ako <strong>{clientName}</strong> najhlbšie prijíma
@@ -353,7 +356,7 @@ export function ClientSummary({ clientName, birthDay, birthMonth, birthYear, num
               {/* Primárny jazyk – detailne */}
               {numerology.loveLanguages[0] && (() => {
                 const top = numerology.loveLanguages[0];
-                const info = loveLanguageDescriptions[top.language];
+                const info = getLoveLanguageDescription(top.language, language);
                 return (
                   <div className="p-3 rounded-lg bg-white border border-rose-200">
                     <div className="flex items-center justify-between mb-1">
@@ -380,7 +383,7 @@ export function ClientSummary({ clientName, birthDay, birthMonth, birthYear, num
               {/* Sekundárny jazyk – stručne */}
               {numerology.loveLanguages[1] && (() => {
                 const second = numerology.loveLanguages[1];
-                const info = loveLanguageDescriptions[second.language];
+                const info = getLoveLanguageDescription(second.language, language);
                 return (
                   <div className="p-3 rounded-lg bg-white border border-indigo-200">
                     <div className="flex items-center justify-between mb-1">
@@ -434,7 +437,7 @@ export function ClientSummary({ clientName, birthDay, birthMonth, birthYear, num
           {/* Čínsky horoskop */}
           {(() => {
             const cz = calculateChineseZodiac(year, birthMonth, birthDay);
-            const animalInfo = CHINESE_ANIMALS[cz.animal];
+            const animalInfo = getChineseAnimalInfo(cz.animal, language);
             return (
               <div className="rounded-xl border border-red-200 bg-red-50/40 p-4 space-y-2">
                 <p className="text-xs text-red-700 font-semibold uppercase tracking-wide">
@@ -475,8 +478,8 @@ export function ClientSummary({ clientName, birthDay, birthMonth, birthYear, num
           })()}
 
           <p>
-            <strong>Aktuálne obdobie:</strong> Nachádza sa v osobnom roku <strong>{numerology.orv}</strong> ({orvDescriptions[numerology.orv]?.title || ''}).
-            {orvDescriptions[numerology.orv]?.description || ''}{' '}
+            <strong>Aktuálne obdobie:</strong> Nachádza sa v osobnom roku <strong>{numerology.orv}</strong> ({getOrvDescription(numerology.orv, language)?.title || ''}).
+            {getOrvDescription(numerology.orv, language)?.description || ''}{' '}
             Vek duchovnej dospelosti (VDD) nastáva v <strong>{numerology.vdd}</strong> rokoch – zlomové obdobie, kedy sa menia priority a životné hodnoty.
           </p>
 
@@ -511,12 +514,12 @@ export function ClientSummary({ clientName, birthDay, birthMonth, birthYear, num
 
               <p>
                 <strong>Ako to prejavuješ vo svete:</strong>{' '}
-                Astrológia ukazuje, že tvoje vedomé ja ({astrology.sunSign.name}, element {astrology.sunSign.element.toLowerCase()})
+                Astrológia ukazuje, že tvoje vedomé ja ({displayName(ZODIAC_DISPLAY, astrology.sunSign.name, language)}, element {displayName(ELEMENT_DISPLAY, astrology.sunSign.element, language).toLowerCase()})
                 {astrology.sunSign.element === 'Oheň' ? ' ti dáva akčnosť a vášeň' :
                  astrology.sunSign.element === 'Zem' ? ' ti dáva praktickosť a vytrvalosť' :
                  astrology.sunSign.element === 'Vzduch' ? ' ti dáva komunikačný talent a analytické myslenie' :
                  ' ti dáva emočnú hĺbku a intuíciu'} —
-                a Human Design dopĺňa <em>ako</em> túto energiu správne používať: si <strong>{humanDesign.type}</strong>,
+                a Human Design dopĺňa <em>ako</em> túto energiu správne používať: si <strong>{displayName(HD_TYPE_DISPLAY, humanDesign.type, language)}</strong>,
                 čiže tvoja stratégia je „{humanDesign.strategy.toLowerCase()}".
                 {humanDesign.type === 'Generátor' || humanDesign.type === 'Manifestujúci Generátor'
                   ? ' Máš obrovskú energiu, ale musíš čakať na správny podnet — nie iniciovať z hlavy.'
@@ -546,7 +549,7 @@ export function ClientSummary({ clientName, birthDay, birthMonth, birthYear, num
                   ? 'Vzdušný element + mentálny enneagram = brilantný intelekt, ale riziko odpojenia od tela. Lekcia: grounding.'
                   : astrology.dominantElement === 'Zem' && (enneagram.coreType === 6 || enneagram.coreType === 9)
                   ? 'Zemský element + stabilizujúci enneagram = spoľahlivosť, ale riziko stagnácie. Lekcia: odvaha riskovať.'
-                  : `Element ${astrology.dominantElement.toLowerCase()} + enneagram ${enneagram.coreType} + HD ${humanDesign.type} = unikátna kombinácia. Tvoja lekcia je nájsť rovnováhu medzi tým, čo ťa poháňa (motivácia) a tým, čo ťa brzdí (strach).`}
+                  : `Element ${displayName(ELEMENT_DISPLAY, astrology.dominantElement, language).toLowerCase()} + enneagram ${enneagram.coreType} + HD ${displayName(HD_TYPE_DISPLAY, humanDesign.type, language)} = unikátna kombinácia. Tvoja lekcia je nájsť rovnováhu medzi tým, čo ťa poháňa (motivácia) a tým, čo ťa brzdí (strach).`}
                 {' '}Všetky systémy ukazujú tú istú cestu — len rôznymi slovami.
               </p>
             </div>
@@ -557,14 +560,14 @@ export function ClientSummary({ clientName, birthDay, birthMonth, birthYear, num
             <p className="text-xs text-indigo-700 font-semibold uppercase tracking-wide mb-3">Prakticky — čo s tým robiť</p>
             <div className="space-y-2 text-xs text-slate-700">
               <p>
-                <strong>1. Rozhodovanie:</strong> Používaj svoju HD autoritu (<strong>{humanDesign.authority}</strong>) —
+                <strong>1. Rozhodovanie:</strong> Používaj svoju HD autoritu (<strong>{displayName(HD_AUTHORITY_DISPLAY, humanDesign.authority, language)}</strong>) —
                 {humanDesign.authority === 'Emocionálna' ? ' nikdy sa nerozhoduj v emočnom výkyve, čakaj na jasnosť.' :
                  humanDesign.authority === 'Sakrálna' ? ' počúvaj reakciu z brucha (uh-huh / unh-unh).' :
                  humanDesign.authority === 'Slezinová' ? ' dôveruj prvému impulzu, ak ho ignoruješ, stratíš ho.' :
                  ' dôveruj svojmu vnútornému kompasu.'}
               </p>
               <p>
-                <strong>2. Energia:</strong> Ako {humanDesign.type} je tvoja stratégia „{humanDesign.strategy.toLowerCase()}". Keď cítiš {humanDesign.notSelfTheme.toLowerCase()} — je to signál, že niečo nie je pre teba.
+                <strong>2. Energia:</strong> Ako {displayName(HD_TYPE_DISPLAY, humanDesign.type, language)} je tvoja stratégia „{humanDesign.strategy.toLowerCase()}". Keď cítiš {humanDesign.notSelfTheme.toLowerCase()} — je to signál, že niečo nie je pre teba.
               </p>
               <p>
                 <strong>3. Rast:</strong> Tvoj dar je {lpInfo?.gift?.toLowerCase() || 'v tvojom životnom čísle'}. Tvoja výzva je {lpInfo?.shadow?.toLowerCase() || 'v tieni tvojho čísla'}. Vedomá práca s tieňom je cesta k daru.
@@ -587,12 +590,12 @@ export function ClientSummary({ clientName, birthDay, birthMonth, birthYear, num
               <div className="p-3 rounded-xl bg-indigo-50 border border-indigo-200">
                 <p className="text-indigo-700 font-semibold mb-1">Kde si teraz</p>
                 <p>ŽČ {numerology.lifePathNumber} ({lpInfo?.title}), ORV {numerology.orv}</p>
-                <p className="mt-1">HD: {humanDesign.type}, stratégia „{humanDesign.strategy.toLowerCase()}"</p>
+                <p className="mt-1">HD: {displayName(HD_TYPE_DISPLAY, humanDesign.type, language)}, stratégia „{humanDesign.strategy.toLowerCase()}"</p>
               </div>
               <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200">
                 <p className="text-emerald-700 font-semibold mb-1">Kam smeruješ</p>
                 <p>Enneagram rast → typ {enneagram.integrationDirection} ({enneagramIntegration?.name})</p>
-                <p className="mt-1">Sev. uzol: {astrology.northNode.name}</p>
+                <p className="mt-1">Sev. uzol: {displayName(ZODIAC_DISPLAY, astrology.northNode.name, language)}</p>
               </div>
             </div>
           </div>
@@ -600,18 +603,18 @@ export function ClientSummary({ clientName, birthDay, birthMonth, birthYear, num
 
         {/* Vibrácie + Karmické dlhy + Kua */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-5">
-          {omvDescriptions[numerology.omv] && (
+          {getOmvDescription(numerology.omv, language) && (
             <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20">
               <p className="text-[10px] text-purple-400 uppercase mb-1">☽ OMV {numerology.omv}</p>
-              <p className="text-xs font-medium text-purple-300">{omvDescriptions[numerology.omv].title}</p>
-              <p className="text-[10px] text-slate-500 mt-1">{omvDescriptions[numerology.omv].theme}</p>
+              <p className="text-xs font-medium text-purple-300">{getOmvDescription(numerology.omv, language).title}</p>
+              <p className="text-[10px] text-slate-500 mt-1">{getOmvDescription(numerology.omv, language).theme}</p>
             </div>
           )}
-          {odvDescriptions[numerology.odv] && (
+          {getOdvDescription(numerology.odv, language) && (
             <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
               <p className="text-[10px] text-amber-400 uppercase mb-1">☀ ODV {numerology.odv}</p>
-              <p className="text-xs font-medium text-amber-300">{odvDescriptions[numerology.odv].title}</p>
-              <p className="text-[10px] text-slate-500 mt-1">{odvDescriptions[numerology.odv].theme}</p>
+              <p className="text-xs font-medium text-amber-300">{getOdvDescription(numerology.odv, language).title}</p>
+              <p className="text-[10px] text-slate-500 mt-1">{getOdvDescription(numerology.odv, language).theme}</p>
             </div>
           )}
           {(() => {
@@ -639,8 +642,8 @@ export function ClientSummary({ clientName, birthDay, birthMonth, birthYear, num
         {(() => {
           const archetype = deriveArchetype(numerology.lifePathNumber, enneagram.coreType, humanDesign.type);
           const biorhythm = calculateBiorhythm(day, month, year);
-          const dailyCrystal = getDailyCrystal(numerology.odv);
-          const zodiacCrystals = getZodiacCrystals(astrology.sunSign.name);
+          const dailyCrystal = getDailyCrystal(numerology.odv, language);
+          const zodiacCrystals = getZodiacCrystals(astrology.sunSign.name, language);
           return (
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-3">
               <div className="p-3 rounded-xl bg-indigo-500/10 border border-indigo-500/20">

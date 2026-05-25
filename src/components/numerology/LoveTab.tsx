@@ -1,27 +1,29 @@
 import { motion } from 'framer-motion';
 import { GlassCard } from '../GlassCard';
 import type { NumerologyResult } from '../../engine/numerologyEngine';
-import { loveLanguageDescriptions, loveLanguageScoringExplanation } from '../../data/orvDescriptions';
+import { getLoveLanguageDescription, getLoveLanguageScoringExplanation } from '../../data/orvDescriptions';
+import { useTranslation } from '../../i18n/useTranslation';
 
 interface LoveTabProps {
   result: NumerologyResult;
 }
 
 export function LoveTab({ result }: LoveTabProps) {
+  const { language } = useTranslation();
   return (
     <div className="space-y-4">
       <GlassCard>
         <p className="text-sm text-slate-400">
           <strong className="text-white">5 jazykov lásky</strong> je koncept Garyho Chapmana, ktorý identifikuje 5 základných spôsobov, akými ľudia prijímajú a dávajú lásku. Numerologický výpočet odhaľuje váš prirodzený jazyk lásky na základe rozloženia čísel vo vašej mriežke.
         </p>
-        <p className="text-xs text-slate-500 mt-2">{loveLanguageScoringExplanation}</p>
+        <p className="text-xs text-slate-500 mt-2">{getLoveLanguageScoringExplanation(language)}</p>
       </GlassCard>
 
       <GlassCard>
         <h3 className="font-medium text-white mb-4">Vaše jazyky lásky – numerologické skóre</h3>
         <div className="space-y-4">
           {result.loveLanguages.map((lang, idx) => {
-            const langInfo = loveLanguageDescriptions[lang.language];
+            const langInfo = getLoveLanguageDescription(lang.language, language);
             return (
               <motion.div
                 key={lang.language}

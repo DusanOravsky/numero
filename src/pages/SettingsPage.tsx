@@ -12,22 +12,32 @@ import {
   CLAUDE_MODELS, type ClaudeModel,
   getLens, setLens, INTERPRETATION_LENSES, type InterpretationLens,
 } from '../engine/aiInterpretation';
+import { useTranslation } from '../i18n/useTranslation';
 
 type SettingsTab = 'profile' | 'ai' | 'data' | 'about';
 
-const SETTINGS_TABS: { id: SettingsTab; label: string; icon: string }[] = [
-  { id: 'profile', label: 'Profil', icon: '◉' },
-  { id: 'ai', label: 'AI', icon: '✦' },
-  { id: 'data', label: 'Dáta', icon: '⛶' },
-  { id: 'about', label: 'O appke', icon: 'ⓘ' },
+const SETTINGS_TAB_IDS: { id: SettingsTab; icon: string }[] = [
+  { id: 'profile', icon: '◉' },
+  { id: 'ai', icon: '✦' },
+  { id: 'data', icon: '⛶' },
+  { id: 'about', icon: 'ⓘ' },
 ];
 
 export function SettingsPage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const initialTab = (searchParams.get('tab') as SettingsTab) || 'profile';
-  const validTab: SettingsTab = SETTINGS_TABS.some(t => t.id === initialTab) ? initialTab : 'profile';
+  const validTab: SettingsTab = SETTINGS_TAB_IDS.some(tab => tab.id === initialTab) ? initialTab : 'profile';
   const [activeTab, setActiveTabState] = useState<SettingsTab>(validTab);
+
+  const SETTINGS_TABS = SETTINGS_TAB_IDS.map(tab => ({
+    ...tab,
+    label: tab.id === 'profile' ? t('settings.tabProfile')
+      : tab.id === 'ai' ? t('settings.tabAi')
+      : tab.id === 'data' ? t('settings.tabData')
+      : t('settings.tabAbout'),
+  }));
   const setActiveTab = (tab: SettingsTab) => {
     setActiveTabState(tab);
     setSearchParams({ tab }, { replace: true });
@@ -52,7 +62,7 @@ export function SettingsPage() {
 
   const handleSaveApiKey = () => {
     setApiKey(aiKey.trim());
-    setAiTestResult({ ok: true, message: aiKey.trim() ? 'Kľúč uložený.' : 'Kľúč vymazaný.' });
+    setAiTestResult({ ok: true, message: aiKey.trim() ? t('settings.aiKeySaved') : t('settings.aiKeyRemoved') });
   };
 
   const handleTestKey = async () => {
@@ -88,7 +98,7 @@ export function SettingsPage() {
     if (!editingId) return;
     const trimmedName = editName.trim();
     if (!trimmedName) {
-      alert('Meno nesmie byť prázdne.');
+      alert(t('validation.emptyName'));
       return;
     }
     const city = findCity(editPlace);
@@ -107,8 +117,8 @@ export function SettingsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-serif text-3xl font-bold text-slate-900">Nastavenia</h1>
-        <p className="text-slate-600 mt-1">Správa profilov a preferencií</p>
+        <h1 className="font-serif text-3xl font-bold text-slate-900">{t('settings.title')}</h1>
+        <p className="text-slate-600 mt-1">{t('settings.subtitle')}</p>
       </div>
 
       <div className="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1">
@@ -132,11 +142,11 @@ export function SettingsPage() {
       <>
       <GlassCard>
         <div className="flex items-center justify-between mb-4">
-          <h3 className="font-medium text-slate-900">Profily</h3>
+          <h3 className="font-medium text-slate-900">{t('settings.profiles')}</h3>
           <button
             onClick={() => navigate('/profile')}
             className="px-3 py-1.5 rounded-lg text-xs font-medium bg-indigo-600 text-white hover:bg-indigo-500 transition-colors"          >
-            + Nový profil
+            {t('settings.newProfile')}
           </button>
         </div>
         <div className="space-y-3">
@@ -163,24 +173,24 @@ export function SettingsPage() {
                     onClick={() => startEdit(profile.id)}
                     className="px-3 py-1.5 rounded-lg text-xs text-amber-700 border border-amber-400 bg-amber-50 hover:bg-amber-100 font-medium"
                   >
-                    Upraviť
+                    {t('common.edit')}
                   </button>
                   {profile.id !== activeProfileId && (
                     <button
                       onClick={() => setActiveProfile(profile.id)}
                       className="px-3 py-1.5 rounded-lg text-xs text-indigo-700 border border-indigo-400 bg-indigo-50 hover:bg-indigo-100 font-medium"
                     >
-                      Aktivovať
+                      {t('common.activate')}
                     </button>
                   )}
                   {profile.id === activeProfileId && (
-                    <span className="px-3 py-1.5 rounded-lg text-xs text-green-700 bg-green-100 border border-green-300 font-medium">Aktívny</span>
+                    <span className="px-3 py-1.5 rounded-lg text-xs text-green-700 bg-green-100 border border-green-300 font-medium">{t('common.active')}</span>
                   )}
                   <button
-                    onClick={() => { if (confirm('Naozaj vymazať profil?')) deleteProfile(profile.id); }}
+                    onClick={() => { if (confirm(t('settings.deleteProfile'))) deleteProfile(profile.id); }}
                     className="px-3 py-1.5 rounded-lg text-xs text-red-700 border border-red-300 bg-red-50 hover:bg-red-100 font-medium"
                   >
-                    Zmazať
+                    {t('common.delete')}
                   </button>
                 </div>
               </div>
@@ -188,27 +198,27 @@ export function SettingsPage() {
               {editingId === profile.id && (
                 <div className="mt-4 pt-4 border-t border-slate-200 space-y-3">
                   <div>
-                    <label className="block text-xs text-slate-500 mb-1">Meno</label>
+                    <label className="block text-xs text-slate-500 mb-1">{t('profile.name')}</label>
                     <input type="text" value={editName} onChange={e => setEditName(e.target.value)} className="w-full px-3 py-2 rounded-lg bg-white border border-slate-300 text-slate-800 text-sm" />
                   </div>
                   <div>
-                    <label className="block text-xs text-slate-500 mb-1">Pohlavie</label>
+                    <label className="block text-xs text-slate-500 mb-1">{t('profile.gender')}</label>
                     <div className="grid grid-cols-2 gap-2">
-                      <button type="button" onClick={() => setEditGender('male')} className={`py-1.5 rounded-lg text-xs border-2 ${editGender === 'male' ? 'border-blue-500 bg-blue-50 text-blue-700 font-medium' : 'border-slate-200 bg-white text-slate-600'}`}>♂ Muž</button>
-                      <button type="button" onClick={() => setEditGender('female')} className={`py-1.5 rounded-lg text-xs border-2 ${editGender === 'female' ? 'border-rose-500 bg-rose-50 text-rose-700 font-medium' : 'border-slate-200 bg-white text-slate-600'}`}>♀ Žena</button>
+                      <button type="button" onClick={() => setEditGender('male')} className={`py-1.5 rounded-lg text-xs border-2 ${editGender === 'male' ? 'border-blue-500 bg-blue-50 text-blue-700 font-medium' : 'border-slate-200 bg-white text-slate-600'}`}>{t('common.male')}</button>
+                      <button type="button" onClick={() => setEditGender('female')} className={`py-1.5 rounded-lg text-xs border-2 ${editGender === 'female' ? 'border-rose-500 bg-rose-50 text-rose-700 font-medium' : 'border-slate-200 bg-white text-slate-600'}`}>{t('common.female')}</button>
                     </div>
                   </div>
                   <div>
-                    <label className="block text-xs text-slate-500 mb-1">Čas narodenia (24h)</label>
+                    <label className="block text-xs text-slate-500 mb-1">{t('profile.birthTime')}</label>
                     <div className="flex gap-2 items-center">
-                      <input type="number" placeholder="Hod" min={0} max={23} value={editHour} onChange={e => setEditHour(e.target.value)} className="w-16 px-2 py-2 rounded-lg bg-white border border-slate-300 text-slate-800 text-center text-sm" />
+                      <input type="number" placeholder={t('profile.hour')} min={0} max={23} value={editHour} onChange={e => setEditHour(e.target.value)} className="w-16 px-2 py-2 rounded-lg bg-white border border-slate-300 text-slate-800 text-center text-sm" />
                       <span className="text-slate-600 font-bold">:</span>
-                      <input type="number" placeholder="Min" min={0} max={59} value={editMinute} onChange={e => setEditMinute(e.target.value)} className="w-16 px-2 py-2 rounded-lg bg-white border border-slate-300 text-slate-800 text-center text-sm" />
+                      <input type="number" placeholder={t('profile.minute')} min={0} max={59} value={editMinute} onChange={e => setEditMinute(e.target.value)} className="w-16 px-2 py-2 rounded-lg bg-white border border-slate-300 text-slate-800 text-center text-sm" />
                     </div>
                   </div>
                   <div className="relative">
-                    <label className="block text-xs text-slate-500 mb-1">Miesto narodenia</label>
-                    <input type="text" placeholder="Napr. Bratislava, Praha..." value={editPlace} onChange={e => { setEditPlace(e.target.value); setCitySuggestions(searchCities(e.target.value)); }} className="w-full px-3 py-2 rounded-lg bg-white border border-slate-300 text-slate-800 text-sm" />
+                    <label className="block text-xs text-slate-500 mb-1">{t('profile.birthPlace')}</label>
+                    <input type="text" placeholder={t('profile.placePlaceholder')} value={editPlace} onChange={e => { setEditPlace(e.target.value); setCitySuggestions(searchCities(e.target.value)); }} className="w-full px-3 py-2 rounded-lg bg-white border border-slate-300 text-slate-800 text-sm" />
                     {citySuggestions.length > 0 && (
                       <div className="absolute left-0 right-0 top-full mt-1 z-50 rounded-lg bg-white border border-slate-200 overflow-hidden shadow-lg">
                         {citySuggestions.map(city => (
@@ -220,23 +230,23 @@ export function SettingsPage() {
                     )}
                   </div>
                   <div className="flex gap-2">
-                    <button onClick={saveEdit} className="px-4 py-2 rounded-lg text-sm bg-indigo-600 text-white hover:bg-indigo-500">Uložiť</button>
-                    <button onClick={() => setEditingId(null)} className="px-4 py-2 rounded-lg text-sm text-slate-700 border border-slate-300 bg-slate-100 hover:bg-slate-200 font-medium">Zrušiť</button>
+                    <button onClick={saveEdit} className="px-4 py-2 rounded-lg text-sm bg-indigo-600 text-white hover:bg-indigo-500">{t('common.save')}</button>
+                    <button onClick={() => setEditingId(null)} className="px-4 py-2 rounded-lg text-sm text-slate-700 border border-slate-300 bg-slate-100 hover:bg-slate-200 font-medium">{t('common.cancel')}</button>
                   </div>
                 </div>
               )}
             </div>
           ))}
           {profiles.length === 0 && (
-            <p className="text-sm text-slate-500 text-center py-4">Žiadne profily. Vytvorte si prvý.</p>
+            <p className="text-sm text-slate-500 text-center py-4">{t('settings.noProfiles')}</p>
           )}
         </div>
       </GlassCard>
 
       <GlassCard>
-        <h3 className="font-medium text-white mb-2">Numerologická metóda</h3>
+        <h3 className="font-medium text-white mb-2">{t('settings.numerologyMethod')}</h3>
         <p className="text-sm text-slate-500 mb-4">
-          Aplikácia podporuje dve rôzne školy numerológie. Líšia sa vo výpočte mriežky aj vo významoch jednotlivých políčok. Vyber si tú, s ktorou pracuješ.
+          {t('settings.methodDescription')}
         </p>
 
         <div className="space-y-3">
@@ -251,7 +261,7 @@ export function SettingsPage() {
                 className="mt-1"
               />
               <div className="flex-1">
-                <p className="font-medium text-slate-800">Charakterová mriežka</p>
+                <p className="font-medium text-slate-800">{t('settings.methodCharacter')}</p>
                 <p className="text-xs text-slate-500 mt-1">
                   Ukazuje <strong>vrodené kvality a archetypy</strong>, ktoré človek dostal do vienka. Mriežka sa skladá z cifier dátumu narodenia + redukcií dňa, mesiaca a roku. Významy: 1 = Ja/začiatok, 2 = Intuícia, 3 = Kreativita, 4 = Stabilita, 5 = Sloboda, 6 = Láska/rodina, 7 = Duchovno, 8 = Hojnosť, 9 = Múdrosť.
                 </p>
@@ -271,7 +281,7 @@ export function SettingsPage() {
                 className="mt-1"
               />
               <div className="flex-1">
-                <p className="font-medium text-slate-800">Vývojová mriežka</p>
+                <p className="font-medium text-slate-800">{t('settings.methodDevelopmental')}</p>
                 <p className="text-xs text-slate-500 mt-1">
                   Ukazuje <strong>životné úlohy a karmické cykly</strong>, ktoré si duša prišla riešiť. Do mriežky vstupujú aj <strong>4 "zakrúžkované" pomocné čísla</strong>. Roky 2000+ sa počítajú špeciálne (rok = 20 + zvyšok). Významy: 1 = Ego (mužské/ženské), 2 = Bioenergia tela, 3 = Vnútorná múdrosť, 4 = Sebavedomie, 5 = Intuícia, 6 = Vytrvalosť (2+ = mág), 7 = Dôvera, 8 = Škola lásky, 9 = Hmotný svet/financie.
                 </p>
@@ -283,12 +293,12 @@ export function SettingsPage() {
       </GlassCard>
 
       <GlassCard>
-        <h3 className="font-medium text-white mb-2">Vzhľad</h3>
-        <p className="text-sm text-slate-500 mb-3">Zvoľte svetlý alebo tmavý režim zobrazenia.</p>
+        <h3 className="font-medium text-white mb-2">{t('settings.appearance')}</h3>
+        <p className="text-sm text-slate-500 mb-3">{t('settings.themeDescription')}</p>
         <div className="grid grid-cols-2 gap-0 p-0.5 bg-slate-100 rounded-lg">
           {([
-            { id: 'light' as const, label: '☀ Svetlá' },
-            { id: 'dark' as const, label: '🌙 Tmavá' },
+            { id: 'light' as const, label: t('settings.themeLight') },
+            { id: 'dark' as const, label: t('settings.themeDark') },
           ]).map(opt => (
             <button
               key={opt.id}
@@ -306,8 +316,8 @@ export function SettingsPage() {
       </GlassCard>
 
       <GlassCard>
-        <h3 className="font-medium text-white mb-3">Inštalácia na plochu</h3>
-        <p className="text-sm text-slate-600 mb-3">Aplikácia funguje aj offline. Po inštalácii ju nájdete na ploche ako bežnú appku.</p>
+        <h3 className="font-medium text-white mb-3">{t('settings.installTitle')}</h3>
+        <p className="text-sm text-slate-600 mb-3">{t('settings.installDescription')}</p>
 
         {(() => {
           const ua = navigator.userAgent;
@@ -320,15 +330,7 @@ export function SettingsPage() {
             return (
               <div className="space-y-2">
                 <p className="text-sm text-slate-600">
-                  <strong>iPhone / iPad (Safari):</strong>
-                </p>
-                <ol className="text-sm text-slate-500 list-decimal list-inside space-y-1">
-                  <li>Klepnite dole na ikonu <strong>Zdieľať</strong> (štvorček so šípkou hore).</li>
-                  <li>Posuňte sa nadol a zvoľte <strong>"Pridať na plochu"</strong> / "Add to Home Screen".</li>
-                  <li>Potvrďte tlačidlom <strong>Pridať</strong>.</li>
-                </ol>
-                <p className="text-xs text-slate-400 mt-2">
-                  Pozn.: iOS Safari nepodporuje automatické inštalačné okno – musí sa to spraviť ručne.
+                  {t('settings.installIos')}
                 </p>
               </div>
             );
@@ -341,17 +343,17 @@ export function SettingsPage() {
                   if (window._deferredInstallPrompt) {
                     window._deferredInstallPrompt.prompt();
                   } else if (isAndroid) {
-                    alert('Otvorte menu prehliadača (3 bodky vpravo hore) a zvoľte "Nainštalovať aplikáciu" alebo "Pridať na plochu".');
+                    alert(t('settings.installAndroid'));
                   } else {
-                    alert('V prehliadači otvorte menu (3 bodky) a zvoľte "Nainštalovať aplikáciu" / "Install app". Ak možnosť nevidíte, navštívte stránku ešte raz po pár minútach – Chrome čaká na "engagement".');
+                    alert(t('settings.installButton'));
                   }
                 }}
                 className="px-4 py-2 rounded-xl text-sm font-medium bg-indigo-600 text-white hover:bg-indigo-500"              >
-                Nainštalovať na plochu
+                {t('settings.installButton')}
               </button>
               {isAndroid && (
                 <p className="text-xs text-slate-500 mt-3">
-                  Pozn. pre Android: Ak sa okno nezobrazí, otvorte menu prehliadača (3 bodky) a vyberte <strong>"Pridať na plochu"</strong> alebo <strong>"Nainštalovať aplikáciu"</strong>.
+                  {t('settings.installAndroid')}
                 </p>
               )}
             </>
@@ -366,17 +368,16 @@ export function SettingsPage() {
       {/* AI integrácia (D1) */}
       <GlassCard>
         <div className="flex items-center justify-between mb-3">
-          <h3 className="font-medium text-slate-900">✦ AI integrácia (Claude)</h3>
-          {aiKey && <span className="text-[10px] uppercase text-emerald-400 px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30">Aktívna</span>}
+          <h3 className="font-medium text-slate-900">{t('settings.aiTitle')}</h3>
+          {aiKey && <span className="text-[10px] uppercase text-emerald-400 px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30">{t('settings.aiActive')}</span>}
         </div>
         <p className="text-xs text-slate-600 mb-3">
-          Pre integratívne AI výklady cez Anthropic Claude. <strong>API kľúč sa ukladá iba lokálne</strong> v tvojom prehliadači a posiela sa výlučne na <span className="font-mono">api.anthropic.com</span>.
-          Získaš ho na <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noreferrer" className="text-indigo-400 underline hover:text-indigo-300">console.anthropic.com</a> ($5 minimum credit).
+          {t('settings.aiDescription')}
         </p>
 
         <div className="space-y-3">
           <div>
-            <label className="block text-xs text-slate-600 mb-1">API kľúč</label>
+            <label className="block text-xs text-slate-600 mb-1">{t('settings.aiKeyLabel')}</label>
             <div className="flex gap-2">
               <div className="relative flex-1">
                 <input
@@ -389,8 +390,8 @@ export function SettingsPage() {
                 <button
                   type="button"
                   onClick={() => setAiKeyVisible(v => !v)}
-                  title={aiKeyVisible ? 'Skryť kľúč' : 'Zobraziť kľúč'}
-                  aria-label={aiKeyVisible ? 'Skryť kľúč' : 'Zobraziť kľúč'}
+                  title={aiKeyVisible ? t('common.hide') : t('common.show')}
+                  aria-label={aiKeyVisible ? t('common.hide') : t('common.show')}
                   className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-700 text-sm px-1"
                 >
                   {aiKeyVisible ? '🙈' : '👁'}
@@ -399,7 +400,7 @@ export function SettingsPage() {
               <button
                 onClick={handleSaveApiKey}
                 className="px-4 py-2 rounded-xl bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-500"              >
-                Uložiť
+                {t('common.save')}
               </button>
               <button
                 onClick={handleTestKey}
@@ -417,7 +418,7 @@ export function SettingsPage() {
           </div>
 
           <div>
-            <label className="block text-xs text-slate-600 mb-1">Model</label>
+            <label className="block text-xs text-slate-600 mb-1">{t('settings.aiModel')}</label>
             <div className="space-y-1">
               {CLAUDE_MODELS.map(m => (
                 <label key={m.id} className={`flex items-center gap-3 p-2 rounded-lg border cursor-pointer transition-colors ${
@@ -442,9 +443,9 @@ export function SettingsPage() {
           </div>
 
           <div>
-            <label className="block text-xs text-slate-600 mb-1">Štýl výkladu (lens)</label>
+            <label className="block text-xs text-slate-600 mb-1">{t('settings.aiLens')}</label>
             <p className="text-[11px] text-slate-500 mb-2">
-              Mení rámec cez ktorý AI číta tvoj profil. Tvoje dáta zostávajú rovnaké, mení sa len uhol pohľadu.
+              {t('settings.aiLensDescription')}
             </p>
             <div className="space-y-1">
               {INTERPRETATION_LENSES.map(l => (
@@ -468,7 +469,7 @@ export function SettingsPage() {
               ))}
             </div>
             <p className="text-[10px] text-amber-400 mt-2">
-              💡 Tip: po zmene štýlu reštartuj rozhovor (tlačidlo ↻ v AI chate), aby sa nový rámec použil od začiatku.
+              💡 {t('settings.aiLensTip')}
             </p>
           </div>
 
@@ -476,26 +477,26 @@ export function SettingsPage() {
             <div className="flex flex-col gap-2 pt-2 border-t border-slate-700/30">
               <button
                 onClick={() => {
-                  if (!confirm('Naozaj odstrániť API kľúč?')) return;
+                  if (!confirm(t('settings.aiKeyRemoveConfirm'))) return;
                   setApiKey('');
                   setAiKey('');
-                  setAiTestResult({ ok: true, message: 'Kľúč odstránený.' });
+                  setAiTestResult({ ok: true, message: t('settings.aiKeyRemoved') });
                 }}
                 className="text-xs text-rose-400 hover:text-rose-300 underline text-left"
               >
-                Odstrániť kľúč
+                {t('settings.aiKeyRemove')}
               </button>
               <button
                 onClick={() => {
-                  if (!confirm('Vymazať VŠETKY AI dáta?\n\n• Anthropic API kľúč\n• Vybraný model\n• Všetky uložené chat histórie\n\nProfily a klienti zostanú zachovaní. Toto použi keď zdieľaš zariadenie alebo dávaš aplikáciu niekomu inému.')) return;
+                  if (!confirm(t('settings.aiClearAllConfirm'))) return;
                   clearAIData();
                   setAiKey('');
-                  setAiTestResult({ ok: true, message: 'Všetky AI dáta vymazané. Reload pre čistý stav.' });
+                  setAiTestResult({ ok: true, message: t('settings.aiClearAllDone') });
                   setTimeout(() => window.location.reload(), 1500);
                 }}
                 className="text-xs text-amber-400 hover:text-amber-300 underline text-left"
               >
-                ⚠ Vymazať VŠETKY AI dáta (kľúč + chat history)
+                {t('settings.aiClearAll')}
               </button>
             </div>
           )}
@@ -503,29 +504,29 @@ export function SettingsPage() {
       </GlassCard>
 
       <GlassCard>
-        <h3 className="font-medium text-white mb-3">Denné pripomenutie</h3>
+        <h3 className="font-medium text-white mb-3">{t('settings.reminderTitle')}</h3>
         <p className="text-xs text-slate-600 mb-3">
-          Pri otvorení appky zobrazí notifikáciu s dennou energiou (ODV). Funguje keď máš appku otvorenú alebo nainštalovanú na ploche.
+          {t('settings.reminderDescription')}
         </p>
         <button
           onClick={() => {
             const current = localStorage.getItem('daily-notification') === 'true';
             if (!current) {
               if (typeof Notification === 'undefined') {
-                alert('Tento prehliadač nepodporuje notifikácie.');
+                alert(t('settings.reminderNotSupported'));
                 return;
               }
               Notification.requestPermission().then(perm => {
                 if (perm === 'granted') {
                   localStorage.setItem('daily-notification', 'true');
-                  alert('Denné pripomenutie zapnuté! Pri každom otvorení appky dostaneš notifikáciu.');
+                  alert(t('settings.reminderOn'));
                 } else {
-                  alert('Notifikácie boli zamietnuté v prehliadači. Povoľ ich v nastaveniach stránky.');
+                  alert(t('settings.reminderDenied'));
                 }
               });
             } else {
               localStorage.removeItem('daily-notification');
-              alert('Denné pripomenutie vypnuté.');
+              alert(t('settings.reminderOff'));
             }
           }}
           className={`w-full py-2.5 rounded-xl text-sm font-medium ${
@@ -534,7 +535,7 @@ export function SettingsPage() {
               : 'bg-indigo-600 hover:bg-indigo-500'
           }`}
                  >
-          {localStorage.getItem('daily-notification') === 'true' ? '✓ Zapnuté — vypnúť' : 'Zapnúť denné pripomenutie'}
+          {localStorage.getItem('daily-notification') === 'true' ? t('settings.reminderDisable') : t('settings.reminderEnable')}
         </button>
       </GlassCard>
       </>
@@ -543,48 +544,47 @@ export function SettingsPage() {
       {activeTab === 'about' && (
       <>
       <GlassCard>
-        <h3 className="font-medium text-white mb-3">O aplikácii</h3>
+        <h3 className="font-medium text-white mb-3">{t('settings.aboutTitle')}</h3>
         <div className="space-y-2 text-sm text-slate-600 mb-4">
-          <p><strong className="text-slate-800">Integrálna mapa bytia</strong></p>
-          <p>Verzia: {APP_VERSION}</p>
+          <p><strong className="text-slate-800">{t('settings.aboutDescription')}</strong></p>
+          <p>{t('settings.version')}: {APP_VERSION}</p>
           <p>© 2026 Dušan Oravský</p>
           <p className="text-[11px] text-slate-500">Co-created with Claude Code (Anthropic)</p>
-          <p className="text-[11px] text-slate-500 mt-1">Offline-first PWA. Všetky dáta lokálne.</p>
+          <p className="text-[11px] text-slate-500 mt-1">Offline-first PWA.</p>
         </div>
         <div className="space-y-2">
           <button
             onClick={async () => {
               const result = await checkForUpdate();
               if (!result.online) {
-                alert('GitHub je offline alebo nedostupný. Aplikácia funguje ďalej z lokálnej cache. Skús neskôr.');
+                alert(t('settings.githubOffline'));
               }
               // Ak je online, app sa už reload-ne sama z checkForUpdate()
             }}
             className="w-full py-2.5 rounded-xl bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-500"          >
-            ↻ Skontrolovať update
+            {t('settings.checkUpdate')}
           </button>
           <p className="text-[11px] text-slate-500">
-            Stiahne najnovšiu verziu zo serveru ak je dostupná. Ak je GitHub offline, appka zostane na aktuálnej verzii a nič sa nestratí.
+            {t('settings.checkUpdateDesc')}
           </p>
         </div>
         <details className="mt-4">
-          <summary className="text-xs text-slate-400 cursor-pointer hover:text-slate-300 select-none">Pokročilé: vynútiť cache wipe</summary>
+          <summary className="text-xs text-slate-400 cursor-pointer hover:text-slate-300 select-none">{t('settings.forceCache')}</summary>
           <div className="mt-2 p-3 rounded-lg bg-amber-50 border border-amber-200">
             <p className="text-xs text-slate-600 mb-2">
-              Použiť IBA ak "Skontrolovať update" opakovane zlyháva (PWA cache môže byť poškodená).
-              <strong className="block mt-1 text-amber-700">Pozor: vyžaduje online pripojenie</strong> — bez siete by sa appka po reload nedokázala načítať.
+              {t('settings.forceCacheDesc')}
             </p>
             <button
               onClick={async () => {
-                if (!confirm('Vynútiť stiahnutie najnovšej verzie?\n\nUnregister-uje service worker, vyčistí cache a obnoví aplikáciu.\nVYŽADUJE ONLINE pripojenie.\n\nTvoje dáta (profily, klienti) zostávajú v localStorage.')) return;
+                if (!confirm(t('settings.forceCacheConfirm'))) return;
                 const result = await forceUpdate();
                 if (!result.online) {
-                  alert('GitHub je offline. Cache wipe sa neuskutočnil — appka by sa po reload nedokázala načítať. Skús keď budeš online.');
+                  alert(t('settings.githubOffline'));
                 }
               }}
               className="w-full py-2 rounded-xl border border-amber-300 text-amber-700 hover:bg-amber-100 text-xs font-medium"
             >
-              ↻ Vynútiť cache wipe
+              {t('settings.forceCache')}
             </button>
           </div>
         </details>
@@ -599,12 +599,12 @@ export function SettingsPage() {
         return (
           <GlassCard>
             <div className="flex items-center justify-between mb-2">
-              <h3 className="font-medium text-slate-900">Výkonnostné metriky</h3>
+              <h3 className="font-medium text-slate-900">{t('settings.perfMetrics')}</h3>
               <button
                 onClick={() => { clearPerfLog(); window.location.reload(); }}
                 className="text-xs text-rose-500 hover:text-rose-300 underline"
               >
-                Vymazať log
+                {t('settings.clearLog')}
               </button>
             </div>
             <div className="grid grid-cols-2 gap-2 mb-2">
@@ -645,12 +645,12 @@ export function SettingsPage() {
         return (
           <GlassCard>
             <div className="flex items-center justify-between mb-2">
-              <h3 className="font-medium text-slate-900">Diagnostika</h3>
+              <h3 className="font-medium text-slate-900">{t('settings.diagnostics')}</h3>
               <button
                 onClick={() => { clearErrorLog(); window.location.reload(); }}
                 className="text-xs text-rose-500 hover:text-rose-300 underline"
               >
-                Vymazať log
+                {t('settings.clearLog')}
               </button>
             </div>
             <p className="text-xs text-slate-500 mb-3">
@@ -675,7 +675,7 @@ export function SettingsPage() {
               }}
               className="mt-2 text-xs text-indigo-400 hover:text-indigo-300 underline"
             >
-              Skopírovať celý log do schránky
+              {t('settings.copyLog')}
             </button>
           </GlassCard>
         );
@@ -687,9 +687,9 @@ export function SettingsPage() {
       <>
       {activeProfile && (
         <GlassCard>
-          <h3 className="font-medium text-white mb-3">Záloha dát</h3>
+          <h3 className="font-medium text-white mb-3">{t('settings.backup')}</h3>
           <p className="text-xs text-slate-500 mb-3">
-            Exportuje/importuje všetky profily, klientov, reporty a nastavenia. Použite na prenos medzi zariadeniami alebo ako zálohu.
+            {t('settings.backupDesc')}
           </p>
           <div className="flex flex-wrap gap-3">
             <button
@@ -705,10 +705,10 @@ export function SettingsPage() {
               }}
               className="px-4 py-2 rounded-xl text-sm font-medium glass text-indigo-300 hover:text-white"
             >
-              ↓ Exportovať zálohu
+              {t('settings.exportBtn')}
             </button>
             <label className="px-4 py-2 rounded-xl text-sm font-medium glass text-emerald-300 hover:text-white cursor-pointer">
-              ↑ Importovať zálohu
+              {t('settings.importBtn')}
               <input
                 type="file"
                 accept=".json"
@@ -721,12 +721,12 @@ export function SettingsPage() {
                     try {
                       const parsed = JSON.parse(reader.result as string);
                       if (!parsed.profiles || !Array.isArray(parsed.profiles)) {
-                        alert('Neplatný súbor — chýbajú profily.');
+                        alert(t('settings.importError'));
                         return;
                       }
                       const importedProfiles = parsed.profiles.length;
                       const importedClients = parsed.clients?.length || 0;
-                      if (!confirm(`Importovať ${importedProfiles} profilov a ${importedClients} klientov? Existujúce dáta budú nahradené.`)) return;
+                      if (!confirm(`${t('settings.importConfirm')} (${importedProfiles} profilov, ${importedClients} klientov)`)) return;
                       const store = useStore.getState();
                       if (parsed.profiles) useStore.setState({ profiles: parsed.profiles });
                       if (parsed.activeProfileId) useStore.setState({ activeProfileId: parsed.activeProfileId });
@@ -736,9 +736,9 @@ export function SettingsPage() {
                       if (parsed.numerologyMethod) store.setNumerologyMethod(parsed.numerologyMethod);
                       if (parsed.themeMode) store.setThemeMode(parsed.themeMode);
                       if (parsed.language) store.setLanguage(parsed.language);
-                      alert(`Import úspešný! ${importedProfiles} profilov, ${importedClients} klientov.`);
+                      alert(`${t('settings.importSuccess')} ${importedProfiles} profilov, ${importedClients} klientov.`);
                     } catch {
-                      alert('Chyba pri čítaní súboru. Skontrolujte formát.');
+                      alert(t('settings.importError'));
                     }
                   };
                   reader.readAsText(file);

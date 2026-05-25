@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useStore } from '../store/useStore';
 import { AIChat } from './AIChat';
+import { useTranslation } from '../i18n/useTranslation';
 import { calculateFullNumerology, reduceToSingle, getGridCount } from '../engine/numerologyEngine';
 import { calculateDevelopmentalNumerology } from '../engine/developmentalNumerologyEngine';
 import { calculateAstrology } from '../engine/astrologyEngine';
@@ -17,6 +18,7 @@ import { hasApiKey } from '../engine/aiInterpretation';
 import { getTimezoneFromCoords } from '../data/cities';
 
 export function GlobalAIDrawer() {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const { profiles, activeProfileId, numerologyMethod } = useStore();
   const profile = profiles.find(p => p.id === activeProfileId);
@@ -86,7 +88,7 @@ export function GlobalAIDrawer() {
         type="button"
         onClick={() => setOpen(true)}
         className="fixed bottom-24 right-4 lg:bottom-6 lg:right-6 z-[55] w-12 h-12 rounded-full bg-gradient-to-br from-indigo-600 to-violet-600 text-white shadow-lg flex items-center justify-center hover:scale-110 transition-transform"
-        aria-label="AI asistent"
+        aria-label={t('ai.drawerLabel')}
       >
         <span className="text-lg">✦</span>
       </button>
@@ -109,11 +111,11 @@ export function GlobalAIDrawer() {
               className="fixed top-0 right-0 bottom-0 w-full sm:w-[420px] bg-white z-[90] shadow-2xl flex flex-col overflow-hidden mobile-sheet"
             >
               <div className="flex items-center justify-between px-4 py-3 border-b border-slate-200">
-                <h2 className="font-medium text-slate-800 text-sm">✦ AI asistent</h2>
+                <h2 className="font-medium text-slate-800 text-sm">{t('ai.drawerTitle')}</h2>
                 <button
                   type="button"
                   onClick={() => setOpen(false)}
-                  aria-label="Zavrieť AI asistenta"
+                  aria-label={t('ai.closeDrawer')}
                   className="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-500"
                 >
                   ✕

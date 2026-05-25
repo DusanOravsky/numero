@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from '../i18n/useTranslation';
 
 interface GridItem {
   value: number;
@@ -60,6 +61,7 @@ const NUMBER_MEANINGS: Record<number, { positive: string; negative: string; them
 };
 
 export function NumerologyGrid({ grid, highlightPlane }: NumerologyGridProps) {
+  const { language } = useTranslation();
   const [selectedNum, setSelectedNum] = useState<number | null>(null);
 
   const gridLayout = [
@@ -74,7 +76,7 @@ export function NumerologyGrid({ grid, highlightPlane }: NumerologyGridProps) {
   return (
     <div>
       <p className="text-[11px] text-indigo-600 italic text-center mb-2">
-        👆 Klikni na číslo pre detail (význam, počet, dar/tieň)
+        {language === 'sk' ? '👆 Klikni na číslo pre detail (význam, počet, dar/tieň)' : '👆 Click a number for detail (meaning, count, gift/shadow)'}
       </p>
       <div className="grid grid-cols-3 gap-2 max-w-xs mx-auto">
         {gridLayout.map((row, rowIdx) =>
@@ -93,7 +95,7 @@ export function NumerologyGrid({ grid, highlightPlane }: NumerologyGridProps) {
                 role="button"
                 tabIndex={0}
                 aria-pressed={isSelected}
-                aria-label={`Číslo ${num}: ${items.length}× — ${NUMBER_MEANINGS[num]?.theme || ''}`}
+                aria-label={language === 'sk' ? `Číslo ${num}: ${items.length}× — ${NUMBER_MEANINGS[num]?.theme || ''}` : `Number ${num}: ${items.length}× — ${NUMBER_MEANINGS[num]?.theme || ''}`}
                 title={`${num} — ${NUMBER_MEANINGS[num]?.theme || ''}`}
                 className={`group relative aspect-square flex flex-col items-center justify-center rounded-xl border-2 transition-all cursor-pointer ${
                   isSelected
@@ -107,7 +109,7 @@ export function NumerologyGrid({ grid, highlightPlane }: NumerologyGridProps) {
               >
                 {/* Mini-card hover tooltip (B32) */}
                 <div className="pointer-events-none absolute -top-2 left-1/2 -translate-x-1/2 -translate-y-full opacity-0 group-hover:opacity-100 transition-opacity z-20 whitespace-nowrap text-[10px] px-2 py-1 rounded shadow-lg" style={{ backgroundColor: '#1e293b', color: '#ffffff' }}>
-                  {NUMBER_MEANINGS[num]?.theme || `Číslo ${num}`}
+                  {NUMBER_MEANINGS[num]?.theme || (language === 'sk' ? `Číslo ${num}` : `Number ${num}`)}
                 </div>
                 <span className="text-[10px] text-slate-400 mb-1">{num}</span>
                 <div className="flex flex-wrap justify-center gap-0.5">
@@ -140,24 +142,24 @@ export function NumerologyGrid({ grid, highlightPlane }: NumerologyGridProps) {
             className="mt-4 p-4 rounded-xl bg-white border border-slate-200 shadow-sm overflow-hidden"
           >
             <div className="flex items-center justify-between mb-2">
-              <h4 className="font-medium text-slate-800">Číslo {selectedNum} – {selectedInfo.theme}</h4>
+              <h4 className="font-medium text-slate-800">{language === 'sk' ? `Číslo ${selectedNum} – ${selectedInfo.theme}` : `Number ${selectedNum} – ${selectedInfo.theme}`}</h4>
               <span className="text-xs px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700">
-                {selectedCount}× v mriežke
+                {selectedCount}× {language === 'sk' ? 'v mriežke' : 'in grid'}
               </span>
             </div>
             <p className="text-xs text-slate-500 mb-2">
-              {selectedCount === 0 ? 'Absencia – oblasť na vedomý rozvoj' :
-               selectedCount === 1 ? 'Prítomné, ale slabšia energia' :
-               selectedCount === 2 ? 'Vyvážená, silná energia' :
-               'Veľmi silné – dominantná energia, pozor na tieň'}
+              {selectedCount === 0 ? (language === 'sk' ? 'Absencia – oblasť na vedomý rozvoj' : 'Absence – area for conscious development') :
+               selectedCount === 1 ? (language === 'sk' ? 'Prítomné, ale slabšia energia' : 'Present, but weaker energy') :
+               selectedCount === 2 ? (language === 'sk' ? 'Vyvážená, silná energia' : 'Balanced, strong energy') :
+               (language === 'sk' ? 'Veľmi silné – dominantná energia, pozor na tieň' : 'Very strong – dominant energy, watch for the shadow')}
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
               <div className="p-2 rounded-lg bg-green-50 border border-green-200">
-                <p className="text-[10px] text-green-700 uppercase mb-0.5">Pozitívne</p>
+                <p className="text-[10px] text-green-700 uppercase mb-0.5">{language === 'sk' ? 'Pozitívne' : 'Positive'}</p>
                 <p className="text-xs text-slate-700">{selectedInfo.positive}</p>
               </div>
               <div className="p-2 rounded-lg bg-red-50 border border-red-200">
-                <p className="text-[10px] text-red-700 uppercase mb-0.5">Negatívne (stres)</p>
+                <p className="text-[10px] text-red-700 uppercase mb-0.5">{language === 'sk' ? 'Negatívne (stres)' : 'Negative (stress)'}</p>
                 <p className="text-xs text-slate-700">{selectedInfo.negative}</p>
               </div>
             </div>

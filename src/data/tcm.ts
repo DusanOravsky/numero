@@ -1,3 +1,5 @@
+import type { Language } from '../store/useStore';
+
 export interface TCMElement {
   name: string;
   season: string;
@@ -20,7 +22,7 @@ export interface TCMElement {
   seasonalAdvice: string;
 }
 
-export const TCM_ELEMENTS: Record<string, TCMElement> = {
+const sk: Record<string, TCMElement> = {
   drevo: {
     name: 'Drevo',
     season: 'Jar',
@@ -127,3 +129,117 @@ export const TCM_ELEMENTS: Record<string, TCMElement> = {
     seasonalAdvice: 'V zime spomaľ, šetri energiu, jedz teplé a slané, spi viac, chi-kung namiesto výkonového športu.',
   },
 };
+
+const en: Record<string, TCMElement> = {
+  drevo: {
+    name: 'Wood',
+    season: 'Spring',
+    organ: 'Liver / Gallbladder',
+    emotion: 'Anger',
+    virtue: 'Kindness and generosity',
+    color: 'Green',
+    taste: 'Sour',
+    strengthSign: 'Decisiveness, vision, planning, growth, flexibility',
+    weaknessSign: 'Frustration, suppressed anger, stiffness, eye problems',
+    balanceTip: 'Movement and stretching, green foods, creative anger expression, forest walks',
+    foods: { nourishing: 'Green leafy vegetables, sprouts, lemons, cucumbers, avocado, mint, turmeric', weakening: 'Alcohol, greasy fried foods, overly spicy, late-night overeating' },
+    meridianHours: '1:00 – 3:00 (Liver), 23:00 – 1:00 (Gallbladder)',
+    meridianNote: 'If you regularly wake between 1-3 AM, your liver is calling for attention — suppressed anger or toxic overload.',
+    generates: 'Fire',
+    controls: 'Earth',
+    generatedBy: 'Water',
+    controlledBy: 'Metal',
+    chakra: 3,
+    seasonalAdvice: 'In spring wake early, eat sour and green foods, move in the morning, express emotions — the liver needs free flow.',
+  },
+  ohen: {
+    name: 'Fire',
+    season: 'Summer',
+    organ: 'Heart / Small Intestine',
+    emotion: 'Joy',
+    virtue: 'Order and respect',
+    color: 'Red',
+    taste: 'Bitter',
+    strengthSign: 'Passion, charisma, joy, communicativeness, intuition',
+    weaknessSign: 'Anxiety, restlessness, insomnia, overexcitement, heart problems',
+    balanceTip: 'Meditation, reducing stimulation, bitter herbs, joyful relationships without dependency',
+    foods: { nourishing: 'Bitter herbs (nettle, dandelion), red fruit, dark chocolate, green tea, rose tea', weakening: 'Excessive caffeine, energy drinks, overly spicy, alcohol' },
+    meridianHours: '11:00 – 13:00 (Heart), 13:00 – 15:00 (Small Intestine)',
+    meridianNote: 'Afternoon fatigue or palpitations around noon — the heart needs rest. Ideal time for a short meditation.',
+    generates: 'Earth',
+    controls: 'Metal',
+    generatedBy: 'Wood',
+    controlledBy: 'Water',
+    chakra: 4,
+    seasonalAdvice: 'In summer rejoice, but without excess. Protect the heart from overheating — eat cooling bitter foods, meditate at noon.',
+  },
+  zem: {
+    name: 'Earth',
+    season: 'Late summer / Transitions',
+    organ: 'Spleen / Stomach',
+    emotion: 'Worry',
+    virtue: 'Faith and trust',
+    color: 'Yellow',
+    taste: 'Sweet',
+    strengthSign: 'Caring, nourishment, stability, empathy, reliability',
+    weaknessSign: 'Overthinking, caring for others at own expense, digestive problems',
+    balanceTip: 'Regular meals, grounding, singing, limiting damp and sweet foods',
+    foods: { nourishing: 'Warm soups, root vegetables (carrots, sweet potatoes), rice, oats, pumpkin, honey', weakening: 'Raw cold food, excessive dairy, refined sugar, ice cream' },
+    meridianHours: '7:00 – 9:00 (Stomach), 9:00 – 11:00 (Spleen)',
+    meridianNote: 'Breakfast is crucial for you — the stomach is most active in the morning. Skipping breakfast weakens the spleen.',
+    generates: 'Metal',
+    controls: 'Water',
+    generatedBy: 'Fire',
+    controlledBy: 'Wood',
+    chakra: 3,
+    seasonalAdvice: 'During seasonal transitions (equinox) eat warm, cooked, grounding foods. Heal worry with singing and rhythm.',
+  },
+  kov: {
+    name: 'Metal',
+    season: 'Autumn',
+    organ: 'Lungs / Large Intestine',
+    emotion: 'Grief',
+    virtue: 'Justice and courage',
+    color: 'White',
+    taste: 'Pungent',
+    strengthSign: 'Discipline, order, clarity, ability to let go, quality',
+    weaknessSign: 'Grief, rigidity, breathing problems, skin problems, isolation',
+    balanceTip: 'Breathing exercises (pranayama), processing loss, pungent foods, decluttering',
+    foods: { nourishing: 'White vegetables (garlic, onion, radish), pears, rice, lotus root, pungent spices', weakening: 'Dairy products (create mucus), cold drinks, overly sweet' },
+    meridianHours: '3:00 – 5:00 (Lungs), 5:00 – 7:00 (Large Intestine)',
+    meridianNote: 'Waking between 3-5 AM = lungs processing grief. Ideal time for breathing exercises if you are awake.',
+    generates: 'Water',
+    controls: 'Wood',
+    generatedBy: 'Earth',
+    controlledBy: 'Fire',
+    chakra: 5,
+    seasonalAdvice: 'In autumn let go — things, relationships, habits. Eat white vegetables, practice pranayama, declutter your space.',
+  },
+  voda: {
+    name: 'Water',
+    season: 'Winter',
+    organ: 'Kidneys / Bladder',
+    emotion: 'Fear',
+    virtue: 'Wisdom and willpower',
+    color: 'Black / Dark blue',
+    taste: 'Salty',
+    strengthSign: 'Wisdom, willpower, endurance, depth, humility',
+    weaknessSign: 'Fear, exhaustion, bone and joint problems, cold feet, weak willpower',
+    balanceTip: 'Enough rest, warm foods, qigong, black foods (sesame, beans), reducing fear',
+    foods: { nourishing: 'Black foods (sesame, black beans, blackcurrants), walnuts, seaweed, bone broth', weakening: 'Excessive coffee, cold raw foods in winter, over-salted, energy drinks' },
+    meridianHours: '15:00 – 17:00 (Bladder), 17:00 – 19:00 (Kidneys)',
+    meridianNote: 'Afternoon fatigue around 3-5 PM = bladder. Evening weakness = kidneys calling for warmth and rest.',
+    generates: 'Wood',
+    controls: 'Fire',
+    generatedBy: 'Metal',
+    controlledBy: 'Earth',
+    chakra: 1,
+    seasonalAdvice: 'In winter slow down, conserve energy, eat warm and salty, sleep more, qigong instead of intense sports.',
+  },
+};
+
+export const TCM_ELEMENTS: Record<string, TCMElement> = sk;
+
+export function getTCMElement(skKey: string, lang: Language = 'sk'): TCMElement {
+  return lang === 'en' ? en[skKey] : sk[skKey];
+}

@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSubject } from '../hooks/useSubject';
+import { useTranslation } from '../i18n/useTranslation';
 import { GlassCard } from '../components/GlassCard';
 import { ChakraBody } from '../components/ChakraBody';
 import { DateInput } from '../components/DateInput';
@@ -28,6 +29,7 @@ function computeChakras(day: number, month: number, year: number, hour: number =
 }
 
 export function ChakrasPage() {
+  const { t, language } = useTranslation();
   const navigate = useNavigate();
   const profile = useSubject();
   const [manualChakras, setManualChakras] = useState<ChakraState[] | null>(null);
@@ -60,11 +62,11 @@ export function ChakrasPage() {
             onClick={() => navigate(`/clients/${profile.id}`)}
             className="text-sm text-indigo-600 hover:text-indigo-800 mb-2 inline-flex items-center gap-1"
           >
-            ← Späť na klienta {profile.name}
+            {t('clients.backToClient')} {profile.name}
           </button>
         )}
         <div className="flex items-center gap-3 flex-wrap">
-          <h1 className="font-serif text-3xl font-bold text-white">Čakry</h1>
+          <h1 className="font-serif text-3xl font-bold text-white">{t('chakras.title')}</h1>
           {profile?.isClient && (
             <span className="text-xs px-3 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-700">
               Klient: <strong>{profile.name}</strong>
@@ -78,7 +80,7 @@ export function ChakrasPage() {
 
       {!chakras && !profile && (
         <GlassCard>
-          <DateInput onSubmit={handleCalculate} label="Dátum narodenia" />
+          <DateInput onSubmit={handleCalculate} label={t('profile.birthDate')} />
         </GlassCard>
       )}
 
@@ -89,7 +91,7 @@ export function ChakrasPage() {
       {chakras && (
         <div className="space-y-6">
           <GlassCard>
-            <h3 className="font-medium text-white mb-2">Ako sa vyhodnocujú čakry</h3>
+            <h3 className="font-medium text-white mb-2">{t('chakras.howEvaluated')}</h3>
             <p className="text-sm text-slate-400 mb-3">Stav čakier je odvodený kombináciou viacerých systémov:</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
               <div className="p-2 rounded-lg bg-indigo-500/10">
@@ -119,7 +121,7 @@ export function ChakrasPage() {
           <GlassCard>
             <details open>
               <summary className="cursor-pointer hover:text-indigo-300 transition-colors">
-                <span className="font-medium text-white">Tvoje čítanie — ako pracovať s čakrami</span>
+                <span className="font-medium text-white">{t('chakras.yourReading')}</span>
               </summary>
               <div className="mt-4 space-y-4">
                 <p className="text-xs text-slate-400">
@@ -235,7 +237,7 @@ export function ChakrasPage() {
                             state.status === 'blocked' ? 'bg-red-500/20 text-red-400' :
                             'bg-yellow-500/20 text-yellow-400'
                           }`}>
-                            {state.status === 'balanced' ? 'Vyvážená' : state.status === 'blocked' ? 'Blokovaná' : 'Hyperaktívna'}
+                            {state.status === 'balanced' ? t('chakras.balanced') : state.status === 'blocked' ? t('chakras.blocked') : t('chakras.hyperactive')}
                           </span>
                         </div>
                       </div>
@@ -270,26 +272,26 @@ export function ChakrasPage() {
                       {/* Detail výpočtu */}
                       <details className="mt-3">
                         <summary className="text-xs text-indigo-600 cursor-pointer hover:text-indigo-800 select-none">
-                          Ako sa skóre {state.score} vyrátalo?
+                          {t('chakras.scoreExplanation')} ({state.score})
                         </summary>
                         <div className="mt-2 p-3 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-600 space-y-1">
-                          <p>Východiskové skóre: <strong>50</strong></p>
-                          <p>Korešpondencia s číslami {state.chakra.numerologyNumbers.join(' a ')} v mriežke:</p>
+                          <p>{language === 'sk' ? 'Východiskové skóre' : 'Starting score'}: <strong>50</strong></p>
+                          <p>{language === 'sk' ? `Korešpondencia s číslami ${state.chakra.numerologyNumbers.join(' a ')} v mriežke:` : `Correspondence with numbers ${state.chakra.numerologyNumbers.join(' and ')} in the grid:`}</p>
                           <ul className="list-disc list-inside ml-2 text-slate-500">
-                            <li>0× → −15 bodov (chýbajúca energia)</li>
-                            <li>1× → +5 bodov</li>
-                            <li>2× → +10 bodov</li>
-                            <li>3+× → +20 bodov</li>
-                            <li>izolované číslo → −10 bodov</li>
+                            <li>0× → −15 {language === 'sk' ? 'bodov (chýbajúca energia)' : 'points (missing energy)'}</li>
+                            <li>1× → +5 {language === 'sk' ? 'bodov' : 'points'}</li>
+                            <li>2× → +10 {language === 'sk' ? 'bodov' : 'points'}</li>
+                            <li>3+× → +20 {language === 'sk' ? 'bodov' : 'points'}</li>
+                            <li>{language === 'sk' ? 'izolované číslo → −10 bodov' : 'isolated number → −10 points'}</li>
                           </ul>
-                          <p>Definované HD centrum zodpovedajúce tejto čakre: <strong>+10</strong></p>
-                          <p>Dominantný element zhodný s {state.chakra.element}: <strong>+10</strong></p>
-                          <p>Životné číslo = {state.chakra.number}: <strong>+15</strong></p>
-                          <p className="pt-1 border-t border-slate-200 mt-1">Vyhodnotenie:</p>
+                          <p>{language === 'sk' ? 'Definované HD centrum zodpovedajúce tejto čakre' : 'Defined HD center corresponding to this chakra'}: <strong>+10</strong></p>
+                          <p>{language === 'sk' ? `Dominantný element zhodný s ${state.chakra.element}` : `Dominant element matching ${state.chakra.element}`}: <strong>+10</strong></p>
+                          <p>{language === 'sk' ? `Životné číslo = ${state.chakra.number}` : `Life path number = ${state.chakra.number}`}: <strong>+15</strong></p>
+                          <p className="pt-1 border-t border-slate-200 mt-1">{language === 'sk' ? 'Vyhodnotenie:' : 'Evaluation:'}</p>
                           <ul className="list-disc list-inside ml-2 text-slate-500">
-                            <li>&lt; 50 → blokovaná (málo podpory)</li>
-                            <li>50–79 → vyvážená (zdravá)</li>
-                            <li>≥ 80 alebo 4+× rovnaké číslo → hyperaktívna</li>
+                            <li>&lt; 50 → {language === 'sk' ? 'blokovaná (málo podpory)' : 'blocked (low support)'}</li>
+                            <li>50–79 → {language === 'sk' ? 'vyvážená (zdravá)' : 'balanced (healthy)'}</li>
+                            <li>≥ 80 {language === 'sk' ? 'alebo' : 'or'} 4+× {language === 'sk' ? 'rovnaké číslo → hyperaktívna' : 'same number → hyperactive'}</li>
                           </ul>
                         </div>
                       </details>
@@ -319,13 +321,13 @@ export function ChakrasPage() {
 
                       {/* Etikoterapia — etická príčina + cnosť (Vogeltanz, Bezděk) */}
                       {(() => {
-                        const eth = getEtikoterapiaForChakra(state.chakra.number);
+                        const eth = getEtikoterapiaForChakra(state.chakra.number, language);
                         if (!eth) return null;
                         const isBlocked = state.status === 'blocked';
                         return (
                           <details className="mt-3" open={isBlocked}>
                             <summary className="text-xs text-rose-600 cursor-pointer hover:text-rose-800 select-none flex items-center gap-1">
-                              <span>✦ Etická príčina a cnosť (etikoterapia)</span>
+                              <span>✦ {t('chakras.etikoterapia')}</span>
                               {isBlocked && (
                                 <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-rose-100 text-rose-700">
                                   Pri blokáde najpotrebnejšie
@@ -395,7 +397,7 @@ export function ChakrasPage() {
               onClick={() => setManualChakras(null)}
               className="px-4 py-2 rounded-xl text-sm font-medium glass text-slate-400 hover:text-white"
             >
-              Nový výpočet
+              {t('common.newCalculation')}
             </button>
           )}
         </div>

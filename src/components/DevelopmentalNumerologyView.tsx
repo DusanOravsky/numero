@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { DevelopmentalNumerologyResult } from '../engine/developmentalNumerologyEngine';
-import { developmentalMeanings, developmentalGridIntro, developmentalHowToRead } from '../data/developmentalMeanings';
+import { getCellMeaning, getGridIntro, getHowToRead } from '../data/developmentalMeanings';
 import { findMatchingCombinations } from '../data/developmentalCombinations';
+import { useTranslation } from '../i18n/useTranslation';
 
 interface Props {
   result: DevelopmentalNumerologyResult;
@@ -13,6 +14,7 @@ interface Props {
 }
 
 export function DevelopmentalNumerologyView({ result, gender, compact }: Props) {
+  const { t, language } = useTranslation();
   const [selected, setSelected] = useState<number | null>(null);
 
   const layout = [
@@ -21,7 +23,7 @@ export function DevelopmentalNumerologyView({ result, gender, compact }: Props) 
     [1, 4, 7],
   ];
 
-  const selectedMeaning = selected ? developmentalMeanings[selected] : null;
+  const selectedMeaning = selected ? getCellMeaning(selected, language) : null;
   const selectedCount = selected ? result.counts[selected] : 0;
 
   // Personalizované dáta pre "Ako čítať" sekciu
@@ -29,18 +31,18 @@ export function DevelopmentalNumerologyView({ result, gender, compact }: Props) 
   // K3 môže byť dvojciferné — vezmeme jeho cifry do mriežky, téma = podľa redukcie
   const k3Reduced = k3Value ? (k3Value <= 9 ? k3Value : String(k3Value).split('').reduce((s, d) => s + Number(d), 0)) : null;
   const k3MeaningKey = k3Reduced ? (k3Reduced <= 9 ? k3Reduced : String(k3Reduced).split('').reduce((s, d) => s + Number(d), 0)) : null;
-  const k3Meaning = k3MeaningKey ? developmentalMeanings[k3MeaningKey] : null;
+  const k3Meaning = k3MeaningKey ? getCellMeaning(k3MeaningKey, language) : null;
   const zeros = Object.entries(result.counts)
     .filter(([, count]) => count === 0)
-    .map(([num]) => ({ num: Number(num), meaning: developmentalMeanings[Number(num)] }))
+    .map(([num]) => ({ num: Number(num), meaning: getCellMeaning(Number(num), language) }))
     .filter(z => z.meaning);
   const highCounts = Object.entries(result.counts)
     .filter(([, count]) => count >= 3)
-    .map(([num, count]) => ({ num: Number(num), count, meaning: developmentalMeanings[Number(num)] }))
+    .map(([num, count]) => ({ num: Number(num), count, meaning: getCellMeaning(Number(num), language) }))
     .filter(h => h.meaning);
 
   function getCountInterpretation(num: number, count: number): string | undefined {
-    const m = developmentalMeanings[num];
+    const m = getCellMeaning(num, language);
     if (!m) return undefined;
     if (num === 1) {
       // Pre jednotku rozlišujeme aj párny / nepárny počet
@@ -65,17 +67,17 @@ export function DevelopmentalNumerologyView({ result, gender, compact }: Props) 
   return (
     <div className="space-y-4">
       <div className="p-4 rounded-xl bg-indigo-50 border border-indigo-200">
-        <p className="text-xs text-indigo-700 italic">{developmentalGridIntro}</p>
+        <p className="text-xs text-indigo-700 italic">{getGridIntro(language)}</p>
       </div>
 
       {/* Tvoje čítanie — personalizovaný sprievodca (skryté v compact mode) */}
       {!compact && (
       <details className="rounded-xl border border-indigo-200 bg-white overflow-hidden" open>
         <summary className="p-4 cursor-pointer hover:bg-indigo-50/50 transition-colors">
-          <span className="font-medium text-indigo-800">Tvoje čítanie — ako pracovať s číslami</span>
+          <span className="font-medium text-indigo-800">{t('dev.yourReading')}</span>
         </summary>
         <div className="px-4 pb-4 space-y-4">
-          <p className="text-xs text-slate-600">{developmentalHowToRead.intro}</p>
+          <p className="text-xs text-slate-600">{getHowToRead(language).intro}</p>
 
           {/* K3 — hlavná téma */}
           {k3Meaning && (
@@ -141,9 +143,9 @@ export function DevelopmentalNumerologyView({ result, gender, compact }: Props) 
 
           {/* Kedy sa cykly aktivujú */}
           <div className="p-3 rounded-lg bg-amber-50 border border-amber-200">
-            <p className="text-xs font-semibold text-amber-800 mb-2">{developmentalHowToRead.karmicCycles.title}</p>
+            <p className="text-xs font-semibold text-amber-800 mb-2">{getHowToRead(language).karmicCycles.title}</p>
             <div className="space-y-2">
-              {developmentalHowToRead.karmicCycles.cycles.map((cyc, i) => (
+              {getHowToRead(language).karmicCycles.cycles.map((cyc, i) => (
                 <div key={i} className="text-xs">
                   <p className="font-medium text-amber-700">
                     {cyc.label} <span className="text-slate-400 font-normal">({cyc.period})</span>
@@ -152,12 +154,12 @@ export function DevelopmentalNumerologyView({ result, gender, compact }: Props) 
                 </div>
               ))}
             </div>
-            <p className="text-[11px] text-slate-500 mt-2 italic">{developmentalHowToRead.karmicCycles.note}</p>
+            <p className="text-[11px] text-slate-500 mt-2 italic">{getHowToRead(language).karmicCycles.note}</p>
           </div>
 
           <div className="p-3 rounded-lg bg-slate-50 border border-slate-200">
             <p className="text-[10px] text-slate-500 uppercase mb-1">Praktický tip</p>
-            <p className="text-xs text-slate-700">{developmentalHowToRead.practicalTip}</p>
+            <p className="text-xs text-slate-700">{getHowToRead(language).practicalTip}</p>
           </div>
         </div>
       </details>
@@ -167,7 +169,7 @@ export function DevelopmentalNumerologyView({ result, gender, compact }: Props) 
       <>
       {/* Postup výpočtu */}
       <div className="p-4 rounded-xl glass-light">
-        <h4 className="font-medium text-slate-800 mb-2">Postup výpočtu</h4>
+        <h4 className="font-medium text-slate-800 mb-2">{t('dev.calculationSteps')}</h4>
         <div className="space-y-1 text-xs text-slate-600">
           <p>D + M (cifry dňa a mesiaca): <strong className="text-indigo-700">{result.dayMonthSum}</strong></p>
           <p>R (cifry roku{result.isPost2000 ? ', pre rok ≥ 2000: 20 + zvyšok' : ''}): <strong className="text-indigo-700">{result.yearSum}</strong></p>
@@ -176,7 +178,7 @@ export function DevelopmentalNumerologyView({ result, gender, compact }: Props) 
 
       {/* Zakrúžkované ako karmické cykly */}
       <div>
-        <h4 className="font-medium text-slate-800 mb-2">Karmické cykly (zakrúžkované čísla)</h4>
+        <h4 className="font-medium text-slate-800 mb-2">{t('dev.karmicCycles')}</h4>
         <p className="text-xs text-slate-500 mb-3">
           Štyri zakrúžkované čísla zodpovedajú štyrom karmickým cyklom života: psychická stabilita, materiálna stabilita, životné poslanie a detské sny. Postupne sa aktivujú v životných obdobiach.
         </p>
@@ -224,7 +226,7 @@ export function DevelopmentalNumerologyView({ result, gender, compact }: Props) 
               {result.egoPolarity === 'masculine' ? '♂' : '♀'}
             </span>
             <p className={`font-semibold ${result.egoPolarity === 'masculine' ? 'text-blue-700' : 'text-rose-700'}`}>
-              {result.egoPolarity === 'masculine' ? 'Mužské ego' : 'Ženské ego'} ({result.oneCount}× číslo 1)
+              {result.egoPolarity === 'masculine' ? t('dev.masculine') : t('dev.feminine')} ({result.oneCount}× číslo 1)
             </p>
           </div>
           <p className="text-xs text-slate-700">
@@ -263,8 +265,9 @@ export function DevelopmentalNumerologyView({ result, gender, compact }: Props) 
       ) : (
         <div className="p-3 rounded-xl border bg-slate-50 border-slate-200">
           <p className="text-sm text-slate-700">
-            <strong>Bez čísla 1 v mriežke</strong> – veľmi slabé ego, človek sa silne vníma ako súčasť celku
-            a môže mať tendenciu strácať sa v iných. Učí sa vymedziť seba.
+            {language === 'sk'
+              ? <><strong>Bez čísla 1 v mriežke</strong> – veľmi slabé ego, človek sa silne vníma ako súčasť celku a môže mať tendenciu strácať sa v iných. Učí sa vymedziť seba.</>
+              : <><strong>No number 1 in the grid</strong> – very weak ego, the person strongly perceives themselves as part of the whole and may tend to lose themselves in others. Learning to define themselves.</>}
           </p>
         </div>
       )}
@@ -272,9 +275,9 @@ export function DevelopmentalNumerologyView({ result, gender, compact }: Props) 
       {/* Mriežka */}
       <div>
         <div className="flex items-center justify-between mb-2">
-          <h4 className="font-medium text-slate-800">Mriežka</h4>
+          <h4 className="font-medium text-slate-800">{t('dev.gridLabel')}</h4>
           <span className="text-[11px] text-indigo-600 italic">
-            👆 Klikni na číslo pre detail
+            {t('dev.clickForDetail')}
           </span>
         </div>
         <div className="grid grid-cols-3 gap-2 max-w-xs mx-auto">
@@ -316,8 +319,8 @@ export function DevelopmentalNumerologyView({ result, gender, compact }: Props) 
           )}
         </div>
         <div className="flex gap-4 mt-3 justify-center text-xs">
-          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-indigo-500"></span> Z dátumu</span>
-          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-amber-500"></span> Zakrúžkované</span>
+          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-indigo-500"></span> {t('dev.fromDate')}</span>
+          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-amber-500"></span> {t('dev.circledLabel')}</span>
         </div>
       </div>
 
@@ -359,7 +362,7 @@ export function DevelopmentalNumerologyView({ result, gender, compact }: Props) 
         if (matches.length === 0) return null;
         return (
           <div className="rounded-xl border border-indigo-200 bg-indigo-50/40 p-4">
-            <h4 className="font-medium text-slate-800 mb-1">Pozoruhodné kombinácie čísel</h4>
+            <h4 className="font-medium text-slate-800 mb-1">{t('dev.notableCombinations')}</h4>
             <p className="text-xs text-slate-500 mb-3">
               Niektoré dvojice čísel v mriežke majú špecifický význam, ktorý pri jednotlivých bunkách nie je viditeľný. Tu sú tie, ktoré platia pre vás.
             </p>
@@ -379,7 +382,7 @@ export function DevelopmentalNumerologyView({ result, gender, compact }: Props) 
                     <p className="text-xs text-slate-700 mt-1">{combo.description}</p>
                     {combo.recommendation && (
                       <p className="text-xs text-slate-600 mt-1.5 italic">
-                        <strong>Odporúčanie:</strong> {combo.recommendation}
+                        <strong>{t('numerology.recommendation')}:</strong> {combo.recommendation}
                       </p>
                     )}
                   </div>
@@ -392,7 +395,10 @@ export function DevelopmentalNumerologyView({ result, gender, compact }: Props) 
 
       <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
         <p className="text-[11px] text-slate-500 italic">
-          Zdroj: kniha Lívia Mičková – <strong>Duchovná numerológia</strong> (a <strong>Duchovná numerológia pre deti</strong>).
+          {language === 'sk'
+            ? <>Zdroj: kniha Lívia Mičková – <strong>Duchovná numerológia</strong> (a <strong>Duchovná numerológia pre deti</strong>).</>
+            : <>Source: book by Lívia Mičková – <strong>Spiritual Numerology</strong> (and <strong>Spiritual Numerology for Children</strong>).</>
+          }
         </p>
       </div>
       </>

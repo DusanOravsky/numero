@@ -1,7 +1,8 @@
 import { motion } from 'framer-motion';
 import { GlassCard } from './GlassCard';
 import { calculateORV } from '../engine/numerologyEngine';
-import { orvDescriptions } from '../data/orvDescriptions';
+import { getOrvDescription } from '../data/orvDescriptions';
+import { useTranslation } from '../i18n/useTranslation';
 
 interface Props {
   birthDay: number;
@@ -16,6 +17,7 @@ interface Props {
  * Aktuálny rok je výrazne označený a obohatený o krátky popis.
  */
 export function ORVLifeHistogram({ birthDay, birthMonth, birthYear, maxAge = 90 }: Props) {
+  const { language } = useTranslation();
   const today = new Date();
   const currentYear = today.getFullYear();
   const currentMonth = today.getMonth() + 1;
@@ -78,7 +80,7 @@ export function ORVLifeHistogram({ birthDay, birthMonth, birthYear, maxAge = 90 
       </div>
 
       {/* Aktuálny rok detail */}
-      {currentEntry && orvDescriptions[currentEntry.orv] && (
+      {currentEntry && getOrvDescription(currentEntry.orv, language) && (
         <div className={`p-3 rounded-xl border-2 mb-4 ${orvColors[currentEntry.orv].bg} ${orvColors[currentEntry.orv].border}`}>
           <div className="flex items-center gap-3">
             <div className={`w-12 h-12 rounded-full bg-white border-2 ${orvColors[currentEntry.orv].border} flex items-center justify-center shrink-0`}>
@@ -86,9 +88,9 @@ export function ORVLifeHistogram({ birthDay, birthMonth, birthYear, maxAge = 90 
             </div>
             <div className="flex-1 min-w-0">
               <p className={`font-medium ${orvColors[currentEntry.orv].text}`}>
-                {orvDescriptions[currentEntry.orv].title}
+                {getOrvDescription(currentEntry.orv, language).title}
               </p>
-              <p className="text-xs text-slate-700 mt-0.5">{orvDescriptions[currentEntry.orv].theme}</p>
+              <p className="text-xs text-slate-700 mt-0.5">{getOrvDescription(currentEntry.orv, language).theme}</p>
             </div>
           </div>
         </div>
@@ -116,7 +118,7 @@ export function ORVLifeHistogram({ birthDay, birthMonth, birthYear, maxAge = 90 
                       className={`aspect-square rounded-md border ${colors.bg} ${colors.border} flex flex-col items-center justify-center transition-all ${
                         y.isCurrent ? 'ring-2 ring-indigo-500 ring-offset-1 scale-110' : y.isPast ? 'opacity-50' : ''
                       }`}
-                      title={`${y.age}. rok života (${y.year}) — ORV ${y.orv} · ${orvDescriptions[y.orv]?.title || ''}`}
+                      title={`${y.age}. rok života (${y.year}) — ORV ${y.orv} · ${getOrvDescription(y.orv, language)?.title || ''}`}
                     >
                       <span className={`text-[8px] ${y.isPast ? 'text-slate-400' : 'text-slate-600'}`}>
                         {y.age}

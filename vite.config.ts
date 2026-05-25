@@ -9,7 +9,7 @@ import pkg from './package.json'
 
 const analyze = process.env.ANALYZE === '1';
 const isBuild = process.argv.includes('build');
-if (isBuild) writeFileSync('public/version.json', JSON.stringify({ version: pkg.version }) + '\n');
+if (isBuild) writeFileSync(resolve(import.meta.dirname, 'public/version.json'), JSON.stringify({ version: pkg.version }) + '\n');
 
 export default defineConfig({
   plugins: [

@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { Outlet, NavLink, useLocation, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useTranslation } from '../i18n/useTranslation';
-import type { TranslationKey } from '../i18n/translations';
+import { useTranslation, type TranslationKey } from '../i18n/useTranslation';
 import { useStore } from '../store/useStore';
 import { APP_VERSION } from '../components/PWAPrompts';
 import { GlobalAIDrawer } from '../components/GlobalAIDrawer';
@@ -76,8 +75,8 @@ export function MainLayout() {
           {/* Theme picker — segmented control (Light / Dark) */}
           <div className="grid grid-cols-2 gap-0 p-0.5 bg-slate-100 rounded-lg">
             {([
-              { id: 'light', svg: <SunIcon />, label: 'Svetlá' },
-              { id: 'dark', svg: <MoonIcon />, label: 'Tmavá' },
+              { id: 'light', svg: <SunIcon />, label: language === 'sk' ? 'Svetlá' : 'Light' },
+              { id: 'dark', svg: <MoonIcon />, label: language === 'sk' ? 'Tmavá' : 'Dark' },
             ] as const).map(opt => (
               <button
                 key={opt.id}
@@ -117,9 +116,9 @@ export function MainLayout() {
           <button
             onClick={togglePresent}
             className="w-full py-1.5 rounded-md text-xs font-medium bg-violet-100 text-violet-700 hover:bg-violet-200 transition-colors"
-            title="Skryje navigáciu pre prezentáciu klientovi"
+            title={language === 'sk' ? 'Skryje navigáciu pre prezentáciu klientovi' : 'Hides navigation for client presentation'}
           >
-            ▶ Prezentačný režim
+            {language === 'sk' ? '▶ Prezentačný režim' : '▶ Presentation mode'}
           </button>
           <p className="text-[10px] text-slate-400 text-center">v{APP_VERSION}</p>
         </div>
@@ -158,7 +157,7 @@ export function MainLayout() {
       </main>
 
       {!presentMode && (
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-50" aria-label="Hlavná navigácia">
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-50" aria-label={language === 'sk' ? 'Hlavná navigácia' : 'Main navigation'}>
         <div className="grid grid-cols-6 items-center py-1.5 px-1">
           {mobilePrimaryItems.map(item => (
             <NavLink
@@ -192,9 +191,9 @@ export function MainLayout() {
         <button
           onClick={togglePresent}
           className="fixed top-4 right-4 z-50 px-4 py-2 rounded-full bg-violet-600 text-white text-xs font-medium shadow-lg hover:bg-violet-500 transition-colors"
-          title="Vypnúť prezentačný režim"
+          title={language === 'sk' ? 'Vypnúť prezentačný režim' : 'Disable presentation mode'}
         >
-          ✕ Ukončiť prezentáciu
+          {language === 'sk' ? '✕ Ukončiť prezentáciu' : '✕ Exit presentation'}
         </button>
       )}
 

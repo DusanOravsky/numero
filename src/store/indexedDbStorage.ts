@@ -26,6 +26,7 @@ function openDb(): Promise<IDBDatabase> {
     request.onsuccess = () => {
       dbInstance = request.result;
       dbInstance.onclose = () => { dbInstance = null; dbPromise = null; };
+      dbInstance.onversionchange = () => { dbInstance?.close(); dbInstance = null; dbPromise = null; };
       resolve(dbInstance);
     };
     request.onerror = () => {
@@ -41,11 +42,16 @@ export const indexedDbStorage: StateStorage = {
     try {
       const db = await openDb();
       return new Promise((resolve, reject) => {
-        const tx = db.transaction(STORE_NAME, 'readonly');
-        const store = tx.objectStore(STORE_NAME);
-        const request = store.get(name);
-        request.onsuccess = () => resolve(request.result ?? null);
-        request.onerror = () => reject(request.error);
+        try {
+          const tx = db.transaction(STORE_NAME, 'readonly');
+          const store = tx.objectStore(STORE_NAME);
+          const request = store.get(name);
+          request.onsuccess = () => resolve(request.result ?? null);
+          request.onerror = () => reject(request.error);
+        } catch {
+          dbInstance = null; dbPromise = null;
+          reject(new Error('Transaction failed, DB connection stale'));
+        }
       });
     } catch {
       storageDegraded = true;
@@ -56,11 +62,16 @@ export const indexedDbStorage: StateStorage = {
     try {
       const db = await openDb();
       return new Promise((resolve, reject) => {
-        const tx = db.transaction(STORE_NAME, 'readwrite');
-        const store = tx.objectStore(STORE_NAME);
-        const request = store.put(value, name);
-        request.onsuccess = () => resolve();
-        request.onerror = () => reject(request.error);
+        try {
+          const tx = db.transaction(STORE_NAME, 'readwrite');
+          const store = tx.objectStore(STORE_NAME);
+          const request = store.put(value, name);
+          request.onsuccess = () => resolve();
+          request.onerror = () => reject(request.error);
+        } catch {
+          dbInstance = null; dbPromise = null;
+          reject(new Error('Transaction failed, DB connection stale'));
+        }
       });
     } catch {
       storageDegraded = true;
@@ -71,11 +82,16 @@ export const indexedDbStorage: StateStorage = {
     try {
       const db = await openDb();
       return new Promise((resolve, reject) => {
-        const tx = db.transaction(STORE_NAME, 'readwrite');
-        const store = tx.objectStore(STORE_NAME);
-        const request = store.delete(name);
-        request.onsuccess = () => resolve();
-        request.onerror = () => reject(request.error);
+        try {
+          const tx = db.transaction(STORE_NAME, 'readwrite');
+          const store = tx.objectStore(STORE_NAME);
+          const request = store.delete(name);
+          request.onsuccess = () => resolve();
+          request.onerror = () => reject(request.error);
+        } catch {
+          dbInstance = null; dbPromise = null;
+          reject(new Error('Transaction failed, DB connection stale'));
+        }
       });
     } catch {
       storageDegraded = true;

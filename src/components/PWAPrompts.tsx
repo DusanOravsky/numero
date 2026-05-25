@@ -1,8 +1,9 @@
 /* eslint-disable react-refresh/only-export-components */
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from '../i18n/useTranslation';
 
-const APP_VERSION = '3.1.0';
+const APP_VERSION = '4.0.0';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -32,6 +33,7 @@ function isInStandaloneMode(): boolean {
 }
 
 export function PWAPrompts() {
+  const { t } = useTranslation();
   const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [showInstall, setShowInstall] = useState(false);
   const [showIOSHint, setShowIOSHint] = useState(false);
@@ -165,7 +167,7 @@ export function PWAPrompts() {
     // Fallback — online check + cache wipe + reload
     const result = await checkForUpdate();
     if (!result.online) {
-      alert('GitHub je offline. Aplikácia beží ďalej z lokálnej cache. Skús neskôr cez Settings → Skontrolovať update.');
+      alert(t('settings.githubOffline'));
     }
   };
 
@@ -186,7 +188,7 @@ export function PWAPrompts() {
             exit={{ y: -40, opacity: 0 }}
             className="fixed top-0 left-0 right-0 z-[200] bg-amber-500 text-amber-900 text-center py-1.5 text-xs font-medium"
           >
-            Offline režim – všetky dáta sú uložené lokálne
+            {t('pwa.offlineMode')}
           </motion.div>
         )}
       </AnimatePresence>
@@ -205,15 +207,15 @@ export function PWAPrompts() {
                 📱
               </div>
               <div className="flex-1">
-                <p className="font-medium text-slate-800 text-sm">Pridať na plochu (iPhone / iPad)</p>
+                <p className="font-medium text-slate-800 text-sm">{t('pwa.iosInstallTitle')}</p>
                 <p className="text-xs text-slate-500 mt-1 leading-relaxed">
-                  V Safari klepni dole na ikonu <strong>Zdieľať</strong> (štvorček so šípkou hore), potom zvoľ <strong>"Pridať na plochu"</strong>. Aplikácia bude fungovať offline ako bežná appka.
+                  {t('pwa.iosInstallDesc')}
                 </p>
               </div>
             </div>
             <div className="flex gap-2 mt-3">
               <button onClick={dismissIOSHint} className="flex-1 py-2 rounded-xl bg-indigo-600 text-white text-sm font-medium">
-                Rozumiem
+                {t('pwa.understand')}
               </button>
             </div>
           </motion.div>
@@ -234,16 +236,16 @@ export function PWAPrompts() {
                 +
               </div>
               <div className="flex-1">
-                <p className="font-medium text-slate-800 text-sm">Pridať na plochu</p>
-                <p className="text-xs text-slate-500 mt-0.5">Nainštalujte si aplikáciu pre rýchly prístup a offline použitie</p>
+                <p className="font-medium text-slate-800 text-sm">{t('pwa.installTitle')}</p>
+                <p className="text-xs text-slate-500 mt-0.5">{t('pwa.installDesc')}</p>
               </div>
             </div>
             <div className="flex gap-2 mt-3">
               <button onClick={handleInstall} className="flex-1 py-2 rounded-xl bg-indigo-600 text-white text-sm font-medium">
-                Nainštalovať
+                {t('common.install')}
               </button>
               <button onClick={dismissInstall} className="px-4 py-2 rounded-xl text-slate-500 text-sm">
-                Neskôr
+                {t('common.later')}
               </button>
             </div>
           </motion.div>
@@ -262,16 +264,16 @@ export function PWAPrompts() {
             <div className="flex items-start gap-3">
               <div className="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center text-lg">↑</div>
               <div className="flex-1">
-                <p className="font-medium text-slate-800 text-sm">Nová verzia {APP_VERSION}</p>
-                <p className="text-xs text-slate-500 mt-0.5">Stiahni najnovšiu verziu zo serveru. Bez internetu sa appka nezmení.</p>
+                <p className="font-medium text-slate-800 text-sm">{t('pwa.newVersion')} {APP_VERSION}</p>
+                <p className="text-xs text-slate-500 mt-0.5">{t('pwa.newVersionDesc')}</p>
               </div>
             </div>
             <div className="flex gap-2 mt-3">
               <button onClick={handleUpdate} className="flex-1 py-2 rounded-xl bg-green-600 text-white text-sm font-medium hover:bg-green-500">
-                Aktualizovať
+                {t('common.update')}
               </button>
               <button onClick={dismissUpdate} className="px-4 py-2 rounded-xl text-slate-500 text-sm hover:bg-slate-50">
-                Neskôr
+                {t('common.later')}
               </button>
             </div>
           </motion.div>

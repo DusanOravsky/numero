@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from '../i18n/useTranslation';
 
 const STORAGE_KEY = 'onboarding-completed';
 
@@ -31,6 +32,7 @@ const STEPS: Step[] = [
 ];
 
 export function OnboardingTour() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [visible, setVisible] = useState(false);
@@ -112,7 +114,7 @@ export function OnboardingTour() {
               onClick={skip}
               className="text-sm text-slate-500 hover:text-slate-700"
             >
-              Preskočiť
+              {t('onboarding.skip')}
             </button>
             <button
               onClick={next}

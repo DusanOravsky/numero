@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from '../i18n/useTranslation';
 
-const APP_VERSION = '4.0.0';
+const APP_VERSION = '4.1.0';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;

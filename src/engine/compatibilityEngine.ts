@@ -1,5 +1,6 @@
 import { reduceToSingle } from './numerologyEngine';
 import type { NumerologyResult } from './numerologyEngine';
+import type { Language } from '../store/useStore';
 
 export interface CompatibilityResult {
   overallScore: number;
@@ -44,7 +45,8 @@ function getLifePathScore(lp1: number, lp2: number): number {
 
 export function calculatePartnerCompatibility(
   person1: NumerologyResult,
-  person2: NumerologyResult
+  person2: NumerologyResult,
+  lang: Language = 'sk'
 ): CompatibilityResult {
   const lpScore = getLifePathScore(person1.lifePathNumber, person2.lifePathNumber);
 
@@ -69,35 +71,57 @@ export function calculatePartnerCompatibility(
   const challenges: string[] = [];
   const strengths: string[] = [];
 
-  if (lpScore >= 75) strengths.push(`Silná kompatibilita životných čísel (${person1.lifePathNumber} a ${person2.lifePathNumber})`);
-  else if (lpScore < 55) challenges.push(`Výzva v životných číslach – rôzne životné lekcie`);
+  if (lpScore >= 75) strengths.push(lang === 'en'
+    ? `Strong life path compatibility (${person1.lifePathNumber} and ${person2.lifePathNumber})`
+    : `Silná kompatibilita životných čísel (${person1.lifePathNumber} a ${person2.lifePathNumber})`);
+  else if (lpScore < 55) challenges.push(lang === 'en'
+    ? `Life path challenge – different life lessons`
+    : `Výzva v životných číslach – rôzne životné lekcie`);
 
-  if (sharedPlanes.length > 0) strengths.push(`Zdieľané roviny: ${sharedPlanes.join(', ')}`);
-  if (conflictPlanes.length > 0) challenges.push(`Spoločné prázdne roviny: ${conflictPlanes.join(', ')}`);
+  if (sharedPlanes.length > 0) strengths.push(lang === 'en'
+    ? `Shared planes: ${sharedPlanes.join(', ')}`
+    : `Zdieľané roviny: ${sharedPlanes.join(', ')}`);
+  if (conflictPlanes.length > 0) challenges.push(lang === 'en'
+    ? `Shared empty planes: ${conflictPlanes.join(', ')}`
+    : `Spoločné prázdne roviny: ${conflictPlanes.join(', ')}`);
 
-  if (matchedLangs.length > 0) strengths.push(`Rovnaký jazyk lásky: ${matchedLangs.join(', ')}`);
-  if (mismatchedLangs.length > 0) challenges.push(`Rôzne jazyky lásky – treba komunikovať potreby`);
+  if (matchedLangs.length > 0) strengths.push(lang === 'en'
+    ? `Matching love language: ${matchedLangs.join(', ')}`
+    : `Rovnaký jazyk lásky: ${matchedLangs.join(', ')}`);
+  if (mismatchedLangs.length > 0) challenges.push(lang === 'en'
+    ? `Different love languages – need to communicate needs`
+    : `Rôzne jazyky lásky – treba komunikovať potreby`);
 
   const recommendations: string[] = [
-    `Učte sa jazyk lásky partnera: ${p2Top[0]}`,
-    `Spoločná aktivita pre zdieľanú energiu`,
-    overallScore > 70 ? 'Vaša kompatibilita je silná – budujte na spoločných silách' : 'Rôznosť je dar – učte sa od seba navzájom',
-    'Pravidelne zdieľajte svoje potreby',
+    lang === 'en'
+      ? `Learn your partner's love language: ${p2Top[0]}`
+      : `Učte sa jazyk lásky partnera: ${p2Top[0]}`,
+    lang === 'en'
+      ? `Shared activity for common energy`
+      : `Spoločná aktivita pre zdieľanú energiu`,
+    overallScore > 70
+      ? (lang === 'en' ? 'Your compatibility is strong – build on shared strengths' : 'Vaša kompatibilita je silná – budujte na spoločných silách')
+      : (lang === 'en' ? 'Diversity is a gift – learn from each other' : 'Rôznosť je dar – učte sa od seba navzájom'),
+    lang === 'en'
+      ? 'Regularly share your needs'
+      : 'Pravidelne zdieľajte svoje potreby',
   ];
 
   const rituals: string[] = [
-    'Ranná spoločná afirmácia',
-    'Týždenný check-in: "Čo potrebujem? Čo ti môžem dať?"',
-    'Mesačný rituál vďačnosti za partnera',
-    'Denný moment prítomnosti – 5 minút bez telefónov',
+    lang === 'en' ? 'Morning shared affirmation' : 'Ranná spoločná afirmácia',
+    lang === 'en' ? 'Weekly check-in: "What do I need? What can I give you?"' : 'Týždenný check-in: "Čo potrebujem? Čo ti môžem dať?"',
+    lang === 'en' ? 'Monthly gratitude ritual for your partner' : 'Mesačný rituál vďačnosti za partnera',
+    lang === 'en' ? 'Daily moment of presence – 5 minutes without phones' : 'Denný moment prítomnosti – 5 minút bez telefónov',
   ];
 
   return {
     overallScore,
-    lifePathCompatibility: { score: lpScore, description: getLifePathDescription(person1.lifePathNumber, person2.lifePathNumber) },
+    lifePathCompatibility: { score: lpScore, description: getLifePathDescription(person1.lifePathNumber, person2.lifePathNumber, lang) },
     planeCompatibility: { score: planeScore, sharedPlanes, conflictPlanes },
     loveLanguageMatch: { score: llScore, matched: matchedLangs, mismatched: mismatchedLangs },
-    energeticConnection: { score: energeticScore, description: `Energetické prepojenie: ORV ${person1.orv} a ${person2.orv}` },
+    energeticConnection: { score: energeticScore, description: lang === 'en'
+      ? `Energetic connection: ORV ${person1.orv} and ${person2.orv}`
+      : `Energetické prepojenie: ORV ${person1.orv} a ${person2.orv}` },
     challenges,
     strengths,
     recommendations,
@@ -107,7 +131,8 @@ export function calculatePartnerCompatibility(
 
 export function calculateParentChild(
   parent: NumerologyResult,
-  child: NumerologyResult
+  child: NumerologyResult,
+  lang: Language = 'sk'
 ): ParentChildResult {
   const lpScore = getLifePathScore(parent.lifePathNumber, child.lifePathNumber);
 
@@ -154,59 +179,133 @@ export function calculateParentChild(
 
   const emotionalNeeds: string[] = [];
   const childLP = child.lifePathNumber > 9 ? reduceToSingle(child.lifePathNumber) : child.lifePathNumber;
-  emotionalNeeds.push(`ŽČ dieťaťa = ${child.lifePathNumber}: ${getChildNeed(childLP)}`);
+  emotionalNeeds.push(lang === 'en'
+    ? `Child's LP = ${child.lifePathNumber}: ${getChildNeed(childLP, lang)}`
+    : `ŽČ dieťaťa = ${child.lifePathNumber}: ${getChildNeed(childLP, lang)}`);
   if (child.isolatedNumbers.length > 0) {
-    emotionalNeeds.push(`Izolované čísla (${child.isolatedNumbers.join(', ')}): dieťa potrebuje pomoc s integráciou týchto energií`);
+    emotionalNeeds.push(lang === 'en'
+      ? `Isolated numbers (${child.isolatedNumbers.join(', ')}): child needs help integrating these energies`
+      : `Izolované čísla (${child.isolatedNumbers.join(', ')}): dieťa potrebuje pomoc s integráciou týchto energií`);
   }
   if (child.emptyPlanes.length > 0) {
-    emotionalNeeds.push(`Prázdne roviny dieťaťa: ${child.emptyPlanes.slice(0, 2).join(', ')} – oblasti, kde potrebuje podporu`);
+    emotionalNeeds.push(lang === 'en'
+      ? `Child's empty planes: ${child.emptyPlanes.slice(0, 2).join(', ')} – areas where support is needed`
+      : `Prázdne roviny dieťaťa: ${child.emptyPlanes.slice(0, 2).join(', ')} – oblasti, kde potrebuje podporu`);
   }
   if (parentCanHelp.length > 0) {
-    emotionalNeeds.push(`Rodič môže pomôcť rozvíjať energie čísel: ${parentCanHelp.join(', ')}`);
+    emotionalNeeds.push(lang === 'en'
+      ? `Parent can help develop number energies: ${parentCanHelp.join(', ')}`
+      : `Rodič môže pomôcť rozvíjať energie čísel: ${parentCanHelp.join(', ')}`);
   }
 
   let communicationStyle: string;
-  if (childLP === 1 || childLP === 8) communicationStyle = 'Priama komunikácia, rešpektujte ich nezávislosť. Dajte im možnosť rozhodovať.';
-  else if (childLP === 2 || childLP === 6) communicationStyle = 'Jemná, empatická komunikácia plná potvrdení a bezpečia.';
-  else if (childLP === 3 || childLP === 5) communicationStyle = 'Hravá a kreatívna komunikácia. Nechajte ich objavovať a experimentovať.';
-  else if (childLP === 4 || childLP === 7) communicationStyle = 'Logická, trpezlivá komunikácia. Dajte priestor na otázky a vlastné závery.';
-  else communicationStyle = 'Láskavá komunikácia s rešpektom k ich hlbokej citlivosti a múdrosti.';
+  if (childLP === 1 || childLP === 8) communicationStyle = lang === 'en'
+    ? 'Direct communication, respect their independence. Give them the opportunity to make decisions.'
+    : 'Priama komunikácia, rešpektujte ich nezávislosť. Dajte im možnosť rozhodovať.';
+  else if (childLP === 2 || childLP === 6) communicationStyle = lang === 'en'
+    ? 'Gentle, empathic communication full of affirmation and safety.'
+    : 'Jemná, empatická komunikácia plná potvrdení a bezpečia.';
+  else if (childLP === 3 || childLP === 5) communicationStyle = lang === 'en'
+    ? 'Playful and creative communication. Let them explore and experiment.'
+    : 'Hravá a kreatívna komunikácia. Nechajte ich objavovať a experimentovať.';
+  else if (childLP === 4 || childLP === 7) communicationStyle = lang === 'en'
+    ? 'Logical, patient communication. Give space for questions and own conclusions.'
+    : 'Logická, trpezlivá komunikácia. Dajte priestor na otázky a vlastné závery.';
+  else communicationStyle = lang === 'en'
+    ? 'Loving communication with respect for their deep sensitivity and wisdom.'
+    : 'Láskavá komunikácia s rešpektom k ich hlbokej citlivosti a múdrosti.';
 
   const parentLP = parent.lifePathNumber > 9 ? reduceToSingle(parent.lifePathNumber) : parent.lifePathNumber;
   let parentRole: string;
-  if (parentLP === 1) parentRole = 'Vodca – učíte dieťa nezávislosti a odvahe ísť vlastnou cestou';
-  else if (parentLP === 2) parentRole = 'Diplomat – učíte dieťa empatii, spolupráci a jemnosti';
-  else if (parentLP === 3) parentRole = 'Tvorca – učíte dieťa kreativite a radosti zo sebavyjadrenia';
-  else if (parentLP === 4) parentRole = 'Staviteľ – učíte dieťa disciplíne, poriadku a spoľahlivosti';
-  else if (parentLP === 5) parentRole = 'Slobodný duch – učíte dieťa adaptabilite a otvorenosti zmene';
-  else if (parentLP === 6) parentRole = 'Opatrovník – učíte dieťa láske, zodpovednosti a starostlivosti';
-  else if (parentLP === 7) parentRole = 'Mystik – učíte dieťa premýšľaniu, intuícii a hľadaniu pravdy';
-  else if (parentLP === 8) parentRole = 'Mocnár – učíte dieťa sile, cieľavedomosti a manifestácii';
-  else parentRole = 'Mudrc – učíte dieťa súcitu, múdrosti a službe';
+  if (parentLP === 1) parentRole = lang === 'en'
+    ? 'Leader – you teach the child independence and courage to follow their own path'
+    : 'Vodca – učíte dieťa nezávislosti a odvahe ísť vlastnou cestou';
+  else if (parentLP === 2) parentRole = lang === 'en'
+    ? 'Diplomat – you teach the child empathy, cooperation and gentleness'
+    : 'Diplomat – učíte dieťa empatii, spolupráci a jemnosti';
+  else if (parentLP === 3) parentRole = lang === 'en'
+    ? 'Creator – you teach the child creativity and joy of self-expression'
+    : 'Tvorca – učíte dieťa kreativite a radosti zo sebavyjadrenia';
+  else if (parentLP === 4) parentRole = lang === 'en'
+    ? 'Builder – you teach the child discipline, order and reliability'
+    : 'Staviteľ – učíte dieťa disciplíne, poriadku a spoľahlivosti';
+  else if (parentLP === 5) parentRole = lang === 'en'
+    ? 'Free Spirit – you teach the child adaptability and openness to change'
+    : 'Slobodný duch – učíte dieťa adaptabilite a otvorenosti zmene';
+  else if (parentLP === 6) parentRole = lang === 'en'
+    ? 'Caretaker – you teach the child love, responsibility and caring'
+    : 'Opatrovník – učíte dieťa láske, zodpovednosti a starostlivosti';
+  else if (parentLP === 7) parentRole = lang === 'en'
+    ? 'Mystic – you teach the child reflection, intuition and the search for truth'
+    : 'Mystik – učíte dieťa premýšľaniu, intuícii a hľadaniu pravdy';
+  else if (parentLP === 8) parentRole = lang === 'en'
+    ? 'Ruler – you teach the child strength, determination and manifestation'
+    : 'Mocnár – učíte dieťa sile, cieľavedomosti a manifestácii';
+  else parentRole = lang === 'en'
+    ? 'Sage – you teach the child compassion, wisdom and service'
+    : 'Mudrc – učíte dieťa súcitu, múdrosti a službe';
 
   const boundaries: string[] = [];
-  if (childLP === 5 || childLP === 3) boundaries.push('Sloboda s jasnými rámcami – nie kontrola, ale dohodnuté pravidlá');
-  else if (childLP === 1 || childLP === 8) boundaries.push('Rešpektujte ich potrebu rozhodovať – nedominujte');
-  else boundaries.push('Konzistentné pravidlá vytvárajú bezpečie');
-  boundaries.push(`Duch. dospelosť dieťaťa: ${childVDD} r. – do tohto veku formujete základ`);
-  if (sharedEmptyPlanes.length > 0) boundaries.push(`Spoločné prázdne roviny (${sharedEmptyPlanes.join(', ')}) – v týchto oblastiach sa učíte SPOLU`);
-  boundaries.push('Dovoľte dieťaťu robiť vlastné chyby v bezpečnom priestore');
+  if (childLP === 5 || childLP === 3) boundaries.push(lang === 'en'
+    ? 'Freedom with clear frameworks – not control, but agreed rules'
+    : 'Sloboda s jasnými rámcami – nie kontrola, ale dohodnuté pravidlá');
+  else if (childLP === 1 || childLP === 8) boundaries.push(lang === 'en'
+    ? 'Respect their need to make decisions – do not dominate'
+    : 'Rešpektujte ich potrebu rozhodovať – nedominujte');
+  else boundaries.push(lang === 'en'
+    ? 'Consistent rules create safety'
+    : 'Konzistentné pravidlá vytvárajú bezpečie');
+  boundaries.push(lang === 'en'
+    ? `Child's spiritual maturity: ${childVDD} yrs – until this age you form the foundation`
+    : `Duch. dospelosť dieťaťa: ${childVDD} r. – do tohto veku formujete základ`);
+  if (sharedEmptyPlanes.length > 0) boundaries.push(lang === 'en'
+    ? `Shared empty planes (${sharedEmptyPlanes.join(', ')}) – in these areas you learn TOGETHER`
+    : `Spoločné prázdne roviny (${sharedEmptyPlanes.join(', ')}) – v týchto oblastiach sa učíte SPOLU`);
+  boundaries.push(lang === 'en'
+    ? 'Allow the child to make their own mistakes in a safe space'
+    : 'Dovoľte dieťaťu robiť vlastné chyby v bezpečnom priestore');
 
   const childNeeds: string[] = [
-    `Hlavná potreba (ŽČ ${child.lifePathNumber}): ${getChildNeed(childLP)}`,
-    `Primárny jazyk lásky: ${child.loveLanguages[0]?.language || 'Kvalitný čas'}`,
-    `Cieľ vzťahu rodič-dieťa (ŽČ ${parent.lifePathNumber}+${child.lifePathNumber}=${relationshipGoal}): ${getRelationshipGoalDescription(relationshipGoal)}`,
+    lang === 'en'
+      ? `Primary need (LP ${child.lifePathNumber}): ${getChildNeed(childLP, lang)}`
+      : `Hlavná potreba (ŽČ ${child.lifePathNumber}): ${getChildNeed(childLP, lang)}`,
+    lang === 'en'
+      ? `Primary love language: ${child.loveLanguages[0]?.language || 'Quality time'}`
+      : `Primárny jazyk lásky: ${child.loveLanguages[0]?.language || 'Kvalitný čas'}`,
+    lang === 'en'
+      ? `Parent-child relationship goal (LP ${parent.lifePathNumber}+${child.lifePathNumber}=${relationshipGoal}): ${getRelationshipGoalDescription(relationshipGoal, lang)}`
+      : `Cieľ vzťahu rodič-dieťa (ŽČ ${parent.lifePathNumber}+${child.lifePathNumber}=${relationshipGoal}): ${getRelationshipGoalDescription(relationshipGoal, lang)}`,
   ];
   if (childTeaches.length > 0) {
-    childNeeds.push(`Dieťa vás učí energiám čísel: ${childTeaches.join(', ')}`);
+    childNeeds.push(lang === 'en'
+      ? `The child teaches you number energies: ${childTeaches.join(', ')}`
+      : `Dieťa vás učí energiám čísel: ${childTeaches.join(', ')}`);
   }
 
   const recommendations: string[] = [
-    `Podporujte ${getChildStrength(childLP)}`,
-    sharedFullPlanes.length > 0 ? `Spoločné silné stránky (${sharedFullPlanes.join(', ')}) – budujte na nich aktivity` : 'Hľadajte spoločné záujmy napriek rôznostiam',
-    `${parentRole.split(' – ')[0]}: vaša rola je ${parentRole.split(' – ')[1] || 'byť vzorom'}`,
-    `VDD rodiča: ${parentVDD} r., VDD dieťaťa: ${childVDD} r. – ${parentVDD < childVDD ? 'vy ste duchovne skôr dozreli' : 'dieťa dozreje skôr ako vy'}`,
-    !sameAge ? `Rôzne kozmické veky (${parentAge === 'aquarius' ? 'Vodnár' : 'Ryby'} vs ${childAge === 'aquarius' ? 'Vodnár' : 'Ryby'}) – rôzny prístup k životu` : 'Rovnaký kozmický vek – podobné vnímanie sveta',
+    lang === 'en'
+      ? `Support ${getChildStrength(childLP, lang)}`
+      : `Podporujte ${getChildStrength(childLP, lang)}`,
+    sharedFullPlanes.length > 0
+      ? (lang === 'en'
+        ? `Shared strengths (${sharedFullPlanes.join(', ')}) – build activities on them`
+        : `Spoločné silné stránky (${sharedFullPlanes.join(', ')}) – budujte na nich aktivity`)
+      : (lang === 'en'
+        ? 'Look for shared interests despite differences'
+        : 'Hľadajte spoločné záujmy napriek rôznostiam'),
+    lang === 'en'
+      ? `${parentRole.split(' – ')[0]}: your role is ${parentRole.split(' – ')[1] || 'to be a role model'}`
+      : `${parentRole.split(' – ')[0]}: vaša rola je ${parentRole.split(' – ')[1] || 'byť vzorom'}`,
+    lang === 'en'
+      ? `Parent VDD: ${parentVDD} yrs, Child VDD: ${childVDD} yrs – ${parentVDD < childVDD ? 'you matured spiritually earlier' : 'child will mature earlier than you'}`
+      : `VDD rodiča: ${parentVDD} r., VDD dieťaťa: ${childVDD} r. – ${parentVDD < childVDD ? 'vy ste duchovne skôr dozreli' : 'dieťa dozreje skôr ako vy'}`,
+    !sameAge
+      ? (lang === 'en'
+        ? `Different cosmic ages (${parentAge === 'aquarius' ? 'Aquarius' : 'Pisces'} vs ${childAge === 'aquarius' ? 'Aquarius' : 'Pisces'}) – different approach to life`
+        : `Rôzne kozmické veky (${parentAge === 'aquarius' ? 'Vodnár' : 'Ryby'} vs ${childAge === 'aquarius' ? 'Vodnár' : 'Ryby'}) – rôzny prístup k životu`)
+      : (lang === 'en'
+        ? 'Same cosmic age – similar perception of the world'
+        : 'Rovnaký kozmický vek – podobné vnímanie sveta'),
   ];
 
   return {
@@ -220,7 +319,21 @@ export function calculateParentChild(
   };
 }
 
-function getRelationshipGoalDescription(goal: number): string {
+function getRelationshipGoalDescription(goal: number, lang: Language = 'sk'): string {
+  if (lang === 'en') {
+    const goals: Record<number, string> = {
+      1: 'The relationship aims toward independence and mutual respect of individuality',
+      2: 'The relationship aims toward deep cooperation and emotional connection',
+      3: 'The relationship aims toward joy, communication and shared creativity',
+      4: 'The relationship aims toward building stability and reliable foundations',
+      5: 'The relationship aims toward growth through changes and shared adventures',
+      6: 'The relationship aims toward harmony, love and mutual nurturing',
+      7: 'The relationship aims toward deep understanding and spiritual growth',
+      8: 'The relationship aims toward achieving goals together and abundance',
+      9: 'The relationship aims toward wisdom, forgiveness and service to the greater whole',
+    };
+    return goals[goal] || 'The relationship has a unique purpose';
+  }
   const goals: Record<number, string> = {
     1: 'Vzťah smeruje k nezávislosti a vzájomnému rešpektu individuality',
     2: 'Vzťah smeruje k hlbokej spolupráci a emocionálnemu prepojeniu',
@@ -235,7 +348,18 @@ function getRelationshipGoalDescription(goal: number): string {
   return goals[goal] || 'Vzťah má unikátny cieľ';
 }
 
-function getLifePathDescription(lp1: number, lp2: number): string {
+function getLifePathDescription(lp1: number, lp2: number, lang: Language = 'sk'): string {
+  if (lang === 'en') {
+    const descriptions: Record<string, string> = {
+      '1-5': 'A dynamic couple full of adventure and mutual respect for independence',
+      '2-6': 'Deep emotional connection, mutual care and harmony',
+      '3-5': 'A creative and free relationship full of joy and inspiration',
+      '4-8': 'A strong partnership team for building and achieving goals',
+      '6-9': 'A relationship based on service, love for people and deep understanding',
+    };
+    const key = `${Math.min(lp1, lp2)}-${Math.max(lp1, lp2)}`;
+    return descriptions[key] || `Life paths ${lp1} and ${lp2} bring a unique relationship dynamic`;
+  }
   const descriptions: Record<string, string> = {
     '1-5': 'Dynamický pár plný dobrodružstva a vzájomného rešpektu nezávislosti',
     '2-6': 'Hlboké emocionálne prepojenie, vzájomná starostlivosť a harmónia',
@@ -247,7 +371,21 @@ function getLifePathDescription(lp1: number, lp2: number): string {
   return descriptions[key] || `Životné čísla ${lp1} a ${lp2} prinášajú unikátnu dynamiku vzťahu`;
 }
 
-function getChildNeed(lp: number): string {
+function getChildNeed(lp: number, lang: Language = 'sk'): string {
+  if (lang === 'en') {
+    const needs: Record<number, string> = {
+      1: 'Independence and space to lead',
+      2: 'Safety and emotional closeness',
+      3: 'Creativity and self-expression',
+      4: 'Stability and clear rules',
+      5: 'Freedom and new experiences',
+      6: 'Harmony and family connection',
+      7: 'Quiet and space for reflection',
+      8: 'Recognition and opportunity to achieve',
+      9: 'Meaningfulness and helping others',
+    };
+    return needs[lp] || 'Love and acceptance';
+  }
   const needs: Record<number, string> = {
     1: 'Nezávislosť a priestor na vedenie',
     2: 'Bezpečie a emocionálna blízkosť',
@@ -262,7 +400,21 @@ function getChildNeed(lp: number): string {
   return needs[lp] || 'Láska a prijatie';
 }
 
-function getChildStrength(lp: number): string {
+function getChildStrength(lp: number, lang: Language = 'sk'): string {
+  if (lang === 'en') {
+    const strengths: Record<number, string> = {
+      1: 'leadership abilities and independence',
+      2: 'sensitivity and ability to cooperate',
+      3: 'creativity and joy of expression',
+      4: 'systematic thinking and reliability',
+      5: 'adaptability and curiosity',
+      6: 'caring nature and sense of beauty',
+      7: 'analytical thinking and intuition',
+      8: 'ambition and ability to organize',
+      9: 'empathy and wisdom',
+    };
+    return strengths[lp] || 'unique gifts';
+  }
   const strengths: Record<number, string> = {
     1: 'vodcovské schopnosti a nezávislosť',
     2: 'citlivosť a schopnosť spolupracovať',

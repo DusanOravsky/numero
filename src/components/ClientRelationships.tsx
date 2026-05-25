@@ -82,7 +82,7 @@ export function ClientRelationships({
           const partner = clients.find(c => c.id === client.partnerId);
           if (!partner) return null;
           const partnerNum = calculateFullNumerology(partner.birthDay, partner.birthMonth, partner.birthYear);
-          const compat = calculatePartnerCompatibility(numerology, partnerNum);
+          const compat = calculatePartnerCompatibility(numerology, partnerNum, language);
           const partnerHD = calculateHumanDesign(partner.birthDay, partner.birthMonth, partner.birthYear, partner.birthHour ?? 12, partner.birthMinute ?? 0);
           return (
             <div className="space-y-3">
@@ -162,7 +162,7 @@ export function ClientRelationships({
           const child = clients.find(c => c.id === childId);
           if (!child) return null;
           const childNum = calculateFullNumerology(child.birthDay, child.birthMonth, child.birthYear);
-          const pcResult = calculateParentChild(numerology, childNum);
+          const pcResult = calculateParentChild(numerology, childNum, language);
           return (
             <div key={childId} className="space-y-3">
               <GlassCard glow>

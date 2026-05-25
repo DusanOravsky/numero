@@ -358,7 +358,7 @@ export function RelationshipsPage() {
     if (saved?.p1 && saved?.p2 && isPersonValid(saved.p1) && isPersonValid(saved.p2)) {
       const p1 = calculateFullNumerology(parseInt(saved.p1.day), parseInt(saved.p1.month), parseInt(saved.p1.year));
       const p2 = calculateFullNumerology(parseInt(saved.p2.day), parseInt(saved.p2.month), parseInt(saved.p2.year));
-      return calculatePartnerCompatibility(p1, p2);
+      return calculatePartnerCompatibility(p1, p2, useStore.getState().language);
     }
     return null;
   });
@@ -367,9 +367,10 @@ export function RelationshipsPage() {
       const validChildren = savedFamily.children.filter(isPersonValid);
       if (validChildren.length === 0) return null;
       const parentNum = calculateFullNumerology(parseInt(savedFamily.parent.day), parseInt(savedFamily.parent.month), parseInt(savedFamily.parent.year));
+      const initFamilyLang = useStore.getState().language;
       return validChildren.map((child: PersonInput) => {
         const childNum = calculateFullNumerology(parseInt(child.day), parseInt(child.month), parseInt(child.year));
-        return { child, result: calculateParentChild(parentNum, childNum) };
+        return { child, result: calculateParentChild(parentNum, childNum, initFamilyLang) };
       });
     }
     return null;
@@ -415,23 +416,24 @@ export function RelationshipsPage() {
     if (!savedConst?.father || !savedConst?.mother || !isPersonValid(savedConst.father) || !isPersonValid(savedConst.mother)) return null;
     const validKids = (savedConst.children || []).filter(isPersonValid);
     if (validKids.length === 0) return null;
+    const initConstLang = useStore.getState().language;
     const fatherNum = calculateFullNumerology(parseInt(savedConst.father.day), parseInt(savedConst.father.month), parseInt(savedConst.father.year));
     const motherNum = calculateFullNumerology(parseInt(savedConst.mother.day), parseInt(savedConst.mother.month), parseInt(savedConst.mother.year));
-    const partnerCompat = calculatePartnerCompatibility(fatherNum, motherNum);
+    const partnerCompat = calculatePartnerCompatibility(fatherNum, motherNum, initConstLang);
     const fatherChildren = validKids.map((child: PersonInput) => {
       const childNum = calculateFullNumerology(parseInt(child.day), parseInt(child.month), parseInt(child.year));
-      return { child, result: calculateParentChild(fatherNum, childNum) };
+      return { child, result: calculateParentChild(fatherNum, childNum, initConstLang) };
     });
     const motherChildren = validKids.map((child: PersonInput) => {
       const childNum = calculateFullNumerology(parseInt(child.day), parseInt(child.month), parseInt(child.year));
-      return { child, result: calculateParentChild(motherNum, childNum) };
+      return { child, result: calculateParentChild(motherNum, childNum, initConstLang) };
     });
     const siblingCompats: { child1: PersonInput; child2: PersonInput; compat: CompatibilityResult }[] = [];
     for (let i = 0; i < validKids.length; i++) {
       for (let j = i + 1; j < validKids.length; j++) {
         const n1 = calculateFullNumerology(parseInt(validKids[i].day), parseInt(validKids[i].month), parseInt(validKids[i].year));
         const n2 = calculateFullNumerology(parseInt(validKids[j].day), parseInt(validKids[j].month), parseInt(validKids[j].year));
-        siblingCompats.push({ child1: validKids[i], child2: validKids[j], compat: calculatePartnerCompatibility(n1, n2) });
+        siblingCompats.push({ child1: validKids[i], child2: validKids[j], compat: calculatePartnerCompatibility(n1, n2, initConstLang) });
       }
     }
     const familyNumbers = [fatherNum.lifePathNumber, motherNum.lifePathNumber, ...validKids.map((k: PersonInput) => calculateFullNumerology(parseInt(k.day), parseInt(k.month), parseInt(k.year)).lifePathNumber)];
@@ -443,18 +445,19 @@ export function RelationshipsPage() {
     const validKids = constChildren.filter(isPersonValid);
     if (validKids.length === 0) return;
 
+    const currentLangConst = useStore.getState().language;
     const fatherNum = calculateFullNumerology(parseInt(constFather.day), parseInt(constFather.month), parseInt(constFather.year));
     const motherNum = calculateFullNumerology(parseInt(constMother.day), parseInt(constMother.month), parseInt(constMother.year));
-    const partnerCompat = calculatePartnerCompatibility(fatherNum, motherNum);
+    const partnerCompat = calculatePartnerCompatibility(fatherNum, motherNum, currentLangConst);
 
     const fatherChildren = validKids.map(child => {
       const childNum = calculateFullNumerology(parseInt(child.day), parseInt(child.month), parseInt(child.year));
-      return { child, result: calculateParentChild(fatherNum, childNum) };
+      return { child, result: calculateParentChild(fatherNum, childNum, currentLangConst) };
     });
 
     const motherChildren = validKids.map(child => {
       const childNum = calculateFullNumerology(parseInt(child.day), parseInt(child.month), parseInt(child.year));
-      return { child, result: calculateParentChild(motherNum, childNum) };
+      return { child, result: calculateParentChild(motherNum, childNum, currentLangConst) };
     });
 
     const siblingCompats: { child1: PersonInput; child2: PersonInput; compat: CompatibilityResult }[] = [];
@@ -462,7 +465,7 @@ export function RelationshipsPage() {
       for (let j = i + 1; j < validKids.length; j++) {
         const n1 = calculateFullNumerology(parseInt(validKids[i].day), parseInt(validKids[i].month), parseInt(validKids[i].year));
         const n2 = calculateFullNumerology(parseInt(validKids[j].day), parseInt(validKids[j].month), parseInt(validKids[j].year));
-        siblingCompats.push({ child1: validKids[i], child2: validKids[j], compat: calculatePartnerCompatibility(n1, n2) });
+        siblingCompats.push({ child1: validKids[i], child2: validKids[j], compat: calculatePartnerCompatibility(n1, n2, currentLangConst) });
       }
     }
 
@@ -480,7 +483,7 @@ export function RelationshipsPage() {
     if (!isPersonValid(partner1) || !isPersonValid(partner2)) return;
     const p1 = calculateFullNumerology(parseInt(partner1.day), parseInt(partner1.month), parseInt(partner1.year));
     const p2 = calculateFullNumerology(parseInt(partner2.day), parseInt(partner2.month), parseInt(partner2.year));
-    setCompatibility(calculatePartnerCompatibility(p1, p2));
+    setCompatibility(calculatePartnerCompatibility(p1, p2, useStore.getState().language));
     localStorage.setItem('relationships-partners', JSON.stringify({ p1: partner1, p2: partner2 }));
   };
 
@@ -511,10 +514,11 @@ export function RelationshipsPage() {
     const validChildren = children.filter(isPersonValid);
     if (validChildren.length === 0) return;
 
+    const currentLangFamily = useStore.getState().language;
     const parentNum = calculateFullNumerology(parseInt(parent.day), parseInt(parent.month), parseInt(parent.year));
     const results = validChildren.map(child => {
       const childNum = calculateFullNumerology(parseInt(child.day), parseInt(child.month), parseInt(child.year));
-      return { child, result: calculateParentChild(parentNum, childNum) };
+      return { child, result: calculateParentChild(parentNum, childNum, currentLangFamily) };
     });
     setFamilyResults(results);
     localStorage.setItem('relationships-family', JSON.stringify({ parent, children: validChildren }));
@@ -1288,7 +1292,7 @@ export function RelationshipsPage() {
                 familyResults.slice(i + 1).map(({ child: c2 }, j) => {
                   const n1 = calculateFullNumerology(parseInt(c1.day), parseInt(c1.month), parseInt(c1.year));
                   const n2 = calculateFullNumerology(parseInt(c2.day), parseInt(c2.month), parseInt(c2.year));
-                  const compat = calculatePartnerCompatibility(n1, n2);
+                  const compat = calculatePartnerCompatibility(n1, n2, language);
                   const c1City = findCity(c1.birthPlace);
                   const c2City = findCity(c2.birthPlace);
                   const c1Tz = getTimezoneFromCoords(c1City?.lat ?? 48.15, c1City?.lon ?? 17.11);

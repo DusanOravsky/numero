@@ -753,7 +753,7 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
                 const partner = clients.find(c => c.id === client.partnerId);
                 if (partner) {
                   const partnerNum = calculateFullNumerology(partner.birthDay, partner.birthMonth, partner.birthYear);
-                  const compat = calculatePartnerCompatibility(numerology, partnerNum);
+                  const compat = calculatePartnerCompatibility(numerology, partnerNum, language);
                   addSection(language === 'sk' ? 'PARTNERSKÁ KOMPATIBILITA' : 'PARTNER COMPATIBILITY', 'rose');
                   addBoldLine(language === 'sk'
                     ? `${client.name} & ${partner.name} — Celkové skóre: ${compat.overallScore}%`

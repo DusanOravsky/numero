@@ -28,6 +28,9 @@ import { getOdvDescription } from '../data/odvDescriptions';
 import { useTranslation } from '../i18n/useTranslation';
 import { getGridCount } from '../engine/numerologyEngine';
 import lifePathsData from '../data/lifePaths';
+import { getLifePath } from '../data/lifePaths';
+import { getLoveLanguageName } from '../data/orvDescriptions';
+import { displayName, ZODIAC_DISPLAY, PLANET_DISPLAY, ELEMENT_DISPLAY, QUALITY_DISPLAY, HD_TYPE_DISPLAY, HD_AUTHORITY_DISPLAY, HD_CENTER_DISPLAY, CHINESE_ANIMAL_DISPLAY, CHINESE_ELEMENT_DISPLAY, CHAKRA_NAME_DISPLAY } from '../i18n/entityNames';
 import { useStore } from '../store/useStore';
 
 const lifePaths = lifePathsData as Record<string, { title: string; keywords: string[]; description: string; gift: string; shadow: string; recommendation?: string }>;
@@ -62,9 +65,9 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
 
   return (
     <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8 }}>
-      <h2 className="font-serif text-xl font-bold text-slate-300 mb-3">Kompletný profil</h2>
+      <h2 className="font-serif text-xl font-bold text-slate-300 mb-3">{language === 'sk' ? 'Kompletný profil' : 'Complete Profile'}</h2>
       <GlassCard>
-        <p className="text-sm text-slate-400 mb-4">Exportujte kompletný profil klienta so všetkými výsledkami.</p>
+        <p className="text-sm text-slate-400 mb-4">{language === 'sk' ? 'Exportujte kompletný profil klienta so všetkými výsledkami.' : 'Export the complete client profile with all results.'}</p>
         <div className="flex gap-3 flex-wrap">
         <button
           onClick={() => {
@@ -78,8 +81,9 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
               doc.addFont('Roboto-Regular.ttf', 'Roboto', 'normal');
               doc.addFont('Roboto-Bold.ttf', 'Roboto', 'bold');
               const lpKey = lifePaths[String(numerology.lifePathNumber)] ? String(numerology.lifePathNumber) : String(reduceToSingle(numerology.lifePathNumber));
-              const lpTitle = lifePaths[lpKey]?.title || '';
-              const lpDesc = lifePaths[lpKey]?.description || '';
+              const lpData = getLifePath(lpKey, language);
+              const lpTitle = lpData?.title || '';
+              const lpDesc = lpData?.description || '';
               let y = 20;
               let pageNum = 1;
 
@@ -186,14 +190,14 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
               doc.setFontSize(10);
               doc.setFont('Roboto', 'normal');
               doc.setTextColor(120, 120, 130);
-              doc.text('Integrálna mapa bytia', 105, 50, { align: 'center' });
+              doc.text(language === 'sk' ? 'Integrálna mapa bytia' : 'Integral Map of Being', 105, 50, { align: 'center' });
               doc.setTextColor(0, 0, 0);
 
               // Hlavny nadpis s shadow efektom
               doc.setFontSize(28);
               doc.setFont('Roboto', 'bold');
               doc.setTextColor(79, 70, 229);
-              doc.text('INTEGRÁLNY PROFIL', 105, 80, { align: 'center' });
+              doc.text(language === 'sk' ? 'INTEGRÁLNY PROFIL' : 'INTEGRAL PROFILE', 105, 80, { align: 'center' });
               doc.setTextColor(0, 0, 0);
 
               // Dvojitá čiara pod nadpisom
@@ -237,14 +241,14 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
               doc.setFontSize(11);
               doc.setFont('Roboto', 'normal');
               doc.setTextColor(79, 70, 229);
-              doc.text(`Životné číslo — ${lpTitle}`, 105, 188, { align: 'center' });
+              doc.text(language === 'sk' ? `Životné číslo — ${lpTitle}` : `Life Path Number — ${lpTitle}`, 105, 188, { align: 'center' });
               doc.setTextColor(0, 0, 0);
               doc.setFont('Roboto', 'normal');
 
               // Spodok titulnej strany
               doc.setFontSize(9);
               doc.setTextColor(150, 150, 150);
-              doc.text(new Date().toLocaleDateString('sk-SK'), 105, 270, { align: 'center' });
+              doc.text(new Date().toLocaleDateString(language === 'sk' ? 'sk-SK' : 'en-GB'), 105, 270, { align: 'center' });
               doc.setTextColor(0, 0, 0);
 
               addPageNumber();
@@ -253,8 +257,10 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
               y = 20;
 
               // === NUMEROLOGIA ===
-              addSection('NUMEROLÓGIA', 'indigo');
-              addBoldLine(`Životné číslo: ${numerology.lifePathNumber} z ${numerology.lifePathFrom} — ${lpTitle}`);
+              addSection(language === 'sk' ? 'NUMEROLÓGIA' : 'NUMEROLOGY', 'indigo');
+              addBoldLine(language === 'sk'
+                ? `Životné číslo: ${numerology.lifePathNumber} z ${numerology.lifePathFrom} — ${lpTitle}`
+                : `Life Path Number: ${numerology.lifePathNumber} from ${numerology.lifePathFrom} — ${lpTitle}`);
               addLine(lpDesc);
               addSpace();
 
@@ -264,22 +270,31 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
               const charZeros = Object.entries(charCounts).filter(([, c]) => c === 0).map(([n]) => Number(n));
               const charHigh = Object.entries(charCounts).filter(([, c]) => c >= 3).map(([n, c]) => `${n} (${c}×)`);
               addInterpretation(
-                `Ako čítať: Tvoje životné číslo ${numerology.lifePathNumber} (${lpTitle}) je tvoja „červená niť". ` +
-                (charZeros.length > 0 ? `Chýbajúce čísla (${charZeros.join(', ')}) sú smery rastu — oblasti na vedomé rozvíjanie. ` : '') +
-                (charHigh.length > 0 ? `Silné energie (${charHigh.join(', ')}) sú tvoje dary, ale v nadbytku aj výzvy. ` : '') +
-                (numerology.isolatedNumbers.length > 0 ? `Izolované čísla (${numerology.isolatedNumbers.join(', ')}) majú blokovanú energiu — vyžadujú integráciu.` : '')
+                language === 'sk'
+                ? `Ako čítať: Tvoje životné číslo ${numerology.lifePathNumber} (${lpTitle}) je tvoja „červená niť". ` +
+                  (charZeros.length > 0 ? `Chýbajúce čísla (${charZeros.join(', ')}) sú smery rastu — oblasti na vedomé rozvíjanie. ` : '') +
+                  (charHigh.length > 0 ? `Silné energie (${charHigh.join(', ')}) sú tvoje dary, ale v nadbytku aj výzvy. ` : '') +
+                  (numerology.isolatedNumbers.length > 0 ? `Izolované čísla (${numerology.isolatedNumbers.join(', ')}) majú blokovanú energiu — vyžadujú integráciu.` : '')
+                : `How to read: Your life path number ${numerology.lifePathNumber} (${lpTitle}) is your "red thread". ` +
+                  (charZeros.length > 0 ? `Missing numbers (${charZeros.join(', ')}) are growth directions — areas for conscious development. ` : '') +
+                  (charHigh.length > 0 ? `Strong energies (${charHigh.join(', ')}) are your gifts, but in excess also challenges. ` : '') +
+                  (numerology.isolatedNumbers.length > 0 ? `Isolated numbers (${numerology.isolatedNumbers.join(', ')}) have blocked energy — they require integration.` : '')
               );
               addSpace();
               addLine(`ORV: ${numerology.orv} | OMV: ${numerology.omv} | ODV: ${numerology.odv}`);
-              addLine(`VDD: ${numerology.vdd} rokov`);
-              addLine(`Plné roviny: ${numerology.fullPlanes.join(', ') || 'žiadne'}`);
-              addLine(`Prázdne roviny: ${numerology.emptyPlanes.join(', ') || 'žiadne'}`);
-              if (numerology.isolatedNumbers.length > 0) addLine(`Izolované čísla: ${numerology.isolatedNumbers.join(', ')}`);
+              addLine(language === 'sk' ? `VDD: ${numerology.vdd} rokov` : `VDD: ${numerology.vdd} years`);
+              addLine(language === 'sk'
+                ? `Plné roviny: ${numerology.fullPlanes.join(', ') || 'žiadne'}`
+                : `Full planes: ${numerology.fullPlanes.join(', ') || 'none'}`);
+              addLine(language === 'sk'
+                ? `Prázdne roviny: ${numerology.emptyPlanes.join(', ') || 'žiadne'}`
+                : `Empty planes: ${numerology.emptyPlanes.join(', ') || 'none'}`);
+              if (numerology.isolatedNumbers.length > 0) addLine(language === 'sk' ? `Izolované čísla: ${numerology.isolatedNumbers.join(', ')}` : `Isolated numbers: ${numerology.isolatedNumbers.join(', ')}`);
               addSpace();
 
               // Vizuálna mriežka 3×3 (Charakterová)
               checkPage(50);
-              addBoldLine('Mriežka 3×3 (Charakterová):');
+              addBoldLine(language === 'sk' ? 'Mriežka 3×3 (Charakterová):' : '3×3 Grid (Character):');
               const gridSize = 14;
               const gridStartX = 14;
               const gridStartY = y + 2;
@@ -316,32 +331,47 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
               y += gridSize * 3 + 6;
               addSpace();
 
-              addBoldLine('Karmické cykly:');
+              addBoldLine(language === 'sk' ? 'Karmické cykly:' : 'Karmic Cycles:');
               numerology.karmicTriangles.forEach(t => {
-                addLine(`  ${t.label}: ${t.fromAge}–${t.toAge || '...'} r. | Vibrácia ${t.vibration} — ${getCycleVibrationDescription(t.vibration, language) || ''}`);
+                addLine(language === 'sk'
+                  ? `  ${t.label}: ${t.fromAge}–${t.toAge || '...'} r. | Vibrácia ${t.vibration} — ${getCycleVibrationDescription(t.vibration, language) || ''}`
+                  : `  ${t.label}: ${t.fromAge}–${t.toAge || '...'} yrs | Vibration ${t.vibration} — ${getCycleVibrationDescription(t.vibration, language) || ''}`);
               });
               addSpace();
 
               // === VÝVOJOVÁ NUMEROLÓGIA (Lívia / Červenák) ===
               const devNum = calculateDevelopmentalNumerology(client.birthDay, client.birthMonth, client.birthYear);
-              addSection('VÝVOJOVÁ NUMEROLÓGIA', 'amber');
-              addLine(`D+M = ${devNum.dayMonthSum} | R = ${devNum.yearSum}${devNum.isPost2000 ? ' (rok ≥ 2000: 20 + zvyšok)' : ''}`);
-              addBoldLine('Karmické cykly (zakrúžkované čísla):');
-              const cycleNames = [
+              addSection(language === 'sk' ? 'VÝVOJOVÁ NUMEROLÓGIA' : 'DEVELOPMENTAL NUMEROLOGY', 'amber');
+              addLine(language === 'sk'
+                ? `D+M = ${devNum.dayMonthSum} | R = ${devNum.yearSum}${devNum.isPost2000 ? ' (rok ≥ 2000: 20 + zvyšok)' : ''}`
+                : `D+M = ${devNum.dayMonthSum} | Y = ${devNum.yearSum}${devNum.isPost2000 ? ' (year ≥ 2000: 20 + remainder)' : ''}`);
+              addBoldLine(language === 'sk' ? 'Karmické cykly (zakrúžkované čísla):' : 'Karmic Cycles (circled numbers):');
+              const cycleNames = language === 'sk' ? [
                 'K1 — Psychická stabilita (0–30 r.)',
                 'K2 — Materiálna stabilita (30–50 r.)',
                 'K3 — Životné poslanie ★ (50+ r., ale rezonuje celý život)',
                 'K4 — Detské sny (neskorší vek)',
+              ] : [
+                'K1 — Psychological stability (0–30 yrs)',
+                'K2 — Material stability (30–50 yrs)',
+                'K3 — Life mission ★ (50+ yrs, but resonates whole life)',
+                'K4 — Childhood dreams (later age)',
               ];
               devNum.circled.forEach((c, idx) => {
                 addLine(`  ${cycleNames[idx]}: ${c.value}  (${c.formula})`);
               });
               addSpace();
               if (devNum.oneCount > 0) {
-                addBoldLine(`Polarita ega: ${devNum.egoPolarity === 'masculine' ? 'Mužské ego' : 'Ženské ego'} (${devNum.oneCount}× číslo 1)`);
-                addLine(devNum.egoPolarity === 'masculine'
-                  ? 'Nepárny počet jednotiek — energia dávania, vymedzovania, akcie.'
-                  : 'Párny počet jednotiek — energia prijímania, otvorenia, trpezlivosti.');
+                addBoldLine(language === 'sk'
+                  ? `Polarita ega: ${devNum.egoPolarity === 'masculine' ? 'Mužské ego' : 'Ženské ego'} (${devNum.oneCount}× číslo 1)`
+                  : `Ego polarity: ${devNum.egoPolarity === 'masculine' ? 'Masculine ego' : 'Feminine ego'} (${devNum.oneCount}× number 1)`);
+                addLine(language === 'sk'
+                  ? (devNum.egoPolarity === 'masculine'
+                    ? 'Nepárny počet jednotiek — energia dávania, vymedzovania, akcie.'
+                    : 'Párny počet jednotiek — energia prijímania, otvorenia, trpezlivosti.')
+                  : (devNum.egoPolarity === 'masculine'
+                    ? 'Odd count of ones — energy of giving, setting boundaries, action.'
+                    : 'Even count of ones — energy of receiving, openness, patience.'));
               }
               addSpace();
 
@@ -350,10 +380,15 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
               const devHigh = Object.entries(devNum.counts).filter(([, c]) => c >= 3).map(([n, c]) => `${n} (${c}×)`);
               const k3Val = devNum.circled[2]?.value;
               addInterpretation(
-                `Ako čítať: K3 = ${k3Val} je tvoje životné poslanie — hlavná téma, pre ktorú si tu. ` +
-                (devZeros.length > 0 ? `Nuly (${devZeros.join(', ')}) sú životné úlohy — nie deficity, ale lekcie. ` : '') +
-                (devHigh.length > 0 ? `Silné energie (${devHigh.join(', ')}) — ak ich vieš nasmerovať, sú dary. ` : '') +
-                `Cykly sa aktivujú postupne: K1 do 30 r., K2 do 50 r., K3 celý život (naplno po 50-ke), K4 neskorší vek.`
+                language === 'sk'
+                ? `Ako čítať: K3 = ${k3Val} je tvoje životné poslanie — hlavná téma, pre ktorú si tu. ` +
+                  (devZeros.length > 0 ? `Nuly (${devZeros.join(', ')}) sú životné úlohy — nie deficity, ale lekcie. ` : '') +
+                  (devHigh.length > 0 ? `Silné energie (${devHigh.join(', ')}) — ak ich vieš nasmerovať, sú dary. ` : '') +
+                  `Cykly sa aktivujú postupne: K1 do 30 r., K2 do 50 r., K3 celý život (naplno po 50-ke), K4 neskorší vek.`
+                : `How to read: K3 = ${k3Val} is your life mission — the main theme you are here for. ` +
+                  (devZeros.length > 0 ? `Zeros (${devZeros.join(', ')}) are life tasks — not deficits, but lessons. ` : '') +
+                  (devHigh.length > 0 ? `Strong energies (${devHigh.join(', ')}) — if you can channel them, they are gifts. ` : '') +
+                  `Cycles activate progressively: K1 until 30 yrs, K2 until 50 yrs, K3 whole life (fully after 50), K4 later age.`
               );
               addSpace();
 
@@ -362,43 +397,60 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
               const earthGate = humanDesign.personalityGates.find(g => g.planet === 'Zem')?.gate;
               const topGeneKeys = [sunGate, earthGate].filter((g): g is number => g !== undefined).map(g => getGeneKeyByGate(g, language)).filter(Boolean);
               if (topGeneKeys.length > 0) {
-                addSection('GÉNOVÉ KĽÚČE', 'purple');
+                addSection(language === 'sk' ? 'GÉNOVÉ KĽÚČE' : 'GENE KEYS', 'purple');
                 addInterpretation(
-                  'Ako čítať: Každá brána má 3 frekvencie — Tieň (pod tlakom), Dar (vedomá voľba), Siddhi (najvyššia forma). ' +
-                  'Rozpoznaj tieň bez súdenia → vedome prejdi k daru. Siddhi príde samo.'
+                  language === 'sk'
+                  ? 'Ako čítať: Každá brána má 3 frekvencie — Tieň (pod tlakom), Dar (vedomá voľba), Siddhi (najvyššia forma). ' +
+                    'Rozpoznaj tieň bez súdenia → vedome prejdi k daru. Siddhi príde samo.'
+                  : 'How to read: Each gate has 3 frequencies — Shadow (under pressure), Gift (conscious choice), Siddhi (highest form). ' +
+                    'Recognize the shadow without judgment → consciously move to the gift. Siddhi comes on its own.'
                 );
                 addSpace();
                 topGeneKeys.forEach(gk => {
                   if (!gk) return;
-                  addBoldLine(`Brána ${gk.gate}:`);
-                  addLine(`  Tieň: ${gk.shadow} — ${gk.shadowDescription}`);
-                  addLine(`  Dar: ${gk.gift} — ${gk.giftDescription}`);
+                  addBoldLine(language === 'sk' ? `Brána ${gk.gate}:` : `Gate ${gk.gate}:`);
+                  addLine(language === 'sk' ? `  Tieň: ${gk.shadow} — ${gk.shadowDescription}` : `  Shadow: ${gk.shadow} — ${gk.shadowDescription}`);
+                  addLine(language === 'sk' ? `  Dar: ${gk.gift} — ${gk.giftDescription}` : `  Gift: ${gk.gift} — ${gk.giftDescription}`);
                   addLine(`  Siddhi: ${gk.siddhi}`);
-                  if (gk.nlpTechnique) addLine(`  NLP technika: ${gk.nlpTechnique} — ${gk.nlpDescription}`);
+                  if (gk.nlpTechnique) addLine(language === 'sk' ? `  NLP technika: ${gk.nlpTechnique} — ${gk.nlpDescription}` : `  NLP technique: ${gk.nlpTechnique} — ${gk.nlpDescription}`);
                   addSpace();
                 });
               }
 
               // === ASTROLÓGIA ===
-              addSection('ASTROLÓGIA', 'cyan');
-              addLine(`Slnko: ${astrology.sunSign.name} (${astrology.sunSign.element}) — ${getPlanetSignDescription('Slnko', astrology.sunSign.name, language) || ''}`);
-              addLine(`Mesiac: ${astrology.moonSign.name} (${astrology.moonSign.element}) — ${getPlanetSignDescription('Mesiac', astrology.moonSign.name, language) || ''}`);
-              addLine(`Ascendent: ${astrology.ascendant.name} (${astrology.ascendant.element})`);
-              addLine(`Dominantný živel: ${astrology.dominantElement} | Kvalita: ${astrology.dominantQuality}`);
+              addSection(language === 'sk' ? 'ASTROLÓGIA' : 'ASTROLOGY', 'cyan');
+              const sunSignName = displayName(ZODIAC_DISPLAY, astrology.sunSign.name, language);
+              const moonSignName = displayName(ZODIAC_DISPLAY, astrology.moonSign.name, language);
+              const ascSignName = displayName(ZODIAC_DISPLAY, astrology.ascendant.name, language);
+              const northNodeName = displayName(ZODIAC_DISPLAY, astrology.northNode.name, language);
+              const domElement = displayName(ELEMENT_DISPLAY, astrology.dominantElement, language);
+              const domQuality = displayName(QUALITY_DISPLAY, astrology.dominantQuality, language);
+              addLine(`${displayName(PLANET_DISPLAY, 'Slnko', language)}: ${sunSignName} (${displayName(ELEMENT_DISPLAY, astrology.sunSign.element, language)}) — ${getPlanetSignDescription('Slnko', astrology.sunSign.name, language) || ''}`);
+              addLine(`${displayName(PLANET_DISPLAY, 'Mesiac', language)}: ${moonSignName} (${displayName(ELEMENT_DISPLAY, astrology.moonSign.element, language)}) — ${getPlanetSignDescription('Mesiac', astrology.moonSign.name, language) || ''}`);
+              addLine(`${language === 'sk' ? 'Ascendent' : 'Ascendant'}: ${ascSignName} (${displayName(ELEMENT_DISPLAY, astrology.ascendant.element, language)})`);
+              addLine(language === 'sk'
+                ? `Dominantný živel: ${domElement} | Kvalita: ${domQuality}`
+                : `Dominant element: ${domElement} | Quality: ${domQuality}`);
               addSpace();
 
               addInterpretation(
-                `Ako čítať: Slnko v ${astrology.sunSign.name} = tvoja podstata (kto si). ` +
-                `Mesiac v ${astrology.moonSign.name} = tvoje emócie (čo cítiš). ` +
-                `Ascendent v ${astrology.ascendant.name} = ako ťa vidia iní. ` +
-                `Sev. uzol v ${astrology.northNode.name} = kam smeruješ (životná evolúcia). ` +
-                `Začni od týchto 4 bodov — to je 80% toho, čo potrebuješ vedieť.`
+                language === 'sk'
+                ? `Ako čítať: Slnko v ${sunSignName} = tvoja podstata (kto si). ` +
+                  `Mesiac v ${moonSignName} = tvoje emócie (čo cítiš). ` +
+                  `Ascendent v ${ascSignName} = ako ťa vidia iní. ` +
+                  `Sev. uzol v ${northNodeName} = kam smeruješ (životná evolúcia). ` +
+                  `Začni od týchto 4 bodov — to je 80% toho, čo potrebuješ vedieť.`
+                : `How to read: Sun in ${sunSignName} = your essence (who you are). ` +
+                  `Moon in ${moonSignName} = your emotions (what you feel). ` +
+                  `Ascendant in ${ascSignName} = how others see you. ` +
+                  `North Node in ${northNodeName} = where you're heading (life evolution). ` +
+                  `Start with these 4 points — that's 80% of what you need to know.`
               );
               addSpace();
 
               // Vizuálne natálne koliesko (zjednodušené)
               checkPage(70);
-              addBoldLine('Natálne koliesko:');
+              addBoldLine(language === 'sk' ? 'Natálne koliesko:' : 'Natal Chart:');
               const wheelCx = 65;
               const wheelCy = y + 32;
               const wheelR = 28;
@@ -441,34 +493,52 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
               doc.setFontSize(7);
               const legendX = wheelCx + wheelR + 10;
               astrology.planets.slice(0, 7).forEach((p, i) => {
-                doc.text(`${p.symbol} ${p.sign.name} ${Math.floor(p.degree)}°`, legendX, wheelCy - 18 + i * 5);
+                doc.text(`${p.symbol} ${displayName(ZODIAC_DISPLAY, p.sign.name, language)} ${Math.floor(p.degree)}°`, legendX, wheelCy - 18 + i * 5);
               });
               y = wheelCy + wheelR + 8;
               addSpace();
 
               // === HUMAN DESIGN ===
               addSection('HUMAN DESIGN', 'purple');
-              addBoldLine(`Typ: ${humanDesign.type} | Autorita: ${humanDesign.authority}`);
-              addLine(`Stratégia: ${humanDesign.strategy}`);
-              addLine(`Profil: ${humanDesign.profile.line1}/${humanDesign.profile.line2} — ${humanDesign.profile.name}: ${humanDesign.profile.description}`);
-              addLine(`Inkarnačný kríž: ${humanDesign.incarnationCross}`);
-              addLine(`Definované centrá: ${humanDesign.definedCenters.join(', ')}`);
-              addLine(`Otvorené centrá: ${humanDesign.openCenters.join(', ')}`);
+              const hdType = displayName(HD_TYPE_DISPLAY, humanDesign.type, language);
+              const hdAuth = displayName(HD_AUTHORITY_DISPLAY, humanDesign.authority, language);
+              const hdDefinedCenters = humanDesign.definedCenters.map(c => displayName(HD_CENTER_DISPLAY, c, language));
+              const hdOpenCenters = humanDesign.openCenters.map(c => displayName(HD_CENTER_DISPLAY, c, language));
+              addBoldLine(language === 'sk'
+                ? `Typ: ${hdType} | Autorita: ${hdAuth}`
+                : `Type: ${hdType} | Authority: ${hdAuth}`);
+              addLine(language === 'sk' ? `Stratégia: ${humanDesign.strategy}` : `Strategy: ${humanDesign.strategy}`);
+              addLine(language === 'sk'
+                ? `Profil: ${humanDesign.profile.line1}/${humanDesign.profile.line2} — ${humanDesign.profile.name}: ${humanDesign.profile.description}`
+                : `Profile: ${humanDesign.profile.line1}/${humanDesign.profile.line2} — ${humanDesign.profile.name}: ${humanDesign.profile.description}`);
+              addLine(language === 'sk' ? `Inkarnačný kríž: ${humanDesign.incarnationCross}` : `Incarnation Cross: ${humanDesign.incarnationCross}`);
+              addLine(language === 'sk'
+                ? `Definované centrá: ${hdDefinedCenters.join(', ')}`
+                : `Defined Centers: ${hdDefinedCenters.join(', ')}`);
+              addLine(language === 'sk'
+                ? `Otvorené centrá: ${hdOpenCenters.join(', ')}`
+                : `Open Centers: ${hdOpenCenters.join(', ')}`);
               addSpace();
 
               addInterpretation(
-                `Ako čítať: Si ${humanDesign.type} — tvoja stratégia je „${humanDesign.strategy.toLowerCase()}". ` +
-                `Autorita (${humanDesign.authority}) ti hovorí ako správne rozhodovať. ` +
-                `Keď cítiš „${humanDesign.notSelfTheme.toLowerCase()}" — niečo nie je pre teba. ` +
-                `Otvorené centrá (${humanDesign.openCenters.join(', ')}) = kde absorbujuješ cudziu energiu. ` +
-                `Začni od stratégie a autority — to sú dva najdôležitejšie nástroje na každý deň.`
+                language === 'sk'
+                ? `Ako čítať: Si ${hdType} — tvoja stratégia je „${humanDesign.strategy.toLowerCase()}". ` +
+                  `Autorita (${hdAuth}) ti hovorí ako správne rozhodovať. ` +
+                  `Keď cítiš „${humanDesign.notSelfTheme.toLowerCase()}" — niečo nie je pre teba. ` +
+                  `Otvorené centrá (${hdOpenCenters.join(', ')}) = kde absorbujuješ cudziu energiu. ` +
+                  `Začni od stratégie a autority — to sú dva najdôležitejšie nástroje na každý deň.`
+                : `How to read: You are a ${hdType} — your strategy is "${humanDesign.strategy.toLowerCase()}". ` +
+                  `Authority (${hdAuth}) tells you how to make correct decisions. ` +
+                  `When you feel "${humanDesign.notSelfTheme.toLowerCase()}" — something is not for you. ` +
+                  `Open Centers (${hdOpenCenters.join(', ')}) = where you absorb others' energy. ` +
+                  `Start with strategy and authority — these are the two most important tools for every day.`
               );
               addSpace();
 
               // Vizuálny bodygraph — 9 centier
               checkPage(45);
-              addBoldLine('Bodygraph (centrá):');
-              const centersLayout: Array<{ name: string; x: number; y: number }> = [
+              addBoldLine(language === 'sk' ? 'Bodygraph (centrá):' : 'Bodygraph (Centers):');
+              const centersLayout: Array<{ name: string; x: number; y: number }> = language === 'sk' ? [
                 { name: 'Hlava', x: 50, y: 0 },
                 { name: 'Ajna', x: 50, y: 10 },
                 { name: 'Hrdlo', x: 50, y: 20 },
@@ -478,14 +548,27 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
                 { name: 'SP', x: 72, y: 36 },
                 { name: 'Slezina', x: 28, y: 36 },
                 { name: 'Koreň', x: 50, y: 50 },
+              ] : [
+                { name: 'Head', x: 50, y: 0 },
+                { name: 'Ajna', x: 50, y: 10 },
+                { name: 'Throat', x: 50, y: 20 },
+                { name: 'G', x: 50, y: 30 },
+                { name: 'Ego', x: 72, y: 26 },
+                { name: 'Sacral', x: 50, y: 40 },
+                { name: 'SP', x: 72, y: 36 },
+                { name: 'Spleen', x: 28, y: 36 },
+                { name: 'Root', x: 50, y: 50 },
               ];
               const definedSet = new Set(humanDesign.definedCenters);
-              const nameMap: Record<string, string> = { 'Srdce/Ego': 'Ego', 'Solárny plexus': 'SP', 'Sakrálne': 'Sakrál' };
+              // Maps SK engine center names → short labels used in centersLayout
+              const centerLabelMap: Record<string, string> = language === 'sk'
+                ? { 'Hlava': 'Hlava', 'Ajna': 'Ajna', 'Hrdlo': 'Hrdlo', 'G': 'G', 'Srdce/Ego': 'Ego', 'Solárny plexus': 'SP', 'Sakrálne': 'Sakrál', 'Slezina': 'Slezina', 'Koreň': 'Koreň' }
+                : { 'Hlava': 'Head', 'Ajna': 'Ajna', 'Hrdlo': 'Throat', 'G': 'G', 'Srdce/Ego': 'Ego', 'Solárny plexus': 'SP', 'Sakrálne': 'Sacral', 'Slezina': 'Spleen', 'Koreň': 'Root' };
               const bgStartY = y + 2;
               centersLayout.forEach(c => {
                 const cx = 14 + c.x * 0.8;
                 const cy = bgStartY + c.y * 0.7;
-                const isDef = definedSet.has(c.name) || Object.entries(nameMap).some(([full, short]) => short === c.name && definedSet.has(full));
+                const isDef = Object.entries(centerLabelMap).some(([skName, label]) => label === c.name && definedSet.has(skName));
                 if (isDef) {
                   doc.setFillColor(99, 102, 241);
                   doc.setTextColor(255, 255, 255);
@@ -503,22 +586,24 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
               addSpace();
 
               // === JAZYKY LÁSKY ===
-              addSection('JAZYKY LÁSKY', 'rose');
-              numerology.loveLanguages.forEach((l, i) => addLine(`${i + 1}. ${l.language}: ${l.score} bodov`));
+              addSection(language === 'sk' ? 'JAZYKY LÁSKY' : 'LOVE LANGUAGES', 'rose');
+              numerology.loveLanguages.forEach((l, i) => addLine(`${i + 1}. ${getLoveLanguageName(l.language, language)}: ${l.score} ${language === 'sk' ? 'bodov' : 'points'}`));
               addSpace();
 
               // === THETA HEALING ===
               addSection('THETA HEALING', 'teal');
-              addBoldLine('Limitujúce presvedčenia:');
+              addBoldLine(language === 'sk' ? 'Limitujúce presvedčenia:' : 'Limiting Beliefs:');
               theta.primaryBeliefs.forEach(b => addLine(`  "${b.belief}" (${b.level}, ${b.emotion})`));
               addSpace();
 
               // === KABALA ===
-              addSection('KABALA', 'amber');
-              addLine(`Primárna sefira: ${kabalah.primarySefira.name} (${kabalah.primarySefira.meaning})`);
-              addLine(`Dar: ${kabalah.primarySefira.gift}`);
-              addLine(`Tieň: ${kabalah.primarySefira.shadow}`);
-              addLine(`Čin v Malchut: ${kabalah.malchutAction}`);
+              addSection(language === 'sk' ? 'KABALA' : 'KABBALAH', 'amber');
+              addLine(language === 'sk'
+                ? `Primárna sefira: ${kabalah.primarySefira.name} (${kabalah.primarySefira.meaning})`
+                : `Primary Sephira: ${kabalah.primarySefira.name} (${kabalah.primarySefira.meaning})`);
+              addLine(language === 'sk' ? `Dar: ${kabalah.primarySefira.gift}` : `Gift: ${kabalah.primarySefira.gift}`);
+              addLine(language === 'sk' ? `Tieň: ${kabalah.primarySefira.shadow}` : `Shadow: ${kabalah.primarySefira.shadow}`);
+              addLine(language === 'sk' ? `Čin v Malchut: ${kabalah.malchutAction}` : `Action in Malchut: ${kabalah.malchutAction}`);
               addSpace();
 
               // === ENNEAGRAM ===
@@ -527,12 +612,16 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
               if (enneagram) {
                 addSection('ENNEAGRAM', 'emerald');
                 const coreType = getEnneagramType(enneagram.coreType, language);
-                addBoldLine(`Typ ${enneagram.coreType} — ${coreType?.name || ''}`);
+                addBoldLine(language === 'sk'
+                  ? `Typ ${enneagram.coreType} — ${coreType?.name || ''}`
+                  : `Type ${enneagram.coreType} — ${coreType?.name || ''}`);
                 if (coreType?.motivation) addLine(coreType.motivation.slice(0, 200));
-                addLine(`Krídlo: ${enneagram.dominantWing || enneagram.wing1} | Integrácia → ${enneagram.integrationDirection} | Stres → ${enneagram.disintegrationDirection}`);
+                addLine(language === 'sk'
+                  ? `Krídlo: ${enneagram.dominantWing || enneagram.wing1} | Integrácia → ${enneagram.integrationDirection} | Stres → ${enneagram.disintegrationDirection}`
+                  : `Wing: ${enneagram.dominantWing || enneagram.wing1} | Integration → ${enneagram.integrationDirection} | Stress → ${enneagram.disintegrationDirection}`);
                 if (coreType?.growthPath) {
                   addSpace();
-                  addBoldLine('Cesta rastu:');
+                  addBoldLine(language === 'sk' ? 'Cesta rastu:' : 'Growth Path:');
                   addLine(coreType.growthPath.slice(0, 250));
                 }
                 addSpace();
@@ -541,48 +630,51 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
               // === ČAKRY ===
               const gridCounts = getGridCount(numerology.grid);
               const chakras = evaluateChakras(numerology.lifePathNumber, gridCounts, numerology.isolatedNumbers, humanDesign.definedCenters, astrology.dominantElement);
-              addSection('ČAKRY', 'rose');
+              addSection(language === 'sk' ? 'ČAKRY' : 'CHAKRAS', 'rose');
               const blocked = chakras.filter(ch => ch.status === 'blocked');
               const balanced = chakras.filter(ch => ch.status === 'balanced');
               if (blocked.length > 0) {
-                addBoldLine('Blokované:');
-                blocked.forEach(ch => addLine(`  ${ch.chakra.name} (${ch.score}/100)`));
+                addBoldLine(language === 'sk' ? 'Blokované:' : 'Blocked:');
+                blocked.forEach(ch => addLine(`  ${displayName(CHAKRA_NAME_DISPLAY, ch.chakra.name, language)} (${ch.score}/100)`));
                 addSpace();
               }
               if (balanced.length > 0) {
-                addBoldLine('Vyvážené:');
-                balanced.forEach(ch => addLine(`  ${ch.chakra.name} (${ch.score}/100)`));
+                addBoldLine(language === 'sk' ? 'Vyvážené:' : 'Balanced:');
+                balanced.forEach(ch => addLine(`  ${displayName(CHAKRA_NAME_DISPLAY, ch.chakra.name, language)} (${ch.score}/100)`));
                 addSpace();
               }
               addInterpretation(
-                'Ako čítať: Blokované čakry = oblasti na vedomé rozvíjanie (meditácia, afirmácie, pohyb). ' +
-                'Vyvážené = vaše silné stránky a zdroje energie.'
+                language === 'sk'
+                ? 'Ako čítať: Blokované čakry = oblasti na vedomé rozvíjanie (meditácia, afirmácie, pohyb). ' +
+                  'Vyvážené = vaše silné stránky a zdroje energie.'
+                : 'How to read: Blocked chakras = areas for conscious development (meditation, affirmations, movement). ' +
+                  'Balanced = your strengths and energy sources.'
               );
               addSpace();
 
               // === AYURVÉDA ===
               const dosha = deriveDosha(numerology, astrology, humanDesign);
-              addSection('AYURVÉDA', 'amber');
-              addBoldLine(`Dominantná dóša: ${dosha.primary}`);
-              addLine(`Sekundárna: ${dosha.secondary || 'žiadna'}`);
-              addLine(`Dominancia: ${dosha.balance}%`);
+              addSection(language === 'sk' ? 'AYURVÉDA' : 'AYURVEDA', 'amber');
+              addBoldLine(language === 'sk' ? `Dominantná dóša: ${dosha.primary}` : `Dominant Dosha: ${dosha.primary}`);
+              addLine(language === 'sk' ? `Sekundárna: ${dosha.secondary || 'žiadna'}` : `Secondary: ${dosha.secondary || 'none'}`);
+              addLine(language === 'sk' ? `Dominancia: ${dosha.balance}%` : `Dominance: ${dosha.balance}%`);
               addSpace();
 
               // === TCM ===
               const tcm = deriveTCMElement(numerology, astrology);
-              addSection('TCM — 5 ELEMENTOV', 'emerald');
-              addBoldLine(`Dominantný element: ${tcm.primary}`);
-              addLine(`Sekundárny element: ${tcm.secondary}`);
+              addSection(language === 'sk' ? 'TCM — 5 ELEMENTOV' : 'TCM — 5 ELEMENTS', 'emerald');
+              addBoldLine(language === 'sk' ? `Dominantný element: ${tcm.primary}` : `Dominant Element: ${tcm.primary}`);
+              addLine(language === 'sk' ? `Sekundárny element: ${tcm.secondary}` : `Secondary Element: ${tcm.secondary}`);
               addSpace();
 
               // === ČÍNSKY HOROSKOP ===
               const chineseZodiac = calculateChineseZodiac(client.birthYear);
-              addSection('ČÍNSKY HOROSKOP', 'red');
-              addBoldLine(`${chineseZodiac.animal} — ${chineseZodiac.element} (${chineseZodiac.polarity})`);
+              addSection(language === 'sk' ? 'ČÍNSKY HOROSKOP' : 'CHINESE HOROSCOPE', 'red');
+              addBoldLine(`${displayName(CHINESE_ANIMAL_DISPLAY, chineseZodiac.animal, language)} — ${displayName(CHINESE_ELEMENT_DISPLAY, chineseZodiac.element, language)} (${chineseZodiac.polarity})`);
               addSpace();
 
               // === ORV / OMV / ODV S POPISMI ===
-              addSection('OSOBNÉ VIBRÁCIE', 'indigo');
+              addSection(language === 'sk' ? 'OSOBNÉ VIBRÁCIE' : 'PERSONAL VIBRATIONS', 'indigo');
               addBoldLine(`ORV ${numerology.orv} — ${getOrvDescription(numerology.orv, language)?.title || ''}`);
               addLine(getOrvDescription(numerology.orv, language)?.advice || '');
               addSpace();
@@ -595,10 +687,13 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
 
               // === BIORYTMUS ===
               const biorhythm = calculateBiorhythm(client.birthDay, client.birthMonth, client.birthYear);
-              addSection('BIORYTMUS', 'cyan');
-              addLine(`Fyzický: ${biorhythm.physical > 0 ? '+' : ''}${biorhythm.physical}% (${biorhythm.physicalPhase === 'high' ? 'vysoký' : biorhythm.physicalPhase === 'low' ? 'nízky' : 'kritický'})`);
-              addLine(`Emocionálny: ${biorhythm.emotional > 0 ? '+' : ''}${biorhythm.emotional}% (${biorhythm.emotionalPhase === 'high' ? 'vysoký' : biorhythm.emotionalPhase === 'low' ? 'nízky' : 'kritický'})`);
-              addLine(`Intelektuálny: ${biorhythm.intellectual > 0 ? '+' : ''}${biorhythm.intellectual}% (${biorhythm.intellectualPhase === 'high' ? 'vysoký' : biorhythm.intellectualPhase === 'low' ? 'nízky' : 'kritický'})`);
+              addSection(language === 'sk' ? 'BIORYTMUS' : 'BIORHYTHM', 'cyan');
+              const phaseLabel = (phase: string) => language === 'sk'
+                ? (phase === 'high' ? 'vysoký' : phase === 'low' ? 'nízky' : 'kritický')
+                : (phase === 'high' ? 'high' : phase === 'low' ? 'low' : 'critical');
+              addLine(`${language === 'sk' ? 'Fyzický' : 'Physical'}: ${biorhythm.physical > 0 ? '+' : ''}${biorhythm.physical}% (${phaseLabel(biorhythm.physicalPhase)})`);
+              addLine(`${language === 'sk' ? 'Emocionálny' : 'Emotional'}: ${biorhythm.emotional > 0 ? '+' : ''}${biorhythm.emotional}% (${phaseLabel(biorhythm.emotionalPhase)})`);
+              addLine(`${language === 'sk' ? 'Intelektuálny' : 'Intellectual'}: ${biorhythm.intellectual > 0 ? '+' : ''}${biorhythm.intellectual}% (${phaseLabel(biorhythm.intellectualPhase)})`);
               addSpace();
 
               // === JUNGOV ARCHETYP ===
@@ -608,39 +703,49 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
                 humanDesign.type,
                 language
               );
-              addSection('JUNGOV ARCHETYP', 'purple');
-              addBoldLine(`Primárny: ${archetype.primary.name} — „${archetype.primary.motto}"`);
-              addLine(`Dar: ${archetype.primary.gift}`);
-              addLine(`Stratégia: ${archetype.primary.strategy}`);
-              addLine(`Sekundárny: ${archetype.secondary.name} | Tieňový: ${archetype.shadow.name}`);
+              addSection(language === 'sk' ? 'JUNGOV ARCHETYP' : 'JUNGIAN ARCHETYPE', 'purple');
+              addBoldLine(language === 'sk'
+                ? `Primárny: ${archetype.primary.name} — „${archetype.primary.motto}"`
+                : `Primary: ${archetype.primary.name} — "${archetype.primary.motto}"`);
+              addLine(language === 'sk' ? `Dar: ${archetype.primary.gift}` : `Gift: ${archetype.primary.gift}`);
+              addLine(language === 'sk' ? `Stratégia: ${archetype.primary.strategy}` : `Strategy: ${archetype.primary.strategy}`);
+              addLine(language === 'sk'
+                ? `Sekundárny: ${archetype.secondary.name} | Tieňový: ${archetype.shadow.name}`
+                : `Secondary: ${archetype.secondary.name} | Shadow: ${archetype.shadow.name}`);
               addSpace();
 
               // === KRISTALOTERAPIA ===
-              addSection('KRISTALOTERAPIA', 'violet');
+              addSection(language === 'sk' ? 'KRISTALOTERAPIA' : 'CRYSTAL THERAPY', 'violet');
               const zodiacCrystals = getZodiacCrystals(astrology.sunSign.name, language);
               if (zodiacCrystals.length > 0) {
-                addBoldLine(`Kryštály pre ${astrology.sunSign.name}:`);
+                addBoldLine(language === 'sk' ? `Kryštály pre ${sunSignName}:` : `Crystals for ${sunSignName}:`);
                 zodiacCrystals.forEach(c => addLine(`  ${c.name} — ${c.properties}`));
                 addSpace();
               }
               const blockedChakraNums = chakras.filter(c => c.status === 'blocked').map(c => c.chakra?.number).filter((n): n is number => n !== undefined);
               const healingCrystals = getBlockedChakraCrystals(blockedChakraNums, language);
               if (healingCrystals.length > 0) {
-                addBoldLine('Pre blokované čakry:');
-                healingCrystals.forEach(c => addLine(`  ${c.name} (čakra ${c.chakra}) — ${c.usage}`));
+                addBoldLine(language === 'sk' ? 'Pre blokované čakry:' : 'For blocked chakras:');
+                healingCrystals.forEach(c => addLine(language === 'sk' ? `  ${c.name} (čakra ${c.chakra}) — ${c.usage}` : `  ${c.name} (chakra ${c.chakra}) — ${c.usage}`));
                 addSpace();
               }
               const dailyCrystal = getDailyCrystal(numerology.odv, language);
-              addLine(`Kryštál dňa (ODV ${numerology.odv}): ${dailyCrystal.name} — ${dailyCrystal.properties}`);
+              addLine(language === 'sk'
+                ? `Kryštál dňa (ODV ${numerology.odv}): ${dailyCrystal.name} — ${dailyCrystal.properties}`
+                : `Crystal of the day (ODV ${numerology.odv}): ${dailyCrystal.name} — ${dailyCrystal.properties}`);
               addSpace();
 
               // === KUA ČÍSLO ===
               const gender = (client as { gender?: string }).gender === 'female' ? 'female' : 'male';
               const kua = calculateKua(client.birthYear, gender as 'male' | 'female', language);
-              addSection('KUA ČÍSLO (FENG SHUI)', 'amber');
+              addSection(language === 'sk' ? 'KUA ČÍSLO (FENG SHUI)' : 'KUA NUMBER (FENG SHUI)', 'amber');
               addBoldLine(`Kua: ${kua.kuaNumber} | ${language === 'sk' ? 'Skupina' : 'Group'}: ${kua.group === 'east' ? (language === 'sk' ? 'Východná' : 'Eastern') : (language === 'sk' ? 'Západná' : 'Western')} | Element: ${kua.element}`);
-              addLine(`Spálňa: ${kua.bestForSleep} | Pracovný stôl: ${kua.bestForWork} | Vstup: ${kua.bestForEntrance}`);
-              addLine(`Priaznivé smery: ${kua.favorable.map(d => d.direction).join(', ')}`);
+              addLine(language === 'sk'
+                ? `Spálňa: ${kua.bestForSleep} | Pracovný stôl: ${kua.bestForWork} | Vstup: ${kua.bestForEntrance}`
+                : `Bedroom: ${kua.bestForSleep} | Desk: ${kua.bestForWork} | Entrance: ${kua.bestForEntrance}`);
+              addLine(language === 'sk'
+                ? `Priaznivé smery: ${kua.favorable.map(d => d.direction).join(', ')}`
+                : `Favorable directions: ${kua.favorable.map(d => d.direction).join(', ')}`);
               addSpace();
 
               // === PARTNERSKÁ KOMPATIBILITA ===
@@ -649,18 +754,22 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
                 if (partner) {
                   const partnerNum = calculateFullNumerology(partner.birthDay, partner.birthMonth, partner.birthYear);
                   const compat = calculatePartnerCompatibility(numerology, partnerNum);
-                  addSection('PARTNERSKÁ KOMPATIBILITA', 'rose');
-                  addBoldLine(`${client.name} & ${partner.name} — Celkové skóre: ${compat.overallScore}%`);
-                  addLine(`Životné čísla: ${numerology.lifePathNumber} + ${partnerNum.lifePathNumber} | Zhoda: ${compat.lifePathCompatibility.score}%`);
-                  addLine(`Jazyky lásky: ${compat.loveLanguageMatch.score}%`);
+                  addSection(language === 'sk' ? 'PARTNERSKÁ KOMPATIBILITA' : 'PARTNER COMPATIBILITY', 'rose');
+                  addBoldLine(language === 'sk'
+                    ? `${client.name} & ${partner.name} — Celkové skóre: ${compat.overallScore}%`
+                    : `${client.name} & ${partner.name} — Overall Score: ${compat.overallScore}%`);
+                  addLine(language === 'sk'
+                    ? `Životné čísla: ${numerology.lifePathNumber} + ${partnerNum.lifePathNumber} | Zhoda: ${compat.lifePathCompatibility.score}%`
+                    : `Life Path Numbers: ${numerology.lifePathNumber} + ${partnerNum.lifePathNumber} | Match: ${compat.lifePathCompatibility.score}%`);
+                  addLine(language === 'sk' ? `Jazyky lásky: ${compat.loveLanguageMatch.score}%` : `Love Languages: ${compat.loveLanguageMatch.score}%`);
                   if (compat.strengths.length > 0) {
                     addSpace();
-                    addBoldLine('Silné stránky:');
+                    addBoldLine(language === 'sk' ? 'Silné stránky:' : 'Strengths:');
                     compat.strengths.forEach(s => addLine(`  + ${s}`));
                   }
                   if (compat.challenges.length > 0) {
                     addSpace();
-                    addBoldLine('Výzvy:');
+                    addBoldLine(language === 'sk' ? 'Výzvy:' : 'Challenges:');
                     compat.challenges.forEach(c => addLine(`  ! ${c}`));
                   }
                   addSpace();
@@ -677,18 +786,21 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
               doc.setFontSize(8);
               doc.setFont('Roboto', 'normal');
               doc.setTextColor(120, 120, 120);
-              doc.text(`Vygenerovane: ${new Date().toLocaleDateString('sk-SK')} ${new Date().toLocaleTimeString('sk-SK')}`, 14, y);
-              doc.text(`Integrálna mapa bytia v${APP_VERSION}`, 196, y, { align: 'right' });
+              const footerLocale = language === 'sk' ? 'sk-SK' : 'en-GB';
+              doc.text(language === 'sk'
+                ? `Vygenerovane: ${new Date().toLocaleDateString(footerLocale)} ${new Date().toLocaleTimeString(footerLocale)}`
+                : `Generated: ${new Date().toLocaleDateString(footerLocale)} ${new Date().toLocaleTimeString(footerLocale)}`, 14, y);
+              doc.text(language === 'sk' ? `Integrálna mapa bytia v${APP_VERSION}` : `Integral Map of Being v${APP_VERSION}`, 196, y, { align: 'right' });
               doc.setTextColor(0, 0, 0);
 
               addPageNumber();
 
-              doc.save(`profil-${client.name.replace(/\s+/g, '-').toLowerCase()}.pdf`);
+              doc.save(`${language === 'sk' ? 'profil' : 'profile'}-${client.name.replace(/\s+/g, '-').toLowerCase()}.pdf`);
             });
           }}
           className="px-6 py-3 rounded-xl bg-indigo-600 text-white font-medium hover:bg-indigo-500 transition-colors"
         >
-          Exportovať PDF (plný)
+          {language === 'sk' ? 'Exportovať PDF (plný)' : 'Export PDF (full)'}
         </button>
         <button
           onClick={() => {
@@ -725,7 +837,7 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
               doc.setFontSize(18);
               doc.setFont('Roboto', 'bold');
               doc.setTextColor(79, 70, 229);
-              doc.text('Osobný výklad', 105, 30, { align: 'center' });
+              doc.text(language === 'sk' ? 'Osobný výklad' : 'Personal Reading', 105, 30, { align: 'center' });
               doc.setFontSize(14);
               doc.setTextColor(0, 0, 0);
               doc.text(client.name, 105, 40, { align: 'center' });
@@ -738,56 +850,88 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
 
               // Životné číslo
               const lpKey = lifePaths[String(numerology.lifePathNumber)] ? String(numerology.lifePathNumber) : String(reduceToSingle(numerology.lifePathNumber));
-              const lpInfo = lifePaths[lpKey];
-              addBold(`Životné číslo ${numerology.lifePathNumber} — ${lpInfo?.title || ''}`);
+              const lpInfo = getLifePath(lpKey, language);
+              addBold(language === 'sk'
+                ? `Životné číslo ${numerology.lifePathNumber} — ${lpInfo?.title || ''}`
+                : `Life Path Number ${numerology.lifePathNumber} — ${lpInfo?.title || ''}`);
               if (lpInfo) {
                 addLine(lpInfo.description);
                 addSpace();
-                addLine(`Dar: ${lpInfo.gift}`);
-                addLine(`Tieň: ${lpInfo.shadow}`);
-                addLine(`Odporúčanie: ${lpInfo.recommendation}`);
+                addLine(language === 'sk' ? `Dar: ${lpInfo.gift}` : `Gift: ${lpInfo.gift}`);
+                addLine(language === 'sk' ? `Tieň: ${lpInfo.shadow}` : `Shadow: ${lpInfo.shadow}`);
+                addLine(language === 'sk' ? `Odporúčanie: ${lpInfo.recommendation}` : `Recommendation: ${lpInfo.recommendation}`);
               }
               addSpace();
 
               // HD
-              addBold(`Human Design: ${humanDesign.type}`);
-              addLine(`Stratégia: „${humanDesign.strategy}" — keď cítiš „${humanDesign.notSelfTheme.toLowerCase()}", niečo nie je pre teba.`);
-              addLine(`Autorita: ${humanDesign.authority} — takto správne rozhoduješ.`);
+              const simpleHdType = displayName(HD_TYPE_DISPLAY, humanDesign.type, language);
+              const simpleHdAuth = displayName(HD_AUTHORITY_DISPLAY, humanDesign.authority, language);
+              addBold(`Human Design: ${simpleHdType}`);
+              addLine(language === 'sk'
+                ? `Stratégia: „${humanDesign.strategy}" — keď cítiš „${humanDesign.notSelfTheme.toLowerCase()}", niečo nie je pre teba.`
+                : `Strategy: "${humanDesign.strategy}" — when you feel "${humanDesign.notSelfTheme.toLowerCase()}", something is not for you.`);
+              addLine(language === 'sk'
+                ? `Autorita: ${simpleHdAuth} — takto správne rozhoduješ.`
+                : `Authority: ${simpleHdAuth} — this is how you make correct decisions.`);
               addSpace();
 
               // Astrológia
-              addBold('Astrológia');
-              addLine(`Slnko v ${astrology.sunSign.name} — tvoja podstata.`);
-              addLine(`Mesiac v ${astrology.moonSign.name} — tvoje emócie.`);
-              addLine(`Ascendent v ${astrology.ascendant.name} — ako ťa vidia iní.`);
-              addLine(`Dominantný element: ${astrology.dominantElement}.`);
+              const simpleSun = displayName(ZODIAC_DISPLAY, astrology.sunSign.name, language);
+              const simpleMoon = displayName(ZODIAC_DISPLAY, astrology.moonSign.name, language);
+              const simpleAsc = displayName(ZODIAC_DISPLAY, astrology.ascendant.name, language);
+              const simpleDomEl = displayName(ELEMENT_DISPLAY, astrology.dominantElement, language);
+              addBold(language === 'sk' ? 'Astrológia' : 'Astrology');
+              addLine(language === 'sk'
+                ? `Slnko v ${simpleSun} — tvoja podstata.`
+                : `Sun in ${simpleSun} — your essence.`);
+              addLine(language === 'sk'
+                ? `Mesiac v ${simpleMoon} — tvoje emócie.`
+                : `Moon in ${simpleMoon} — your emotions.`);
+              addLine(language === 'sk'
+                ? `Ascendent v ${simpleAsc} — ako ťa vidia iní.`
+                : `Ascendant in ${simpleAsc} — how others see you.`);
+              addLine(language === 'sk'
+                ? `Dominantný element: ${simpleDomEl}.`
+                : `Dominant element: ${simpleDomEl}.`);
               addSpace();
 
               // Vývojová
               const devNum = calculateDevelopmentalNumerology(client.birthDay, client.birthMonth, client.birthYear);
-              addBold('Vývojová numerológia');
-              addLine(`K3 (životné poslanie): ${devNum.circled[2].value} — hlavná téma, pre ktorú si tu.`);
-              addLine(`Polarita ega: ${devNum.egoPolarity === 'masculine' ? 'mužské' : devNum.egoPolarity === 'feminine' ? 'ženské' : 'bez ega'}.`);
+              addBold(language === 'sk' ? 'Vývojová numerológia' : 'Developmental Numerology');
+              addLine(language === 'sk'
+                ? `K3 (životné poslanie): ${devNum.circled[2].value} — hlavná téma, pre ktorú si tu.`
+                : `K3 (life mission): ${devNum.circled[2].value} — the main theme you are here for.`);
+              addLine(language === 'sk'
+                ? `Polarita ega: ${devNum.egoPolarity === 'masculine' ? 'mužské' : devNum.egoPolarity === 'feminine' ? 'ženské' : 'bez ega'}.`
+                : `Ego polarity: ${devNum.egoPolarity === 'masculine' ? 'masculine' : devNum.egoPolarity === 'feminine' ? 'feminine' : 'no ego'}.`);
               addSpace();
 
               // Praktické tipy
-              addBold('Prakticky — čo s tým');
-              addLine(`1. Rozhodovanie: používaj svoju autoritu (${humanDesign.authority}).`);
-              addLine(`2. Energia: stratégia „${humanDesign.strategy.toLowerCase()}" — keď to funguje, cítiš spokojnosť.`);
-              addLine(`3. Rast: dar = ${lpInfo?.gift?.toLowerCase() || '?'}. Výzva = ${lpInfo?.shadow?.toLowerCase() || '?'}.`);
+              addBold(language === 'sk' ? 'Prakticky — čo s tým' : 'Practical — what to do');
+              addLine(language === 'sk'
+                ? `1. Rozhodovanie: používaj svoju autoritu (${simpleHdAuth}).`
+                : `1. Decision-making: use your authority (${simpleHdAuth}).`);
+              addLine(language === 'sk'
+                ? `2. Energia: stratégia „${humanDesign.strategy.toLowerCase()}" — keď to funguje, cítiš spokojnosť.`
+                : `2. Energy: strategy "${humanDesign.strategy.toLowerCase()}" — when it works, you feel satisfaction.`);
+              addLine(language === 'sk'
+                ? `3. Rast: dar = ${lpInfo?.gift?.toLowerCase() || '?'}. Výzva = ${lpInfo?.shadow?.toLowerCase() || '?'}.`
+                : `3. Growth: gift = ${lpInfo?.gift?.toLowerCase() || '?'}. Challenge = ${lpInfo?.shadow?.toLowerCase() || '?'}.`);
               addSpace();
 
               // Footer
               doc.setFontSize(8);
               doc.setTextColor(150, 150, 150);
-              doc.text(`Vygenerované: ${new Date().toLocaleDateString('sk-SK')} | Integrálna mapa bytia`, 105, 285, { align: 'center' });
+              doc.text(language === 'sk'
+                ? `Vygenerované: ${new Date().toLocaleDateString('sk-SK')} | Integrálna mapa bytia`
+                : `Generated: ${new Date().toLocaleDateString('en-GB')} | Integral Map of Being`, 105, 285, { align: 'center' });
 
-              doc.save(`vyklad-${client.name.replace(/\s+/g, '-').toLowerCase()}.pdf`);
+              doc.save(`${language === 'sk' ? 'vyklad' : 'reading'}-${client.name.replace(/\s+/g, '-').toLowerCase()}.pdf`);
             });
           }}
           className="px-6 py-3 rounded-xl bg-emerald-600 text-white font-medium hover:bg-emerald-500 transition-colors"
         >
-          PDF pre klienta (zjednodušený)
+          {language === 'sk' ? 'PDF pre klienta (zjednodušený)' : 'PDF for client (simplified)'}
         </button>
         <button
           onClick={() => {
@@ -809,24 +953,24 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
 
             if (navigator.clipboard && navigator.clipboard.writeText) {
               navigator.clipboard.writeText(shareUrl).then(() => {
-                setShareMsg('Skopírované!');
+                setShareMsg(language === 'sk' ? 'Skopírované!' : 'Copied!');
                 setTimeout(() => setShareMsg(''), 3000);
               }).catch(() => {
-                prompt('Skopírujte tento link:', shareUrl);
+                prompt(language === 'sk' ? 'Skopírujte tento link:' : 'Copy this link:', shareUrl);
               });
             } else {
-              prompt('Skopírujte tento link:', shareUrl);
+              prompt(language === 'sk' ? 'Skopírujte tento link:' : 'Copy this link:', shareUrl);
             }
           }}
           className="px-6 py-3 rounded-xl bg-purple-600 text-white font-medium hover:bg-purple-500 transition-colors"
         >
-          {shareMsg || 'Zdieľať výklad'}
+          {shareMsg || (language === 'sk' ? 'Zdieľať výklad' : 'Share reading')}
         </button>
         <button
           onClick={() => setShowQR(!showQR)}
           className="px-6 py-3 rounded-xl bg-slate-600 text-white font-medium hover:bg-slate-500 transition-colors"
         >
-          QR kód
+          {language === 'sk' ? 'QR kód' : 'QR Code'}
         </button>
         </div>
         {showQR && (() => {
@@ -848,10 +992,10 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
             <div className="mt-4 p-4 rounded-xl bg-white border border-slate-200 text-center">
               <img
                 src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrUrl)}`}
-                alt="QR kód pre zdieľanie profilu"
+                alt={language === 'sk' ? 'QR kód pre zdieľanie profilu' : 'QR code for sharing profile'}
                 className="mx-auto w-48 h-48"
               />
-              <p className="text-xs text-slate-500 mt-2">Naskenuj pre zobrazenie profilu {client.name}</p>
+              <p className="text-xs text-slate-500 mt-2">{language === 'sk' ? `Naskenuj pre zobrazenie profilu ${client.name}` : `Scan to view ${client.name}'s profile`}</p>
               <p className="text-[10px] text-slate-400 mt-1 break-all max-w-xs mx-auto">{qrUrl.slice(0, 80)}...</p>
             </div>
           );

@@ -1,5 +1,6 @@
 import { useTranslation } from '../i18n/useTranslation';
 import type { HumanDesignResult } from '../engine/humanDesignEngine';
+import type { Language } from '../store/useStore';
 
 interface BodygraphProps {
   result: HumanDesignResult;
@@ -21,8 +22,8 @@ const CHANNEL_TO_CENTERS: Record<string, [string, string]> = {
 };
 
 interface CenterInfo {
-  label: string;
-  fullName: string;
+  label: Record<Language, string>;
+  fullName: Record<Language, string>;
   color: string;
   top: string;
   left: string;
@@ -35,15 +36,15 @@ interface CenterInfo {
 // najvyšší bod (Hlava) posunutý dolu z 2% na 8%, aby nesiahala nad
 // horný okraj kontainera a neprekrývala hlavičku/nadpis.
 const CENTERS: Record<string, CenterInfo> = {
-  'Hlava':    { label: 'Hlava', fullName: 'Inšpirácia', color: '#f5c542', top: '8%', left: '50%', gates: [64, 61, 63] },
-  'Ajna':     { label: 'Ajna', fullName: 'Myslenie', color: '#4ade80', top: '20%', left: '50%', gates: [47, 24, 4, 17, 43, 11] },
-  'Hrdlo':    { label: 'Hrdlo', fullName: 'Prejav', color: '#a78bfa', top: '32%', left: '50%', gates: [62, 23, 56, 16, 20, 31, 8, 33, 35, 12, 45] },
-  'G':        { label: 'G', fullName: 'Identita', color: '#facc15', top: '46%', left: '50%', gates: [1, 13, 25, 46, 2, 15, 10, 7] },
-  'Ego':      { label: 'Ego', fullName: 'Vôľa', color: '#f87171', top: '40%', left: '80%', gates: [21, 40, 26, 51] },
-  'Sakrálne': { label: 'Sakrál', fullName: 'Sila', color: '#ef4444', top: '62%', left: '50%', gates: [34, 5, 14, 29, 9, 3, 42, 27, 59] },
-  'SP':       { label: 'SP', fullName: 'Emócie', color: '#fb923c', top: '57%', left: '80%', gates: [36, 22, 37, 6, 49, 55, 30] },
-  'Slezina':  { label: 'Slezina', fullName: 'Intuícia', color: '#fbbf24', top: '57%', left: '20%', gates: [48, 57, 44, 50, 32, 28, 18] },
-  'Koreň':    { label: 'Koreň', fullName: 'Tlak', color: '#ef4444', top: '78%', left: '50%', gates: [58, 38, 54, 53, 60, 52, 19, 39, 41] },
+  'Hlava':    { label: { sk: 'Hlava', en: 'Head' }, fullName: { sk: 'Inšpirácia', en: 'Inspiration' }, color: '#f5c542', top: '8%', left: '50%', gates: [64, 61, 63] },
+  'Ajna':     { label: { sk: 'Ajna', en: 'Ajna' }, fullName: { sk: 'Myslenie', en: 'Thinking' }, color: '#4ade80', top: '20%', left: '50%', gates: [47, 24, 4, 17, 43, 11] },
+  'Hrdlo':    { label: { sk: 'Hrdlo', en: 'Throat' }, fullName: { sk: 'Prejav', en: 'Expression' }, color: '#a78bfa', top: '32%', left: '50%', gates: [62, 23, 56, 16, 20, 31, 8, 33, 35, 12, 45] },
+  'G':        { label: { sk: 'G', en: 'G' }, fullName: { sk: 'Identita', en: 'Identity' }, color: '#facc15', top: '46%', left: '50%', gates: [1, 13, 25, 46, 2, 15, 10, 7] },
+  'Ego':      { label: { sk: 'Ego', en: 'Ego' }, fullName: { sk: 'Vôľa', en: 'Will' }, color: '#f87171', top: '40%', left: '80%', gates: [21, 40, 26, 51] },
+  'Sakrálne': { label: { sk: 'Sakrál', en: 'Sacral' }, fullName: { sk: 'Sila', en: 'Power' }, color: '#ef4444', top: '62%', left: '50%', gates: [34, 5, 14, 29, 9, 3, 42, 27, 59] },
+  'SP':       { label: { sk: 'SP', en: 'SP' }, fullName: { sk: 'Emócie', en: 'Emotions' }, color: '#fb923c', top: '57%', left: '80%', gates: [36, 22, 37, 6, 49, 55, 30] },
+  'Slezina':  { label: { sk: 'Slezina', en: 'Spleen' }, fullName: { sk: 'Intuícia', en: 'Intuition' }, color: '#fbbf24', top: '57%', left: '20%', gates: [48, 57, 44, 50, 32, 28, 18] },
+  'Koreň':    { label: { sk: 'Koreň', en: 'Root' }, fullName: { sk: 'Tlak', en: 'Pressure' }, color: '#ef4444', top: '78%', left: '50%', gates: [58, 38, 54, 53, 60, 52, 19, 39, 41] },
 };
 
 export function Bodygraph({ result }: BodygraphProps) {
@@ -107,9 +108,9 @@ export function Bodygraph({ result }: BodygraphProps) {
                 borderColor: defined ? cfg.color : 'rgba(148, 163, 184, 0.3)',
                 boxShadow: defined ? `0 2px 8px ${cfg.color}30` : 'none',
               }}
-              title={`${cfg.label} – ${cfg.fullName}${activeGates.length > 0 ? ` · brány ${activeGates.join(', ')}` : ''}`}
+              title={`${cfg.label[language]} – ${cfg.fullName[language]}${activeGates.length > 0 ? ` · ${language === 'sk' ? 'brány' : 'gates'} ${activeGates.join(', ')}` : ''}`}
             >
-              {cfg.label.length > 4 ? cfg.label.slice(0, 3) : cfg.label}
+              {cfg.label[language].length > 4 ? cfg.label[language].slice(0, 3) : cfg.label[language]}
             </div>
             {activeGates.length > 0 && (
               <div className="mt-1 flex flex-wrap gap-0.5 justify-center max-w-[80px]">

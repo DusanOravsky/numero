@@ -34,11 +34,13 @@ export function EnneagramTab({ result, enneagramResult, devResult, numerologyMet
             <div className="flex gap-2 mt-2 flex-wrap justify-center sm:justify-start">
               {enneagramResult.dominantWing && (
                 <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300">
-                  Krídlo {enneagramResult.dominantWing}w
+                  {language === 'sk' ? `Krídlo ${enneagramResult.dominantWing}w` : `Wing ${enneagramResult.dominantWing}w`}
                 </span>
               )}
               <span className="text-xs px-2 py-0.5 rounded-full bg-slate-500/20 text-slate-400">
-                {numerologyMethod === 'characterological' ? `z ŽČ ${result.lifePathNumber}` : `z K3 ${devResult?.circled[2].value}`}
+                {language === 'sk'
+                  ? (numerologyMethod === 'characterological' ? `z ŽČ ${result.lifePathNumber}` : `z K3 ${devResult?.circled[2].value}`)
+                  : (numerologyMethod === 'characterological' ? `from LP ${result.lifePathNumber}` : `from K3 ${devResult?.circled[2].value}`)}
               </span>
             </div>
           </div>
@@ -50,36 +52,49 @@ export function EnneagramTab({ result, enneagramResult, devResult, numerologyMet
         <h3 className="font-medium text-white mb-3">{t('numerology.enneagramYourReading')}</h3>
         <div className="space-y-3 text-sm text-slate-300">
           <p>
-            Si typ <strong className="text-white">{enneagramResult.coreType} — {typeData.name}</strong>.
-            Tvoja základná motivácia: <em>{typeData.motivation.toLowerCase()}</em>.
-            Tvoj základný strach: <em>{typeData.fear.toLowerCase()}</em>.
+            {language === 'sk'
+              ? <>Si typ <strong className="text-white">{enneagramResult.coreType} — {typeData.name}</strong>. Tvoja základná motivácia: <em>{typeData.motivation.toLowerCase()}</em>. Tvoj základný strach: <em>{typeData.fear.toLowerCase()}</em>.</>
+              : <>You are type <strong className="text-white">{enneagramResult.coreType} — {typeData.name}</strong>. Your core motivation: <em>{typeData.motivation.toLowerCase()}</em>. Your core fear: <em>{typeData.fear.toLowerCase()}</em>.</>}
           </p>
 
           <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
-            <p className="text-xs text-emerald-400 font-semibold mb-1">Tvoj smer rastu → typ {enneagramResult.integrationDirection} ({integrationData?.name})</p>
+            <p className="text-xs text-emerald-400 font-semibold mb-1">
+              {language === 'sk'
+                ? `Tvoj smer rastu → typ ${enneagramResult.integrationDirection} (${integrationData?.name})`
+                : `Your growth direction → type ${enneagramResult.integrationDirection} (${integrationData?.name})`}
+            </p>
             <p className="text-xs text-slate-300">
-              Keď si v pohode a vedome pracuješ na sebe, smeruješ sem. Toto je tvoja „vyššia verzia".
-              {typeData.growthPath.split('.')[0]}.
+              {language === 'sk'
+                ? `Keď si v pohode a vedome pracuješ na sebe, smeruješ sem. Toto je tvoja „vyššia verzia". ${typeData.growthPath.split('.')[0]}.`
+                : `When you are at ease and consciously working on yourself, you move here. This is your "higher version". ${typeData.growthPath.split('.')[0]}.`}
             </p>
           </div>
 
           <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20">
-            <p className="text-xs text-rose-400 font-semibold mb-1">Tvoj stresový smer → typ {enneagramResult.disintegrationDirection} ({disintegrationData?.name})</p>
+            <p className="text-xs text-rose-400 font-semibold mb-1">
+              {language === 'sk'
+                ? `Tvoj stresový smer → typ ${enneagramResult.disintegrationDirection} (${disintegrationData?.name})`
+                : `Your stress direction → type ${enneagramResult.disintegrationDirection} (${disintegrationData?.name})`}
+            </p>
             <p className="text-xs text-slate-300">
-              Pod tlakom nevedome skĺzneš sem. Nie je to zlyhanie — je to signál že niečo nie je OK.
-              Keď si to všimneš, môžeš sa vedome vrátiť.
+              {language === 'sk'
+                ? 'Pod tlakom nevedome skĺzneš sem. Nie je to zlyhanie — je to signál že niečo nie je OK. Keď si to všimneš, môžeš sa vedome vrátiť.'
+                : 'Under pressure you unconsciously slide here. It is not a failure — it is a signal that something is not OK. When you notice it, you can consciously return.'}
             </p>
           </div>
 
           <div className="p-3 rounded-xl bg-slate-500/10 border border-slate-500/20">
-            <p className="text-[10px] text-slate-500 uppercase mb-1">Praktický tip</p>
+            <p className="text-[10px] text-slate-500 uppercase mb-1">{language === 'sk' ? 'Praktický tip' : 'Practical tip'}</p>
             <p className="text-xs text-slate-300">
-              Dnes si všímaj: kedy konáš z motivácie ({typeData.motivation.split('.')[0].toLowerCase()}) a kedy zo strachu ({typeData.fear.split('.')[0].toLowerCase()}).
-              Stačí pozorovať — samotné uvedomenie je prvý krok zmeny.
+              {language === 'sk'
+                ? `Dnes si všímaj: kedy konáš z motivácie (${typeData.motivation.split('.')[0].toLowerCase()}) a kedy zo strachu (${typeData.fear.split('.')[0].toLowerCase()}). Stačí pozorovať — samotné uvedomenie je prvý krok zmeny.`
+                : `Today notice: when you act from motivation (${typeData.motivation.split('.')[0].toLowerCase()}) and when from fear (${typeData.fear.split('.')[0].toLowerCase()}). Just observe — awareness itself is the first step of change.`}
             </p>
           </div>
           <p className="text-[11px] text-slate-500 italic mt-2">
-            Enneagram typ je odvodený z numerologického profilu (nie z dotazníka). Pre presnejšie typovanie odporúčame RHETI alebo iEQ9 test. Ak poznáš svoj typ, môžeš ho nastaviť manuálne v profile.
+            {language === 'sk'
+              ? 'Enneagram typ je odvodený z numerologického profilu (nie z dotazníka). Pre presnejšie typovanie odporúčame RHETI alebo iEQ9 test. Ak poznáš svoj typ, môžeš ho nastaviť manuálne v profile.'
+              : 'Enneagram type is derived from the numerological profile (not from a questionnaire). For more accurate typing we recommend the RHETI or iEQ9 test. If you know your type, you can set it manually in your profile.'}
           </p>
         </div>
       </GlassCard>
@@ -94,7 +109,11 @@ export function EnneagramTab({ result, enneagramResult, devResult, numerologyMet
             <div>
               <p className="text-xs text-emerald-400 uppercase mb-1">{t('numerology.enneagramMotivation')}</p>
               <p className="text-sm text-slate-300">{typeData.motivation}</p>
-              <p className="text-xs text-slate-500 mt-2 italic">Toto ťa nevedome poháňa — vo vzťahoch, práci, rozhodnutiach.</p>
+              <p className="text-xs text-slate-500 mt-2 italic">
+                {language === 'sk'
+                  ? 'Toto ťa nevedome poháňa — vo vzťahoch, práci, rozhodnutiach.'
+                  : 'This unconsciously drives you — in relationships, work, decisions.'}
+              </p>
             </div>
           </div>
         </GlassCard>
@@ -106,7 +125,11 @@ export function EnneagramTab({ result, enneagramResult, devResult, numerologyMet
             <div>
               <p className="text-xs text-rose-400 uppercase mb-1">{t('numerology.enneagramFear')}</p>
               <p className="text-sm text-slate-300">{typeData.fear}</p>
-              <p className="text-xs text-slate-500 mt-2 italic">Keď si pod tlakom, tento strach riadi tvoje reakcie.</p>
+              <p className="text-xs text-slate-500 mt-2 italic">
+                {language === 'sk'
+                  ? 'Keď si pod tlakom, tento strach riadi tvoje reakcie.'
+                  : 'When you are under pressure, this fear drives your reactions.'}
+              </p>
             </div>
           </div>
         </GlassCard>
@@ -142,7 +165,9 @@ export function EnneagramTab({ result, enneagramResult, devResult, numerologyMet
       <GlassCard>
         <h3 className="font-medium text-white mb-2">{t('numerology.enneagramGrowthDirections')}</h3>
         <p className="text-xs text-slate-500 mb-4">
-          Enneagram nie je statický — ukazuje kam sa posúvaš keď rastieš (integrácia) a kam skĺzneš pod tlakom (dezintegrácia). Toto je mapa tvojho vnútorného pohybu.
+          {language === 'sk'
+            ? 'Enneagram nie je statický — ukazuje kam sa posúvaš keď rastieš (integrácia) a kam skĺzneš pod tlakom (dezintegrácia). Toto je mapa tvojho vnútorného pohybu.'
+            : 'The Enneagram is not static — it shows where you move when you grow (integration) and where you slide under pressure (disintegration). This is a map of your inner movement.'}
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="p-4 rounded-xl bg-green-500/10 border border-green-500/20">
@@ -151,12 +176,14 @@ export function EnneagramTab({ result, enneagramResult, devResult, numerologyMet
                 {enneagramResult.integrationDirection}
               </div>
               <div>
-                <p className="text-xs text-green-400 uppercase">Rast → Typ {enneagramResult.integrationDirection}</p>
+                <p className="text-xs text-green-400 uppercase">{language === 'sk' ? `Rast → Typ ${enneagramResult.integrationDirection}` : `Growth → Type ${enneagramResult.integrationDirection}`}</p>
                 <p className="text-sm text-white">{integrationData?.name}</p>
               </div>
             </div>
             <p className="text-xs text-slate-300">
-              Keď si v dobrom stave a vedome pracuješ na sebe, preberáš pozitívne vlastnosti typu {enneagramResult.integrationDirection}. Toto je tvoj smer zdravia.
+              {language === 'sk'
+                ? `Keď si v dobrom stave a vedome pracuješ na sebe, preberáš pozitívne vlastnosti typu ${enneagramResult.integrationDirection}. Toto je tvoj smer zdravia.`
+                : `When you are in a good state and consciously working on yourself, you take on the positive qualities of type ${enneagramResult.integrationDirection}. This is your direction of health.`}
             </p>
           </div>
           <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20">
@@ -165,12 +192,14 @@ export function EnneagramTab({ result, enneagramResult, devResult, numerologyMet
                 {enneagramResult.disintegrationDirection}
               </div>
               <div>
-                <p className="text-xs text-red-400 uppercase">Stres → Typ {enneagramResult.disintegrationDirection}</p>
+                <p className="text-xs text-red-400 uppercase">{language === 'sk' ? `Stres → Typ ${enneagramResult.disintegrationDirection}` : `Stress → Type ${enneagramResult.disintegrationDirection}`}</p>
                 <p className="text-sm text-white">{disintegrationData?.name}</p>
               </div>
             </div>
             <p className="text-xs text-slate-300">
-              Pod stresom nevedome preberáš negatívne vzorce typu {enneagramResult.disintegrationDirection}. Keď to rozpoznáš, môžeš sa vedome vrátiť.
+              {language === 'sk'
+                ? `Pod stresom nevedome preberáš negatívne vzorce typu ${enneagramResult.disintegrationDirection}. Keď to rozpoznáš, môžeš sa vedome vrátiť.`
+                : `Under stress you unconsciously adopt negative patterns of type ${enneagramResult.disintegrationDirection}. When you recognize it, you can consciously return.`}
             </p>
           </div>
         </div>
@@ -180,7 +209,9 @@ export function EnneagramTab({ result, enneagramResult, devResult, numerologyMet
       <GlassCard>
         <h3 className="font-medium text-white mb-2">{t('numerology.enneagramWings')}</h3>
         <p className="text-xs text-slate-500 mb-4">
-          Krídla sú dva susedné typy ({enneagramResult.wing1} a {enneagramResult.wing2}), ktoré farbia tvoj hlavný typ. Jedno krídlo je zvyčajne silnejšie — pridáva ti dodatočné vlastnosti.
+          {language === 'sk'
+            ? `Krídla sú dva susedné typy (${enneagramResult.wing1} a ${enneagramResult.wing2}), ktoré farbia tvoj hlavný typ. Jedno krídlo je zvyčajne silnejšie — pridáva ti dodatočné vlastnosti.`
+            : `Wings are two adjacent types (${enneagramResult.wing1} and ${enneagramResult.wing2}) that color your main type. One wing is usually stronger — it adds additional qualities.`}
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {[enneagramResult.wing1, enneagramResult.wing2].map(wingNum => {
@@ -199,7 +230,7 @@ export function EnneagramTab({ result, enneagramResult, devResult, numerologyMet
                     <p className={`text-sm font-medium ${isDominant ? 'text-white' : 'text-slate-300'}`}>
                       {wData?.name}
                     </p>
-                    {isDominant && <span className="text-xs text-indigo-300">Dominantné krídlo</span>}
+                    {isDominant && <span className="text-xs text-indigo-300">{language === 'sk' ? 'Dominantné krídlo' : 'Dominant wing'}</span>}
                   </div>
                 </div>
                 <p className="text-xs text-slate-400 mt-1">{wData?.subtitle}</p>
@@ -209,7 +240,9 @@ export function EnneagramTab({ result, enneagramResult, devResult, numerologyMet
         </div>
         {wingData && (
           <p className="text-xs text-slate-500 mt-3 italic">
-            Tvoje dominantné krídlo {enneagramResult.dominantWing} ti pridáva: {wingData.strengths[0].toLowerCase()}, {wingData.strengths[1].toLowerCase()}.
+            {language === 'sk'
+              ? `Tvoje dominantné krídlo ${enneagramResult.dominantWing} ti pridáva: ${wingData.strengths[0].toLowerCase()}, ${wingData.strengths[1].toLowerCase()}.`
+              : `Your dominant wing ${enneagramResult.dominantWing} adds: ${wingData.strengths[0].toLowerCase()}, ${wingData.strengths[1].toLowerCase()}.`}
           </p>
         )}
       </GlassCard>

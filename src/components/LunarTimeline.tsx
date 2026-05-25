@@ -1,5 +1,8 @@
 import * as Astronomy from 'astronomy-engine';
 import { GlassCard } from './GlassCard';
+import { useTranslation } from '../i18n/useTranslation';
+import { displayName, MOON_PHASE_DISPLAY } from '../i18n/entityNames';
+import type { Language } from '../store/useStore';
 
 interface Props {
   /** Koľko dní pred dnešným zobraziť (default 7). */
@@ -8,16 +11,27 @@ interface Props {
   daysAhead?: number;
 }
 
-function phaseInfo(angleDeg: number): { name: string; glyph: string; advice: string } {
-  if (angleDeg < 22.5) return { name: 'Nov', glyph: '🌑', advice: 'Začni nové. Setba zámerov.' };
-  if (angleDeg < 67.5) return { name: 'Dorastajúci kosáčik', glyph: '🌒', advice: 'Pestuj klíčiace nápady.' };
-  if (angleDeg < 112.5) return { name: 'Prvá štvrť', glyph: '🌓', advice: 'Rozhodni sa, prekonaj prekážky.' };
-  if (angleDeg < 157.5) return { name: 'Dorastajúci mesiac', glyph: '🌔', advice: 'Doplň, dolaď, prelaď.' };
-  if (angleDeg < 202.5) return { name: 'Spln', glyph: '🌕', advice: 'Plnosť. Zber, oslava, vrchol.' };
-  if (angleDeg < 247.5) return { name: 'Ubúdajúci mesiac', glyph: '🌖', advice: 'Zdieľaj, vyjadri vďaku.' };
-  if (angleDeg < 292.5) return { name: 'Posledná štvrť', glyph: '🌗', advice: 'Pusť, oddel, vyčisti.' };
-  if (angleDeg < 337.5) return { name: 'Ubúdajúci kosáčik', glyph: '🌘', advice: 'Odpočinok, reflexia.' };
-  return { name: 'Nov', glyph: '🌑', advice: 'Začni nové. Setba zámerov.' };
+const MOON_ADVICE: Record<string, Record<Language, string>> = {
+  'Nov': { sk: 'Začni nové. Setba zámerov.', en: 'Start fresh. Seed intentions.' },
+  'Dorastajúci kosáčik': { sk: 'Pestuj klíčiace nápady.', en: 'Nurture sprouting ideas.' },
+  'Prvá štvrť': { sk: 'Rozhodni sa, prekonaj prekážky.', en: 'Make decisions, overcome obstacles.' },
+  'Dorastajúci mesiac': { sk: 'Doplň, dolaď, prelaď.', en: 'Refine, adjust, fine-tune.' },
+  'Spln': { sk: 'Plnosť. Zber, oslava, vrchol.', en: 'Fullness. Harvest, celebrate, peak.' },
+  'Ubúdajúci mesiac': { sk: 'Zdieľaj, vyjadri vďaku.', en: 'Share, express gratitude.' },
+  'Posledná štvrť': { sk: 'Pusť, oddel, vyčisti.', en: 'Let go, separate, cleanse.' },
+  'Ubúdajúci kosáčik': { sk: 'Odpočinok, reflexia.', en: 'Rest, reflection.' },
+};
+
+function phaseInfo(angleDeg: number): { name: string; glyph: string } {
+  if (angleDeg < 22.5) return { name: 'Nov', glyph: '🌑' };
+  if (angleDeg < 67.5) return { name: 'Dorastajúci kosáčik', glyph: '🌒' };
+  if (angleDeg < 112.5) return { name: 'Prvá štvrť', glyph: '🌓' };
+  if (angleDeg < 157.5) return { name: 'Dorastajúci mesiac', glyph: '🌔' };
+  if (angleDeg < 202.5) return { name: 'Spln', glyph: '🌕' };
+  if (angleDeg < 247.5) return { name: 'Ubúdajúci mesiac', glyph: '🌖' };
+  if (angleDeg < 292.5) return { name: 'Posledná štvrť', glyph: '🌗' };
+  if (angleDeg < 337.5) return { name: 'Ubúdajúci kosáčik', glyph: '🌘' };
+  return { name: 'Nov', glyph: '🌑' };
 }
 
 /**
@@ -26,6 +40,7 @@ function phaseInfo(angleDeg: number): { name: string; glyph: string; advice: str
  * Dnešný deň je výrazne zvýraznený.
  */
 export function LunarTimeline({ daysBack = 7, daysAhead = 7 }: Props) {
+  const { language } = useTranslation();
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
@@ -40,9 +55,15 @@ export function LunarTimeline({ daysBack = 7, daysAhead = 7 }: Props) {
 
   return (
     <GlassCard>
-      <h3 className="font-medium text-white mb-1">Lunárny pás — najbližšie {daysBack + daysAhead + 1} dní</h3>
+      <h3 className="font-medium text-white mb-1">
+        {language === 'sk'
+          ? `Lunárny pás — najbližšie ${daysBack + daysAhead + 1} dní`
+          : `Lunar band — next ${daysBack + daysAhead + 1} days`}
+      </h3>
       <p className="text-xs text-slate-500 mb-3">
-        Fázy Mesiaca okolo dnešného dňa. Začínajte nové projekty pri nove, dokončujte pri splne.
+        {language === 'sk'
+          ? 'Fázy Mesiaca okolo dnešného dňa. Začínajte nové projekty pri nove, dokončujte pri splne.'
+          : 'Moon phases around today. Start new projects at the New Moon, finish them at the Full Moon.'}
       </p>
 
       <div className="overflow-x-auto -mx-2 px-2">
@@ -59,14 +80,14 @@ export function LunarTimeline({ daysBack = 7, daysAhead = 7 }: Props) {
                 }`}
               >
                 <p className={`text-[10px] uppercase ${d.isToday ? 'text-indigo-300 font-bold' : 'text-slate-500'}`}>
-                  {d.date.toLocaleDateString('sk-SK', { weekday: 'short' })}
+                  {d.date.toLocaleDateString(language === 'sk' ? 'sk-SK' : 'en-US', { weekday: 'short' })}
                 </p>
                 <p className={`text-xs ${d.isToday ? 'text-white font-bold' : 'text-slate-700'}`}>
                   {d.date.getDate()}. {d.date.getMonth() + 1}.
                 </p>
                 <div className="text-3xl my-1">{info.glyph}</div>
                 <p className={`text-[10px] leading-tight ${d.isToday ? 'text-indigo-200 font-medium' : 'text-slate-500'}`}>
-                  {info.name}
+                  {displayName(MOON_PHASE_DISPLAY, info.name, language)}
                 </p>
               </div>
             );
@@ -78,8 +99,10 @@ export function LunarTimeline({ daysBack = 7, daysAhead = 7 }: Props) {
         const todayInfo = phaseInfo(days.find(d => d.isToday)!.angle);
         return (
           <div className="mt-3 p-3 rounded-xl bg-indigo-500/10 border border-indigo-500/20">
-            <p className="text-xs text-indigo-300 uppercase mb-1">Dnešná fáza: {todayInfo.name}</p>
-            <p className="text-sm text-slate-300">{todayInfo.advice}</p>
+            <p className="text-xs text-indigo-300 uppercase mb-1">
+              {language === 'sk' ? 'Dnešná fáza' : "Today's phase"}: {displayName(MOON_PHASE_DISPLAY, todayInfo.name, language)}
+            </p>
+            <p className="text-sm text-slate-300">{MOON_ADVICE[todayInfo.name]?.[language] ?? todayInfo.name}</p>
           </div>
         );
       })()}

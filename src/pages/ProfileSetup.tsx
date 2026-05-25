@@ -7,7 +7,7 @@ import { isValidDate } from '../engine/numerologyEngine';
 import { useTranslation } from '../i18n/useTranslation';
 
 export function ProfileSetup() {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const navigate = useNavigate();
   const { addProfile, setActiveProfile, profiles } = useStore();
   const [name, setName] = useState('');
@@ -68,7 +68,9 @@ export function ProfileSetup() {
             {profiles.length === 0 ? t('profile.welcome') : t('profile.newProfile')}
           </h1>
           <p className="text-slate-400 mt-2">
-            Stačí zadať meno a dátum narodenia – všetky sekcie sa automaticky vypočítajú. Čas a miesto narodenia sú voliteľné (spresňujú astrológiu a Human Design) a dajú sa doplniť aj neskôr.
+            {language === 'sk'
+              ? 'Stačí zadať meno a dátum narodenia – všetky sekcie sa automaticky vypočítajú. Čas a miesto narodenia sú voliteľné (spresňujú astrológiu a Human Design) a dajú sa doplniť aj neskôr.'
+              : 'Just enter your name and birth date – all sections will be calculated automatically. Birth time and place are optional (they refine astrology and Human Design) and can be added later.'}
           </p>
         </div>
 

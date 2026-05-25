@@ -128,12 +128,18 @@ export function KabalahPage() {
 
           {/* 22 ciest */}
           <GlassCard>
-            <h3 className="font-medium text-white mb-2">22 ciest medzi sefirotmi</h3>
+            <h3 className="font-medium text-white mb-2">{language === 'sk' ? '22 ciest medzi sefirotmi' : '22 Paths Between the Sefirot'}</h3>
             <p className="text-sm text-slate-700 mb-2">
-              Sefiroty nie sú izolované – spája ich <strong>22 ciest</strong>, ktoré zodpovedajú 22 písmenám hebrejskej abecedy a 22 hlavným kartám tarotu (veľkej arkány). Každá cesta je proces, ktorým duša prechádza pri integrácii dvoch sefír.
+              {language === 'sk'
+                ? <>Sefiroty nie sú izolované – spája ich <strong>22 ciest</strong>, ktoré zodpovedajú 22 písmenám hebrejskej abecedy a 22 hlavným kartám tarotu (veľkej arkány). Každá cesta je proces, ktorým duša prechádza pri integrácii dvoch sefír.</>
+                : <>The sefirot are not isolated – they are connected by <strong>22 paths</strong> corresponding to 22 letters of the Hebrew alphabet and 22 major tarot cards (Major Arcana). Each path is a process through which the soul passes when integrating two sefirot.</>
+              }
             </p>
             <p className="text-xs text-slate-600">
-              Vaša osobná „cesta" (zobrazená nižšie) je vlastne výber niekoľkých z týchto 22 ciest – tých, ktoré práve teraz tvoria os vášho vývoja: <strong>od primárnej sefiry cez sekundárnu až po Malchut</strong>, kde sa všetko zhmotňuje.
+              {language === 'sk'
+                ? <>Vaša osobná „cesta" (zobrazená nižšie) je vlastne výber niekoľkých z týchto 22 ciest – tých, ktoré práve teraz tvoria os vášho vývoja: <strong>od primárnej sefiry cez sekundárnu až po Malchut</strong>, kde sa všetko zhmotňuje.</>
+                : <>Your personal "path" (shown below) is actually a selection of several of these 22 paths – those that currently form the axis of your development: <strong>from the primary sefira through the secondary to Malchut</strong>, where everything materializes.</>
+              }
             </p>
           </GlassCard>
 
@@ -166,37 +172,50 @@ export function KabalahPage() {
 
           {/* Prepojenie so systémami */}
           <GlassCard>
-            <h3 className="font-medium text-white mb-3">Ako to súvisí s ostatnými systémami</h3>
+            <h3 className="font-medium text-white mb-3">{language === 'sk' ? 'Ako to súvisí s ostatnými systémami' : 'How It Connects to Other Systems'}</h3>
             <p className="text-xs text-slate-500 mb-3">
-              Kabala nie je izolovaný systém — prepája sa s numerológiou aj čakrami. Tu vidíš, kde sa tvoje výsledky stretávajú.
+              {language === 'sk'
+                ? 'Kabala nie je izolovaný systém — prepája sa s numerológiou aj čakrami. Tu vidíš, kde sa tvoje výsledky stretávajú.'
+                : 'Kabbalah is not an isolated system — it connects with numerology and chakras. Here you can see where your results meet.'}
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="p-3 rounded-xl bg-indigo-50 border border-indigo-200">
-                <p className="text-xs text-indigo-700 font-semibold mb-1">Numerológia → Kabala</p>
+                <p className="text-xs text-indigo-700 font-semibold mb-1">{language === 'sk' ? 'Numerológia → Kabala' : 'Numerology → Kabbalah'}</p>
                 <p className="text-xs text-slate-700">
-                  Tvoje <strong>životné číslo</strong> určuje primárnu sefiru. Rovnaké číslo, ktoré definuje tvoj charakter v numerológii, definuje aj tvoju duchovnú tému v Kabale.
+                  {language === 'sk'
+                    ? <>Tvoje <strong>životné číslo</strong> určuje primárnu sefiru. Rovnaké číslo, ktoré definuje tvoj charakter v numerológii, definuje aj tvoju duchovnú tému v Kabale.</>
+                    : <>Your <strong>life path number</strong> determines the primary sefira. The same number that defines your character in numerology also defines your spiritual theme in Kabbalah.</>
+                  }
                 </p>
               </div>
               <div className="p-3 rounded-xl bg-purple-50 border border-purple-200">
-                <p className="text-xs text-purple-700 font-semibold mb-1">Kabala → Čakry</p>
+                <p className="text-xs text-purple-700 font-semibold mb-1">{language === 'sk' ? 'Kabala → Čakry' : 'Kabbalah → Chakras'}</p>
                 <p className="text-xs text-slate-700">
-                  Sefira <strong>{result.primarySefira.name}</strong> zodpovedá <strong>{result.primarySefira.chakra}. čakre</strong>. Keď pracuješ na tejto sefíre, automaticky posilňuješ aj danú čakru.
+                  {language === 'sk'
+                    ? <>Sefira <strong>{result.primarySefira.name}</strong> zodpovedá <strong>{result.primarySefira.chakra}. čakre</strong>. Keď pracuješ na tejto sefíre, automaticky posilňuješ aj danú čakru.</>
+                    : <>Sefira <strong>{result.primarySefira.name}</strong> corresponds to the <strong>{result.primarySefira.chakra}th chakra</strong>. When you work on this sefira, you automatically strengthen the corresponding chakra.</>
+                  }
                 </p>
               </div>
             </div>
             <p className="text-xs text-slate-500 mt-3 italic">
-              Všetky systémy v tejto appke ukazujú rôzne uhly pohľadu na tú istú osobnosť — nie sú to oddelené informácie, ale časti jednej mapy.
+              {language === 'sk'
+                ? 'Všetky systémy v tejto appke ukazujú rôzne uhly pohľadu na tú istú osobnosť — nie sú to oddelené informácie, ale časti jednej mapy.'
+                : 'All systems in this app show different angles of the same personality — they are not separate information, but parts of one map.'}
             </p>
           </GlassCard>
 
           <GlassCard glow>
             <div className="text-center mb-6">
-              <p className="text-xs text-slate-400 uppercase tracking-wider">Vaša primárna sefira</p>
+              <p className="text-xs text-slate-400 uppercase tracking-wider">{language === 'sk' ? 'Vaša primárna sefira' : 'Your Primary Sefira'}</p>
               <h2 className="font-serif text-3xl font-bold text-white mt-2">{result.primarySefira.name}</h2>
               <p className="text-lg text-indigo-300">{result.primarySefira.meaning}</p>
               <p className="text-sm text-slate-400 mt-1">{result.primarySefira.hebrewName}</p>
               <p className="text-xs text-slate-500 mt-3 max-w-md mx-auto">
-                Primárna sefira sa určuje z <strong>životného čísla</strong> – zodpovedá energii, ktorú má vaša duša v tomto živote rozpoznať a integrovať. Sekundárna sefira (z dňa narodenia) ukazuje, <strong>cez akú bránu</strong> sa k tejto energii dostávate.
+                {language === 'sk'
+                  ? <>Primárna sefira sa určuje z <strong>životného čísla</strong> – zodpovedá energii, ktorú má vaša duša v tomto živote rozpoznať a integrovať. Sekundárna sefira (z dňa narodenia) ukazuje, <strong>cez akú bránu</strong> sa k tejto energii dostávate.</>
+                  : <>The primary sefira is determined from your <strong>life path number</strong> – it corresponds to the energy your soul is meant to recognize and integrate in this life. The secondary sefira (from day of birth) shows <strong>through which gateway</strong> you access this energy.</>
+                }
               </p>
             </div>
           </GlassCard>
@@ -209,7 +228,7 @@ export function KabalahPage() {
               <h3 className="font-medium text-white mb-3">{t('kabalah.primarySefira')}: {result.primarySefira.name}</h3>
               <div className="space-y-3">
                 <div>
-                  <p className="text-xs text-slate-400">Témy</p>
+                  <p className="text-xs text-slate-400">{language === 'sk' ? 'Témy' : 'Themes'}</p>
                   <div className="flex flex-wrap gap-1 mt-1">
                     {result.primarySefira.themes.map(th => (
                       <span key={th} className="text-xs px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300">{th}</span>
@@ -217,19 +236,19 @@ export function KabalahPage() {
                   </div>
                 </div>
                 <div>
-                  <p className="text-xs text-green-400">Dar</p>
+                  <p className="text-xs text-green-400">{language === 'sk' ? 'Dar' : 'Gift'}</p>
                   <p className="text-sm text-slate-300">{result.primarySefira.gift}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-red-400">Tieň</p>
+                  <p className="text-xs text-red-400">{language === 'sk' ? 'Tieň' : 'Shadow'}</p>
                   <p className="text-sm text-slate-300">{result.primarySefira.shadow}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-slate-400">Pilier</p>
+                  <p className="text-xs text-slate-400">{language === 'sk' ? 'Pilier' : 'Pillar'}</p>
                   <p className="text-sm text-slate-300">{result.primarySefira.pillar}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-slate-400">Planéta</p>
+                  <p className="text-xs text-slate-400">{language === 'sk' ? 'Planéta' : 'Planet'}</p>
                   <p className="text-sm text-slate-300">{result.primarySefira.planet}</p>
                 </div>
               </div>
@@ -239,7 +258,7 @@ export function KabalahPage() {
               <h3 className="font-medium text-white mb-3">{t('kabalah.secondarySefira')}: {result.secondarySefira.name}</h3>
               <div className="space-y-3">
                 <div>
-                  <p className="text-xs text-slate-400">Témy</p>
+                  <p className="text-xs text-slate-400">{language === 'sk' ? 'Témy' : 'Themes'}</p>
                   <div className="flex flex-wrap gap-1 mt-1">
                     {result.secondarySefira.themes.map(th => (
                       <span key={th} className="text-xs px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300">{th}</span>
@@ -247,11 +266,11 @@ export function KabalahPage() {
                   </div>
                 </div>
                 <div>
-                  <p className="text-xs text-green-400">Dar</p>
+                  <p className="text-xs text-green-400">{language === 'sk' ? 'Dar' : 'Gift'}</p>
                   <p className="text-sm text-slate-300">{result.secondarySefira.gift}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-red-400">Tieň</p>
+                  <p className="text-xs text-red-400">{language === 'sk' ? 'Tieň' : 'Shadow'}</p>
                   <p className="text-sm text-slate-300">{result.secondarySefira.shadow}</p>
                 </div>
               </div>
@@ -259,7 +278,7 @@ export function KabalahPage() {
           </div>
 
           <GlassCard>
-            <h3 className="font-medium text-white mb-3">Vaša cesta po Strome života</h3>
+            <h3 className="font-medium text-white mb-3">{language === 'sk' ? 'Vaša cesta po Strome života' : 'Your Path on the Tree of Life'}</h3>
             <p className="text-sm text-indigo-300 font-serif italic mb-3">{result.path}</p>
             <p className="text-sm text-slate-700 mb-3">{result.integration}</p>
             <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
@@ -274,7 +293,7 @@ export function KabalahPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <GlassCard>
-              <h3 className="font-medium text-white mb-3">Životné lekcie</h3>
+              <h3 className="font-medium text-white mb-3">{language === 'sk' ? 'Životné lekcie' : 'Life Lessons'}</h3>
               <div className="space-y-2">
                 {result.lifeLessons.map((lesson, i) => (
                   <motion.div
@@ -292,47 +311,65 @@ export function KabalahPage() {
             </GlassCard>
 
             <GlassCard glow>
-              <h3 className="font-medium text-white mb-2">Čin v Malchut (Kráľovstvo)</h3>
-              <p className="text-xs text-slate-400 mb-3">Konkrétny krok pre dnešný deň</p>
+              <h3 className="font-medium text-white mb-2">{language === 'sk' ? 'Čin v Malchut (Kráľovstvo)' : 'Act in Malchut (Kingdom)'}</h3>
+              <p className="text-xs text-slate-400 mb-3">{language === 'sk' ? 'Konkrétny krok pre dnešný deň' : 'A concrete step for today'}</p>
               <p className="text-sm text-indigo-300 font-serif">{result.malchutAction}</p>
             </GlassCard>
           </div>
 
           {/* Ako pracovať s vašou cestou */}
           <GlassCard>
-            <h3 className="font-medium text-white mb-3">Ako pracovať s vašou cestou</h3>
+            <h3 className="font-medium text-white mb-3">{language === 'sk' ? 'Ako pracovať s vašou cestou' : 'How to Work With Your Path'}</h3>
             <div className="space-y-3 text-sm text-slate-700">
               <div className="p-3 rounded-xl bg-indigo-50 border border-indigo-200">
-                <p className="text-xs text-indigo-700 font-semibold uppercase tracking-wide mb-1">1. Rozpoznať svoju primárnu energiu</p>
+                <p className="text-xs text-indigo-700 font-semibold uppercase tracking-wide mb-1">{language === 'sk' ? '1. Rozpoznať svoju primárnu energiu' : '1. Recognize Your Primary Energy'}</p>
                 <p className="text-xs text-slate-700">
-                  Pozorujte počas dňa, kedy sa prejavuje energia <strong>{result.primarySefira.name}</strong> ({result.primarySefira.meaning}). Kedy ste v jej dare ({result.primarySefira.gift.toLowerCase()}) a kedy ste v tieni ({result.primarySefira.shadow.toLowerCase()})?
+                  {language === 'sk'
+                    ? <>Pozorujte počas dňa, kedy sa prejavuje energia <strong>{result.primarySefira.name}</strong> ({result.primarySefira.meaning}). Kedy ste v jej dare ({result.primarySefira.gift.toLowerCase()}) a kedy ste v tieni ({result.primarySefira.shadow.toLowerCase()})?</>
+                    : <>Observe during the day when the energy of <strong>{result.primarySefira.name}</strong> ({result.primarySefira.meaning}) manifests. When are you in its gift ({result.primarySefira.gift.toLowerCase()}) and when are you in its shadow ({result.primarySefira.shadow.toLowerCase()})?</>
+                  }
                 </p>
               </div>
               <div className="p-3 rounded-xl bg-purple-50 border border-purple-200">
-                <p className="text-xs text-purple-700 font-semibold uppercase tracking-wide mb-1">2. Použiť bránu sekundárnej sefiry</p>
+                <p className="text-xs text-purple-700 font-semibold uppercase tracking-wide mb-1">{language === 'sk' ? '2. Použiť bránu sekundárnej sefiry' : '2. Use the Secondary Sefira Gateway'}</p>
                 <p className="text-xs text-slate-700">
-                  K primárnej energii sa najľahšie dostanete cez <strong>{result.secondarySefira.name}</strong> ({result.secondarySefira.meaning}). Témy ako „{result.secondarySefira.themes.slice(0, 2).join(', ')}" sú vstupnou bránou.
+                  {language === 'sk'
+                    ? <>K primárnej energii sa najľahšie dostanete cez <strong>{result.secondarySefira.name}</strong> ({result.secondarySefira.meaning}). Témy ako „{result.secondarySefira.themes.slice(0, 2).join(', ')}" sú vstupnou bránou.</>
+                    : <>The easiest way to access your primary energy is through <strong>{result.secondarySefira.name}</strong> ({result.secondarySefira.meaning}). Themes like "{result.secondarySefira.themes.slice(0, 2).join(', ')}" are the gateway.</>
+                  }
                 </p>
               </div>
               <div className="p-3 rounded-xl bg-amber-50 border border-amber-200">
-                <p className="text-xs text-amber-700 font-semibold uppercase tracking-wide mb-1">3. Zhmotniť cez Malchut</p>
+                <p className="text-xs text-amber-700 font-semibold uppercase tracking-wide mb-1">{language === 'sk' ? '3. Zhmotniť cez Malchut' : '3. Materialize Through Malchut'}</p>
                 <p className="text-xs text-slate-700">
-                  Každý deň si zvolte <strong>jednu konkrétnu akciu</strong> v hmote, ktorá vyjadrí dnešnú energiu. Bez tohto kroku zostáva práca abstraktná. Čin pre dnes je v karte vyššie.
+                  {language === 'sk'
+                    ? <>Každý deň si zvolte <strong>jednu konkrétnu akciu</strong> v hmote, ktorá vyjadrí dnešnú energiu. Bez tohto kroku zostáva práca abstraktná. Čin pre dnes je v karte vyššie.</>
+                    : <>Each day, choose <strong>one concrete action</strong> in the material world that expresses today&apos;s energy. Without this step, the work remains abstract. Today&apos;s action is in the card above.</>
+                  }
                 </p>
               </div>
               <div className="p-3 rounded-xl bg-rose-50 border border-rose-200">
-                <p className="text-xs text-rose-700 font-semibold uppercase tracking-wide mb-1">4. Pracovať s tieňom</p>
+                <p className="text-xs text-rose-700 font-semibold uppercase tracking-wide mb-1">{language === 'sk' ? '4. Pracovať s tieňom' : '4. Work With the Shadow'}</p>
                 <p className="text-xs text-slate-700">
-                  Tieň primárnej sefiry („{result.primarySefira.shadow.toLowerCase()}") sa neignoruje – integruje sa. Keď ho rozpoznáte v sebe, namiesto popretia sa opýtajte: <em>„Čo táto energia chcela ochrániť?"</em>
+                  {language === 'sk'
+                    ? <>Tieň primárnej sefiry (&ldquo;{result.primarySefira.shadow.toLowerCase()}&rdquo;) sa neignoruje – integruje sa. Keď ho rozpoznáte v sebe, namiesto popretia sa opýtajte: <em>„Čo táto energia chcela ochrániť?"</em></>
+                    : <>The shadow of the primary sefira (&ldquo;{result.primarySefira.shadow.toLowerCase()}&rdquo;) is not ignored – it is integrated. When you recognize it in yourself, instead of denial, ask: <em>&ldquo;What was this energy trying to protect?&rdquo;</em></>
+                  }
                 </p>
               </div>
               <div className="p-3 rounded-xl bg-green-50 border border-green-200">
-                <p className="text-xs text-green-700 font-semibold uppercase tracking-wide mb-1">5. Vyvážiť pilier</p>
+                <p className="text-xs text-green-700 font-semibold uppercase tracking-wide mb-1">{language === 'sk' ? '5. Vyvážiť pilier' : '5. Balance the Pillar'}</p>
                 <p className="text-xs text-slate-700">
-                  Vaša primárna sefira je v pilieri <strong>{result.primarySefira.pillar}</strong>. Vedome dopĺňajte aj druhý pilier:
-                  {result.primarySefira.pillar === 'Milosrdenstvo' && ' rozvíjajte aj disciplínu, hranice a štruktúru (pilier Prísnosti).'}
-                  {result.primarySefira.pillar === 'Prísnosť' && ' rozvíjajte aj štedrosť, expanziu a otvorenosť (pilier Milosrdenstva).'}
-                  {result.primarySefira.pillar === 'Stred' && ' v sebe už máte prístup k oboj polarítam – vašou úlohou je ich harmonizácia v každodenných situáciách.'}
+                  {language === 'sk'
+                    ? <>Vaša primárna sefira je v pilieri <strong>{result.primarySefira.pillar}</strong>. Vedome dopĺňajte aj druhý pilier:
+                      {result.primarySefira.pillar === 'Milosrdenstvo' && ' rozvíjajte aj disciplínu, hranice a štruktúru (pilier Prísnosti).'}
+                      {result.primarySefira.pillar === 'Prísnosť' && ' rozvíjajte aj štedrosť, expanziu a otvorenosť (pilier Milosrdenstva).'}
+                      {result.primarySefira.pillar === 'Stred' && ' v sebe už máte prístup k oboj polarítam – vašou úlohou je ich harmonizácia v každodenných situáciách.'}</>
+                    : <>Your primary sefira is in the <strong>{result.primarySefira.pillar}</strong> pillar. Consciously develop the other pillar as well:
+                      {result.primarySefira.pillar === 'Milosrdenstvo' && ' also develop discipline, boundaries, and structure (Pillar of Severity).'}
+                      {result.primarySefira.pillar === 'Prísnosť' && ' also develop generosity, expansion, and openness (Pillar of Mercy).'}
+                      {result.primarySefira.pillar === 'Stred' && ' you already have access to both polarities – your task is to harmonize them in everyday situations.'}</>
+                  }
                 </p>
               </div>
             </div>

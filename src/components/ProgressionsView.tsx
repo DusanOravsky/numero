@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { GlassCard } from './GlassCard';
 import { calculateProgressions } from '../engine/astrologyEngine';
+import { useTranslation } from '../i18n/useTranslation';
+import { displayName, ZODIAC_DISPLAY } from '../i18n/entityNames';
 
 interface Props {
   birthDay: number;
@@ -17,6 +19,7 @@ interface Props {
  * Slnko sa hýbe ~1°/rok (zmena znamenia každých ~30 rokov), Mesiac ~12°/rok.
  */
 export function ProgressionsView({ birthDay, birthMonth, birthYear, birthHour, birthMinute }: Props) {
+  const { language } = useTranslation();
   const today = new Date();
   const ageNow = today.getFullYear() - birthYear - (
     today.getMonth() < birthMonth - 1 ||
@@ -28,14 +31,18 @@ export function ProgressionsView({ birthDay, birthMonth, birthYear, birthHour, b
 
   return (
     <GlassCard>
-      <h3 className="font-medium text-white mb-1">Sekundárne progresie</h3>
+      <h3 className="font-medium text-white mb-1">
+        {language === 'sk' ? 'Sekundárne progresie' : 'Secondary Progressions'}
+      </h3>
       <p className="text-xs text-slate-500 mb-3">
-        Klasická prediktívna technika: pozícia planéty <strong>N dní po narodení = pozícia v N. roku života</strong>.
-        Slnko sa hýbe ~1°/rok, Mesiac ~12°/rok — zmena znamenia preto signalizuje hlbokú zmenu životnej fázy.
+        {language === 'sk'
+          ? <>Klasická prediktívna technika: pozícia planéty <strong>N dní po narodení = pozícia v N. roku života</strong>. Slnko sa hýbe ~1°/rok, Mesiac ~12°/rok — zmena znamenia preto signalizuje hlbokú zmenu životnej fázy.</>
+          : <>Classic predictive technique: a planet's position <strong>N days after birth = position in the Nth year of life</strong>. The Sun moves ~1°/year, the Moon ~12°/year — a sign change therefore signals a deep shift in life phase.</>
+        }
       </p>
 
       <div className="flex items-center gap-3 mb-4 flex-wrap">
-        <label className="text-sm text-slate-400">Vek:</label>
+        <label className="text-sm text-slate-400">{language === 'sk' ? 'Vek' : 'Age'}:</label>
         <input
           type="number"
           min={0}
@@ -48,7 +55,7 @@ export function ProgressionsView({ birthDay, birthMonth, birthYear, birthHour, b
           onClick={() => setTargetAge(ageNow)}
           className="text-xs text-indigo-400 hover:text-indigo-300 underline"
         >
-          Dnes ({ageNow} r.)
+          {language === 'sk' ? `Dnes (${ageNow} r.)` : `Today (${ageNow} y.)`}
         </button>
         {[20, 30, 40, 50, 60].map(age => (
           <button
@@ -60,7 +67,7 @@ export function ProgressionsView({ birthDay, birthMonth, birthYear, birthHour, b
                 : 'border-slate-300 text-slate-600 hover:bg-slate-50'
             }`}
           >
-            {age} r.
+            {age} {language === 'sk' ? 'r.' : 'y.'}
           </button>
         ))}
       </div>
@@ -82,17 +89,20 @@ export function ProgressionsView({ birthDay, birthMonth, birthYear, birthHour, b
               </div>
               <div className="text-right text-xs">
                 <p className="text-slate-400">
-                  Natal: <span className="text-white">{p.natalSign} {p.natalDegree.toFixed(1)}°</span>
+                  Natal: <span className="text-white">{displayName(ZODIAC_DISPLAY, p.natalSign, language)} {p.natalDegree.toFixed(1)}°</span>
                 </p>
                 <p className={p.signChanged ? 'text-amber-300 font-medium' : 'text-slate-300'}>
-                  Progress: {p.progressedSign} {p.progressedDegree.toFixed(1)}°
+                  {language === 'sk' ? 'Progresia' : 'Progressed'}: {displayName(ZODIAC_DISPLAY, p.progressedSign, language)} {p.progressedDegree.toFixed(1)}°
                   {p.signChanged && ' ★'}
                 </p>
               </div>
             </div>
             {p.signChanged && (
               <p className="text-[11px] text-amber-300 mt-2 italic">
-                ★ Zmena znamenia z {p.natalSign} → {p.progressedSign}: nová fáza života v tejto oblasti.
+                {language === 'sk'
+                  ? `★ Zmena znamenia z ${displayName(ZODIAC_DISPLAY, p.natalSign, language)} → ${displayName(ZODIAC_DISPLAY, p.progressedSign, language)}: nová fáza života v tejto oblasti.`
+                  : `★ Sign change from ${displayName(ZODIAC_DISPLAY, p.natalSign, language)} → ${displayName(ZODIAC_DISPLAY, p.progressedSign, language)}: a new life phase in this area.`
+                }
               </p>
             )}
           </div>
@@ -100,8 +110,10 @@ export function ProgressionsView({ birthDay, birthMonth, birthYear, birthHour, b
       </div>
 
       <p className="text-[11px] text-slate-500 italic mt-3">
-        Najdôležitejšia je progresia <strong>Slnka</strong> (zmena znamenia ~ raz za 30 rokov = veľký životný prah)
-        a <strong>Mesiaca</strong> (zmena znamenia ~ každé 2-3 roky = emocionálny cyklus).
+        {language === 'sk'
+          ? <>Najdôležitejšia je progresia <strong>Slnka</strong> (zmena znamenia ~ raz za 30 rokov = veľký životný prah) a <strong>Mesiaca</strong> (zmena znamenia ~ každé 2-3 roky = emocionálny cyklus).</>
+          : <>The most important is the progression of the <strong>Sun</strong> (sign change ~ once every 30 years = major life threshold) and the <strong>Moon</strong> (sign change ~ every 2-3 years = emotional cycle).</>
+        }
       </p>
     </GlassCard>
   );

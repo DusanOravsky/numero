@@ -263,9 +263,12 @@ export function SettingsPage() {
               <div className="flex-1">
                 <p className="font-medium text-slate-800">{t('settings.methodCharacter')}</p>
                 <p className="text-xs text-slate-500 mt-1">
-                  Ukazuje <strong>vrodené kvality a archetypy</strong>, ktoré človek dostal do vienka. Mriežka sa skladá z cifier dátumu narodenia + redukcií dňa, mesiaca a roku. Významy: 1 = Ja/začiatok, 2 = Intuícia, 3 = Kreativita, 4 = Stabilita, 5 = Sloboda, 6 = Láska/rodina, 7 = Duchovno, 8 = Hojnosť, 9 = Múdrosť.
+                  {language === 'sk'
+                    ? <>Ukazuje <strong>vrodené kvality a archetypy</strong>, ktoré človek dostal do vienka. Mriežka sa skladá z cifier dátumu narodenia + redukcií dňa, mesiaca a roku. Významy: 1 = Ja/začiatok, 2 = Intuícia, 3 = Kreativita, 4 = Stabilita, 5 = Sloboda, 6 = Láska/rodina, 7 = Duchovno, 8 = Hojnosť, 9 = Múdrosť.</>
+                    : <>Shows <strong>innate qualities and archetypes</strong> that a person was born with. The grid consists of birth date digits + reductions of day, month, and year. Meanings: 1 = Self/beginning, 2 = Intuition, 3 = Creativity, 4 = Stability, 5 = Freedom, 6 = Love/family, 7 = Spirituality, 8 = Abundance, 9 = Wisdom.</>
+                  }
                 </p>
-                <p className="text-[11px] text-indigo-600 mt-2 italic">Zdroj: Robin Steinová – Numerológia: Čísla Lásky</p>
+                <p className="text-[11px] text-indigo-600 mt-2 italic">{language === 'sk' ? 'Zdroj: Robin Steinová – Numerológia: Čísla Lásky' : 'Source: Robin Stein – Numerology: Numbers of Love'}</p>
               </div>
             </div>
           </label>
@@ -283,9 +286,12 @@ export function SettingsPage() {
               <div className="flex-1">
                 <p className="font-medium text-slate-800">{t('settings.methodDevelopmental')}</p>
                 <p className="text-xs text-slate-500 mt-1">
-                  Ukazuje <strong>životné úlohy a karmické cykly</strong>, ktoré si duša prišla riešiť. Do mriežky vstupujú aj <strong>4 "zakrúžkované" pomocné čísla</strong>. Roky 2000+ sa počítajú špeciálne (rok = 20 + zvyšok). Významy: 1 = Ego (mužské/ženské), 2 = Bioenergia tela, 3 = Vnútorná múdrosť, 4 = Sebavedomie, 5 = Intuícia, 6 = Vytrvalosť (2+ = mág), 7 = Dôvera, 8 = Škola lásky, 9 = Hmotný svet/financie.
+                  {language === 'sk'
+                    ? <>Ukazuje <strong>životné úlohy a karmické cykly</strong>, ktoré si duša prišla riešiť. Do mriežky vstupujú aj <strong>4 &ldquo;zakrúžkované&rdquo; pomocné čísla</strong>. Roky 2000+ sa počítajú špeciálne (rok = 20 + zvyšok). Významy: 1 = Ego (mužské/ženské), 2 = Bioenergia tela, 3 = Vnútorná múdrosť, 4 = Sebavedomie, 5 = Intuícia, 6 = Vytrvalosť (2+ = mág), 7 = Dôvera, 8 = Škola lásky, 9 = Hmotný svet/financie.</>
+                    : <>Shows <strong>life tasks and karmic cycles</strong> that the soul came to resolve. The grid also includes <strong>4 &ldquo;circled&rdquo; auxiliary numbers</strong>. Years 2000+ are calculated specially (year = 20 + remainder). Meanings: 1 = Ego (masculine/feminine), 2 = Body bioenergy, 3 = Inner wisdom, 4 = Self-confidence, 5 = Intuition, 6 = Perseverance (2+ = mage), 7 = Trust, 8 = School of love, 9 = Material world/finances.</>
+                  }
                 </p>
-                <p className="text-[11px] text-indigo-600 mt-2 italic">Zdroj: kniha Lívia Mičková – Duchovná numerológia</p>
+                <p className="text-[11px] text-indigo-600 mt-2 italic">{language === 'sk' ? 'Zdroj: kniha Lívia Mičková – Duchovná numerológia' : 'Source: Livia Mickova – Spiritual Numerology'}</p>
               </div>
             </div>
           </label>
@@ -644,7 +650,7 @@ export function SettingsPage() {
               )}
             </div>
             <p className="text-[11px] text-slate-500">
-              {log.length} záznamov v logu. Najnovších 10 mount-time súborov:
+              {language === 'sk' ? `${log.length} záznamov v logu. Najnovších 10 mount-time súborov:` : `${log.length} records in log. Latest 10 mount-time files:`}
             </p>
             <div className="mt-1 space-y-1 max-h-32 overflow-y-auto">
               {log.filter(e => !['LCP', 'CLS'].includes(e.name)).slice(0, 10).map((e, i) => (
@@ -674,14 +680,14 @@ export function SettingsPage() {
               </button>
             </div>
             <p className="text-xs text-slate-500 mb-3">
-              {log.length} chýb v lokálnom logu (max {20}). Užitočné pri reportovaní problémov.
+              {language === 'sk' ? `${log.length} chýb v lokálnom logu (max 20). Užitočné pri reportovaní problémov.` : `${log.length} errors in local log (max 20). Useful when reporting issues.`}
             </p>
             <div className="space-y-2 max-h-48 overflow-y-auto">
               {log.slice(0, 5).map((e, i) => (
                 <div key={i} className="p-2 rounded-lg bg-rose-500/10 border border-rose-500/30 text-xs">
                   <p className="text-rose-300 font-mono break-all">{e.message}</p>
                   <p className="text-slate-500 text-[10px] mt-1">
-                    {new Date(e.timestamp).toLocaleString('sk-SK')} · {e.url.split('/').slice(-1)[0] || '/'}
+                    {new Date(e.timestamp).toLocaleString(language === 'sk' ? 'sk-SK' : 'en-US')} · {e.url.split('/').slice(-1)[0] || '/'}
                   </p>
                 </div>
               ))}

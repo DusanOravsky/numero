@@ -14,7 +14,7 @@ import { UpcomingEclipses } from '../components/UpcomingEclipses';
 import { ProgressionsView } from '../components/ProgressionsView';
 import { SolarReturnView } from '../components/SolarReturnView';
 import { calculateChineseZodiac } from '../engine/chineseZodiacEngine';
-import { getChineseAnimalInfo, CHINESE_ELEMENTS } from '../data/chineseZodiac';
+import { getChineseAnimalInfo, getChineseElementInfo } from '../data/chineseZodiac';
 import { useTranslation } from '../i18n/useTranslation';
 import type { Language } from '../store/useStore';
 import { displayName, ZODIAC_DISPLAY, PLANET_DISPLAY, ELEMENT_DISPLAY, QUALITY_DISPLAY, MOON_PHASE_DISPLAY, CHINESE_ANIMAL_DISPLAY, CHINESE_ELEMENT_DISPLAY } from '../i18n/entityNames';
@@ -597,7 +597,7 @@ export function AstrologyPage() {
               if (!birthYear) return null;
               const chinese = calculateChineseZodiac(birthYear, profile?.birthMonth, profile?.birthDay);
               const animalInfo = getChineseAnimalInfo(chinese.animal, language);
-              const elementInfo = CHINESE_ELEMENTS[chinese.element];
+              const elementInfo = getChineseElementInfo(chinese.element, language);
               if (!animalInfo) return null;
               return (
                 <GlassCard>

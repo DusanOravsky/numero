@@ -1,6 +1,8 @@
 import { useMemo, useState } from 'react';
 import * as Astronomy from 'astronomy-engine';
 import { GlassCard } from './GlassCard';
+import { useTranslation } from '../i18n/useTranslation';
+import type { Language } from '../store/useStore';
 
 interface EclipseEvent {
   date: Date;
@@ -8,11 +10,18 @@ interface EclipseEvent {
   type: 'Solar' | 'Lunar';
 }
 
-const KIND_INFO: Record<string, { glyph: string; meaning: string }> = {
-  Total: { glyph: '●', meaning: 'totálne — najsilnejšia transformácia' },
-  Partial: { glyph: '◐', meaning: 'čiastočné — postupná zmena' },
-  Annular: { glyph: '○', meaning: 'prsteňové — vzácne, znova-rodenie' },
-  Penumbral: { glyph: '◌', meaning: 'penumbrálne — jemná energia' },
+const KIND_INFO: Record<string, { glyph: string; meaning: Record<Language, string> }> = {
+  Total: { glyph: '●', meaning: { sk: 'totálne — najsilnejšia transformácia', en: 'total — strongest transformation' } },
+  Partial: { glyph: '◐', meaning: { sk: 'čiastočné — postupná zmena', en: 'partial — gradual change' } },
+  Annular: { glyph: '○', meaning: { sk: 'prstencové — vzácne, znova-rodenie', en: 'annular — rare, rebirth' } },
+  Penumbral: { glyph: '◌', meaning: { sk: 'penumbrálne — jemná energia', en: 'penumbral — subtle energy' } },
+};
+
+const KIND_LABEL: Record<string, Record<Language, string>> = {
+  Total: { sk: 'totálne', en: 'total' },
+  Partial: { sk: 'čiastočné', en: 'partial' },
+  Annular: { sk: 'prstencové', en: 'annular' },
+  Penumbral: { sk: 'penumbrálne', en: 'penumbral' },
 };
 
 /**
@@ -21,6 +30,7 @@ const KIND_INFO: Record<string, { glyph: string; meaning: string }> = {
  * presne podľa Espenak/Meeus polynómov.
  */
 export function UpcomingEclipses() {
+  const { language } = useTranslation();
   const [nowMs] = useState(() => Date.now());
   const events = useMemo<EclipseEvent[]>(() => {
     const now = new Date();
@@ -48,13 +58,18 @@ export function UpcomingEclipses() {
 
   return (
     <GlassCard>
-      <h3 className="font-medium text-white mb-1">Nadchádzajúce zatmenia</h3>
+      <h3 className="font-medium text-white mb-1">
+        {language === 'sk' ? 'Nadchádzajúce zatmenia' : 'Upcoming Eclipses'}
+      </h3>
       <p className="text-xs text-slate-500 mb-3">
-        Zatmenia Slnka a Mesiaca prinášajú silné transformačné okná v cykle ~6 mesiacov. Energie sa mobilizujú niekoľko týždňov pred a po.
+        {language === 'sk'
+          ? 'Zatmenia Slnka a Mesiaca prinášajú silné transformačné okná v cykle ~6 mesiacov. Energie sa mobilizujú niekoľko týždňov pred a po.'
+          : 'Solar and Lunar eclipses bring powerful transformation windows in ~6-month cycles. Energies mobilize several weeks before and after.'}
       </p>
       <div className="space-y-2">
         {events.map((e, i) => {
-          const info = KIND_INFO[e.kind] || { glyph: '?', meaning: e.kind };
+          const info = KIND_INFO[e.kind] || { glyph: '?', meaning: { sk: e.kind, en: e.kind } };
+          const kindLabel = KIND_LABEL[e.kind]?.[language] ?? e.kind;
           const daysFromNow = Math.round((e.date.getTime() - nowMs) / 86400000);
           return (
             <div
@@ -72,17 +87,23 @@ export function UpcomingEclipses() {
                   </span>
                   <div>
                     <p className="text-sm font-medium text-white">
-                      {e.type === 'Solar' ? '☉ Slnečné' : '☽ Mesačné'} — {e.kind}
+                      {e.type === 'Solar'
+                        ? (language === 'sk' ? '☉ Slnečné' : '☉ Solar')
+                        : (language === 'sk' ? '☽ Mesačné' : '☽ Lunar')
+                      } — {kindLabel}
                     </p>
-                    <p className="text-xs text-slate-400">{info.meaning}</p>
+                    <p className="text-xs text-slate-400">{info.meaning[language]}</p>
                   </div>
                 </div>
                 <div className="text-right">
                   <p className="text-sm text-slate-300">
-                    {e.date.toLocaleDateString('sk-SK', { day: 'numeric', month: 'long', year: 'numeric' })}
+                    {e.date.toLocaleDateString(language === 'sk' ? 'sk-SK' : 'en-US', { day: 'numeric', month: 'long', year: 'numeric' })}
                   </p>
                   <p className="text-[10px] text-slate-500">
-                    {daysFromNow >= 0 ? `o ${daysFromNow} dní` : `pred ${-daysFromNow} dňami`}
+                    {daysFromNow >= 0
+                      ? (language === 'sk' ? `o ${daysFromNow} dní` : `in ${daysFromNow} days`)
+                      : (language === 'sk' ? `pred ${-daysFromNow} dňami` : `${-daysFromNow} days ago`)
+                    }
                   </p>
                 </div>
               </div>

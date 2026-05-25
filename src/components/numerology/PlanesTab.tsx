@@ -15,10 +15,12 @@ export function PlanesTab({ result }: PlanesTabProps) {
     <div className="space-y-6">
       <GlassCard>
         <p className="text-sm text-slate-400">
-          <strong className="text-white">{t('numerology.tabPlanes')}</strong> sú zoskupenia troch čísel v mriežke (riadok, stĺpec alebo uhlopriečka). <strong className="text-green-300">{t('numerology.fullPlanes')}</strong> vyjadrujú schopnosti, ktoré človek dostal do vienka. <strong className="text-amber-300">{t('numerology.emptyPlanes')}</strong> naznačujú smer, ktorým sa má osoba uberať v ďalšom rozvoji.
+          {language === 'sk'
+            ? <><strong className="text-white">{t('numerology.tabPlanes')}</strong> sú zoskupenia troch čísel v mriežke (riadok, stĺpec alebo uhlopriečka). <strong className="text-green-300">{t('numerology.fullPlanes')}</strong> vyjadrujú schopnosti, ktoré človek dostal do vienka. <strong className="text-amber-300">{t('numerology.emptyPlanes')}</strong> naznačujú smer, ktorým sa má osoba uberať v ďalšom rozvoji.</>
+            : <><strong className="text-white">{t('numerology.tabPlanes')}</strong> are groupings of three numbers in the grid (row, column or diagonal). <strong className="text-green-300">{t('numerology.fullPlanes')}</strong> express abilities that a person was born with. <strong className="text-amber-300">{t('numerology.emptyPlanes')}</strong> indicate the direction in which the person should develop further.</>}
         </p>
         <p className="text-[11px] text-slate-500 italic mt-2">
-          Zdroj: Robin Steinová – Numerológia: Čísla Lásky
+          {language === 'sk' ? 'Zdroj: Robin Steinová – Numerológia: Čísla Lásky' : 'Source: Robin Steinová – Numerology: Numbers of Love'}
         </p>
       </GlassCard>
 

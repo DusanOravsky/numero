@@ -14,7 +14,7 @@ import { deriveDosha } from '../engine/ayurvedaEngine';
 import { deriveTCMElement } from '../engine/tcmEngine';
 import { getDoshaInfo } from '../data/ayurveda';
 import { getTCMElement } from '../data/tcm';
-import { BACH_FLOWERS_BY_CHAKRA } from '../data/bachFlowers';
+import { getBachFlowersByChakra } from '../data/bachFlowers';
 import { getZodiacCrystals, getBlockedChakraCrystals } from '../data/crystals';
 import { deriveArchetype } from '../engine/archetypeEngine';
 import type { ArchetypeResult } from '../engine/archetypeEngine';
@@ -141,7 +141,7 @@ export function ModalityPage() {
   // Collect Bach flowers for blocked chakras
   const recommendedFlowers: BachFlower[] = [];
   for (const chakraNum of data.blockedChakras) {
-    const flowers = BACH_FLOWERS_BY_CHAKRA[chakraNum];
+    const flowers = getBachFlowersByChakra(chakraNum, language);
     if (flowers) {
       recommendedFlowers.push(...flowers);
     }
@@ -657,8 +657,8 @@ export function ModalityPage() {
             </p>
             <div className="space-y-4">
               {data.blockedChakras.map(chakraNum => {
-                const flowers = BACH_FLOWERS_BY_CHAKRA[chakraNum];
-                if (!flowers) return null;
+                const flowers = getBachFlowersByChakra(chakraNum, language);
+                if (!flowers || flowers.length === 0) return null;
                 const chakraState = data.chakras.find(c => c.chakra.number === chakraNum);
                 return (
                   <div key={chakraNum} className="border border-slate-700 rounded-xl p-4">

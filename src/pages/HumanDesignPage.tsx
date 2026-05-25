@@ -9,7 +9,7 @@ import type { HumanDesignResult } from '../engine/humanDesignEngine';
 import { Bodygraph } from '../components/Bodygraph';
 import { motion } from 'framer-motion';
 import { getGeneKeysForGates } from '../data/geneKeys';
-import { HD_LINES, HD_PROFILE_PHASES, HD_AUTHORITY_INFO, HD_DEFINITION_INFO } from '../data/hdLines';
+import { getHDLine, getHDProfilePhase, getHDAuthorityInfo, getHDDefinitionInfo } from '../data/hdLines';
 import type { GeneKey } from '../data/geneKeys';
 import { useTranslation } from '../i18n/useTranslation';
 import { displayName, HD_TYPE_DISPLAY, HD_AUTHORITY_DISPLAY, HD_CENTER_DISPLAY } from '../i18n/entityNames';
@@ -634,10 +634,10 @@ export function HumanDesignPage() {
 
           {/* Detailný popis 6 línií podľa profilu */}
           {(() => {
-            const line1 = HD_LINES[result.profile.line1];
-            const line2 = HD_LINES[result.profile.line2];
+            const line1 = getHDLine(result.profile.line1, language);
+            const line2 = getHDLine(result.profile.line2, language);
             const profileKey = `${result.profile.line1}/${result.profile.line2}`;
-            const phaseHint = HD_PROFILE_PHASES[profileKey];
+            const phaseHint = getHDProfilePhase(profileKey, language);
             return (
               <GlassCard>
                 <h3 className="font-medium text-white mb-3">
@@ -676,18 +676,18 @@ export function HumanDesignPage() {
 
           {/* Authority detail with wave (B16) + Definition type (B17) */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {HD_AUTHORITY_INFO[result.authority] && (
+            {getHDAuthorityInfo(result.authority, language) && (
               <GlassCard>
                 <h3 className="font-medium text-white mb-1">{t('hd.authority')}: {displayName(HD_AUTHORITY_DISPLAY, result.authority, language)}</h3>
-                <p className="text-xs text-slate-400 mb-2"><strong>{language === 'sk' ? 'Vlna' : 'Wave'}:</strong> {HD_AUTHORITY_INFO[result.authority].wave}</p>
-                <p className="text-sm text-emerald-700"><strong>{language === 'sk' ? 'Ako počúvať' : 'How to listen'}:</strong> {HD_AUTHORITY_INFO[result.authority].how}</p>
+                <p className="text-xs text-slate-400 mb-2"><strong>{language === 'sk' ? 'Vlna' : 'Wave'}:</strong> {getHDAuthorityInfo(result.authority, language).wave}</p>
+                <p className="text-sm text-emerald-700"><strong>{language === 'sk' ? 'Ako počúvať' : 'How to listen'}:</strong> {getHDAuthorityInfo(result.authority, language).how}</p>
               </GlassCard>
             )}
-            {HD_DEFINITION_INFO[result.definition] && (
+            {getHDDefinitionInfo(result.definition, language) && (
               <GlassCard>
                 <h3 className="font-medium text-white mb-1">{t('hd.definition')}: {result.definition}</h3>
-                <p className="text-xs text-slate-400 mb-2">{HD_DEFINITION_INFO[result.definition].description}</p>
-                <p className="text-sm text-indigo-700"><strong>{language === 'sk' ? 'Lekcia' : 'Lesson'}:</strong> {HD_DEFINITION_INFO[result.definition].lesson}</p>
+                <p className="text-xs text-slate-400 mb-2">{getHDDefinitionInfo(result.definition, language).description}</p>
+                <p className="text-sm text-indigo-700"><strong>{language === 'sk' ? 'Lekcia' : 'Lesson'}:</strong> {getHDDefinitionInfo(result.definition, language).lesson}</p>
               </GlassCard>
             )}
           </div>

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { DevelopmentalNumerologyResult } from '../engine/developmentalNumerologyEngine';
 import { getCellMeaning, getGridIntro, getHowToRead } from '../data/developmentalMeanings';
-import { findMatchingCombinations } from '../data/developmentalCombinations';
+import { findMatchingCombinations, getCombinationText } from '../data/developmentalCombinations';
 import { useTranslation } from '../i18n/useTranslation';
 
 interface Props {
@@ -83,7 +83,7 @@ export function DevelopmentalNumerologyView({ result, gender, compact }: Props) 
           {k3Meaning && (
             <div className="p-3 rounded-lg bg-violet-50 border border-violet-200">
               <p className="text-xs font-semibold text-violet-800 mb-1">
-                Tvoje životné poslanie (K3 = {k3Value}): {k3Meaning.theme}
+                {language === 'sk' ? 'Tvoje životné poslanie' : 'Your life mission'} (K3 = {k3Value}): {k3Meaning.theme}
               </p>
               <p className="text-xs text-slate-700">{k3Meaning.description}</p>
               <p className="text-xs text-slate-600 mt-2">
@@ -99,10 +99,12 @@ export function DevelopmentalNumerologyView({ result, gender, compact }: Props) 
           {zeros.length > 0 && (
             <div className="p-3 rounded-lg bg-rose-50 border border-rose-200">
               <p className="text-xs font-semibold text-rose-800 mb-2">
-                Tvoje životné úlohy (prázdne bunky): {zeros.map(z => z.num).join(', ')}
+                {language === 'sk' ? 'Tvoje životné úlohy (prázdne bunky)' : 'Your life tasks (empty cells)'}: {zeros.map(z => z.num).join(', ')}
               </p>
               <p className="text-[11px] text-slate-600 mb-2">
-                Tieto oblasti nemáš „vrodené" — prišiel si sa ich naučiť. Nie sú to slabiny, ale lekcie.
+                {language === 'sk'
+                  ? 'Tieto oblasti nemáš „vrodené" — prišiel si sa ich naučiť. Nie sú to slabiny, ale lekcie.'
+                  : 'These areas are not "innate" to you — you came to learn them. They are not weaknesses, but lessons.'}
               </p>
               <div className="space-y-2">
                 {zeros.map(z => (
@@ -122,10 +124,12 @@ export function DevelopmentalNumerologyView({ result, gender, compact }: Props) 
           {highCounts.length > 0 && (
             <div className="p-3 rounded-lg bg-emerald-50 border border-emerald-200">
               <p className="text-xs font-semibold text-emerald-800 mb-2">
-                Tvoje silné energie (3+×): {highCounts.map(h => `${h.num} (${h.count}×)`).join(', ')}
+                {language === 'sk' ? 'Tvoje silné energie (3+×)' : 'Your strong energies (3+×)'}: {highCounts.map(h => `${h.num} (${h.count}×)`).join(', ')}
               </p>
               <p className="text-[11px] text-slate-600 mb-2">
-                Ak ich vieš nasmerovať, sú to dary. Ak nie — stávajú sa záťažou.
+                {language === 'sk'
+                  ? 'Ak ich vieš nasmerovať, sú to dary. Ak nie — stávajú sa záťažou.'
+                  : 'If you can channel them, they are gifts. If not — they become a burden.'}
               </p>
               <div className="space-y-2">
                 {highCounts.map(h => (
@@ -158,7 +162,7 @@ export function DevelopmentalNumerologyView({ result, gender, compact }: Props) 
           </div>
 
           <div className="p-3 rounded-lg bg-slate-50 border border-slate-200">
-            <p className="text-[10px] text-slate-500 uppercase mb-1">Praktický tip</p>
+            <p className="text-[10px] text-slate-500 uppercase mb-1">{language === 'sk' ? 'Praktický tip' : 'Practical tip'}</p>
             <p className="text-xs text-slate-700">{getHowToRead(language).practicalTip}</p>
           </div>
         </div>
@@ -171,8 +175,8 @@ export function DevelopmentalNumerologyView({ result, gender, compact }: Props) 
       <div className="p-4 rounded-xl glass-light">
         <h4 className="font-medium text-slate-800 mb-2">{t('dev.calculationSteps')}</h4>
         <div className="space-y-1 text-xs text-slate-600">
-          <p>D + M (cifry dňa a mesiaca): <strong className="text-indigo-700">{result.dayMonthSum}</strong></p>
-          <p>R (cifry roku{result.isPost2000 ? ', pre rok ≥ 2000: 20 + zvyšok' : ''}): <strong className="text-indigo-700">{result.yearSum}</strong></p>
+          <p>{language === 'sk' ? 'D + M (cifry dňa a mesiaca)' : 'D + M (digits of day and month)'}: <strong className="text-indigo-700">{result.dayMonthSum}</strong></p>
+          <p>R ({language === 'sk' ? 'cifry roku' : 'digits of year'}{result.isPost2000 ? (language === 'sk' ? ', pre rok ≥ 2000: 20 + zvyšok' : ', for year ≥ 2000: 20 + remainder') : ''}): <strong className="text-indigo-700">{result.yearSum}</strong></p>
         </div>
       </div>
 
@@ -180,15 +184,22 @@ export function DevelopmentalNumerologyView({ result, gender, compact }: Props) 
       <div>
         <h4 className="font-medium text-slate-800 mb-2">{t('dev.karmicCycles')}</h4>
         <p className="text-xs text-slate-500 mb-3">
-          Štyri zakrúžkované čísla zodpovedajú štyrom karmickým cyklom života: psychická stabilita, materiálna stabilita, životné poslanie a detské sny. Postupne sa aktivujú v životných obdobiach.
+          {language === 'sk'
+            ? 'Štyri zakrúžkované čísla zodpovedajú štyrom karmickým cyklom života: psychická stabilita, materiálna stabilita, životné poslanie a detské sny. Postupne sa aktivujú v životných obdobiach.'
+            : 'The four circled numbers correspond to four karmic life cycles: psychological stability, material stability, life mission, and childhood dreams. They activate gradually in different life periods.'}
         </p>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {result.circled.map((c, idx) => {
-            const cycleLabels = [
+            const cycleLabels = language === 'sk' ? [
               { name: 'Psychická stabilita', desc: 'Tvorba vnútornej psychickej stability a sebaobrazu.' },
               { name: 'Materiálna stabilita', desc: 'Vytváranie hmotnej a finančnej stability v živote.' },
               { name: 'Životné poslanie', desc: 'Plnenie hlavnej životnej úlohy duše.' },
               { name: 'Detské sny', desc: 'Plnenie detských snov, návrat k pôvodnej radosti.' },
+            ] : [
+              { name: 'Psychological stability', desc: 'Building inner psychological stability and self-image.' },
+              { name: 'Material stability', desc: 'Creating material and financial stability in life.' },
+              { name: 'Life mission', desc: 'Fulfilling the main life task of the soul.' },
+              { name: 'Childhood dreams', desc: 'Fulfilling childhood dreams, return to original joy.' },
             ];
             const meta = cycleLabels[idx];
             return (
@@ -226,13 +237,17 @@ export function DevelopmentalNumerologyView({ result, gender, compact }: Props) 
               {result.egoPolarity === 'masculine' ? '♂' : '♀'}
             </span>
             <p className={`font-semibold ${result.egoPolarity === 'masculine' ? 'text-blue-700' : 'text-rose-700'}`}>
-              {result.egoPolarity === 'masculine' ? t('dev.masculine') : t('dev.feminine')} ({result.oneCount}× číslo 1)
+              {result.egoPolarity === 'masculine' ? t('dev.masculine') : t('dev.feminine')} ({result.oneCount}× {language === 'sk' ? 'číslo' : 'number'} 1)
             </p>
           </div>
           <p className="text-xs text-slate-700">
             {result.egoPolarity === 'masculine'
-              ? 'Nepárny počet jednotiek – energia dávania, vymedzovania priestoru, ochrany, akcie a iniciatívy.'
-              : 'Párny počet jednotiek – energia prijímania, otvorenia, plnenia priestoru teplom, trpezlivosti.'}
+              ? (language === 'sk'
+                ? 'Nepárny počet jednotiek – energia dávania, vymedzovania priestoru, ochrany, akcie a iniciatívy.'
+                : 'Odd number of ones – energy of giving, defining space, protection, action and initiative.')
+              : (language === 'sk'
+                ? 'Párny počet jednotiek – energia prijímania, otvorenia, plnenia priestoru teplom, trpezlivosti.'
+                : 'Even number of ones – energy of receiving, opening, filling space with warmth, patience.')}
           </p>
 
           {/* Kontextový výklad podľa pohlavia */}
@@ -244,13 +259,21 @@ export function DevelopmentalNumerologyView({ result, gender, compact }: Props) 
               <div className={`mt-2 p-2 rounded-lg ${genderMatchesEgo ? 'bg-green-50 border border-green-200' : 'bg-amber-50 border border-amber-200'}`}>
                 <p className={`text-[11px] font-medium ${genderMatchesEgo ? 'text-green-700' : 'text-amber-700'}`}>
                   {genderMatchesEgo
-                    ? `✓ Súlad: ${gender === 'male' ? 'muž' : 'žena'} s ${result.egoPolarity === 'masculine' ? 'mužským' : 'ženským'} egom`
-                    : `⚠ Kríženie: ${gender === 'male' ? 'muž' : 'žena'} s ${result.egoPolarity === 'masculine' ? 'mužským' : 'ženským'} egom`}
+                    ? (language === 'sk'
+                      ? `✓ Súlad: ${gender === 'male' ? 'muž' : 'žena'} s ${result.egoPolarity === 'masculine' ? 'mužským' : 'ženským'} egom`
+                      : `✓ Alignment: ${gender === 'male' ? 'male' : 'female'} with ${result.egoPolarity === 'masculine' ? 'masculine' : 'feminine'} ego`)
+                    : (language === 'sk'
+                      ? `⚠ Kríženie: ${gender === 'male' ? 'muž' : 'žena'} s ${result.egoPolarity === 'masculine' ? 'mužským' : 'ženským'} egom`
+                      : `⚠ Crossing: ${gender === 'male' ? 'male' : 'female'} with ${result.egoPolarity === 'masculine' ? 'masculine' : 'feminine'} ego`)}
                 </p>
                 <p className="text-[11px] text-slate-600 mt-1">
                   {genderMatchesEgo
-                    ? 'Polarita ega je v súlade s tvojim biologickým pohlavím – tvojou úlohou je rozvíjať túto prirodzenú polaritu s múdrosťou.'
-                    : `Tvoje biologické pohlavie a vibrácia ega sú opačné. Životnou úlohou je vedome sa naučiť ${gender === 'male' ? 'mužský' : 'ženský'} princíp – to, čo prirodzene poznáš ${gender === 'male' ? 'zo ženského sveta' : 'z mužského sveta'}, doplniť o opačnú polaritu, aby si žil/a v plnom potenciáli.`}
+                    ? (language === 'sk'
+                      ? 'Polarita ega je v súlade s tvojim biologickým pohlavím – tvojou úlohou je rozvíjať túto prirodzenú polaritu s múdrosťou.'
+                      : 'The ego polarity is aligned with your biological sex – your task is to develop this natural polarity with wisdom.')
+                    : (language === 'sk'
+                      ? `Tvoje biologické pohlavie a vibrácia ega sú opačné. Životnou úlohou je vedome sa naučiť ${gender === 'male' ? 'mužský' : 'ženský'} princíp – to, čo prirodzene poznáš ${gender === 'male' ? 'zo ženského sveta' : 'z mužského sveta'}, doplniť o opačnú polaritu, aby si žil/a v plnom potenciáli.`
+                      : `Your biological sex and ego vibration are opposite. Your life task is to consciously learn the ${gender === 'male' ? 'masculine' : 'feminine'} principle – to complement what you naturally know ${gender === 'male' ? 'from the feminine world' : 'from the masculine world'} with the opposite polarity, so you can live to your full potential.`)}
                 </p>
               </div>
             );
@@ -258,7 +281,9 @@ export function DevelopmentalNumerologyView({ result, gender, compact }: Props) 
 
           {!gender && (
             <p className="text-[11px] text-slate-500 italic mt-1">
-              Pre presnejší výklad pridaj v profile pohlavie – ukážeme, či je polarita ega v súlade s biologickým pohlavím alebo či je tvojou úlohou naučiť sa opačnú polaritu.
+              {language === 'sk'
+                ? 'Pre presnejší výklad pridaj v profile pohlavie – ukážeme, či je polarita ega v súlade s biologickým pohlavím alebo či je tvojou úlohou naučiť sa opačnú polaritu.'
+                : 'For a more precise reading, add your gender in the profile – we will show whether the ego polarity is aligned with your biological sex or whether your task is to learn the opposite polarity.'}
             </p>
           )}
         </div>
@@ -305,7 +330,7 @@ export function DevelopmentalNumerologyView({ result, gender, compact }: Props) 
                     {cells.map((cell, i) => (
                       <span
                         key={i}
-                        title={cell.source === 'circled' ? `${cell.circledIndex}. zakrúžkované` : 'cifra dátumu'}
+                        title={cell.source === 'circled' ? `${cell.circledIndex}. ${language === 'sk' ? 'zakrúžkované' : 'circled'}` : (language === 'sk' ? 'cifra dátumu' : 'date digit')}
                         className={`text-lg font-bold ${cell.source === 'date' ? 'text-indigo-600' : 'text-amber-600'}`}
                       >
                         {cell.digit}
@@ -338,17 +363,17 @@ export function DevelopmentalNumerologyView({ result, gender, compact }: Props) 
                 {selectedMeaning.number} – {selectedMeaning.theme}
               </h4>
               <span className="text-xs px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700">
-                {selectedCount}× v mriežke
+                {selectedCount}× {language === 'sk' ? 'v mriežke' : 'in grid'}
               </span>
             </div>
             <p className="text-xs text-slate-600 mb-2">{selectedMeaning.description}</p>
             <div className="p-3 rounded-lg bg-amber-50 border border-amber-200">
-              <p className="text-[10px] text-amber-700 uppercase mb-1">Interpretácia podľa počtu</p>
+              <p className="text-[10px] text-amber-700 uppercase mb-1">{language === 'sk' ? 'Interpretácia podľa počtu' : 'Interpretation by count'}</p>
               <p className="text-xs text-slate-700">{getCountInterpretation(selectedMeaning.number, selectedCount)}</p>
             </div>
             {selectedMeaning.recommendation && (
               <div className="mt-2 p-3 rounded-lg bg-indigo-50 border border-indigo-200">
-                <p className="text-[10px] text-indigo-700 uppercase mb-1">Odporúčanie</p>
+                <p className="text-[10px] text-indigo-700 uppercase mb-1">{language === 'sk' ? 'Odporúčanie' : 'Recommendation'}</p>
                 <p className="text-xs text-slate-700">{selectedMeaning.recommendation}</p>
               </div>
             )}
@@ -364,10 +389,13 @@ export function DevelopmentalNumerologyView({ result, gender, compact }: Props) 
           <div className="rounded-xl border border-indigo-200 bg-indigo-50/40 p-4">
             <h4 className="font-medium text-slate-800 mb-1">{t('dev.notableCombinations')}</h4>
             <p className="text-xs text-slate-500 mb-3">
-              Niektoré dvojice čísel v mriežke majú špecifický význam, ktorý pri jednotlivých bunkách nie je viditeľný. Tu sú tie, ktoré platia pre vás.
+              {language === 'sk'
+                ? 'Niektoré dvojice čísel v mriežke majú špecifický význam, ktorý pri jednotlivých bunkách nie je viditeľný. Tu sú tie, ktoré platia pre vás.'
+                : 'Some number pairs in the grid have specific meaning that is not visible in individual cells. Here are the ones that apply to you.'}
             </p>
             <div className="space-y-2">
               {matches.map(combo => {
+                const texts = getCombinationText(combo, language);
                 const colors =
                   combo.tone === 'gift' ? 'bg-green-50 border-green-200' :
                   combo.tone === 'warn' ? 'bg-amber-50 border-amber-200' :
@@ -378,11 +406,11 @@ export function DevelopmentalNumerologyView({ result, gender, compact }: Props) 
                   'text-slate-700';
                 return (
                   <div key={combo.id} className={`p-3 rounded-lg border ${colors}`}>
-                    <p className={`text-sm font-medium ${titleColor}`}>{combo.title}</p>
-                    <p className="text-xs text-slate-700 mt-1">{combo.description}</p>
-                    {combo.recommendation && (
+                    <p className={`text-sm font-medium ${titleColor}`}>{texts.title}</p>
+                    <p className="text-xs text-slate-700 mt-1">{texts.description}</p>
+                    {texts.recommendation && (
                       <p className="text-xs text-slate-600 mt-1.5 italic">
-                        <strong>{t('numerology.recommendation')}:</strong> {combo.recommendation}
+                        <strong>{t('numerology.recommendation')}:</strong> {texts.recommendation}
                       </p>
                     )}
                   </div>

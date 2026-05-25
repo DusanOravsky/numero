@@ -70,13 +70,13 @@ export function SharedView() {
       const match = hash.match(/[?&]data=([^&]+)/);
       if (!match) {
         // eslint-disable-next-line react-hooks/set-state-in-effect
-        setError('Chyba: chybajuce data v odkaze');
+        setError(language === 'sk' ? 'Chyba: chybajuce data v odkaze' : 'Error: missing data in link');
         return;
       }
       // Cap base64 dĺžku na 4KB (chráni pred OOM cez maliciózny long URL)
       if (match[1].length > 4096) {
         // eslint-disable-next-line react-hooks/set-state-in-effect
-        setError('Chyba: prilis dlhy odkaz');
+        setError(language === 'sk' ? 'Chyba: prilis dlhy odkaz' : 'Error: link too long');
         return;
       }
       // Modern UTF-8 decode (escape() je deprecated)
@@ -90,7 +90,7 @@ export function SharedView() {
       const year = parseInt(String(decoded.birthYear), 10);
       if (!name || !day || !month || !year || day < 1 || day > 31 || month < 1 || month > 12 || year < 1900 || year > 2100) {
         // eslint-disable-next-line react-hooks/set-state-in-effect
-        setError('Chyba: nekompletne alebo neplatne data');
+        setError(language === 'sk' ? 'Chyba: nekompletne alebo neplatne data' : 'Error: incomplete or invalid data');
         return;
       }
       const hour = decoded.birthHour !== undefined ? parseInt(String(decoded.birthHour), 10) : undefined;
@@ -108,8 +108,9 @@ export function SharedView() {
       setClientData(safe);
     } catch {
       // eslint-disable-next-line react-hooks/set-state-in-effect
-      setError('Chyba: neplatny odkaz');
+      setError(language === 'sk' ? 'Chyba: neplatny odkaz' : 'Error: invalid link');
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const results: AllResults | null = useMemo(() => {
@@ -143,7 +144,7 @@ export function SharedView() {
   if (!clientData || !results) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p className="text-slate-400">Nacitavam...</p>
+        <p className="text-slate-400">{t('common.loading')}</p>
       </div>
     );
   }

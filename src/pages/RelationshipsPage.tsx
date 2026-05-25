@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { GlassCard } from '../components/GlassCard';
 import { useStore } from '../store/useStore';
-import type { Client } from '../store/useStore';
+import type { Client, Language } from '../store/useStore';
 import { useTranslation } from '../i18n/useTranslation';
 import { displayName, ELEMENT_DISPLAY, HD_TYPE_DISPLAY, HD_AUTHORITY_DISPLAY, HD_CENTER_DISPLAY } from '../i18n/entityNames';
 import { calculateFullNumerology, reduceToSingle, isValidDate } from '../engine/numerologyEngine';
@@ -164,16 +164,16 @@ interface SynastryResult {
   overallScore: number;
 }
 
-function getElementCompatibility(el1: string, el2: string): { score: number; description: string } {
-  if (el1 === el2) return { score: 95, description: 'Rovnaký živel -- prirodzená harmónia a vzájomné pochopenie.' };
+function getElementCompatibility(el1: string, el2: string, lang: Language = 'sk'): { score: number; description: string } {
+  if (el1 === el2) return { score: 95, description: lang === 'sk' ? 'Rovnaký živel -- prirodzená harmónia a vzájomné pochopenie.' : 'Same element — natural harmony and mutual understanding.' };
   // Komplementárne (trigón v astrológii): Oheň-Vzduch a Zem-Voda
   const compatible: Record<string, string> = { 'Oheň': 'Vzduch', 'Vzduch': 'Oheň', 'Zem': 'Voda', 'Voda': 'Zem' };
-  if (compatible[el1] === el2) return { score: 80, description: 'Komplementárne živly -- vzájomne sa posilňujete a inšpirujete.' };
+  if (compatible[el1] === el2) return { score: 80, description: lang === 'sk' ? 'Komplementárne živly -- vzájomne sa posilňujete a inšpirujete.' : 'Complementary elements — you strengthen and inspire each other.' };
   // Opozičné (kvadratúra): Oheň-Voda, Zem-Vzduch
   const opposite: Record<string, string> = { 'Oheň': 'Voda', 'Voda': 'Oheň', 'Zem': 'Vzduch', 'Vzduch': 'Zem' };
-  if (opposite[el1] === el2) return { score: 45, description: 'Protichodné živly -- silná príťažlivosť, ale aj napätie a výzvy.' };
+  if (opposite[el1] === el2) return { score: 45, description: lang === 'sk' ? 'Protichodné živly -- silná príťažlivosť, ale aj napätie a výzvy.' : 'Opposing elements — strong attraction, but also tension and challenges.' };
   // Neutrálne (kvadratúra menej intenzívna): Oheň-Zem, Vzduch-Voda
-  return { score: 55, description: 'Neutrálna kombinácia -- vyžaduje vedomú prácu na pochopení odlišností.' };
+  return { score: 55, description: lang === 'sk' ? 'Neutrálna kombinácia -- vyžaduje vedomú prácu na pochopení odlišností.' : 'Neutral combination — requires conscious effort to understand differences.' };
 }
 
 function getPlanetByName(result: AstrologyResult, name: string) {
@@ -244,27 +244,28 @@ function calculateComposite(
 
 function calculateSynastry(
   name1: string, day1: number, month1: number, year1: number, hour1: number, minute1: number, lat1: number, lon1: number,
-  name2: string, day2: number, month2: number, year2: number, hour2: number, minute2: number, lat2: number, lon2: number
+  name2: string, day2: number, month2: number, year2: number, hour2: number, minute2: number, lat2: number, lon2: number,
+  lang: Language = 'sk'
 ): SynastryResult {
   const tz1 = getTimezoneFromCoords(lat1, lon1);
   const tz2 = getTimezoneFromCoords(lat2, lon2);
   const r1 = calculateAstrology(day1, month1, year1, hour1, minute1, lat1, lon1, tz1);
   const r2 = calculateAstrology(day2, month2, year2, hour2, minute2, lat2, lon2, tz2);
 
-  const sunCompat = getElementCompatibility(r1.sunSign.element, r2.sunSign.element);
-  const moonCompat = getElementCompatibility(r1.moonSign.element, r2.moonSign.element);
+  const sunCompat = getElementCompatibility(r1.sunSign.element, r2.sunSign.element, lang);
+  const moonCompat = getElementCompatibility(r1.moonSign.element, r2.moonSign.element, lang);
 
   const venus1 = getPlanetByName(r1, 'Venuša');
   const venus2 = getPlanetByName(r2, 'Venuša');
   const venusCompat = venus1 && venus2
-    ? getElementCompatibility(venus1.sign.element, venus2.sign.element)
-    : { score: 70, description: 'Nedá sa presne určiť.' };
+    ? getElementCompatibility(venus1.sign.element, venus2.sign.element, lang)
+    : { score: 70, description: lang === 'sk' ? 'Nedá sa presne určiť.' : 'Cannot be precisely determined.' };
 
   const mars1 = getPlanetByName(r1, 'Mars');
   const mars2 = getPlanetByName(r2, 'Mars');
   const marsCompat = mars1 && mars2
-    ? getElementCompatibility(mars1.sign.element, mars2.sign.element)
-    : { score: 70, description: 'Nedá sa presne určiť.' };
+    ? getElementCompatibility(mars1.sign.element, mars2.sign.element, lang)
+    : { score: 70, description: lang === 'sk' ? 'Nedá sa presne určiť.' : 'Cannot be precisely determined.' };
 
   const complementary: Record<string, string> = { 'Oheň': 'Vzduch', 'Vzduch': 'Oheň', 'Zem': 'Voda', 'Voda': 'Zem' };
   const elBalance = {
@@ -289,9 +290,9 @@ function calculateSynastry(
   };
 }
 
-function getAspectMeaning(planet1: string, planet2: string, nature: string): string {
+function getAspectMeaning(planet1: string, planet2: string, nature: string, lang: Language = 'sk'): string {
   const key = [planet1, planet2].sort().join('-');
-  const meanings: Record<string, Record<string, string>> = {
+  const sk: Record<string, Record<string, string>> = {
     'Slnko-Mesiac': { harmonic: 'Hlboké vzájomné porozumenie — identita jedného živí emócie druhého.', tense: 'Napätie medzi tým, čo chcete a čo cítite. Vyžaduje kompromis.', neutral: 'Silné prepojenie identity a emócií — intenzívny vzťah.' },
     'Slnko-Venuša': { harmonic: 'Prirodzená náklonnosť a obdiv. Vzťah plný láskavosti.', tense: 'Rozdielne hodnoty v láske. Treba hľadať spoločný jazyk.', neutral: 'Silná príťažlivosť — jeden obdivuje druhého.' },
     'Slnko-Mars': { harmonic: 'Vzájomné motivovanie a energia. Dobrý tím.', tense: 'Rivalizácia a konflikty ega. Motor rastu ak sa zvládne.', neutral: 'Intenzívna dynamika — buď spolupráca alebo súťaž.' },
@@ -308,10 +309,28 @@ function getAspectMeaning(planet1: string, planet2: string, nature: string): str
     'Mars-Saturn': { harmonic: 'Disciplinovaná spolupráca. Spoločne prekonávate prekážky.', tense: 'Frustrácia — jeden brzdí, druhý tlačí. Mocenské hry.', neutral: 'Napätie medzi akciou a opatrnosťou.' },
     'Jupiter-Saturn': { harmonic: 'Rovnováha expanzie a štruktúry. Múdre spoločné rozhodnutia.', tense: 'Konflikt optimizmu a realizmu. Rôzne tempo.', neutral: 'Učiteľ a žiak — vzájomná výmena múdrosti.' },
   };
+  const en: Record<string, Record<string, string>> = {
+    'Slnko-Mesiac': { harmonic: 'Deep mutual understanding — one\'s identity nourishes the other\'s emotions.', tense: 'Tension between what you want and what you feel. Requires compromise.', neutral: 'Strong connection of identity and emotions — an intense relationship.' },
+    'Slnko-Venuša': { harmonic: 'Natural affection and admiration. A relationship full of kindness.', tense: 'Different values in love. Need to find a common language.', neutral: 'Strong attraction — one admires the other.' },
+    'Slnko-Mars': { harmonic: 'Mutual motivation and energy. A great team.', tense: 'Rivalry and ego conflicts. A growth engine if managed well.', neutral: 'Intense dynamics — either cooperation or competition.' },
+    'Slnko-Jupiter': { harmonic: 'Mutual support of growth and optimism. The relationship broadens horizons.', tense: 'Exaggerated expectations. One promises more than they deliver.', neutral: 'Expansive energy — together you aim high.' },
+    'Slnko-Saturn': { harmonic: 'Stability and mutual respect. A relationship with depth and responsibility.', tense: 'One restricts the other. A sense of duty instead of joy.', neutral: 'Karmic relationship — lessons and responsibility.' },
+    'Mesiac-Venuša': { harmonic: 'Emotional harmony and tenderness. You feel safe together.', tense: 'Emotional needs clash with the way love is expressed.', neutral: 'Strong emotional connection — deep intimacy.' },
+    'Mesiac-Mars': { harmonic: 'Passion and emotional intensity. The relationship is alive and dynamic.', tense: 'Emotions turn into conflicts. Reactivity.', neutral: 'Intense emotions — passion and storms.' },
+    'Mesiac-Jupiter': { harmonic: 'Mutual care and generous emotional support.', tense: 'Emotional overindulgence — too many promises.', neutral: 'Expansion of the emotional world.' },
+    'Mesiac-Saturn': { harmonic: 'Emotional safety and reliability. A long-term relationship.', tense: 'Emotional suppression. One feels restricted.', neutral: 'Karmic emotional connection — lessons in feelings.' },
+    'Venuša-Mars': { harmonic: 'Strong physical and romantic attraction.', tense: 'Desire vs. frustration. Intensity that can be destructive.', neutral: 'Magnetic attraction — erotic spark.' },
+    'Venuša-Jupiter': { harmonic: 'Generous, joyful love. Mutual enrichment.', tense: 'Excessive spending or exaggerated idealism in love.', neutral: 'Love broadens horizons for both.' },
+    'Venuša-Saturn': { harmonic: 'Faithful, stable love with depth. A lifelong relationship.', tense: 'Love vs. duty. Coldness instead of tenderness.', neutral: 'Serious and responsible emotional bond.' },
+    'Mars-Jupiter': { harmonic: 'Shared adventures and mutual motivation to act.', tense: 'Exaggerated ambitions or conflict of values in action.', neutral: 'Expansive energy — together you achieve a lot.' },
+    'Mars-Saturn': { harmonic: 'Disciplined cooperation. Together you overcome obstacles.', tense: 'Frustration — one brakes, the other pushes. Power games.', neutral: 'Tension between action and caution.' },
+    'Jupiter-Saturn': { harmonic: 'Balance of expansion and structure. Wise joint decisions.', tense: 'Conflict of optimism and realism. Different pace.', neutral: 'Teacher and student — mutual exchange of wisdom.' },
+  };
+  const meanings = lang === 'en' ? en : sk;
   const pair = meanings[key];
   if (pair) return pair[nature] || pair.neutral || '';
-  if (nature === 'harmonic') return 'Harmonický tok energie medzi týmito oblasťami vášho vzťahu.';
-  if (nature === 'tense') return 'Napätie ktoré vyžaduje vedomú prácu, ale je motorom rastu.';
+  if (nature === 'harmonic') return lang === 'sk' ? 'Harmonický tok energie medzi týmito oblasťami vášho vzťahu.' : 'Harmonious energy flow between these areas of your relationship.';
+  if (nature === 'tense') return lang === 'sk' ? 'Napätie ktoré vyžaduje vedomú prácu, ale je motorom rastu.' : 'Tension that requires conscious effort, but drives growth.';
   return '';
 }
 
@@ -361,6 +380,7 @@ export function RelationshipsPage() {
     if (savedAstro?.p1 && savedAstro?.p2 && isAstroPersonValid(savedAstro.p1) && isAstroPersonValid(savedAstro.p2)) {
       const city1 = findCity(savedAstro.p1.birthPlace);
       const city2 = findCity(savedAstro.p2.birthPlace);
+      const initLang = useStore.getState().language;
       return calculateSynastry(
         savedAstro.p1.name,
         parseInt(savedAstro.p1.day), parseInt(savedAstro.p1.month), parseInt(savedAstro.p1.year),
@@ -371,7 +391,8 @@ export function RelationshipsPage() {
         parseInt(savedAstro.p2.day), parseInt(savedAstro.p2.month), parseInt(savedAstro.p2.year),
         savedAstro.p2.hour ? parseInt(savedAstro.p2.hour) : 12,
         savedAstro.p2.minute ? parseInt(savedAstro.p2.minute) : 0,
-        city2?.lat || 48.15, city2?.lon || 17.11
+        city2?.lat || 48.15, city2?.lon || 17.11,
+        initLang
       );
     }
     return null;
@@ -467,6 +488,7 @@ export function RelationshipsPage() {
     if (!isAstroPersonValid(astroPartner1) || !isAstroPersonValid(astroPartner2)) return;
     const city1 = findCity(astroPartner1.birthPlace);
     const city2 = findCity(astroPartner2.birthPlace);
+    const currentLang = useStore.getState().language;
     const result = calculateSynastry(
       astroPartner1.name,
       parseInt(astroPartner1.day), parseInt(astroPartner1.month), parseInt(astroPartner1.year),
@@ -477,7 +499,8 @@ export function RelationshipsPage() {
       parseInt(astroPartner2.day), parseInt(astroPartner2.month), parseInt(astroPartner2.year),
       astroPartner2.hour ? parseInt(astroPartner2.hour) : 12,
       astroPartner2.minute ? parseInt(astroPartner2.minute) : 0,
-      city2?.lat || 48.15, city2?.lon || 17.11
+      city2?.lat || 48.15, city2?.lon || 17.11,
+      currentLang
     );
     setSynastryResult(result);
     localStorage.setItem('relationships-astro', JSON.stringify({ p1: astroPartner1, p2: astroPartner2 }));
@@ -1553,7 +1576,9 @@ export function RelationshipsPage() {
               <GlassCard>
                 <h3 className="font-medium text-slate-900 mb-2">{t('rel.synastryAspects')}</h3>
                 <p className="text-xs text-slate-500 mb-3">
-                  Každý uhol medzi planétami partnerov tvorí aspekt – buď harmonický (trigon, sextil), napäťový (kvadratúra, opozícia) alebo neutrálny (spojenie). Orbis = odchýlka od ideálu.
+                  {language === 'sk'
+                    ? 'Každý uhol medzi planétami partnerov tvorí aspekt – buď harmonický (trigon, sextil), napäťový (kvadratúra, opozícia) alebo neutrálny (spojenie). Orbis = odchýlka od ideálu.'
+                    : 'Each angle between partners\' planets forms an aspect — either harmonic (trine, sextile), tense (square, opposition), or neutral (conjunction). Orb = deviation from the ideal angle.'}
                 </p>
 
                 {/* Súhrnný score */}
@@ -1587,7 +1612,7 @@ export function RelationshipsPage() {
                                'bg-slate-50 border-slate-200';
                     const iconColor = a.nature === 'harmonic' ? 'text-green-700' :
                                       a.nature === 'tense' ? 'text-rose-700' : 'text-slate-700';
-                    const meaning = getAspectMeaning(a.planet1, a.planet2, a.nature);
+                    const meaning = getAspectMeaning(a.planet1, a.planet2, a.nature, language);
                     return (
                       <div key={i} className={`p-2 rounded-lg border ${bg}`}>
                         <div className="flex items-center justify-between gap-2">

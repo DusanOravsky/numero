@@ -2,6 +2,7 @@ import { useMemo, useState, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useSubject } from '../hooks/useSubject';
 import { useTranslation } from '../i18n/useTranslation';
+import type { Language } from '../store/useStore';
 import { GlassCard } from '../components/GlassCard';
 import { DateInput } from '../components/DateInput';
 import { calculateFullNumerology, getGridCount } from '../engine/numerologyEngine';
@@ -40,7 +41,8 @@ interface ModalityData {
 function computeModality(
   day: number, month: number, year: number,
   hour: number = 12, minute: number = 0,
-  lat: number = 48.15, lon: number = 17.11, tz: number = 1
+  lat: number = 48.15, lon: number = 17.11, tz: number = 1,
+  lang: Language = 'sk'
 ): ModalityData {
   const numerology = calculateFullNumerology(day, month, year);
   const astrology = calculateAstrology(day, month, year, hour, minute, lat, lon, tz);
@@ -63,7 +65,7 @@ function computeModality(
   const devNum = calculateDevelopmentalNumerology(day, month, year);
   const enneagram = deriveEnneagramType(numerology, devNum, 'developmental');
   const archetype = enneagram
-    ? deriveArchetype(numerology.lifePathNumber, enneagram.coreType, hd.type)
+    ? deriveArchetype(numerology.lifePathNumber, enneagram.coreType, hd.type, lang)
     : null;
 
   return {
@@ -94,9 +96,10 @@ export function ModalityPage() {
       profile.birthMinute ?? 0,
       lat,
       lon,
-      tz
+      tz,
+      language
     );
-  }, [profile]);
+  }, [profile, language]);
 
   const data = manualData ?? profileData;
 
@@ -104,8 +107,8 @@ export function ModalityPage() {
   const kuaResult = useMemo<KuaResult | null>(() => {
     if (!profile) return null;
     const gender = (profile as { gender?: string }).gender === 'female' ? 'female' : 'male';
-    return calculateKua(profile.birthYear, gender as 'male' | 'female');
-  }, [profile]);
+    return calculateKua(profile.birthYear, gender as 'male' | 'female', language);
+  }, [profile, language]);
 
   // Tab routing (hooks musia byť pred early return)
   const [searchParams, setSearchParams] = useSearchParams();
@@ -116,7 +119,7 @@ export function ModalityPage() {
 
   const handleCalculate = (day: number, month: number, year: number, hour?: number, minute?: number, lat?: number, lon?: number) => {
     const tz = lon !== undefined ? Math.round(lon / 15) : 1;
-    setManualData(computeModality(day, month, year, hour ?? 12, minute ?? 0, lat ?? 48.15, lon ?? 17.11, tz));
+    setManualData(computeModality(day, month, year, hour ?? 12, minute ?? 0, lat ?? 48.15, lon ?? 17.11, tz, language));
   };
 
   if (!data) {

@@ -84,6 +84,105 @@ export const HD_CENTER_DISPLAY: NameMap = {
   'Koreň': { sk: 'Koreň', en: 'Root' },
 };
 
+export const CHAKRA_NAME_DISPLAY: NameMap = {
+  'Koreňová čakra': { sk: 'Koreňová čakra', en: 'Root Chakra' },
+  'Sakrálna čakra': { sk: 'Sakrálna čakra', en: 'Sacral Chakra' },
+  'Čakra solárneho plexu': { sk: 'Čakra solárneho plexu', en: 'Solar Plexus Chakra' },
+  'Srdcová čakra': { sk: 'Srdcová čakra', en: 'Heart Chakra' },
+  'Krčná čakra': { sk: 'Krčná čakra', en: 'Throat Chakra' },
+  'Čakra tretieho oka': { sk: 'Čakra tretieho oka', en: 'Third Eye Chakra' },
+  'Korunná čakra': { sk: 'Korunná čakra', en: 'Crown Chakra' },
+};
+
+export const CHAKRA_LOCATION_DISPLAY: NameMap = {
+  'Báza chrbtice': { sk: 'Báza chrbtice', en: 'Base of spine' },
+  'Pod pupkom': { sk: 'Pod pupkom', en: 'Below navel' },
+  'Solárny plexus': { sk: 'Solárny plexus', en: 'Solar plexus' },
+  'Stred hrudníka': { sk: 'Stred hrudníka', en: 'Center of chest' },
+  'Hrdlo': { sk: 'Hrdlo', en: 'Throat' },
+  'Stred čela': { sk: 'Stred čela', en: 'Center of forehead' },
+  'Temeno hlavy': { sk: 'Temeno hlavy', en: 'Crown of head' },
+};
+
+export const CHAKRA_ELEMENT_DISPLAY: NameMap = {
+  'Zem': { sk: 'Zem', en: 'Earth' },
+  'Voda': { sk: 'Voda', en: 'Water' },
+  'Oheň': { sk: 'Oheň', en: 'Fire' },
+  'Vzduch': { sk: 'Vzduch', en: 'Air' },
+  'Éter': { sk: 'Éter', en: 'Ether' },
+  'Svetlo': { sk: 'Svetlo', en: 'Light' },
+  'Myšlienka': { sk: 'Myšlienka', en: 'Thought' },
+};
+
+export const CHAKRA_THEME_DISPLAY: NameMap = {
+  'Bezpečie': { sk: 'Bezpečie', en: 'Safety' },
+  'Prežitie': { sk: 'Prežitie', en: 'Survival' },
+  'Stabilita': { sk: 'Stabilita', en: 'Stability' },
+  'Zakorenenie': { sk: 'Zakorenenie', en: 'Grounding' },
+  'Kreativita': { sk: 'Kreativita', en: 'Creativity' },
+  'Emócie': { sk: 'Emócie', en: 'Emotions' },
+  'Sexualita': { sk: 'Sexualita', en: 'Sexuality' },
+  'Radosť': { sk: 'Radosť', en: 'Joy' },
+  'Sila vôle': { sk: 'Sila vôle', en: 'Willpower' },
+  'Sebavedomie': { sk: 'Sebavedomie', en: 'Self-confidence' },
+  'Osobná moc': { sk: 'Osobná moc', en: 'Personal power' },
+  'Hranice': { sk: 'Hranice', en: 'Boundaries' },
+  'Láska': { sk: 'Láska', en: 'Love' },
+  'Súcit': { sk: 'Súcit', en: 'Compassion' },
+  'Odpustenie': { sk: 'Odpustenie', en: 'Forgiveness' },
+  'Prijatie': { sk: 'Prijatie', en: 'Acceptance' },
+  'Komunikácia': { sk: 'Komunikácia', en: 'Communication' },
+  'Pravda': { sk: 'Pravda', en: 'Truth' },
+  'Sebavyjadrenie': { sk: 'Sebavyjadrenie', en: 'Self-expression' },
+  'Autenticita': { sk: 'Autenticita', en: 'Authenticity' },
+  'Intuícia': { sk: 'Intuícia', en: 'Intuition' },
+  'Vízia': { sk: 'Vízia', en: 'Vision' },
+  'Múdrosť': { sk: 'Múdrosť', en: 'Wisdom' },
+  'Vnútorné vedenie': { sk: 'Vnútorné vedenie', en: 'Inner guidance' },
+  'Duchovnosť': { sk: 'Duchovnosť', en: 'Spirituality' },
+  'Prepojenie': { sk: 'Prepojenie', en: 'Connection' },
+  'Jednota': { sk: 'Jednota', en: 'Unity' },
+  'Osvietenie': { sk: 'Osvietenie', en: 'Enlightenment' },
+};
+
+export const CHAKRA_STATUS_TEXT: Record<number, Record<'balanced' | 'blocked' | 'hyperactive', Record<Language, string>>> = {
+  1: {
+    balanced: { sk: 'Pocit bezpečia, stability, dôvery v život', en: 'Feeling of safety, stability, trust in life' },
+    blocked: { sk: 'Strach, úzkosť, nestabilita, finančné problémy', en: 'Fear, anxiety, instability, financial problems' },
+    hyperactive: { sk: 'Materializmus, chamtivosť, rigidita', en: 'Materialism, greed, rigidity' },
+  },
+  2: {
+    balanced: { sk: 'Kreativita, zdravé vzťahy, radosť zo života', en: 'Creativity, healthy relationships, joy of life' },
+    blocked: { sk: 'Vina, strata kreativity, emocionálna necitlivosť', en: 'Guilt, loss of creativity, emotional numbness' },
+    hyperactive: { sk: 'Emocionálna závislosť, manipulácia', en: 'Emotional dependency, manipulation' },
+  },
+  3: {
+    balanced: { sk: 'Sebadôvera, motivácia, zdravé hranice', en: 'Self-confidence, motivation, healthy boundaries' },
+    blocked: { sk: 'Nízke sebavedomie, nerozhodnosť, obeť', en: 'Low self-esteem, indecisiveness, victim mentality' },
+    hyperactive: { sk: 'Kontrola, agresia, perfekcionizmus', en: 'Control, aggression, perfectionism' },
+  },
+  4: {
+    balanced: { sk: 'Bezpodmienečná láska, súcit, odpustenie', en: 'Unconditional love, compassion, forgiveness' },
+    blocked: { sk: 'Uzavretosť, strach z intimity, žiarlivosť', en: 'Emotional closure, fear of intimacy, jealousy' },
+    hyperactive: { sk: 'Obetovanie sa, závislosť od lásky', en: 'Self-sacrifice, love dependency' },
+  },
+  5: {
+    balanced: { sk: 'Jasná komunikácia, autentické vyjadrenie', en: 'Clear communication, authentic expression' },
+    blocked: { sk: 'Strach z vyjadrenia, klamstvo, tichosť', en: 'Fear of expression, dishonesty, silence' },
+    hyperactive: { sk: 'Klebety, dominancia v konverzácii', en: 'Gossip, conversational dominance' },
+  },
+  6: {
+    balanced: { sk: 'Jasná intuícia, vnútorné vedenie, múdrosť', en: 'Clear intuition, inner guidance, wisdom' },
+    blocked: { sk: 'Zmätenosť, nedôvera intuícii, ilúzie', en: 'Confusion, distrust of intuition, illusions' },
+    hyperactive: { sk: 'Odpojenie od reality, halucinácie', en: 'Disconnection from reality, hallucinations' },
+  },
+  7: {
+    balanced: { sk: 'Duchovné prepojenie, vnútorný mier, jednota', en: 'Spiritual connection, inner peace, unity' },
+    blocked: { sk: 'Oddelenie od duchovna, cynizmus, prázdnota', en: 'Disconnection from spirituality, cynicism, emptiness' },
+    hyperactive: { sk: 'Duchovná posadnutosť, odpojenie od tela', en: 'Spiritual obsession, disconnection from body' },
+  },
+};
+
 export const CHINESE_ANIMAL_DISPLAY: NameMap = {
   'Potkan': { sk: 'Potkan', en: 'Rat' },
   'Byvol': { sk: 'Byvol', en: 'Ox' },

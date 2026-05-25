@@ -1,3 +1,5 @@
+import type { Language } from '../store/useStore';
+
 export interface ArchetypeResult {
   primary: Archetype;
   secondary: Archetype;
@@ -27,6 +29,21 @@ const ARCHETYPES: Archetype[] = [
   { id: 10, name: 'Tvorca', motto: 'Čo si viem predstaviť, to vytvorím', coreDesire: 'Vytvoriť niečo trvalé', gift: 'Kreativita a imaginácia', shadow: 'Perfekcionizmus a neukončené diela', strategy: 'Tvor bez autocenzúry — dokončenie príde.' },
   { id: 11, name: 'Vládca', motto: 'Moc nie je všetko — je to jediná vec', coreDesire: 'Kontrola a poriadok', gift: 'Zodpovednosť a vedenie', shadow: 'Autoritárstvo a rigidita', strategy: 'Veď príkladom — skutočná moc je služba.' },
   { id: 12, name: 'Každý človek', motto: 'Všetci sme si rovní', coreDesire: 'Príslušnosť a prepojenie', gift: 'Empatia a reálnosť', shadow: 'Strata individuality a konformita', strategy: 'Buď súčasťou celku — ale zachovaj si hlas.' },
+];
+
+const ARCHETYPES_EN: Archetype[] = [
+  { id: 1, name: 'Innocent', motto: 'Freedom to be yourself', coreDesire: 'Safety and happiness', gift: 'Optimism and trust', shadow: 'Naivety and denial of reality', strategy: 'Trust life and do things right.' },
+  { id: 2, name: 'Sage', motto: 'The truth will set you free', coreDesire: 'Understanding the world', gift: 'Wisdom and clarity', shadow: 'Analysis paralysis and detachment', strategy: 'Seek knowledge and share it with others.' },
+  { id: 3, name: 'Explorer', motto: 'Don\'t fence me in', coreDesire: 'Freedom to discover yourself', gift: 'Autonomy and ambition', shadow: 'Aimlessness and endless wandering', strategy: 'Go your own way and try new things.' },
+  { id: 4, name: 'Rebel', motto: 'Rules are made to be broken', coreDesire: 'Revolution and vengeance', gift: 'Radical freedom and courage', shadow: 'Destructiveness and nihilism', strategy: 'Tear down what doesn\'t work — but build something better.' },
+  { id: 5, name: 'Magician', motto: 'I want to make it happen', coreDesire: 'Understanding the laws of the universe', gift: 'Transformation and vision', shadow: 'Manipulation and disconnection from reality', strategy: 'Transform vision into reality step by step.' },
+  { id: 6, name: 'Hero', motto: 'Where there\'s a will, there\'s a way', coreDesire: 'Proving one\'s worth', gift: 'Competence and courage', shadow: 'Arrogance and need for constant battle', strategy: 'Act courageously — but know when to rest.' },
+  { id: 7, name: 'Lover', motto: 'You are the only one for me', coreDesire: 'Intimacy and connection', gift: 'Passion and devotion', shadow: 'Dependency and loss of identity', strategy: 'Love deeply — but don\'t forget yourself.' },
+  { id: 8, name: 'Jester', motto: 'You only live once', coreDesire: 'Joy and lightness', gift: 'Humor and presence', shadow: 'Superficiality and avoidance of responsibility', strategy: 'Find joy in the present moment.' },
+  { id: 9, name: 'Caregiver', motto: 'Love your neighbor as yourself', coreDesire: 'To protect and help', gift: 'Generosity and compassion', shadow: 'Martyrdom and self-sacrifice', strategy: 'Help others — but replenish your own energy first.' },
+  { id: 10, name: 'Creator', motto: 'If I can imagine it, I can create it', coreDesire: 'To create something enduring', gift: 'Creativity and imagination', shadow: 'Perfectionism and unfinished works', strategy: 'Create without self-censorship — completion will come.' },
+  { id: 11, name: 'Ruler', motto: 'Power isn\'t everything — it\'s the only thing', coreDesire: 'Control and order', gift: 'Responsibility and leadership', shadow: 'Authoritarianism and rigidity', strategy: 'Lead by example — true power is service.' },
+  { id: 12, name: 'Everyman', motto: 'We are all equal', coreDesire: 'Belonging and connection', gift: 'Empathy and groundedness', shadow: 'Loss of individuality and conformity', strategy: 'Be part of the whole — but keep your voice.' },
 ];
 
 const LP_TO_ARCHETYPE: Record<number, number> = {
@@ -67,7 +84,8 @@ const HD_TYPE_TO_ARCHETYPE: Record<string, number> = {
 export function deriveArchetype(
   lifePathNumber: number,
   enneagramType: number,
-  hdType: string
+  hdType: string,
+  lang: Language = 'sk'
 ): ArchetypeResult {
   const lpArchId = LP_TO_ARCHETYPE[lifePathNumber] || LP_TO_ARCHETYPE[lifePathNumber > 9 ? lifePathNumber : 1] || 6;
   const enneaArchId = ENNEAGRAM_TO_ARCHETYPE[enneagramType] || 12;
@@ -90,10 +108,12 @@ export function deriveArchetype(
   };
   const shadowId = shadowMap[primaryId] || 4;
 
+  const archetypes = lang === 'sk' ? ARCHETYPES : ARCHETYPES_EN;
+
   return {
-    primary: ARCHETYPES[primaryId - 1],
-    secondary: ARCHETYPES[secondaryId - 1] || ARCHETYPES[0],
-    shadow: ARCHETYPES[shadowId - 1],
+    primary: archetypes[primaryId - 1],
+    secondary: archetypes[secondaryId - 1] || archetypes[0],
+    shadow: archetypes[shadowId - 1],
   };
 }
 

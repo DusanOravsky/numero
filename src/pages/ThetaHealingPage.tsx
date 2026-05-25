@@ -22,14 +22,14 @@ export function ThetaHealingPage() {
   const profileResult = useMemo<ThetaHealingResult | null>(() => {
     if (!profile) return null;
     const lifePath = reduceToSingle(profile.birthDay + profile.birthMonth + profile.birthYear);
-    return calculateThetaHealing(lifePath);
-  }, [profile]);
+    return calculateThetaHealing(lifePath, language);
+  }, [profile, language]);
 
   const result = manualResult ?? profileResult;
 
   const handleCalculate = (day: number, month: number, year: number) => {
     const lifePath = reduceToSingle(day + month + year);
-    setManualResult(calculateThetaHealing(lifePath));
+    setManualResult(calculateThetaHealing(lifePath, language));
   };
 
   return (
@@ -187,7 +187,7 @@ export function ThetaHealingPage() {
                     <div>
                       <p className="text-sm font-medium text-white">"{belief.belief}"</p>
                       <div className="flex gap-2 mt-2 flex-wrap">
-                        <span className="text-xs px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300">{getLevelName(belief.level)}</span>
+                        <span className="text-xs px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300">{getLevelName(belief.level, language)}</span>
                         <span className="text-xs px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300">{belief.emotion}</span>
                         <span className="text-xs px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300">{belief.bodyArea}</span>
                       </div>

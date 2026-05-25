@@ -87,7 +87,7 @@ export function Dashboard() {
     const humanDesign = calculateHumanDesign(profile.birthDay, profile.birthMonth, profile.birthYear, profile.birthHour ?? 12, profile.birthMinute ?? 0, tz);
     const lp = numerology.lifePathNumber > 9 ? reduceToSingle(numerology.lifePathNumber) : numerology.lifePathNumber;
     const kabalah = calculateKabalah(lp, reduceToSingle(profile.birthDay));
-    const theta = calculateThetaHealing(lp);
+    const theta = calculateThetaHealing(lp, language);
     const enneagram = deriveEnneagramType(numerology, developmental, numerologyMethod);
     const dosha = deriveDosha(numerology, astrology, humanDesign);
     const tcm = deriveTCMElement(numerology, astrology);

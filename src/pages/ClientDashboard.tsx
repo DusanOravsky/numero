@@ -18,7 +18,7 @@ import { SkeletonClientDashboard } from '../components/Skeleton';
 import { getTimezoneFromCoords } from '../data/cities';
 
 export function ClientDashboard() {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
   const { clients, addReport, reports } = useStore();
@@ -47,9 +47,9 @@ export function ClientDashboard() {
     const chakras = evaluateChakras(numerology.lifePathNumber, gridCounts, numerology.isolatedNumbers, humanDesign.definedCenters, astrology.dominantElement);
     const lp = numerology.lifePathNumber > 9 ? reduceToSingle(numerology.lifePathNumber) : numerology.lifePathNumber;
     const kabalah = calculateKabalah(lp, reduceToSingle(d));
-    const theta = calculateThetaHealing(lp);
+    const theta = calculateThetaHealing(lp, language);
     return { numerology, devNumerology, astrology, humanDesign, chakras, kabalah, theta };
-  }, [client]);
+  }, [client, language]);
 
   const recordVisit = () => {
     if (!client || !computedResults) return;

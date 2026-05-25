@@ -605,7 +605,8 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
               const archetype = deriveArchetype(
                 numerology.lifePathNumber,
                 enneagram?.coreType || 9,
-                humanDesign.type
+                humanDesign.type,
+                language
               );
               addSection('JUNGOV ARCHETYP', 'purple');
               addBoldLine(`Primárny: ${archetype.primary.name} — „${archetype.primary.motto}"`);
@@ -635,9 +636,9 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
 
               // === KUA ČÍSLO ===
               const gender = (client as { gender?: string }).gender === 'female' ? 'female' : 'male';
-              const kua = calculateKua(client.birthYear, gender as 'male' | 'female');
+              const kua = calculateKua(client.birthYear, gender as 'male' | 'female', language);
               addSection('KUA ČÍSLO (FENG SHUI)', 'amber');
-              addBoldLine(`Kua: ${kua.kuaNumber} | Skupina: ${kua.group === 'east' ? 'Východná' : 'Západná'} | Element: ${kua.element}`);
+              addBoldLine(`Kua: ${kua.kuaNumber} | ${language === 'sk' ? 'Skupina' : 'Group'}: ${kua.group === 'east' ? (language === 'sk' ? 'Východná' : 'Eastern') : (language === 'sk' ? 'Západná' : 'Western')} | Element: ${kua.element}`);
               addLine(`Spálňa: ${kua.bestForSleep} | Pracovný stôl: ${kua.bestForWork} | Vstup: ${kua.bestForEntrance}`);
               addLine(`Priaznivé smery: ${kua.favorable.map(d => d.direction).join(', ')}`);
               addSpace();

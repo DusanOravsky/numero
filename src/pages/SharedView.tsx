@@ -122,7 +122,7 @@ export function SharedView() {
     const chakras = evaluateChakras(numerology.lifePathNumber, gridCounts, numerology.isolatedNumbers, humanDesign.definedCenters, astrology.dominantElement);
     const lp = numerology.lifePathNumber > 9 ? reduceToSingle(numerology.lifePathNumber) : numerology.lifePathNumber;
     const kabalah = calculateKabalah(lp, reduceToSingle(d));
-    const theta = calculateThetaHealing(lp);
+    const theta = calculateThetaHealing(lp, language);
     const developmental = calculateDevelopmentalNumerology(d, m, y);
     const enneagram = deriveEnneagramType(numerology, developmental, 'characterological');
     const dosha = deriveDosha(numerology, astrology, humanDesign);

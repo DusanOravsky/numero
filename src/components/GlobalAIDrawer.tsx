@@ -18,7 +18,7 @@ import { hasApiKey } from '../engine/aiInterpretation';
 import { getTimezoneFromCoords } from '../data/cities';
 
 export function GlobalAIDrawer() {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const [open, setOpen] = useState(false);
   const { profiles, activeProfileId, numerologyMethod } = useStore();
   const profile = profiles.find(p => p.id === activeProfileId);
@@ -41,7 +41,7 @@ export function GlobalAIDrawer() {
     const humanDesign = calculateHumanDesign(profile.birthDay, profile.birthMonth, profile.birthYear, profile.birthHour ?? 12, profile.birthMinute ?? 0, tz);
     const lp = numerology.lifePathNumber > 9 ? reduceToSingle(numerology.lifePathNumber) : numerology.lifePathNumber;
     const kabalah = calculateKabalah(lp, reduceToSingle(profile.birthDay));
-    const theta = calculateThetaHealing(lp);
+    const theta = calculateThetaHealing(lp, language);
     const enneagram = deriveEnneagramType(numerology, developmental, numerologyMethod);
     const dosha = deriveDosha(numerology, astrology, humanDesign);
     const tcm = deriveTCMElement(numerology, astrology);
@@ -78,7 +78,7 @@ export function GlobalAIDrawer() {
         themes: interpretation.themes.slice(0, 3).map(t => t.theme),
       },
     };
-  }, [profile?.id, profile?.birthDay, profile?.birthMonth, profile?.birthYear, profile?.birthHour, profile?.birthMinute, profile?.birthLatitude, profile?.birthLongitude, profile?.name, profile?.gender, profile?.birthPlace, numerologyMethod, open]);
+  }, [profile?.id, profile?.birthDay, profile?.birthMonth, profile?.birthYear, profile?.birthHour, profile?.birthMinute, profile?.birthLatitude, profile?.birthLongitude, profile?.name, profile?.gender, profile?.birthPlace, numerologyMethod, open, language]);
 
   if (!profile || !hasApiKey()) return null;
 

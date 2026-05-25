@@ -1,6 +1,6 @@
 # Integrálna mapa bytia (Número)
 
-Offline-first PWA pre numerológiu, astrológiu, Human Design, etikoterapiu, kabalu, Theta Healing, Enneagram, Ayurvédu, TCM, biorytmus, Jungove archetypy, kristaloterapiu, Feng Shui (Kua) a sebarozvoj. **v4.0.0**
+Offline-first PWA pre numerológiu, astrológiu, Human Design, etikoterapiu, kabalu, Theta Healing, Enneagram, Ayurvédu, TCM, biorytmus, Jungove archetypy, kristaloterapiu, Feng Shui (Kua) a sebarozvoj. **v4.1.0**
 
 > 📁 **Nested CLAUDE.md súbory:**
 > - `src/engine/CLAUDE.md` — engine pravidlá, numerológia/astrológia/HD matematika
@@ -70,7 +70,8 @@ Plná SK/EN podpora. **Vždy 1:1** — každý text musí existovať v oboch jaz
 - `src/i18n/entityNames.ts` — display mapy (zodiac→Aries, planéty→Sun, HD typy→Generator, etc.)
 - `useTranslation()` hook → `{ t, language }`. Pre content paragrafy: `language === 'sk' ? 'SK' : 'EN'` ternary
 - Dátové súbory: accessor funkcie s `lang: Language = 'sk'` (fallback na SK)
-- Engine výpočty NIKDY neimportujú i18n — vracajú SK strings, UI vrstva prekladá cez `displayName()`
+- Engines s content stringami (theta, archetype, kua, compatibility): prijímajú `lang: Language = 'sk'` parameter
+- Pure calculation engines (numerology, astrology, HD, chakra, biorhythm): bez i18n, UI prekladá cez `displayName()`
 
 **Pri pridaní novej funkcionality:**
 1. UI labely → pridať key do príslušného namespace (oba jazyky)

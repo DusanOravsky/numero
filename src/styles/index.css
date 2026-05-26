@@ -434,9 +434,11 @@ html.dark .from-indigo-50.to-violet-50\/60 {
 html.dark .hover\:from-indigo-100:hover { --tw-gradient-from: rgba(99,102,241,0.18) !important; }
 html.dark .hover\:to-violet-100:hover { --tw-gradient-to: rgba(139,92,246,0.12) !important; }
 
-/* Landing title gradient — svetlejšia v dark mode */
+/* Landing title — biely text v dark mode pre čitateľnosť */
 html.dark .landing-title {
-  background-image: linear-gradient(to right, #a5b4fc, #c4b5fd, #d8b4fe) !important;
+  background-image: none !important;
+  -webkit-text-fill-color: #ffffff !important;
+  color: #ffffff !important;
 }
 
 /* Mobile sidebar / nav / bottom-sheet backgrounds */

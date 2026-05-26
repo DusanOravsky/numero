@@ -161,6 +161,21 @@ Anthropic Claude priamo z prehliadača (header `anthropic-dangerous-direct-brows
 - `404.html` pre SPA redirect na GitHub Pages
 - **URL: https://dusanoravsky.github.io/numero/**
 
+## TWA — Google Play distribúcia (v4.3.1)
+
+Android obal cez Trusted Web Activity (Bubblewrap). TWA otvára existujúcu PWA URL — žiadny natívny kód.
+
+- **Package:** `com.integralmap.app`
+- **App name:** Integral Map
+- **Projekt:** `twa/` (Bubblewrap-generated gradle projekt)
+- **Build:** výhradne cez GitHub Actions (`.github/workflows/build-twa.yml`, manual trigger `workflow_dispatch`)
+- **Keystore:** `twa/android.keystore` — NIKDY v gite, uložený ako GitHub Secret `TWA_KEYSTORE_BASE64`
+- **Digital Asset Links:** `public/.well-known/assetlinks.json` — SHA-256 fingerprint z Play Console App Signing (aktuálne PLACEHOLDER)
+- **Notifikácie:** `enableNotifications: true` — TWA deleguje Web Push na SW
+- **Lokálny build nefunguje** — firemný SSL proxy blokuje Gradle. Preto CI-only.
+
+**GitHub Secrets:** `TWA_KEYSTORE_BASE64`, `TWA_KEYSTORE_PASSWORD`, `TWA_KEY_PASSWORD`
+
 ## PWA — offline-first + manual-friendly update
 
 `vite-plugin-pwa` s **CacheFirst stratégiou** pre všetky resources (HTML aj

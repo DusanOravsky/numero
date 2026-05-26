@@ -265,6 +265,13 @@ export function NumerologyPage() {
                         <p className="text-[10px] text-slate-400">{language === 'sk' ? 'typ' : 'type'}</p>
                       </div>
                     )}
+                    {numerologyMethod === 'developmental' && (
+                      <div className="p-2 rounded-lg bg-slate-500/10 border border-slate-500/20 text-center">
+                        <p className="text-[10px] text-slate-500 uppercase">{language === 'sk' ? 'Číslo zrelosti' : 'Maturity number'}</p>
+                        <p className="text-xl font-bold text-slate-300">{result.maturityNumber}</p>
+                        <p className="text-[10px] text-slate-400">{language === 'sk' ? 'aktív. ~35-40 r.' : 'active ~35-40 y.'}</p>
+                      </div>
+                    )}
                     {result.loveLanguages.length > 0 && numerologyMethod === 'characterological' && (
                       <div className="p-2 rounded-lg bg-pink-500/10 border border-pink-500/20 text-center">
                         <p className="text-[10px] text-slate-500 uppercase">{language === 'sk' ? 'Jazyk lásky' : 'Love language'}</p>

@@ -1,0 +1,10 @@
+android.keystore
+keystore.jks
+*.apk
+*.aab
+build/
+.gradle/
+local.properties
+store_icon.png
+manifest.webmanifest
+manifest-checksum.txt

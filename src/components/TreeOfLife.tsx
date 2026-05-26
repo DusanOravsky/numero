@@ -52,7 +52,7 @@ export function TreeOfLife({ result }: Props) {
         a sekundárna sefira ({result.secondarySefira.name}) sú zvýraznené, cesta z nich do Malchut je vyznačená.
       </p>
       <div className="flex justify-center">
-        <svg width={size} height={size * 1.05} viewBox={`0 0 ${size} ${size * 1.05}`}>
+        <svg width={size} height={size * 1.05} viewBox={`0 0 ${size} ${size * 1.05}`} role="img" aria-label="Kabalistický strom života — 10 sefír a 22 ciest">
           {/* 22 paths */}
           {PATHS.map(([a, b], i) => {
             const pa = xy(a);

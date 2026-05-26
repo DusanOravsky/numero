@@ -23,6 +23,18 @@ body {
   overflow-x: hidden;
 }
 
+/* Keyboard focus ring — viditeľný pri Tab navigácii */
+:focus-visible {
+  outline: 2px solid #6366f1;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible {
+  outline: 2px solid #6366f1;
+  outline-offset: 2px;
+}
+
 .chakra-border-right {
   border-right: 2px solid transparent;
   border-image: linear-gradient(

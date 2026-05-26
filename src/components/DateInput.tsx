@@ -31,7 +31,7 @@ export function DateInput({ onSubmit, showTime = false, showPlace = false, label
     const d = parseInt(day);
     const m = parseInt(month);
     const y = parseInt(year);
-    if (!d || !m || !y) {
+    if (isNaN(d) || isNaN(m) || isNaN(y) || d < 1 || m < 1 || y < 1) {
       setError(t('validation.fillDate'));
       return;
     }

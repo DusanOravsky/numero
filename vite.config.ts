@@ -12,6 +12,9 @@ const isBuild = process.argv.includes('build');
 if (isBuild) writeFileSync(resolve(import.meta.dirname, 'public/version.json'), JSON.stringify({ version: pkg.version }) + '\n');
 
 export default defineConfig({
+  define: {
+    __APP_VERSION__: JSON.stringify(pkg.version),
+  },
   plugins: [
     react(),
     tailwindcss(),

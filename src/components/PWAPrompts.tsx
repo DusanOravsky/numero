@@ -1,9 +1,10 @@
 /* eslint-disable react-refresh/only-export-components */
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from '../i18n/useTranslation';
 
-const APP_VERSION = '4.1.0';
+declare const __APP_VERSION__: string;
+const APP_VERSION = __APP_VERSION__;
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -39,6 +40,10 @@ export function PWAPrompts() {
   const [showIOSHint, setShowIOSHint] = useState(false);
   const [showUpdate, setShowUpdate] = useState(false);
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
+  const swRegRef = useRef<ServiceWorkerRegistration | null>(null);
+  const updateFoundRef = useRef<(() => void) | null>(null);
+  const stateChangeSwRef = useRef<ServiceWorker | null>(null);
+  const onStateChangeRef = useRef<(() => void) | null>(null);
 
   useEffect(() => {
     // Online/offline detection — vždy aktívne (aj v standalone mode)
@@ -58,49 +63,68 @@ export function PWAPrompts() {
       localStorage.removeItem('pwa-ios-hint-dismissed');
     } else {
       if (!lastVersion) localStorage.setItem('app-version', APP_VERSION);
-      // Network check — fetch version.json aby sme zistili či je nová verzia
-      fetch(`${import.meta.env.BASE_URL}version.json`, { cache: 'no-store' })
-        .then(r => r.ok ? r.json() : null)
-        .then(data => {
-          if (data?.version && data.version !== APP_VERSION) {
-            // eslint-disable-next-line react-hooks/set-state-in-effect
-            setShowUpdate(true);
-          }
-        })
-        .catch(() => { /* offline — ignoruj */ });
+      // Network check — fetch version.json aby sme zistili či je nová verzia (3 pokusy)
+      const fetchVersion = (attempt: number) => {
+        fetch(`${import.meta.env.BASE_URL}version.json`, { cache: 'no-store' })
+          .then(r => r.ok ? r.json() : null)
+          .then(data => {
+            if (data?.version && data.version !== APP_VERSION) {
+              // eslint-disable-next-line react-hooks/set-state-in-effect
+              setShowUpdate(true);
+            }
+          })
+          .catch(() => {
+            if (attempt < 3) setTimeout(() => fetchVersion(attempt + 1), attempt * 2000);
+          });
+      };
+      fetchVersion(1);
     }
 
     // SW lifecycle detection — keď prehliadač nájde nový SW waiting na aktiváciu
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.getRegistration().then(reg => {
         if (!reg) return;
-        // Už čaká nový SW
         if (reg.waiting) {
           // eslint-disable-next-line react-hooks/set-state-in-effect
           setShowUpdate(true);
           return;
         }
-        // Nový SW sa inštaluje
-        reg.addEventListener('updatefound', () => {
+        const onStateChange = () => {
+          const sw = reg.installing;
+          if (sw?.state === 'installed' && navigator.serviceWorker.controller) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            setShowUpdate(true);
+          }
+        };
+        onStateChangeRef.current = onStateChange;
+        const onUpdateFound = () => {
           const newSW = reg.installing;
           if (!newSW) return;
-          newSW.addEventListener('statechange', () => {
-            if (newSW.state === 'installed' && navigator.serviceWorker.controller) {
-              // eslint-disable-next-line react-hooks/set-state-in-effect
-              setShowUpdate(true);
-            }
-          });
-        });
-        // Manuálny check — triggerne updatefound ak server má nový sw.js
+          stateChangeSwRef.current = newSW;
+          newSW.addEventListener('statechange', onStateChange);
+        };
+        updateFoundRef.current = onUpdateFound;
+        reg.addEventListener('updatefound', onUpdateFound);
+        swRegRef.current = reg;
         reg.update().catch(() => {});
       });
     }
+
+    const cleanupSW = () => {
+      if (swRegRef.current && updateFoundRef.current) {
+        swRegRef.current.removeEventListener('updatefound', updateFoundRef.current);
+      }
+      if (stateChangeSwRef.current && onStateChangeRef.current) {
+        stateChangeSwRef.current.removeEventListener('statechange', onStateChangeRef.current);
+      }
+    };
 
     // Install hints — iba ak appka NIE JE už nainštalovaná
     if (isInStandaloneMode()) {
       return () => {
         window.removeEventListener('online', onOnline);
         window.removeEventListener('offline', onOffline);
+        cleanupSW();
       };
     }
 
@@ -129,6 +153,7 @@ export function PWAPrompts() {
       window.removeEventListener('beforeinstallprompt', handler);
       window.removeEventListener('online', onOnline);
       window.removeEventListener('offline', onOffline);
+      cleanupSW();
     };
   }, []);
 

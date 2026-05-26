@@ -131,7 +131,7 @@ export function NatalWheel({ result }: Props) {
         Ascendent vľavo (9h), MC hore. Whole-Sign domy: každý dom = jedno celé znamenie. Planéty umiestnené v správnej longitúde.
       </p>
       <div className="flex justify-center overflow-x-auto">
-        <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="min-w-[320px]">
+        <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="min-w-[320px]" role="img" aria-label="Natálne koliesko — pozície planét v znameniach zodiaku">
           {/* Sign sectors */}
           {signSectors.map(s => (
             <path

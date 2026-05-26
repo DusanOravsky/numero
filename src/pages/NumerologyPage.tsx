@@ -266,10 +266,10 @@ export function NumerologyPage() {
                       </div>
                     )}
                     {numerologyMethod === 'developmental' && (
-                      <div className="p-2 rounded-lg bg-slate-500/10 border border-slate-500/20 text-center">
-                        <p className="text-[10px] text-slate-500 uppercase">{language === 'sk' ? 'Číslo zrelosti' : 'Maturity number'}</p>
-                        <p className="text-xl font-bold text-slate-300">{result.maturityNumber}</p>
-                        <p className="text-[10px] text-slate-400">{language === 'sk' ? 'aktív. ~35-40 r.' : 'active ~35-40 y.'}</p>
+                      <div className="p-2 rounded-lg bg-blue-500/10 border border-blue-500/20 text-center">
+                        <p className="text-[10px] text-slate-500 uppercase">VDD</p>
+                        <p className="text-xl font-bold text-blue-300">{result.vdd}</p>
+                        <p className="text-[10px] text-slate-400">{language === 'sk' ? `duch. dospelosť` : `spiritual maturity`}</p>
                       </div>
                     )}
                     {result.loveLanguages.length > 0 && numerologyMethod === 'characterological' && (

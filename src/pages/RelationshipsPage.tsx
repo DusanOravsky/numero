@@ -577,6 +577,31 @@ export function RelationshipsPage() {
   }, [partner1.day, partner1.month, partner1.year, partner2.day, partner2.month, partner2.year]);
 
   const { t, language } = useTranslation();
+  const { profiles, activeProfileId } = useStore();
+  const profile = profiles.find(p => p.id === activeProfileId);
+
+  const handleShareCompare = () => {
+    if (!profile) return;
+    const payload = JSON.stringify({
+      name: profile.name,
+      birthDay: profile.birthDay,
+      birthMonth: profile.birthMonth,
+      birthYear: profile.birthYear,
+      birthHour: profile.birthHour,
+      birthMinute: profile.birthMinute,
+    });
+    const encoded = btoa(unescape(encodeURIComponent(payload)));
+    const url = `https://dusanoravsky.github.io/numero/share?data=${encoded}`;
+    if (navigator.share) {
+      navigator.share({
+        title: language === 'sk' ? 'Integrálna mapa bytia' : 'Integral Map of Being',
+        text: language === 'sk' ? 'Porovnaj sa so mnou — zisti náš vzťahový potenciál!' : 'Compare with me — discover our relationship potential!',
+        url,
+      }).catch(() => {});
+    } else {
+      navigator.clipboard?.writeText(url);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -584,6 +609,25 @@ export function RelationshipsPage() {
         <h1 className="font-serif text-3xl font-bold text-slate-900">{t('rel.title')}</h1>
         <p className="text-slate-600 mt-1">{t('rel.subtitle')}</p>
       </div>
+
+      {/* Share CTA */}
+      {profile && (
+        <button
+          onClick={handleShareCompare}
+          className="w-full flex items-center gap-3 p-3 rounded-xl bg-indigo-50 border border-indigo-200 hover:bg-indigo-100 transition-colors text-left"
+        >
+          <span className="w-9 h-9 rounded-full bg-indigo-500 flex items-center justify-center text-white text-sm">📤</span>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium text-indigo-900">
+              {language === 'sk' ? 'Porovnaj sa s partnerom' : 'Compare with partner'}
+            </p>
+            <p className="text-[10px] text-indigo-600">
+              {language === 'sk' ? 'Pošli odkaz a zisti vzťahovú kompatibilitu' : 'Send a link and discover relationship compatibility'}
+            </p>
+          </div>
+          <span className="text-indigo-400 text-sm">→</span>
+        </button>
+      )}
 
       <div className="flex gap-2 flex-wrap">
         <button

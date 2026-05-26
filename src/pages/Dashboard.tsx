@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import { useTranslation } from '../i18n/useTranslation';
-import { WEEKDAY_SHORT, MONTH_NAMES } from '../i18n/entityNames';
+import { WEEKDAY_SHORT, MONTH_NAMES, displayName, ELEMENT_DISPLAY, ZODIAC_DISPLAY, HD_TYPE_DISPLAY } from '../i18n/entityNames';
 import { GlassCard } from '../components/GlassCard';
 import { VibrationCard } from '../components/VibrationCard';
 import { ClientSummary } from '../components/ClientSummary';
@@ -29,6 +29,7 @@ import { getTimezoneFromCoords } from '../data/cities';
 import { getGeneKeyByGate } from '../data/geneKeys';
 import { calculateBiorhythm } from '../engine/biorhythmEngine';
 import { getDailyCrystal } from '../data/crystals';
+import { generateDailyStory, generateProfileCard, shareOrDownload } from '../components/ShareStory';
 
 export function Dashboard() {
   const navigate = useNavigate();
@@ -358,6 +359,55 @@ export function Dashboard() {
               );
             })()}
           </GlassCard>
+        </div>
+      )}
+
+      {/* Zdieľanie — share buttons */}
+      {profile && fullResults && (
+        <div className="flex gap-2 flex-wrap">
+          <button
+            onClick={async () => {
+              const isDark = document.documentElement.classList.contains('dark');
+              const crystal = getDailyCrystal(odv, language);
+              const blob = await generateDailyStory({
+                odvNumber: odv,
+                affirmation: affirmations[odv] || affirmations[1],
+                crystal: crystal.name,
+                isDark,
+                language,
+              });
+              await shareOrDownload(blob, `energia-${odv}.png`);
+            }}
+            className="px-3 py-1.5 rounded-lg text-xs font-medium border border-indigo-300 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 transition-colors"
+          >
+            {language === 'sk' ? '📤 Denná energia' : '📤 Daily energy'}
+          </button>
+          <button
+            onClick={async () => {
+              const isDark = document.documentElement.classList.contains('dark');
+              const lp = fullResults.numerology.lifePathNumber;
+              const hdType = displayName(HD_TYPE_DISPLAY, fullResults.humanDesign.type, language);
+              const hdProfile = `${fullResults.humanDesign.profile.line1}/${fullResults.humanDesign.profile.line2}`;
+              const element = displayName(ELEMENT_DISPLAY, fullResults.astrology.dominantElement, language);
+              const sunSign = displayName(ZODIAC_DISPLAY, fullResults.astrology.sunSign.name, language);
+              const enneaType = fullResults.enneagram?.coreType ?? 0;
+              const blob = await generateProfileCard({
+                name: profile.name,
+                lifePathNumber: lp,
+                hdType,
+                hdProfile,
+                element,
+                sunSign,
+                enneagramType: enneaType,
+                isDark,
+                language,
+              });
+              await shareOrDownload(blob, `profil-${profile.name}.png`);
+            }}
+            className="px-3 py-1.5 rounded-lg text-xs font-medium border border-violet-300 bg-violet-50 text-violet-700 hover:bg-violet-100 transition-colors"
+          >
+            {language === 'sk' ? '📤 Môj profil' : '📤 My profile'}
+          </button>
         </div>
       )}
 

@@ -120,6 +120,18 @@ export function MainLayout() {
           >
             {language === 'sk' ? '▶ Prezentačný režim' : '▶ Presentation mode'}
           </button>
+          <button
+            onClick={() => {
+              navigator.share?.({
+                title: 'Integrálna mapa bytia',
+                text: language === 'sk' ? 'Objavte svoju integrálnu mapu bytia — numerológia, astrológia, Human Design a ďalšie systémy na jednom mieste.' : 'Discover your integral map of being — numerology, astrology, Human Design and more systems in one place.',
+                url: 'https://dusanoravsky.github.io/numero/',
+              }).catch(() => {});
+            }}
+            className="w-full py-1.5 rounded-md text-xs font-medium bg-emerald-50 text-emerald-700 hover:bg-emerald-100 transition-colors border border-emerald-200"
+          >
+            {language === 'sk' ? '💌 Pozvi priateľa' : '💌 Invite a friend'}
+          </button>
           <p className="text-[10px] text-slate-400 text-center">v{APP_VERSION}</p>
         </div>
       </aside>

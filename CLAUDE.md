@@ -1,6 +1,6 @@
 # Integrálna mapa bytia (Número)
 
-Offline-first PWA pre numerológiu, astrológiu, Human Design, etikoterapiu, kabalu, Theta Healing, Enneagram, Ayurvédu, TCM, biorytmus, Jungove archetypy, kristaloterapiu, Feng Shui (Kua) a sebarozvoj. **v4.1.0**
+Offline-first PWA pre numerológiu, astrológiu, Human Design, etikoterapiu, kabalu, Theta Healing, Enneagram, Ayurvédu, TCM, biorytmus, Jungove archetypy, kristaloterapiu, Feng Shui (Kua) a sebarozvoj. **v4.2.0**
 
 > 📁 **Nested CLAUDE.md súbory:**
 > - `src/engine/CLAUDE.md` — engine pravidlá, numerológia/astrológia/HD matematika
@@ -177,7 +177,8 @@ Tri nezávislé mechanizmy detekcie (belt-and-suspenders):
 1. **localStorage version compare** — pri mount porovná `localStorage.app-version`
    vs `APP_VERSION` v JS bundle. Ak sú rôzne → popup.
 
-2. **version.json network fetch** — fetchne `version.json` s `cache: 'no-store'`.
+2. **version.json network fetch** — fetchne `version.json` s `cache: 'no-store'`
+   (3 pokusy s exponenciálnym backoff: 2s, 4s).
    Porovná s `APP_VERSION`. Ak server má novšiu → popup.
    **KRITICKÉ:** `version.json` je vylúčený z precache cez `globIgnores` v
    `vite.config.ts`. Bez toho SW servíruje starú verziu z cache a detekcia nefunguje.
@@ -213,9 +214,9 @@ ako fallback keď opakovaná kontrola zlyháva.
 
 ### Version bump pravidlo (SemVer)
 
-**Pri KAŽDOM user-facing release** treba bump-núť `APP_VERSION` v
-`src/components/PWAPrompts.tsx` AJ `version` v `package.json`. Auto-popup
-porovnáva tieto verzie — bez bump-u používateľ nedostane upozornenie.
+**Pri KAŽDOM user-facing release** treba bump-núť `version` v `package.json`.
+`APP_VERSION` sa derivuje automaticky z `package.json` cez Vite `define`
+(`__APP_VERSION__` → `pkg.version`). Stačí bump-núť na jednom mieste.
 
 Stratégia podľa [SemVer](https://semver.org/):
 
@@ -227,7 +228,7 @@ Stratégia podľa [SemVer](https://semver.org/):
 
 **Workflow:**
 1. Pri commitovaní viacerých zmien → urči najvyššiu úroveň zmeny.
-2. Bump obe `APP_VERSION` aj `package.json` v jednom commite.
+2. Bump `version` v `package.json` (APP_VERSION sa auto-synchronizuje).
 3. CHANGELOG.md → pridaj sekciu pre novú verziu.
 
 ### iOS / Android install
@@ -242,6 +243,19 @@ Stratégia podľa [SemVer](https://semver.org/):
 - Profily, klienti (s tags), reports (max 200), favourites
 - Preferencie: language (sk/en), numerologyMethod, themeMode
 - Persisted cez zustand persist v **IndexedDB** (nie localStorage)
+
+## Storage management (v4.2.0)
+
+**Chat storage** (`src/engine/chatStorage.ts`):
+- **Max 50 správ per chat** — trim pri každom uložení (ponechá posledných 50)
+- **TTL 90 dní** — `cleanupOldChats()` maže chaty s `updatedAt` starším ako 90 dní
+- Auto-cleanup pri boot (`main.tsx`) — tichý, neblokujúci
+- Manuálny trigger v Settings → Dáta → "Vyčistiť staré chaty"
+
+**Quota monitoring** (`getStorageEstimate()`):
+- Wraps `navigator.storage.estimate()` — vracia MB used / quota / percent
+- Zobrazené v Settings → Dáta (progress bar, farebný podľa stavu)
+- >80% = červený warning text s odporúčaním vyčistiť
 
 ## Export / Import
 

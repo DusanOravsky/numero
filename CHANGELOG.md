@@ -4,6 +4,26 @@ All notable changes to this project are documented in this file. Dates are
 in ISO 8601 (YYYY-MM-DD). The format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 4.2.0 — 2026-05-26
+
+**MINOR**: Code review audit fixy — bezpečnosť, a11y, storage management.
+
+### Opravené bugy
+- **SW memory leak:** `statechange` listener v PWAPrompts sa akumuloval pri viacerých SW update cykloch → refs + cleanup
+- **APP_VERSION sync risk:** hardcoded verzia nahradená auto-deriváciou z `package.json` cez Vite `define`
+- **version.json fetch:** pridaný retry (3 pokusy, exponenciálny backoff 2s/4s)
+- **DateInput validation:** `parseInt("0")` falsy check → `isNaN()` + explicitný range check
+- **Dark mode title:** desktop sidebar `<h1>` chýbal `landing-title` class → nečitateľný gradient text
+
+### Nové funkcie
+- **Storage quota monitoring:** Settings → Dáta zobrazuje progress bar s MB/% využitia
+- **Chat TTL cleanup:** automatické mazanie chatov starších ako 90 dní (boot + manuálne)
+- **Chat trim:** max 50 správ per chat (trim pri uložení)
+
+### Accessibility
+- **Focus-visible:** globálny `:focus-visible` ring (indigo) pre klávesovú navigáciu
+- **SVG ARIA:** NatalWheel + TreeOfLife dostali `role="img"` + `aria-label`
+
 ## 2.47.0 — 2026-05-21
 
 **MINOR**: Hlbkový audit a code review — 30 nálezov opravených, test coverage 81 → 209.

@@ -52,6 +52,10 @@ Astrológiu, HD, Čakry, Kabalu, Theta — v klient dashboarde len summary, deta
 
 ## NumerologyPage refaktor (v2.14.0)
 
+**Overview tab — profil grid (v4.3.0):**
+- Developmental: K3, K1·K2·K4, ego polarita, ORV, OMV, ODV, Enneagram, Maturity, karmické dlhy (ak existujú)
+- Characterological: ORV, OMV, ODV, plné roviny, chýbajúce čísla, izolované, Enneagram, jazyk lásky, Maturity, karmické dlhy
+
 NumerologyPage bola zrefaktorovaná z ~1585 na ~1200 riadkov. Taby extrahované do `src/components/numerology/`:
 
 | Komponent | Účel |

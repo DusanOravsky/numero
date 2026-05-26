@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useStore } from '../store/useStore';
 import type { NumerologyMethod } from '../store/useStore';
 import { GlassCard } from '../components/GlassCard';
@@ -12,6 +12,7 @@ import {
   CLAUDE_MODELS, type ClaudeModel,
   getLens, setLens, INTERPRETATION_LENSES, type InterpretationLens,
 } from '../engine/aiInterpretation';
+import { cleanupOldChats, getStorageEstimate } from '../engine/chatStorage';
 import { useTranslation } from '../i18n/useTranslation';
 
 type SettingsTab = 'profile' | 'ai' | 'data' | 'about';
@@ -59,6 +60,13 @@ export function SettingsPage() {
   const [aiLens, setAiLens] = useState<InterpretationLens>(getLens());
   const [aiTesting, setAiTesting] = useState(false);
   const [aiTestResult, setAiTestResult] = useState<{ ok: boolean; message: string } | null>(null);
+
+  // Storage quota monitoring
+  const [storageInfo, setStorageInfo] = useState<{ usageMB: number; quotaMB: number; percent: number } | null>(null);
+  const [cleanupResult, setCleanupResult] = useState<string | null>(null);
+  useEffect(() => {
+    getStorageEstimate().then(setStorageInfo);
+  }, []);
 
   const handleSaveApiKey = () => {
     setApiKey(aiKey.trim());
@@ -711,6 +719,45 @@ export function SettingsPage() {
 
       {activeTab === 'data' && (
       <>
+      <GlassCard>
+        <h3 className="font-medium text-white mb-3">{language === 'sk' ? 'Úložisko' : 'Storage'}</h3>
+        {storageInfo ? (
+          <div className="space-y-2">
+            <div className="flex justify-between text-xs text-slate-500">
+              <span>{storageInfo.usageMB} MB / {storageInfo.quotaMB} MB</span>
+              <span>{storageInfo.percent}%</span>
+            </div>
+            <div className="h-2 bg-slate-200 rounded-full overflow-hidden">
+              <div
+                className={`h-full rounded-full transition-all ${storageInfo.percent > 80 ? 'bg-rose-500' : storageInfo.percent > 50 ? 'bg-amber-500' : 'bg-emerald-500'}`}
+                style={{ width: `${Math.min(storageInfo.percent, 100)}%` }}
+              />
+            </div>
+            {storageInfo.percent > 80 && (
+              <p className="text-xs text-rose-600 font-medium">
+                {language === 'sk' ? 'Úložisko je takmer plné. Odporúčame vyčistiť staré chaty.' : 'Storage is almost full. Consider cleaning up old chats.'}
+              </p>
+            )}
+          </div>
+        ) : (
+          <p className="text-xs text-slate-500">{language === 'sk' ? 'Nedostupné' : 'Not available'}</p>
+        )}
+        <div className="flex gap-2 mt-3">
+          <button
+            onClick={async () => {
+              const removed = await cleanupOldChats();
+              setCleanupResult(language === 'sk' ? `Vyčistené: ${removed} starých chatov` : `Cleaned: ${removed} old chats`);
+              getStorageEstimate().then(setStorageInfo);
+              setTimeout(() => setCleanupResult(null), 4000);
+            }}
+            className="px-3 py-1.5 rounded-lg text-xs font-medium glass text-amber-700 hover:text-amber-600"
+          >
+            {language === 'sk' ? 'Vyčistiť staré chaty (90+ dní)' : 'Clean old chats (90+ days)'}
+          </button>
+        </div>
+        {cleanupResult && <p className="text-xs text-emerald-600 mt-2">{cleanupResult}</p>}
+      </GlassCard>
+
       {activeProfile && (
         <GlassCard>
           <h3 className="font-medium text-white mb-3">{t('settings.backup')}</h3>

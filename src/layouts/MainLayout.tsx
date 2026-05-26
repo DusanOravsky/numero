@@ -49,7 +49,7 @@ export function MainLayout() {
       <aside className="hidden lg:flex lg:flex-col lg:w-64 bg-white chakra-border-right fixed h-full z-40">
         <div className="p-6 border-b border-slate-100 text-center">
           <img src={logoSrc} alt="" aria-hidden="true" className="w-16 h-16 mx-auto mb-3" />
-          <h1 className="font-serif text-lg font-bold bg-gradient-to-r from-indigo-600 via-violet-600 to-purple-600 bg-clip-text text-transparent">
+          <h1 className="font-serif text-lg font-bold bg-gradient-to-r from-indigo-600 via-violet-600 to-purple-600 bg-clip-text text-transparent landing-title">
             Integrálna mapa bytia
           </h1>
         </div>

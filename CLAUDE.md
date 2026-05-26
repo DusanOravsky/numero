@@ -1,6 +1,6 @@
 # Integrálna mapa bytia (Número)
 
-Offline-first PWA pre numerológiu, astrológiu, Human Design, etikoterapiu, kabalu, Theta Healing, Enneagram, Ayurvédu, TCM, biorytmus, Jungove archetypy, kristaloterapiu, Feng Shui (Kua) a sebarozvoj. **v4.2.0**
+Offline-first PWA pre numerológiu, astrológiu, Human Design, etikoterapiu, kabalu, Theta Healing, Enneagram, Ayurvédu, TCM, biorytmus, Jungove archetypy, kristaloterapiu, Feng Shui (Kua) a sebarozvoj. **v4.3.0**
 
 > 📁 **Nested CLAUDE.md súbory:**
 > - `src/engine/CLAUDE.md` — engine pravidlá, numerológia/astrológia/HD matematika
@@ -291,6 +291,26 @@ Rozdelený na 3 vrstvy:
 - **Hlbší profil** (`<details>` default closed) — Integrálny súhrn (ClientSummary), Export PDF
 
 Plus **Posledný klient shortcut** — amber karta hneď pod headerom, naviguje na `/clients/{id}` posledne otvoreného klienta (persisted v `localStorage['last-viewed-client']` cez `ClientDashboard` mount effect). Má ✕ dismiss button (v2.50.0+).
+
+## Zdieľateľný obsah (v4.3.0)
+
+Canvas-based PNG generátor pre Instagram stories (1080×1920) v `components/ShareStory.tsx`:
+
+- **Denná energia** — ODV číslo + afirmácia + kryštál dňa + app URL
+- **Profil karta** — meno + ŽČ + HD typ/profil + element + znamenie + enneagram + app URL
+- **Share mechanika** — Web Share API (`navigator.share({ files })`) s download fallback
+- **Integrácia:** Dashboard (2 buttony), RelationshipsPage (partner CTA), sidebar (pozvi priateľa)
+
+## Onboarding Reveal (v4.3.0)
+
+Personalizovaný 5-kartový reveal po prvom vytvorení profilu (nahrádza generický tour):
+1. Životné číslo + archetype
+2. HD typ + stratégia + autorita
+3. Dominantný element + Slnko
+4. Blokované čakry + chýbajúce čísla
+5. ODV + CTA
+
+Theme-aware, Framer Motion animácie. Trigger: `localStorage.onboarding-completed`.
 
 ## MainLayout chrome (v2.45.0+)
 

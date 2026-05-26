@@ -277,14 +277,34 @@ Pri Davison/Composite charts som musel rozbiť dynamic colors na inline if/else 
 - `usePerformanceMetrics(name)` — per-component mount-to-paint
 - `getPerfLog()` / `clearPerfLog()` — pre Settings Diagnostika
 
-## Onboarding
+## Onboarding Reveal (v4.3.0)
 
-`OnboardingTour.tsx` — first-run tour po vytvorení profilu. Použitie:
+`OnboardingReveal.tsx` — personalizovaný 5-kartový reveal po vytvorení prvého profilu. Nahradil pôvodný generický `OnboardingTour` (ten je teraz len re-export).
 
-```tsx
-const profiles = useStore(s => s.profiles);
-const showOnboarding = profiles.length > 0;
-{showOnboarding && <OnboardingTour />}
-```
+**5 kariet:**
+1. Životné číslo + archetype title (scale-up animácia)
+2. HD typ + stratégia + autorita (stagger fade-in)
+3. Dominantný element + znamenie Slnka (rotate-in)
+4. Blokované čakry + chýbajúce čísla (slide-in, rose/amber)
+5. ODV číslo + CTA "Objavuj profil" (glow)
 
-Persists v localStorage: `onboarding-completed`.
+**Technické:**
+- Theme-aware (kontroluje `html.dark` class)
+- Všetky engine výpočty cez `useMemo` (numerology + HD + astrology + chakras)
+- Trigger: `localStorage.onboarding-completed` neexistuje + profil existuje
+- Dismiss: backdrop click / "Preskočiť" / finálne CTA → navigate `/numerology`
+
+## Zdieľateľný obsah (v4.3.0)
+
+`ShareStory.tsx` — canvas-based PNG generátor pre Instagram stories (1080×1920).
+
+**Dve šablóny:**
+- `generateDailyStory()` — ODV číslo + afirmácia + kryštál dňa + app URL
+- `generateProfileCard()` — meno + ŽČ + HD typ/profil + element + znamenie + enneagram + app URL
+
+**`shareOrDownload(blob, filename)`** — Web Share API s `files` ak podporované, inak download fallback.
+
+**Integrácia:**
+- Dashboard: 2 tlačidlá "📤 Denná energia" / "📤 Môj profil"
+- RelationshipsPage: "Porovnaj sa s partnerom" CTA (share link na SharedView)
+- MainLayout sidebar: "Pozvi priateľa" (navigator.share s app URL)

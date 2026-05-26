@@ -106,7 +106,7 @@ export function OnboardingReveal() {
   const isDark = document.documentElement.classList.contains('dark');
   const lifePathInfo = getLifePath(String(numerology.lifePathNumber), language);
   const blockedChakras = chakras?.filter(c => c.status === 'blocked').slice(0, 2) ?? [];
-  const sunSign = astro?.planets[0]?.sign ?? '';
+  const sunSign = String(astro?.planets[0]?.sign ?? '');
 
   return (
     <AnimatePresence>

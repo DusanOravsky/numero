@@ -84,14 +84,12 @@ export function PWAPrompts() {
       navigator.serviceWorker.getRegistration().then(reg => {
         if (!reg) return;
         if (reg.waiting) {
-           
           setShowUpdate(true);
           return;
         }
         const onStateChange = () => {
           const sw = reg.installing;
           if (sw?.state === 'installed' && navigator.serviceWorker.controller) {
-             
             setShowUpdate(true);
           }
         };

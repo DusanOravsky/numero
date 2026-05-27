@@ -784,6 +784,9 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
               addPageNumber();
 
               doc.save(`${language === 'sk' ? 'profil' : 'profile'}-${client.name.replace(/\s+/g, '-').toLowerCase()}.pdf`);
+            } catch (err) {
+              console.error('PDF export failed:', err);
+              alert(language === 'sk' ? 'Export PDF zlyhal. Skúste znova.' : 'PDF export failed. Please try again.');
             } finally {
               setIsExporting(false);
             }
@@ -912,6 +915,9 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
                 : `Generated: ${new Date().toLocaleDateString('en-GB')} | Integral Map of Being`, 105, 285, { align: 'center' });
 
               doc.save(`${language === 'sk' ? 'vyklad' : 'reading'}-${client.name.replace(/\s+/g, '-').toLowerCase()}.pdf`);
+            } catch (err) {
+              console.error('PDF export failed:', err);
+              alert(language === 'sk' ? 'Export PDF zlyhal. Skúste znova.' : 'PDF export failed. Please try again.');
             } finally {
               setIsExporting(false);
             }

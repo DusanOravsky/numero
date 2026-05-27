@@ -75,7 +75,6 @@ export function SharedView() {
       }
       // Cap base64 dĺžku na 4KB (chráni pred OOM cez maliciózny long URL)
       if (match[1].length > 4096) {
-         
         setError(language === 'sk' ? 'Chyba: prilis dlhy odkaz' : 'Error: link too long');
         return;
       }
@@ -89,7 +88,6 @@ export function SharedView() {
       const month = parseInt(String(decoded.birthMonth), 10);
       const year = parseInt(String(decoded.birthYear), 10);
       if (!name || !day || !month || !year || day < 1 || day > 31 || month < 1 || month > 12 || year < 1900 || year > 2100) {
-         
         setError(language === 'sk' ? 'Chyba: nekompletne alebo neplatne data' : 'Error: incomplete or invalid data');
         return;
       }
@@ -104,10 +102,8 @@ export function SharedView() {
         birthMinute: minute !== undefined && minute >= 0 && minute <= 59 ? minute : undefined,
         birthPlace: decoded.birthPlace ? String(decoded.birthPlace).slice(0, 100) : undefined,
       };
-       
       setClientData(safe);
     } catch {
-       
       setError(language === 'sk' ? 'Chyba: neplatny odkaz' : 'Error: invalid link');
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps

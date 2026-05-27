@@ -79,7 +79,6 @@ export function AIChat({ context, title, initialUserMessage, storageKey }: Props
   const scrollRef = useRef<HTMLDivElement>(null);
 
   // Async load z IndexedDB + migrácia z localStorage
-   
   useEffect(() => {
     let cancelled = false;
     (async () => {

@@ -4,6 +4,15 @@ All notable changes to this project are documented in this file. Dates are
 in ISO 8601 (YYYY-MM-DD). The format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 4.3.3 — 2026-05-27
+
+**PATCH**: Self code review nálezy z v4.3.2.
+
+### Fixy
+- **ClientsPage import order**: `CLIENTS_PAGE_SIZE` konštanta posunutá pod imports
+- **ClientExport try/catch**: PDF export buttons majú `catch (err)` s alertom — chyby v generation neudriaďujú appku cez ErrorBoundary
+- **Whitespace cleanup**: odstránené stub indents po `eslint --fix` v AIChat, PWAPrompts, SharedView
+
 ## 4.3.2 — 2026-05-27
 
 **PATCH**: Code review fixy — correctness, performance, security cleanup.

@@ -1,6 +1,4 @@
 import { useMemo, useState } from 'react';
-
-const CLIENTS_PAGE_SIZE = 50;
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import { useShallow } from 'zustand/react/shallow';
@@ -10,6 +8,8 @@ import { searchCities, findCity } from '../data/cities';
 import { isValidDate, calculateLifePath } from '../engine/numerologyEngine';
 import { useTranslation } from '../i18n/useTranslation';
 import type { Client } from '../store/useStore';
+
+const CLIENTS_PAGE_SIZE = 50;
 
 export function ClientsPage() {
   const { t } = useTranslation();

@@ -33,6 +33,7 @@ import { getDailyCrystal } from '../data/crystals';
 import { generateDailyStory, generateProfileCard, shareOrDownload } from '../components/ShareStory';
 import { getAffirmationsPool, getDailyRituals } from '../data/affirmations';
 import { safeGet, safeSet, safeRemove } from '../utils/safeStorage';
+import { getTodayNameDays, getFirstName } from '../data/namedays';
 
 export function Dashboard() {
   const navigate = useNavigate();
@@ -122,6 +123,18 @@ export function Dashboard() {
 
   const dailyRituals = useMemo(() => getDailyRituals(language), [language]);
 
+  const nameDayInfo = useMemo(() => {
+    if (language !== 'sk') return null;
+    const todayNames = getTodayNameDays();
+    if (todayNames.length === 0) return null;
+    const profileFirstName = profile ? getFirstName(profile.name) : '';
+    const isProfileNameDay = todayNames.some(n => n.toLowerCase() === profileFirstName.toLowerCase());
+    const clientMatches = clients
+      .filter(c => todayNames.some(n => n.toLowerCase() === getFirstName(c.name).toLowerCase()))
+      .map(c => c.name);
+    return { todayNames, isProfileNameDay, clientMatches };
+  }, [language, profile, clients]);
+
   if (!profile) {
     return (
       <div className="min-h-[80vh] flex flex-col items-center justify-center">
@@ -190,6 +203,33 @@ export function Dashboard() {
             ✕
           </button>
         </div>
+      )}
+
+      {nameDayInfo && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className={`p-4 rounded-xl border ${nameDayInfo.isProfileNameDay ? 'bg-gradient-to-r from-amber-50 to-yellow-50 border-amber-300' : 'bg-violet-50 border-violet-200'}`}
+        >
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-lg">{nameDayInfo.isProfileNameDay ? '🎉' : '🗓'}</span>
+            <p className="text-xs uppercase tracking-wider text-violet-700 font-semibold">Meniny</p>
+          </div>
+          {nameDayInfo.isProfileNameDay ? (
+            <p className="text-sm text-amber-900 font-medium">
+              Všetko najlepšie k meninám, {getFirstName(profile.name)}! 🎂
+            </p>
+          ) : (
+            <p className="text-sm text-violet-900">
+              Dnes má meniny: <strong>{nameDayInfo.todayNames.join(', ')}</strong>
+            </p>
+          )}
+          {nameDayInfo.clientMatches.length > 0 && (
+            <p className="text-xs text-violet-700 mt-1">
+              📋 Klient{nameDayInfo.clientMatches.length > 1 ? 'i' : ''} s meninami dnes: <strong>{nameDayInfo.clientMatches.join(', ')}</strong>
+            </p>
+          )}
+        </motion.div>
       )}
 
       {/* ═══ MORNING BRIEF — vždy viditeľné ═══ */}

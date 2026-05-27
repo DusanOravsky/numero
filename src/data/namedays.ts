@@ -10,8 +10,8 @@ export function getNameDaysForDate(month: number, day: number): string[] {
 export function hasNameDayToday(firstName: string): boolean {
   const today = new Date();
   const names = getNameDaysForDate(today.getMonth() + 1, today.getDate());
-  const normalized = firstName.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
-  return names.some(n => n.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '') === normalized);
+  const normalized = firstName.toLowerCase().normalize('NFD').replace(/\p{M}/gu, '');
+  return names.some(n => n.toLowerCase().normalize('NFD').replace(/\p{M}/gu, '') === normalized);
 }
 
 export function getTodayNameDays(): string[] {

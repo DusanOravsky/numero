@@ -495,7 +495,7 @@ export function ClientSummary({ clientName, birthDay, birthMonth, birthYear, num
                     <><strong>{language === 'sk' ? 'Blokované:' : 'Blocked:'}</strong> {blocked.map(c => `${displayName(CHAKRA_NAME_DISPLAY, c.chakra.name, language)} (${c.score})`).join(', ')} — {language === 'sk' ? 'oblasti kde energia neprúdi voľne, vyžadujú vedomú pozornosť.' : 'areas where energy does not flow freely, requiring conscious attention.'} </>
                   )}
                   {hyperactive.length > 0 && (
-                    <><strong>{language === 'sk' ? 'Hyperaktívne:' : 'Hyperactive:'}</strong> {hyperactive.map(c => `${c.chakra.name} (${c.score})`).join(', ')} — {language === 'sk' ? 'nadbytok energie, potrebné vyváženie.' : 'excess energy, balancing needed.'} </>
+                    <><strong>{language === 'sk' ? 'Hyperaktívne:' : 'Hyperactive:'}</strong> {hyperactive.map(c => `${displayName(CHAKRA_NAME_DISPLAY, c.chakra.name, language)} (${c.score})`).join(', ')} — {language === 'sk' ? 'nadbytok energie, potrebné vyváženie.' : 'excess energy, balancing needed.'} </>
                   )}
                 </p>
               </div>

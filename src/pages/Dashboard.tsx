@@ -128,13 +128,13 @@ export function Dashboard() {
     const todayNames = getTodayNameDays();
     if (todayNames.length === 0) return null;
     const profileFirstName = profile ? getFirstName(profile.name) : '';
-    const norm = (s: string) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+    const norm = (s: string) => s.toLowerCase().normalize('NFD').replace(/\p{M}/gu, '');
     const isProfileNameDay = todayNames.some(n => norm(n) === norm(profileFirstName));
     const clientMatches = clients
       .filter(c => todayNames.some(n => norm(n) === norm(getFirstName(c.name))))
       .map(c => c.name);
     return { todayNames, isProfileNameDay, clientMatches };
-  }, [language, profile, clients]);
+  }, [language, profile, clients, currentDay, currentMonth]);
 
   if (!profile) {
     return (

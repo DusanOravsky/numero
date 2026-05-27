@@ -15,6 +15,16 @@ const CHAKRA_NAME_EN: Record<string, string> = {
   'Korunná čakra': 'Crown Chakra',
 };
 
+const CHAKRA_THEME_EN: Record<string, string> = {
+  'Bezpečie': 'Security', 'Prežitie': 'Survival', 'Stabilita': 'Stability', 'Zakorenenie': 'Grounding',
+  'Kreativita': 'Creativity', 'Emócie': 'Emotions', 'Sexualita': 'Sexuality', 'Radosť': 'Joy',
+  'Sila vôle': 'Willpower', 'Sebavedomie': 'Self-confidence', 'Osobná moc': 'Personal power', 'Hranice': 'Boundaries',
+  'Láska': 'Love', 'Súcit': 'Compassion', 'Odpustenie': 'Forgiveness', 'Prijatie': 'Acceptance',
+  'Komunikácia': 'Communication', 'Pravda': 'Truth', 'Sebavyjadrenie': 'Self-expression', 'Autenticita': 'Authenticity',
+  'Intuícia': 'Intuition', 'Vízia': 'Vision', 'Múdrosť': 'Wisdom', 'Vnútorné vedenie': 'Inner guidance',
+  'Spojenie': 'Connection', 'Transcendencia': 'Transcendence', 'Duchovno': 'Spirituality', 'Vedomie': 'Consciousness',
+};
+
 export interface Chakra {
   number: number;
   name: string;
@@ -218,10 +228,11 @@ export function evaluateChakras(
     const recommendations: string[] = [];
     const nameLocalized = lang === 'sk' ? chakra.name.toLowerCase() : (CHAKRA_NAME_EN[chakra.name] || chakra.name).toLowerCase();
     const colorLocalized = lang === 'sk' ? chakra.color : (CHAKRA_COLOR_EN[chakra.color] || chakra.color);
+    const themesLocalized = lang === 'sk' ? chakra.themes : chakra.themes.map(t => CHAKRA_THEME_EN[t] || t);
     if (status === 'blocked') {
       recommendations.push(lang === 'sk'
-        ? `Venujte pozornosť oblasti: ${chakra.themes.join(', ')}`
-        : `Focus on areas: ${chakra.themes.join(', ')}`);
+        ? `Venujte pozornosť oblasti: ${themesLocalized.join(', ')}`
+        : `Focus on areas: ${themesLocalized.join(', ')}`);
       recommendations.push(lang === 'sk'
         ? `Meditácia na farbu: ${colorLocalized}`
         : `Color meditation: ${colorLocalized}`);

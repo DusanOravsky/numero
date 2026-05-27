@@ -28,9 +28,9 @@ export function DateInput({ onSubmit, showTime = false, showPlace = false, label
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    const d = parseInt(day);
-    const m = parseInt(month);
-    const y = parseInt(year);
+    const d = parseInt(day, 10);
+    const m = parseInt(month, 10);
+    const y = parseInt(year, 10);
     if (isNaN(d) || isNaN(m) || isNaN(y) || d < 1 || m < 1 || y < 1) {
       setError(t('validation.fillDate'));
       return;
@@ -42,8 +42,8 @@ export function DateInput({ onSubmit, showTime = false, showPlace = false, label
     const city = findCity(birthPlace);
     onSubmit(
       d, m, y,
-      showTime ? parseInt(hour) : undefined,
-      showTime ? parseInt(minute) : undefined,
+      showTime ? parseInt(hour, 10) : undefined,
+      showTime ? parseInt(minute, 10) : undefined,
       city?.lat,
       city?.lon
     );

@@ -48,7 +48,7 @@ export function ProgressionsView({ birthDay, birthMonth, birthYear, birthHour, b
           min={0}
           max={120}
           value={targetAge}
-          onChange={e => setTargetAge(Math.max(0, Math.min(120, parseInt(e.target.value) || 0)))}
+          onChange={e => setTargetAge(Math.max(0, Math.min(120, parseInt(e.target.value, 10) || 0)))}
           className="w-20 px-3 py-1.5 rounded-lg bg-slate-800/50 border border-indigo-500/30 text-white text-sm"
         />
         <button

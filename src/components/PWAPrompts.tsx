@@ -69,7 +69,6 @@ export function PWAPrompts() {
           .then(r => r.ok ? r.json() : null)
           .then(data => {
             if (data?.version && data.version !== APP_VERSION) {
-              // eslint-disable-next-line react-hooks/set-state-in-effect
               setShowUpdate(true);
             }
           })
@@ -85,14 +84,14 @@ export function PWAPrompts() {
       navigator.serviceWorker.getRegistration().then(reg => {
         if (!reg) return;
         if (reg.waiting) {
-          // eslint-disable-next-line react-hooks/set-state-in-effect
+           
           setShowUpdate(true);
           return;
         }
         const onStateChange = () => {
           const sw = reg.installing;
           if (sw?.state === 'installed' && navigator.serviceWorker.controller) {
-            // eslint-disable-next-line react-hooks/set-state-in-effect
+             
             setShowUpdate(true);
           }
         };

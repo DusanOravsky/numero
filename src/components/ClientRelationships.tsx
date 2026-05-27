@@ -8,6 +8,7 @@ import type { HumanDesignResult } from '../engine/humanDesignEngine';
 import { calculateHumanDesign } from '../engine/humanDesignEngine';
 import { calculatePartnerCompatibility, calculateParentChild } from '../engine/compatibilityEngine';
 import { useStore } from '../store/useStore';
+import { useShallow } from 'zustand/react/shallow';
 
 interface Client {
   id: string;
@@ -40,7 +41,9 @@ export function ClientRelationships({
   showChildSelect,
   setShowChildSelect,
 }: ClientRelationshipsProps) {
-  const { clients, updateClient } = useStore();
+  const { clients, updateClient } = useStore(
+    useShallow(s => ({ clients: s.clients, updateClient: s.updateClient }))
+  );
   const { language } = useTranslation();
 
   return (

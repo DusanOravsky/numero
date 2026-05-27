@@ -62,7 +62,7 @@ export function SolarReturnView({ birthDay, birthMonth, birthYear, birthHour, bi
           min={birthYear}
           max={birthYear + 120}
           value={year}
-          onChange={e => setYear(Math.max(birthYear, Math.min(birthYear + 120, parseInt(e.target.value) || currentYear)))}
+          onChange={e => setYear(Math.max(birthYear, Math.min(birthYear + 120, parseInt(e.target.value, 10) || currentYear)))}
           className="w-24 px-3 py-1.5 rounded-lg bg-slate-800/50 border border-indigo-500/30 text-white text-sm"
         />
         {[currentYear - 1, currentYear, currentYear + 1].map(y => (

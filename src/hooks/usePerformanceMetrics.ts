@@ -60,7 +60,6 @@ export function usePerformanceMetrics(name: string): void {
       });
     });
     return () => cancelAnimationFrame(raf);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [name]);
 }
 

@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useStore } from '../store/useStore';
+import { useShallow } from 'zustand/react/shallow';
 import { AIChat } from './AIChat';
 import { useTranslation } from '../i18n/useTranslation';
 import { calculateFullNumerology, reduceToSingle, getGridCount } from '../engine/numerologyEngine';
@@ -20,7 +21,9 @@ import { getTimezoneFromCoords } from '../data/cities';
 export function GlobalAIDrawer() {
   const { t, language } = useTranslation();
   const [open, setOpen] = useState(false);
-  const { profiles, activeProfileId, numerologyMethod } = useStore();
+  const { profiles, activeProfileId, numerologyMethod } = useStore(
+    useShallow(s => ({ profiles: s.profiles, activeProfileId: s.activeProfileId, numerologyMethod: s.numerologyMethod }))
+  );
   const profile = profiles.find(p => p.id === activeProfileId);
 
   useEffect(() => {
@@ -78,7 +81,7 @@ export function GlobalAIDrawer() {
         themes: interpretation.themes.slice(0, 3).map(t => t.theme),
       },
     };
-  }, [profile?.id, profile?.birthDay, profile?.birthMonth, profile?.birthYear, profile?.birthHour, profile?.birthMinute, profile?.birthLatitude, profile?.birthLongitude, profile?.name, profile?.gender, profile?.birthPlace, numerologyMethod, open, language]);
+  }, [profile, numerologyMethod, open, language]);
 
   if (!profile || !hasApiKey()) return null;
 

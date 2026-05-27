@@ -15,6 +15,15 @@ interface State {
 
 const ERROR_LOG_KEY = 'numero-error-log';
 const ERROR_LOG_MAX = 20;
+const SECRET_PATTERNS: RegExp[] = [
+  /sk-ant-[A-Za-z0-9_-]+/g,
+  /Bearer\s+[A-Za-z0-9._-]+/gi,
+];
+
+function redactSecrets(input: string | undefined): string | undefined {
+  if (!input) return input;
+  return SECRET_PATTERNS.reduce((acc, re) => acc.replace(re, '[REDACTED]'), input);
+}
 
 interface ErrorLogEntry {
   message: string;
@@ -27,9 +36,15 @@ interface ErrorLogEntry {
 
 function appendToErrorLog(entry: ErrorLogEntry): void {
   try {
+    const sanitized: ErrorLogEntry = {
+      ...entry,
+      message: redactSecrets(entry.message) ?? '',
+      stack: redactSecrets(entry.stack),
+      componentStack: redactSecrets(entry.componentStack),
+    };
     const raw = localStorage.getItem(ERROR_LOG_KEY);
     const log: ErrorLogEntry[] = raw ? JSON.parse(raw) : [];
-    log.unshift(entry);
+    log.unshift(sanitized);
     localStorage.setItem(ERROR_LOG_KEY, JSON.stringify(log.slice(0, ERROR_LOG_MAX)));
   } catch {
     // localStorage may be full or disabled — best-effort.
@@ -76,9 +91,9 @@ export class ErrorBoundary extends Component<Props, State> {
     const { error, errorInfo } = this.state;
     if (!error) return;
     const details = [
-      `Message: ${error.message}`,
-      `Stack:\n${error.stack || '(no stack)'}`,
-      `Component stack:\n${errorInfo?.componentStack || '(no component stack)'}`,
+      `Message: ${redactSecrets(error.message) ?? ''}`,
+      `Stack:\n${redactSecrets(error.stack) || '(no stack)'}`,
+      `Component stack:\n${redactSecrets(errorInfo?.componentStack ?? undefined) || '(no component stack)'}`,
       `URL: ${window.location.href}`,
       `User Agent: ${navigator.userAgent}`,
       `Timestamp: ${new Date().toISOString()}`,

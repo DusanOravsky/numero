@@ -26,7 +26,8 @@ export type ClientsKey =
   | 'clients.currentEnergy' | 'clients.visits' | 'clients.recordVisit'
   | 'clients.visitAlreadyRecorded'
   | 'clients.timeline' | 'clients.completeReading' | 'clients.readingFor'
-  | 'clients.compareTitle' | 'clients.compareSubtitle';
+  | 'clients.compareTitle' | 'clients.compareSubtitle'
+  | 'clients.loadMore';
 
 type Dict = Record<ClientsKey, string>;
 
@@ -40,6 +41,7 @@ const sk: Dict = {
   'clients.history': 'História výkladov',
   'clients.deleteAll': 'Vymazať všetky',
   'clients.foundOf': 'Nájdených',
+  'clients.loadMore': 'Načítať ďalších',
   'clients.notesLabel': 'Poznámky',
   'clients.parent': 'Rodič',
   'clients.child': 'Dieťa',
@@ -109,6 +111,7 @@ const en: Dict = {
   'clients.history': 'Reading history',
   'clients.deleteAll': 'Delete all',
   'clients.foundOf': 'Found',
+  'clients.loadMore': 'Load more',
   'clients.notesLabel': 'Notes',
   'clients.parent': 'Parent',
   'clients.child': 'Child',

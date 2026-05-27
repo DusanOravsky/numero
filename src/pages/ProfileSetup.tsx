@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
+import { useShallow } from 'zustand/react/shallow';
 import { GlassCard } from '../components/GlassCard';
 import { searchCities, findCity } from '../data/cities';
 import { isValidDate } from '../engine/numerologyEngine';
@@ -9,7 +10,9 @@ import { useTranslation } from '../i18n/useTranslation';
 export function ProfileSetup() {
   const { t, language } = useTranslation();
   const navigate = useNavigate();
-  const { addProfile, setActiveProfile, profiles } = useStore();
+  const { addProfile, setActiveProfile, profiles } = useStore(
+    useShallow(s => ({ addProfile: s.addProfile, setActiveProfile: s.setActiveProfile, profiles: s.profiles }))
+  );
   const [name, setName] = useState('');
   const [gender, setGender] = useState<'male' | 'female' | ''>('');
   const [day, setDay] = useState('');
@@ -24,9 +27,9 @@ export function ProfileSetup() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    const d = parseInt(day);
-    const m = parseInt(month);
-    const y = parseInt(year);
+    const d = parseInt(day, 10);
+    const m = parseInt(month, 10);
+    const y = parseInt(year, 10);
     if (!name.trim()) {
       setError(t('validation.fillName'));
       return;
@@ -49,8 +52,8 @@ export function ProfileSetup() {
       birthDay: d,
       birthMonth: m,
       birthYear: y,
-      birthHour: hour ? parseInt(hour) : undefined,
-      birthMinute: minute ? parseInt(minute) : undefined,
+      birthHour: hour ? parseInt(hour, 10) : undefined,
+      birthMinute: minute ? parseInt(minute, 10) : undefined,
       birthPlace: birthPlace.trim() || undefined,
       birthLatitude: city?.lat,
       birthLongitude: city?.lon,

@@ -3,6 +3,7 @@ import { Outlet, NavLink, useLocation, useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation, type TranslationKey } from '../i18n/useTranslation';
 import { useStore } from '../store/useStore';
+import { useShallow } from 'zustand/react/shallow';
 import { APP_VERSION } from '../components/PWAPrompts';
 import { GlobalAIDrawer } from '../components/GlobalAIDrawer';
 import { SubjectPicker } from '../components/SubjectPicker';
@@ -31,7 +32,9 @@ export function MainLayout() {
   const { t } = useTranslation();
   const logoSrc = `${import.meta.env.BASE_URL}icons/logo.svg`;
   const [showMoreSheet, setShowMoreSheet] = useState(false);
-  const { themeMode, setThemeMode, language, setLanguage } = useStore();
+  const { themeMode, setThemeMode, language, setLanguage } = useStore(
+    useShallow(s => ({ themeMode: s.themeMode, setThemeMode: s.setThemeMode, language: s.language, setLanguage: s.setLanguage }))
+  );
 
   const togglePresent = () => {
     const next = new URLSearchParams(searchParams);

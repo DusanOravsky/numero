@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { useStore } from '../store/useStore';
+import { useShallow } from 'zustand/react/shallow';
 
 const SUBJECT_AWARE_PATHS = [
   '/numerology',
@@ -16,7 +17,9 @@ export function SubjectPicker() {
   const location = useLocation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { profiles, activeProfileId, clients } = useStore();
+  const { profiles, activeProfileId, clients } = useStore(
+    useShallow(s => ({ profiles: s.profiles, activeProfileId: s.activeProfileId, clients: s.clients }))
+  );
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 

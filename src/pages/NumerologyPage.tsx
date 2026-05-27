@@ -37,7 +37,7 @@ const isolatedInfo = isolatedData as Record<string, { type: string; effect: stri
 
 export function NumerologyPage() {
   const navigate = useNavigate();
-  const { numerologyMethod } = useStore();
+  const numerologyMethod = useStore(s => s.numerologyMethod);
   // Subject = aktívny profil alebo klient z ?client=ID query param.
   // Nazývame ju 'profile' kvôli minimalizácii diff-ov v rendrovacom kóde.
   const profile = useSubject();

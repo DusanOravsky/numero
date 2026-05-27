@@ -1,6 +1,9 @@
 import { useMemo, useState } from 'react';
+
+const CLIENTS_PAGE_SIZE = 50;
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
+import { useShallow } from 'zustand/react/shallow';
 import { GlassCard } from '../components/GlassCard';
 import { motion } from 'framer-motion';
 import { searchCities, findCity } from '../data/cities';
@@ -11,7 +14,9 @@ import type { Client } from '../store/useStore';
 export function ClientsPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { clients, addClient, updateClient, deleteClient, reports, deleteReport } = useStore();
+  const { clients, addClient, updateClient, deleteClient, reports, deleteReport } = useStore(
+    useShallow(s => ({ clients: s.clients, addClient: s.addClient, updateClient: s.updateClient, deleteClient: s.deleteClient, reports: s.reports, deleteReport: s.deleteReport }))
+  );
   const [showForm, setShowForm] = useState(false);
   const [editingClient, setEditingClient] = useState<Client | null>(null);
   const [name, setName] = useState('');
@@ -31,6 +36,15 @@ export function ClientsPage() {
   const [activeTagFilter, setActiveTagFilter] = useState<string | null>(null);
   const [bulkMode, setBulkMode] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  // Page-counter pre "Load more" — viazaný na (searchQuery, activeTagFilter) cez state-reset pri zmene filtra.
+  const [filterKey, setFilterKey] = useState('');
+  const [extraPages, setExtraPages] = useState(0);
+  const currentFilterKey = `${searchQuery}|${activeTagFilter ?? ''}`;
+  if (currentFilterKey !== filterKey) {
+    setFilterKey(currentFilterKey);
+    setExtraPages(0);
+  }
+  const visibleCount = CLIENTS_PAGE_SIZE * (1 + extraPages);
 
   const resetForm = () => {
     setName(''); setGender(''); setDay(''); setMonth(''); setYear(''); setHour(''); setMinute(''); setBirthPlace(''); setNotes(''); setTagsInput('');
@@ -68,9 +82,9 @@ export function ClientsPage() {
       setFormError(t('validation.fillName'));
       return;
     }
-    const dNum = parseInt(day);
-    const mNum = parseInt(month);
-    const yNum = parseInt(year);
+    const dNum = parseInt(day, 10);
+    const mNum = parseInt(month, 10);
+    const yNum = parseInt(year, 10);
     if (!dNum || !mNum || !yNum) {
       setFormError(t('validation.fillDate'));
       return;
@@ -83,11 +97,11 @@ export function ClientsPage() {
     const data = {
       name: name.trim(),
       gender: gender || undefined,
-      birthDay: parseInt(day),
-      birthMonth: parseInt(month),
-      birthYear: parseInt(year),
-      birthHour: hour ? parseInt(hour) : undefined,
-      birthMinute: minute ? parseInt(minute) : undefined,
+      birthDay: parseInt(day, 10),
+      birthMonth: parseInt(month, 10),
+      birthYear: parseInt(year, 10),
+      birthHour: hour ? parseInt(hour, 10) : undefined,
+      birthMinute: minute ? parseInt(minute, 10) : undefined,
       birthPlace: birthPlace.trim() || undefined,
       birthLatitude: city?.lat,
       birthLongitude: city?.lon,
@@ -668,7 +682,7 @@ export function ClientsPage() {
       )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filteredClients.map((client, idx) => {
+        {filteredClients.slice(0, visibleCount).map((client, idx) => {
           const isSelected = selectedIds.has(client.id);
           return (
             <motion.div
@@ -727,6 +741,16 @@ export function ClientsPage() {
           );
         })}
       </div>
+      {filteredClients.length > visibleCount && (
+        <div className="flex justify-center mt-4">
+          <button
+            onClick={() => setExtraPages(p => p + 1)}
+            className="px-6 py-3 rounded-xl bg-indigo-600 text-white font-medium hover:bg-indigo-500 transition-colors"
+          >
+            {t('clients.loadMore')} ({filteredClients.length - visibleCount})
+          </button>
+        </div>
+      )}
     </div>
   );
 }

@@ -98,7 +98,7 @@ export default defineConfig({
     alias: { '@': resolve(__dirname, 'src') }
   },
   build: {
-    chunkSizeWarningLimit: 600,
+    chunkSizeWarningLimit: 300,
     rollupOptions: {
       output: {
         manualChunks(id: string) {

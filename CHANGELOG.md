@@ -4,6 +4,34 @@ All notable changes to this project are documented in this file. Dates are
 in ISO 8601 (YYYY-MM-DD). The format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 4.3.2 — 2026-05-27
+
+**PATCH**: Code review fixy — correctness, performance, security cleanup.
+
+### Opravené bugy
+- **`language` v useMemo deps**: Dashboard `fullResults`, GlobalAIDrawer `context`, RelationshipsPage 4× partner useMemo, SharedView `results` — texty sa neaktualizovali pri prepnutí jazyka
+- **ChineseZodiac nextYear**: mŕtva podmienka odstránená, štart zo `currentYear+1`
+- **ErrorBoundary secret redaction**: `sk-ant-...` a `Bearer ...` regex-redact pred zápisom do localStorage logu a copy-to-clipboard
+- **parseInt radix**: globálny pass cez ProfileSetup, ClientsPage, RelationshipsPage, DateInput, Progressions/SolarReturn, SettingsPage
+- **ComparePage allPersons**: presunutý dovnútra useMemo (predtým nový array každý render → useMemo no-op)
+
+### Performance
+- **Zustand selektory**: 13 callsites refaktorované cez `useShallow` — žiadne `useStore()` bez selectoru. Eliminuje cascading re-renders pri zmene nesúvisiaceho store state.
+- **Dashboard memoizácia**: ORV/OMV/ODV výpočty + universalDay + dayOfYear + affirmations/dailyRituals — všetko v useMemo. Predtým sa `affirmationsPool` (90 stringov) a `dailyRituals` (18 ritualov) vytvárali každý render.
+- **Affirmations module**: `data/affirmations.ts` — externé konštanty (47 LOC odstránených z Dashboard).
+- **vite.config chunkSizeWarningLimit**: 600 → 300 KB, viditeľnejšie warningy pri raste bundle.
+
+### Refaktor
+- **PDF bootstrap helper**: `utils/pdfExport.ts#loadPdf()` — duplikovaný jsPDF + Roboto font init vyriešený. ClientExport má teraz `isExporting` flag (race-condition-safe button).
+- **ClientsPage virtualizácia**: top-50 + "Načítať ďalších" tlačidlo (krátkodobý guard pre viac než 100 klientov).
+
+### Testy
+- **astrologyEngine.test.ts**: 14 nových lock testov pre referenčný profil 30.8.1979 02:40 Bratislava (Slnko Panna ~6°, Mesiac Škorpión ~27°, Asc Rak) + invariants + derivácie (progressions, solar return, synastry).
+- Total: 209 → 223 testov (17 → 18 súborov).
+
+### Skipped (vedomé rozhodnutie)
+- **RelationshipsPage dekompozícia** (2249 LOC, 4 módy) — odložené, vysoké riziko regresie bez test coverage. Ostáva ako tech debt.
+
 ## 4.2.0 — 2026-05-26
 
 **MINOR**: Code review audit fixy — bezpečnosť, a11y, storage management.

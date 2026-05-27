@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useStore } from '../store/useStore';
+import { useShallow } from 'zustand/react/shallow';
 import type { NumerologyMethod } from '../store/useStore';
 import { GlassCard } from '../components/GlassCard';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -43,7 +44,9 @@ export function SettingsPage() {
     setActiveTabState(tab);
     setSearchParams({ tab }, { replace: true });
   };
-  const { profiles, activeProfileId, setActiveProfile, updateProfile, deleteProfile, numerologyMethod, setNumerologyMethod, clients, reports, favorites, themeMode, setThemeMode, language, setLanguage } = useStore();
+  const { profiles, activeProfileId, setActiveProfile, updateProfile, deleteProfile, numerologyMethod, setNumerologyMethod, clients, reports, favorites, themeMode, setThemeMode, language, setLanguage } = useStore(
+    useShallow(s => ({ profiles: s.profiles, activeProfileId: s.activeProfileId, setActiveProfile: s.setActiveProfile, updateProfile: s.updateProfile, deleteProfile: s.deleteProfile, numerologyMethod: s.numerologyMethod, setNumerologyMethod: s.setNumerologyMethod, clients: s.clients, reports: s.reports, favorites: s.favorites, themeMode: s.themeMode, setThemeMode: s.setThemeMode, language: s.language, setLanguage: s.setLanguage }))
+  );
   const activeProfile = profiles.find(p => p.id === activeProfileId);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editHour, setEditHour] = useState('');
@@ -113,8 +116,8 @@ export function SettingsPage() {
     updateProfile(editingId, {
       name: trimmedName,
       gender: editGender || undefined,
-      birthHour: editHour ? parseInt(editHour) : undefined,
-      birthMinute: editMinute ? parseInt(editMinute) : undefined,
+      birthHour: editHour ? parseInt(editHour, 10) : undefined,
+      birthMinute: editMinute ? parseInt(editMinute, 10) : undefined,
       birthPlace: editPlace.trim() || undefined,
       birthLatitude: city?.lat,
       birthLongitude: city?.lon,

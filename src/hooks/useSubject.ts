@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useStore } from '../store/useStore';
+import { useShallow } from 'zustand/react/shallow';
 import { getTimezoneFromCoords } from '../data/cities';
 
 /**
@@ -37,7 +38,9 @@ export interface Subject {
 export function useSubject(): Subject | null {
   const [searchParams] = useSearchParams();
   const clientId = searchParams.get('client');
-  const { profiles, activeProfileId, clients } = useStore();
+  const { profiles, activeProfileId, clients } = useStore(
+    useShallow(s => ({ profiles: s.profiles, activeProfileId: s.activeProfileId, clients: s.clients }))
+  );
 
   return useMemo<Subject | null>(() => {
     if (clientId) {

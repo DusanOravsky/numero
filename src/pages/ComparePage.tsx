@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useStore } from '../store/useStore';
+import { useShallow } from 'zustand/react/shallow';
 import { useTranslation } from '../i18n/useTranslation';
 import { GlassCard } from '../components/GlassCard';
 import { calculateFullNumerology } from '../engine/numerologyEngine';
@@ -17,7 +18,9 @@ export function ComparePage() {
   const { t, language } = useTranslation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { clients, profiles, activeProfileId, numerologyMethod } = useStore();
+  const { clients, profiles, activeProfileId, numerologyMethod } = useStore(
+    useShallow(s => ({ clients: s.clients, profiles: s.profiles, activeProfileId: s.activeProfileId, numerologyMethod: s.numerologyMethod }))
+  );
   const activeProfile = profiles.find(p => p.id === activeProfileId);
   const idsParam = searchParams.get('ids');
   const [selectedIds, setSelectedIds] = useState<string[]>(() =>
@@ -37,22 +40,23 @@ export function ComparePage() {
     .map(id => clients.find(c => c.id === id))
     .filter((c): c is NonNullable<typeof c> => !!c);
 
-  const allPersons: Array<{ id: string; name: string; birthDay: number; birthMonth: number; birthYear: number; birthHour?: number; birthMinute?: number; gender?: 'male' | 'female'; birthLatitude?: number; birthLongitude?: number }> = [
-    ...(includeMyProfile && activeProfile ? [{ id: activeProfile.id, name: `${activeProfile.name} (ja)`, birthDay: activeProfile.birthDay, birthMonth: activeProfile.birthMonth, birthYear: activeProfile.birthYear, birthHour: activeProfile.birthHour, birthMinute: activeProfile.birthMinute, gender: activeProfile.gender, birthLatitude: activeProfile.birthLatitude, birthLongitude: activeProfile.birthLongitude }] : []),
-    ...selected,
-  ];
-
-  const computed = useMemo(() => allPersons.map(c => {
-    const num = calculateFullNumerology(c.birthDay, c.birthMonth, c.birthYear);
-    const dev = calculateDevelopmentalNumerology(c.birthDay, c.birthMonth, c.birthYear);
-    const lat = c.birthLatitude ?? 48.15;
-    const lon = c.birthLongitude ?? 17.11;
-    const tz = getTimezoneFromCoords(lat, lon);
-    const astro = calculateAstrology(c.birthDay, c.birthMonth, c.birthYear, c.birthHour ?? 12, c.birthMinute ?? 0, lat, lon, tz);
-    const hd = calculateHumanDesign(c.birthDay, c.birthMonth, c.birthYear, c.birthHour ?? 12, c.birthMinute ?? 0, tz);
-    const enneagram = deriveEnneagramType(num, dev, numerologyMethod);
-    return { client: c, num, dev, astro, hd, enneagram };
-  }), [allPersons, numerologyMethod]);
+  const computed = useMemo(() => {
+    const allPersons: Array<{ id: string; name: string; birthDay: number; birthMonth: number; birthYear: number; birthHour?: number; birthMinute?: number; gender?: 'male' | 'female'; birthLatitude?: number; birthLongitude?: number }> = [
+      ...(includeMyProfile && activeProfile ? [{ id: activeProfile.id, name: `${activeProfile.name} (ja)`, birthDay: activeProfile.birthDay, birthMonth: activeProfile.birthMonth, birthYear: activeProfile.birthYear, birthHour: activeProfile.birthHour, birthMinute: activeProfile.birthMinute, gender: activeProfile.gender, birthLatitude: activeProfile.birthLatitude, birthLongitude: activeProfile.birthLongitude }] : []),
+      ...selected,
+    ];
+    return allPersons.map(c => {
+      const num = calculateFullNumerology(c.birthDay, c.birthMonth, c.birthYear);
+      const dev = calculateDevelopmentalNumerology(c.birthDay, c.birthMonth, c.birthYear);
+      const lat = c.birthLatitude ?? 48.15;
+      const lon = c.birthLongitude ?? 17.11;
+      const tz = getTimezoneFromCoords(lat, lon);
+      const astro = calculateAstrology(c.birthDay, c.birthMonth, c.birthYear, c.birthHour ?? 12, c.birthMinute ?? 0, lat, lon, tz);
+      const hd = calculateHumanDesign(c.birthDay, c.birthMonth, c.birthYear, c.birthHour ?? 12, c.birthMinute ?? 0, tz);
+      const enneagram = deriveEnneagramType(num, dev, numerologyMethod);
+      return { client: c, num, dev, astro, hd, enneagram };
+    });
+  }, [includeMyProfile, activeProfile, selected, numerologyMethod]);
 
   const rows: { label: string; cells: (data: typeof computed[number]) => React.ReactNode; keyOf?: (data: typeof computed[number]) => string; highlight?: boolean }[] = [
     { label: language === 'sk' ? 'Dátum' : 'Date', cells: d => `${d.client.birthDay}.${d.client.birthMonth}.${d.client.birthYear}` },

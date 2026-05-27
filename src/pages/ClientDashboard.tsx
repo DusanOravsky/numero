@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
+import { useShallow } from 'zustand/react/shallow';
 import { useTranslation } from '../i18n/useTranslation';
 import { calculateFullNumerology, getGridCount, reduceToSingle } from '../engine/numerologyEngine';
 import { calculateDevelopmentalNumerology } from '../engine/developmentalNumerologyEngine';
@@ -21,7 +22,9 @@ export function ClientDashboard() {
   const { t, language } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
-  const { clients, addReport, reports } = useStore();
+  const { clients, addReport, reports } = useStore(
+    useShallow(s => ({ clients: s.clients, addReport: s.addReport, reports: s.reports }))
+  );
   const client = clients.find(c => c.id === id);
 
   useEffect(() => {

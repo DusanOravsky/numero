@@ -79,7 +79,7 @@ export function AIChat({ context, title, initialUserMessage, storageKey }: Props
   const scrollRef = useRef<HTMLDivElement>(null);
 
   // Async load z IndexedDB + migrácia z localStorage
-  // eslint-disable-next-line react-hooks/set-state-in-effect
+   
   useEffect(() => {
     let cancelled = false;
     (async () => {

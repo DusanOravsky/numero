@@ -79,9 +79,8 @@ export function calculateChineseZodiac(birthYear: number, birthMonth?: number, b
   const polarity: 'Yin' | 'Yang' = effectiveYear % 2 === 0 ? 'Yang' : 'Yin';
 
   const currentYear = new Date().getFullYear();
-  let nextYear = currentYear;
+  let nextYear = currentYear + 1;
   while (ANIMALS[nextYear % 12] !== animal) nextYear++;
-  if (nextYear === currentYear) nextYear += 12;
 
   return {
     animal,

@@ -32,6 +32,7 @@ import { getLifePath } from '../data/lifePaths';
 import { getLoveLanguageName } from '../data/orvDescriptions';
 import { displayName, ZODIAC_DISPLAY, PLANET_DISPLAY, ELEMENT_DISPLAY, QUALITY_DISPLAY, HD_TYPE_DISPLAY, HD_AUTHORITY_DISPLAY, HD_CENTER_DISPLAY, CHINESE_ANIMAL_DISPLAY, CHINESE_ELEMENT_DISPLAY, CHAKRA_NAME_DISPLAY } from '../i18n/entityNames';
 import { useStore } from '../store/useStore';
+import { loadPdf, PDF_SECTION_COLORS } from '../utils/pdfExport';
 
 const lifePaths = lifePathsData as Record<string, { title: string; keywords: string[]; description: string; gift: string; shadow: string; recommendation?: string }>;
 
@@ -61,7 +62,8 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
   const { language } = useTranslation();
   const [shareMsg, setShareMsg] = useState('');
   const [showQR, setShowQR] = useState(false);
-  const { clients } = useStore();
+  const [isExporting, setIsExporting] = useState(false);
+  const clients = useStore(s => s.clients);
 
   return (
     <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8 }}>
@@ -70,16 +72,12 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
         <p className="text-sm text-slate-400 mb-4">{language === 'sk' ? 'Exportujte kompletný profil klienta so všetkými výsledkami.' : 'Export the complete client profile with all results.'}</p>
         <div className="flex gap-3 flex-wrap">
         <button
-          onClick={() => {
-            Promise.all([
-              import('jspdf'),
-              import('../assets/fonts/robotoFont'),
-            ]).then(([{ jsPDF }, fontModule]) => {
-              const doc = new jsPDF();
-              doc.addFileToVFS('Roboto-Regular.ttf', fontModule.ROBOTO_REGULAR);
-              doc.addFileToVFS('Roboto-Bold.ttf', fontModule.ROBOTO_BOLD);
-              doc.addFont('Roboto-Regular.ttf', 'Roboto', 'normal');
-              doc.addFont('Roboto-Bold.ttf', 'Roboto', 'bold');
+          disabled={isExporting}
+          onClick={async () => {
+            if (isExporting) return;
+            setIsExporting(true);
+            try {
+              const doc = await loadPdf();
               const lpKey = lifePaths[String(numerology.lifePathNumber)] ? String(numerology.lifePathNumber) : String(reduceToSingle(numerology.lifePathNumber));
               const lpData = getLifePath(lpKey, language);
               const lpTitle = lpData?.title || '';
@@ -104,17 +102,7 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
                 }
               };
 
-              // Farebné palety sekcií (RGB)
-              const sectionColors: Record<string, [number, number, number]> = {
-                indigo: [79, 70, 229],
-                cyan: [8, 145, 178],
-                purple: [124, 58, 237],
-                green: [22, 163, 74],
-                amber: [180, 83, 9],
-                rose: [225, 29, 72],
-                slate: [100, 116, 139],
-                teal: [13, 148, 136],
-              };
+              const sectionColors = PDF_SECTION_COLORS;
 
               const addSection = (text: string, color: keyof typeof sectionColors = 'indigo', icon?: string) => {
                 checkPage(18);
@@ -796,24 +784,21 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
               addPageNumber();
 
               doc.save(`${language === 'sk' ? 'profil' : 'profile'}-${client.name.replace(/\s+/g, '-').toLowerCase()}.pdf`);
-            });
+            } finally {
+              setIsExporting(false);
+            }
           }}
-          className="px-6 py-3 rounded-xl bg-indigo-600 text-white font-medium hover:bg-indigo-500 transition-colors"
+          className="px-6 py-3 rounded-xl bg-indigo-600 text-white font-medium hover:bg-indigo-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {language === 'sk' ? 'Exportovať PDF (plný)' : 'Export PDF (full)'}
+          {isExporting ? (language === 'sk' ? 'Generujem…' : 'Generating…') : (language === 'sk' ? 'Exportovať PDF (plný)' : 'Export PDF (full)')}
         </button>
         <button
-          onClick={() => {
-            Promise.all([
-              import('jspdf'),
-              import('../assets/fonts/robotoFont'),
-            ]).then(([{ jsPDF }, fontModule]) => {
-              const doc = new jsPDF();
-              doc.addFileToVFS('Roboto-Regular.ttf', fontModule.ROBOTO_REGULAR);
-              doc.addFileToVFS('Roboto-Bold.ttf', fontModule.ROBOTO_BOLD);
-              doc.addFont('Roboto-Regular.ttf', 'Roboto', 'normal');
-              doc.addFont('Roboto-Bold.ttf', 'Roboto', 'bold');
-
+          disabled={isExporting}
+          onClick={async () => {
+            if (isExporting) return;
+            setIsExporting(true);
+            try {
+              const doc = await loadPdf();
               let y = 20;
               const addLine = (text: string) => {
                 if (y > 270) { doc.addPage(); y = 20; }
@@ -927,11 +912,13 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
                 : `Generated: ${new Date().toLocaleDateString('en-GB')} | Integral Map of Being`, 105, 285, { align: 'center' });
 
               doc.save(`${language === 'sk' ? 'vyklad' : 'reading'}-${client.name.replace(/\s+/g, '-').toLowerCase()}.pdf`);
-            });
+            } finally {
+              setIsExporting(false);
+            }
           }}
-          className="px-6 py-3 rounded-xl bg-emerald-600 text-white font-medium hover:bg-emerald-500 transition-colors"
+          className="px-6 py-3 rounded-xl bg-emerald-600 text-white font-medium hover:bg-emerald-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {language === 'sk' ? 'PDF pre klienta (zjednodušený)' : 'PDF for client (simplified)'}
+          {isExporting ? (language === 'sk' ? 'Generujem…' : 'Generating…') : (language === 'sk' ? 'PDF pre klienta (zjednodušený)' : 'PDF for client (simplified)')}
         </button>
         <button
           onClick={() => {

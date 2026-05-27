@@ -9,6 +9,8 @@
 - **Glass morphism** — všetky sekcie obalené v `<GlassCard>` pre konzistentný vzhľad.
 - **Framer Motion** pre vstupné animácie (`initial`, `animate`, `transition delay`).
 - **Slovenčina** v UI textoch. i18n prerušujeme cez `useTranslation()` ale väčšina textov je inline (sk-only kvôli ezoterickej špecifickosti).
+- **`safeStorage` pre localStorage** (v4.3.4+) — `safeGet/safeSet/safeRemove` z `src/utils/safeStorage.ts`. Priamy `localStorage.*` zhodí appku v iOS Safari private mode. Detail v top-level CLAUDE.md.
+- **`useShallow` selektor pre Zustand** (v4.3.2+) — `useStore(useShallow(s => ({ x: s.x, y: s.y })))`. Single field cez `useStore(s => s.x)`.
 
 ## Klient kontext (`useSubject` hook + `SubjectPicker`)
 
@@ -168,6 +170,7 @@ Streaming chat s Claude API:
 
 - **Persistovaná história** v **IndexedDB** pod kľúčom `ai-chat-{storageKey}`. Storage key: `global-${profileId}` (drawer), `client-${clientId}` (ClientDashboard).
 - **Streaming** cez `streamChat()` s `AbortController` pre cancel.
+- **Abort trim na vetu** (v4.3.4+): pri zrušení mid-stream sa text trimne na poslednú dokončenú vetu (`. !? \n`) cez `trimToLastSentence()` helper. Žiadne polovičné slová v histórii.
 - **Markdown rendering** inline (## ### nadpisy, **bold**, • bullets) bez external lib.
 - **Empty state** s CTA button "Vytvoriť AI výklad" + default úvodná správa.
 - **Token counter** v patičke + reset rozhovoru.
@@ -295,12 +298,13 @@ Pri Davison/Composite charts som musel rozbiť dynamic colors na inline if/else 
 **Technické:**
 - Theme-aware (kontroluje `html.dark` class)
 - Všetky engine výpočty cez `useMemo` (numerology + HD + astrology + chakras)
-- Trigger: `localStorage.onboarding-completed` neexistuje + profil existuje
-- Dismiss: backdrop click / "Preskočiť" / finálne CTA → navigate `/numerology`
+- Trigger: `localStorage.onboarding-completed` neexistuje + profil existuje (cez `safeGet`)
+- Dismiss: backdrop click / "Preskočiť" / finálne CTA / **Escape key** (v4.3.4+)
+- Z-index `z-[200]` — nad PWAPrompts. Pri E2E testoch treba modal preskočiť cez `localStorage.setItem('onboarding-completed', 'true')`.
 
 ## Zdieľateľný obsah (v4.3.0)
 
-`ShareStory.tsx` — canvas-based PNG generátor pre Instagram stories (1080×1920).
+`ShareStory.tsx` — canvas-based PNG generátor pre Instagram stories (1080×1920). URL footer používa `getAppUrlDisplay()` z `utils/constants.ts` — žiadny hardcoded host.
 
 **Dve šablóny:**
 - `generateDailyStory()` — ODV číslo + afirmácia + kryštál dňa + app URL

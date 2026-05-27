@@ -1,6 +1,6 @@
 # Integrálna mapa bytia (Número)
 
-Offline-first PWA pre numerológiu, astrológiu, Human Design, etikoterapiu, kabalu, Theta Healing, Enneagram, Ayurvédu, TCM, biorytmus, Jungove archetypy, kristaloterapiu, Feng Shui (Kua) a sebarozvoj. **v4.3.0**
+Offline-first PWA pre numerológiu, astrológiu, Human Design, etikoterapiu, kabalu, Theta Healing, Enneagram, Ayurvédu, TCM, biorytmus, Jungove archetypy, kristaloterapiu, Feng Shui (Kua) a sebarozvoj. **v4.3.4**
 
 > 📁 **Nested CLAUDE.md súbory:**
 > - `src/engine/CLAUDE.md` — engine pravidlá, numerológia/astrológia/HD matematika
@@ -101,6 +101,10 @@ src/
     registry.ts    # Merges namespaces, exports translate() + TranslationKey union
     entityNames.ts # Display name maps for zodiac, planets, elements, HD types, Chinese animals
     useTranslation.ts # Hook: { t, language }
+  utils/           # Cross-cutting helpers (v4.3.2+)
+    safeStorage.ts # safeGet/safeSet/safeRemove — tolerantné voči localStorage exception (iOS private mode, quota exceeded)
+    constants.ts   # getAppUrl() / getAppUrlDisplay() — base URL z window.location.origin + BASE_URL
+    pdfExport.ts   # loadPdf() — lazy jsPDF + Roboto font bootstrap, PDF_SECTION_COLORS palette
   test/            # Vitest setup (jsdom + jest-dom matchers)
 e2e/               # Playwright smoke tests — viď e2e/CLAUDE.md
 .github/
@@ -258,6 +262,32 @@ Stratégia podľa [SemVer](https://semver.org/):
 - Profily, klienti (s tags), reports (max 200), favourites
 - Preferencie: language (sk/en), numerologyMethod, themeMode
 - Persisted cez zustand persist v **IndexedDB** (nie localStorage)
+- **useShallow selektory** (v4.3.2+) — všetky `useStore()` callsites s viac poliami používajú `useShallow(s => ({ ... }))` aby sa predišlo cascading re-renderom pri zmene nesúvisiaceho store state. Single field: `useStore(s => s.fieldName)`.
+
+## localStorage robustnosť (v4.3.4+)
+
+**KRITICKÉ:** localStorage hodí exception v iOS Safari private mode + pri vyčerpanej quote. Bez try/catch každý mount-time read/write zhodí celú appku cez ErrorBoundary.
+
+**Pravidlo:** všetky `localStorage.*` callsites mimo storage layeru (chatStorage, indexedDbStorage) používať cez `safeGet/safeSet/safeRemove` z `src/utils/safeStorage.ts`.
+
+```ts
+import { safeGet, safeSet, safeRemove } from '../utils/safeStorage';
+
+const v = safeGet('key');                   // string | null
+const ok = safeSet('key', 'value');         // boolean (false ak exception)
+safeRemove('key');                          // boolean
+```
+
+**Výnimky** (vlastný try/catch je acceptable):
+- `engine/chatStorage.ts` — má vlastnú error logiku + IndexedDB fallback
+- `hooks/usePerformanceMetrics.ts` — celé funkcie sú v try/catch
+- `components/ErrorBoundary.tsx` — log writer má try/catch
+- `components/PWAPrompts.tsx#clearAIData()` — má vlastný try/catch okolo celej funkcie
+
+**APP_URL konštanta** (`utils/constants.ts`):
+- `getAppUrl()` → `'https://dusanoravsky.github.io/numero/'` v produkcii (derivuje z `window.location.origin + import.meta.env.BASE_URL`)
+- `getAppUrlDisplay()` → `'dusanoravsky.github.io/numero'` (bez https:// pre user-facing texty)
+- Používať pre share linky, Web Share API, story canvas footer. **NIKDY hardcode-ovať** doménu.
 
 ## Storage management (v4.2.0)
 
@@ -397,11 +427,12 @@ App má pôvodný **dark-mode JSX** (`text-white`, `text-slate-300`, `bg-{color}
 
 ## Testovanie
 
-- **209 unit + component testov** (`npm test`) — 17 test files
-- **4 E2E smoke testov** (`npm run test:e2e`)
-- Lock testy pre kritické hodnoty: 30.8.1979 02:40 Bratislava → HD profil 1/3, ŽČ 1 z 37, čakra root score 45
+- **223 unit + component testov** (`npm test`) — 18 test files
+- **13 E2E testov** (`npm run test:e2e`) — 3 smoke + 10 v4.3.3+ regression
+- Lock testy pre kritické hodnoty: 30.8.1979 02:40 Bratislava → HD profil 1/3, ŽČ 1 z 37, čakra root score 45, Slnko Panna ~6°, Mesiac Škorpión ~27°, Asc Rak
 - Component testy: PersonalYearTimeline, RadarChart9
-- Engine testy: numerology, developmental, HD, chakra, enneagram, kabalah, ayurveda, tcm, chineseZodiac, compatibility, thetaHealing, interpretation, engineCache
+- Engine testy: numerology, developmental, HD, chakra, enneagram, kabalah, ayurveda, tcm, chineseZodiac, compatibility, thetaHealing, interpretation, engineCache, **astrology** (v4.3.2+)
+- E2E regression suite: `e2e/v433-regression.spec.ts` — engine integrity + JS console errors + language switch + RelationshipsPage partner mode
 - Detail Playwright config: `e2e/CLAUDE.md`
 
 ## Referenčný profil pre testovanie

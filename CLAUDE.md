@@ -1,6 +1,6 @@
 # Integrálna mapa bytia (Número)
 
-Offline-first PWA pre numerológiu, astrológiu, Human Design, etikoterapiu, kabalu, Theta Healing, Enneagram, Ayurvédu, TCM, biorytmus, Jungove archetypy, kristaloterapiu, Feng Shui (Kua) a sebarozvoj. **v4.3.4**
+Offline-first PWA pre numerológiu, astrológiu, Human Design, etikoterapiu, kabalu, Theta Healing, Enneagram, Ayurvédu, TCM, biorytmus, Jungove archetypy, kristaloterapiu, Feng Shui (Kua) a sebarozvoj. **v4.4.0**
 
 > 📁 **Nested CLAUDE.md súbory:**
 > - `src/engine/CLAUDE.md` — engine pravidlá, numerológia/astrológia/HD matematika
@@ -60,18 +60,27 @@ Detaily matematiky: `src/engine/CLAUDE.md`.
 
 UI je **method-aware**: niektoré sekcie (Roviny, Karmické cykly, Jazyky lásky) sú špecifické pre Charakterovú a skryjú sa pri Vývojovej. Detail v `src/components/CLAUDE.md`.
 
-## i18n — kompletná bilingválnosť (v4.0.0)
+## i18n — kompletná bilingválnosť (v4.0.0, audit v4.4.0)
 
 Plná SK/EN podpora. **Vždy 1:1** — každý text musí existovať v oboch jazykoch v rovnakej hĺbke.
 
 **Architektúra:**
 - `src/i18n/namespaces/*.ts` — 8 namespace súborov s typed SK+EN dictionaries
 - `src/i18n/registry.ts` — merge, `translate()`, `TranslationKey` union type
-- `src/i18n/entityNames.ts` — display mapy (zodiac→Aries, planéty→Sun, HD typy→Generator, etc.)
+- `src/i18n/entityNames.ts` — display mapy (zodiac→Aries, planéty→Sun, HD typy→Generator, channels, strategies, love languages, house themes, Chinese animals, etc.)
 - `useTranslation()` hook → `{ t, language }`. Pre content paragrafy: `language === 'sk' ? 'SK' : 'EN'` ternary
 - Dátové súbory: accessor funkcie s `lang: Language = 'sk'` (fallback na SK)
-- Engines s content stringami (theta, archetype, kua, compatibility): prijímajú `lang: Language = 'sk'` parameter
-- Pure calculation engines (numerology, astrology, HD, chakra, biorhythm): bez i18n, UI prekladá cez `displayName()`
+- Engines s content stringami (theta, archetype, kua, kabalah, chakra, compatibility): prijímajú `lang: Language = 'sk'` parameter
+- Pure calculation engines (numerology, astrology, HD, biorhythm): bez i18n, UI prekladá cez `displayName()`
+
+**Display mapy v `entityNames.ts` (v4.4.0):**
+- `ZODIAC_DISPLAY`, `PLANET_DISPLAY`, `ELEMENT_DISPLAY` — astro entity names
+- `HD_TYPE_DISPLAY`, `HD_AUTHORITY_DISPLAY`, `HD_CENTER_DISPLAY` — HD typy
+- `HD_STRATEGY_DISPLAY`, `HD_NOT_SELF_THEME_DISPLAY`, `HD_CHANNEL_DISPLAY` — HD stratégie, not-self, kanály
+- `LOVE_LANGUAGE_DISPLAY` — 5 jazykov lásky
+- `CHAKRA_NAME_DISPLAY`, `CHAKRA_THEME_DISPLAY`, `CHAKRA_STATUS_TEXT` — čakry
+- `CHINESE_ANIMAL_DISPLAY`, `CHINESE_ELEMENT_DISPLAY`, `CHINESE_ANIMAL_GENITIVE` — čínsky horoskop
+- `HOUSE_THEME_DISPLAY` — 12 astrologických domov
 
 **Pri pridaní novej funkcionality:**
 1. UI labely → pridať key do príslušného namespace (oba jazyky)
@@ -79,6 +88,7 @@ Plná SK/EN podpora. **Vždy 1:1** — každý text musí existovať v oboch jaz
 3. Dátový obsah → accessor s `lang` parametrom + oba jazyky
 4. Entity names z engines → `displayName(MAPA, skKey, language)` v renderovaní
 5. **Žiadne skrátené verzie** — EN musí mať rovnakú hĺbku ako SK
+6. **E2E audit** — `e2e/i18n-audit.spec.ts` testuje 80+ SK patterns na 10 stránkach v EN mode
 
 **Language picker:** Settings → Profil tab (mobile aj desktop) + Desktop sidebar.
 
@@ -336,6 +346,8 @@ Rozdelený na 3 vrstvy:
 - **Hlbší profil** (`<details>` default closed) — Integrálny súhrn (ClientSummary), Export PDF
 
 Plus **Posledný klient shortcut** — amber karta hneď pod headerom, naviguje na `/clients/{id}` posledne otvoreného klienta (persisted v `localStorage['last-viewed-client']` cez `ClientDashboard` mount effect). Má ✕ dismiss button (v2.50.0+).
+
+Plus **Meniny karta** (v4.4.0, SK only) — zobrazuje kto má dnes meniny. Ak user's firstName matchne → osobné blahoprianie. Ak klient matchne → upozornenie. Dáta: `src/data/namedays.json` (513 mien, 8.6KB, exportované z birthday_application DB). Matching cez NFD normalizáciu (`\p{M}` Unicode property) — "Dusan" matchne "Dušan".
 
 ## Zdieľateľný obsah (v4.3.0)
 

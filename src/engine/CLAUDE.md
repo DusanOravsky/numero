@@ -18,8 +18,8 @@
 | `nameNumerologyEngine.ts` | Numerológia mena: výraz, duša, osobnosť, hidden passion, karmic lessons, cornerstone, balance |
 | `astrologyEngine.ts` | Planéty, znamenia, ascendent, domy (Whole Sign), aspekty, progresie, solar return, tranzity (`calculateTransitAspects`) |
 | `humanDesignEngine.ts` | Typy, autority, centrá, kanály, brány, profil, definícia, inkarnačný kríž |
-| `chakraEngine.ts` | 7 čakier — cross-system výpočet z numerológie + HD + astrológia |
-| `kabalahEngine.ts` | 10 sefír, Strom života, primárna/sekundárna sefira |
+| `chakraEngine.ts` | 7 čakier — cross-system výpočet z numerológie + HD + astrológia. `evaluateChakras(..., lang)` — recommendations bilingual |
+| `kabalahEngine.ts` | 10 sefír, Strom života, primárna/sekundárna sefira. `calculateKabalah(..., lang)` — SEFIROT + SEFIROT_EN |
 | `thetaHealingEngine.ts` | Limitujúce presvedčenia podľa ŽČ |
 | `compatibilityEngine.ts` | Partner + rodič-dieťa kompatibilita |
 | `interpretationEngine.ts` | Cross-system pattern matching |

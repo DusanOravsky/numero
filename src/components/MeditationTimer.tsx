@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { GlassCard } from './GlassCard';
+import { useTranslation } from '../i18n/useTranslation';
 
 const PRESETS = [
   { label: '3 min', seconds: 3 * 60 },
@@ -20,6 +21,7 @@ function fmt(sec: number): string {
  * Pri konci spustí krátky tón pomocou Web Audio.
  */
 export function MeditationTimer() {
+  const { language } = useTranslation();
   const [duration, setDuration] = useState(5 * 60);
   const [remaining, setRemaining] = useState(5 * 60);
   const [running, setRunning] = useState(false);
@@ -58,9 +60,9 @@ export function MeditationTimer() {
 
   return (
     <GlassCard>
-      <h3 className="font-medium text-white mb-1">Meditácia / Timer</h3>
+      <h3 className="font-medium text-white mb-1">{language === 'sk' ? 'Meditácia / Timer' : 'Meditation / Timer'}</h3>
       <p className="text-xs text-slate-500 mb-3">
-        Vyber dĺžku a stlač Štart. Po skončení zaznie jemný gong (Web Audio).
+        {language === 'sk' ? 'Vyber dĺžku a stlač Štart. Po skončení zaznie jemný gong (Web Audio).' : 'Choose duration and press Start. A gentle gong sounds when done (Web Audio).'}
       </p>
 
       <div className="flex flex-col items-center gap-3">
@@ -107,7 +109,7 @@ export function MeditationTimer() {
             disabled={remaining === 0}
             className="px-6 py-2 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {running ? '⏸ Pauza' : remaining === 0 ? '✓ Hotovo' : '▶ Štart'}
+            {running ? (language === 'sk' ? '⏸ Pauza' : '⏸ Pause') : remaining === 0 ? (language === 'sk' ? '✓ Hotovo' : '✓ Done') : (language === 'sk' ? '▶ Štart' : '▶ Start')}
           </button>
           <button
             onClick={reset}

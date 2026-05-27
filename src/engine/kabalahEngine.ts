@@ -1,3 +1,5 @@
+import type { Language } from '../store/useStore';
+
 export interface Sefira {
   number: number;
   name: string;
@@ -5,7 +7,7 @@ export interface Sefira {
   meaning: string;
   planet: string;
   chakra: number;
-  pillar: 'Prísnosť' | 'Milosrdenstvo' | 'Stred';
+  pillar: 'Prísnosť' | 'Milosrdenstvo' | 'Stred' | 'Severity' | 'Mercy' | 'Middle';
   color: string;
   themes: string[];
   shadow: string;
@@ -165,6 +167,149 @@ export const SEFIROT: Sefira[] = [
   },
 ];
 
+export const SEFIROT_EN: Sefira[] = [
+  {
+    number: 1,
+    name: 'Keter',
+    hebrewName: 'כתר',
+    meaning: 'Crown',
+    planet: 'Neptune',
+    chakra: 7,
+    pillar: 'Middle',
+    color: '#ffffff',
+    themes: ['Unity', 'Divine Will', 'Infinity', 'Pure Being'],
+    shadow: 'Disconnection from reality, spiritual pride',
+    gift: 'Connection with higher purpose, unity',
+    action: 'Meditation in silence – 5 minutes without any stimulus',
+  },
+  {
+    number: 2,
+    name: 'Chokmah',
+    hebrewName: 'חכמה',
+    meaning: 'Wisdom',
+    planet: 'Uranus',
+    chakra: 6,
+    pillar: 'Mercy',
+    color: '#6366f1',
+    themes: ['Inspiration', 'Vision', 'Impulse', 'Creative Force'],
+    shadow: 'Chaos, impulsivity, scatter',
+    gift: 'Creative spark, vision without limits',
+    action: 'Write down one new thought without judgment',
+  },
+  {
+    number: 3,
+    name: 'Binah',
+    hebrewName: 'בינה',
+    meaning: 'Understanding',
+    planet: 'Saturn',
+    chakra: 6,
+    pillar: 'Severity',
+    color: '#1e1b4b',
+    themes: ['Structure', 'Form', 'Boundaries', 'Motherhood'],
+    shadow: 'Rigidity, excessive control, grief',
+    gift: 'Ability to shape thought, deep understanding',
+    action: 'Create a simple plan for tomorrow – 3 steps',
+  },
+  {
+    number: 4,
+    name: 'Chesed',
+    hebrewName: 'חסד',
+    meaning: 'Mercy',
+    planet: 'Jupiter',
+    chakra: 5,
+    pillar: 'Mercy',
+    color: '#3b82f6',
+    themes: ['Generosity', 'Expansion', 'Kindness', 'Abundance'],
+    shadow: 'Naivety, excessive generosity, loss of boundaries',
+    gift: 'Generosity of spirit, ability to give',
+    action: 'Do one act of kindness without expecting anything in return',
+  },
+  {
+    number: 5,
+    name: 'Geburah',
+    hebrewName: 'גבורה',
+    meaning: 'Strength',
+    planet: 'Mars',
+    chakra: 5,
+    pillar: 'Severity',
+    color: '#ef4444',
+    themes: ['Discipline', 'Boundaries', 'Courage', 'Justice'],
+    shadow: 'Cruelty, harshness, anger',
+    gift: 'Strength to say no, healthy boundaries',
+    action: 'Say one clear "no" today where needed',
+  },
+  {
+    number: 6,
+    name: 'Tiferet',
+    hebrewName: 'תפארת',
+    meaning: 'Beauty',
+    planet: 'Sun',
+    chakra: 4,
+    pillar: 'Middle',
+    color: '#f59e0b',
+    themes: ['Harmony', 'Heart', 'Balance', 'Compassion'],
+    shadow: 'Narcissism, superficiality, emotional instability',
+    gift: 'Authentic beauty of the soul, harmony of opposites',
+    action: 'Find beauty in one ordinary thing today',
+  },
+  {
+    number: 7,
+    name: 'Necach',
+    hebrewName: 'נצח',
+    meaning: 'Victory',
+    planet: 'Venus',
+    chakra: 3,
+    pillar: 'Mercy',
+    color: '#22c55e',
+    themes: ['Persistence', 'Triumph', 'Passion', 'Creativity'],
+    shadow: 'Addiction, obsession, excessive desire',
+    gift: 'Tireless passion for life, creativity',
+    action: 'Spend 10 minutes on something you truly enjoy',
+  },
+  {
+    number: 8,
+    name: 'Hod',
+    hebrewName: 'הוד',
+    meaning: 'Glory',
+    planet: 'Mercury',
+    chakra: 3,
+    pillar: 'Severity',
+    color: '#f97316',
+    themes: ['Intellect', 'Communication', 'Analysis', 'Humility'],
+    shadow: 'Over-analysis, cynicism, coldness',
+    gift: 'Clear mind, ability to communicate truth',
+    action: 'Write three things you are grateful for',
+  },
+  {
+    number: 9,
+    name: 'Jesod',
+    hebrewName: 'יסוד',
+    meaning: 'Foundation',
+    planet: 'Moon',
+    chakra: 2,
+    pillar: 'Middle',
+    color: '#a855f7',
+    themes: ['Subconscious', 'Dreams', 'Emotions', 'Fertility'],
+    shadow: 'Illusions, instability, sexual addiction',
+    gift: 'Deep connection with the subconscious, intuition',
+    action: 'Before sleep, write down one dream or feeling',
+  },
+  {
+    number: 10,
+    name: 'Malchut',
+    hebrewName: 'מלכות',
+    meaning: 'Kingdom',
+    planet: 'Earth',
+    chakra: 1,
+    pillar: 'Middle',
+    color: '#78716c',
+    themes: ['Matter', 'Body', 'Reality', 'Manifestation'],
+    shadow: 'Materialism, disconnection from spirituality, addiction',
+    gift: 'Ability to manifest, groundedness',
+    action: 'Take one concrete step toward your goal',
+  },
+];
+
 function reduceForSefira(n: number): number {
   if (n === 11) return 2;
   if (n === 22) return 4;
@@ -172,23 +317,41 @@ function reduceForSefira(n: number): number {
   return Math.min(n, 9);
 }
 
-export function calculateKabalah(lifePathNumber: number, dayNumber: number): KabalahResult {
+export function calculateKabalah(lifePathNumber: number, dayNumber: number, lang: Language = 'sk'): KabalahResult {
   const primaryIndex = reduceForSefira(lifePathNumber);
   const secondaryIndex = reduceForSefira(dayNumber);
 
-  const primarySefira = SEFIROT[primaryIndex - 1] || SEFIROT[0];
-  const secondarySefira = SEFIROT[secondaryIndex - 1] || SEFIROT[0];
+  const sefirot = lang === 'sk' ? SEFIROT : SEFIROT_EN;
+  const primarySefira = sefirot[primaryIndex - 1] || sefirot[0];
+  const secondarySefira = sefirot[secondaryIndex - 1] || sefirot[0];
 
-  const path = `Cesta z ${primarySefira.name} cez ${secondarySefira.name} do Malchut`;
+  let path: string;
+  let lifeLessons: string[];
+  let integration: string;
 
-  const lifeLessons = [
-    `Integrácia ${primarySefira.meaning} – ${primarySefira.themes[0]}`,
-    `Práca s tieňom: ${primarySefira.shadow}`,
-    `Rozvoj daru: ${primarySefira.gift}`,
-    `Sekundárna lekcia: ${secondarySefira.themes[1] || secondarySefira.themes[0]}`,
-  ];
+  if (lang === 'sk') {
+    path = `Cesta z ${primarySefira.name} cez ${secondarySefira.name} do Malchut`;
 
-  const integration = `Vaša duša sa učí spájať energiu ${primarySefira.name} (${primarySefira.meaning}) s praktickým prejavom v ${SEFIROT[9].name} (${SEFIROT[9].meaning}). Kľúčom je rovnováha medzi ${primarySefira.pillar === 'Prísnosť' ? 'disciplínou a milosrdenstvom' : primarySefira.pillar === 'Milosrdenstvo' ? 'štedrosťou a hranicami' : 'vyšším a nižším'}.`;
+    lifeLessons = [
+      `Integrácia ${primarySefira.meaning} – ${primarySefira.themes[0]}`,
+      `Práca s tieňom: ${primarySefira.shadow}`,
+      `Rozvoj daru: ${primarySefira.gift}`,
+      `Sekundárna lekcia: ${secondarySefira.themes[1] || secondarySefira.themes[0]}`,
+    ];
+
+    integration = `Vaša duša sa učí spájať energiu ${primarySefira.name} (${primarySefira.meaning}) s praktickým prejavom v ${SEFIROT[9].name} (${SEFIROT[9].meaning}). Kľúčom je rovnováha medzi ${primarySefira.pillar === 'Prísnosť' ? 'disciplínou a milosrdenstvom' : primarySefira.pillar === 'Milosrdenstvo' ? 'štedrosťou a hranicami' : 'vyšším a nižším'}.`;
+  } else {
+    path = `Path from ${primarySefira.name} through ${secondarySefira.name} to Malchut`;
+
+    lifeLessons = [
+      `Integration of ${primarySefira.meaning} – ${primarySefira.themes[0]}`,
+      `Working with shadow: ${primarySefira.shadow}`,
+      `Developing gift: ${primarySefira.gift}`,
+      `Secondary lesson: ${secondarySefira.themes[1] || secondarySefira.themes[0]}`,
+    ];
+
+    integration = `Your soul is learning to connect the energy of ${primarySefira.name} (${primarySefira.meaning}) with practical manifestation in ${SEFIROT_EN[9].name} (${SEFIROT_EN[9].meaning}). The key is balance between ${primarySefira.pillar === 'Severity' ? 'discipline and mercy' : primarySefira.pillar === 'Mercy' ? 'generosity and boundaries' : 'higher and lower'}.`;
+  }
 
   const malchutAction = primarySefira.action;
 

@@ -57,8 +57,8 @@ export function LunarTimeline({ daysBack = 7, daysAhead = 7 }: Props) {
     <GlassCard>
       <h3 className="font-medium text-white mb-1">
         {language === 'sk'
-          ? `Lunárny pás — najbližšie ${daysBack + daysAhead + 1} dní`
-          : `Lunar band — next ${daysBack + daysAhead + 1} days`}
+          ? `Lunárny pás — ${daysBack} dní dozadu, ${daysAhead} dopredu`
+          : `Lunar band — ${daysBack} days back, ${daysAhead} ahead`}
       </h3>
       <p className="text-xs text-slate-500 mb-3">
         {language === 'sk'

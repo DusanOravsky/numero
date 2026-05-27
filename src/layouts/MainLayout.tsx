@@ -253,9 +253,22 @@ export function MainLayout() {
                 ))}
               </div>
               <button
+                onClick={() => {
+                  navigator.share?.({
+                    title: 'Integrálna mapa bytia',
+                    text: language === 'sk' ? 'Objavte svoju integrálnu mapu bytia — numerológia, astrológia, Human Design a ďalšie systémy na jednom mieste.' : 'Discover your integral map of being — numerology, astrology, Human Design and more systems in one place.',
+                    url: getAppUrl(),
+                  }).catch(() => {});
+                  setShowMoreSheet(false);
+                }}
+                className="w-full mt-3 py-2.5 rounded-xl text-sm font-medium bg-emerald-50 text-emerald-700 border border-emerald-200"
+              >
+                {language === 'sk' ? '💌 Pozvi priateľa' : '💌 Invite a friend'}
+              </button>
+              <button
                 type="button"
                 onClick={() => setShowMoreSheet(false)}
-                className="w-full mt-4 py-2 text-sm text-slate-500"
+                className="w-full mt-2 py-2 text-sm text-slate-500"
               >
                 {t('common.close')}
               </button>

@@ -53,7 +53,8 @@ function computeModality(
     gridCounts,
     numerology.isolatedNumbers,
     hd.definedCenters,
-    astrology.dominantElement
+    astrology.dominantElement,
+    lang
   );
 
   const dosha = deriveDosha(numerology, astrology, hd);

@@ -3,6 +3,7 @@ import { GlassCard } from '../GlassCard';
 import type { NumerologyResult } from '../../engine/numerologyEngine';
 import { getLoveLanguageDescription, getLoveLanguageScoringExplanation } from '../../data/orvDescriptions';
 import { useTranslation } from '../../i18n/useTranslation';
+import { displayName, LOVE_LANGUAGE_DISPLAY } from '../../i18n/entityNames';
 
 interface LoveTabProps {
   result: NumerologyResult;
@@ -35,7 +36,7 @@ export function LoveTab({ result }: LoveTabProps) {
                 className="space-y-2"
               >
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-sm font-medium text-white">{lang.language}</span>
+                  <span className="text-sm font-medium text-white">{displayName(LOVE_LANGUAGE_DISPLAY, lang.language, language)}</span>
                   <span className="text-sm text-slate-400">{lang.score} {language === 'sk' ? 'bodov' : 'points'}</span>
                 </div>
                 <div className="h-3 bg-slate-800 rounded-full overflow-hidden">

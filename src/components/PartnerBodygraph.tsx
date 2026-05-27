@@ -2,6 +2,7 @@ import type { HumanDesignResult } from '../engine/humanDesignEngine';
 import { CHANNEL_DEFINITIONS, CENTER_THEMES } from '../engine/humanDesignEngine';
 import { getGeneKeyByGate } from '../data/geneKeys';
 import { useTranslation } from '../i18n/useTranslation';
+import { displayName, HD_CHANNEL_DISPLAY } from '../i18n/entityNames';
 
 interface PartnerBodygraphProps {
   result1: HumanDesignResult;
@@ -246,9 +247,9 @@ export function PartnerBodygraph({ result1, result2, name1, name2 }: PartnerBody
               const gk2 = getGeneKeyByGate(ch.gates[1], language);
               return (
               <div key={i} className="p-3 rounded-lg bg-amber-50 border border-amber-200 mb-2 space-y-2">
-                <p className="text-sm font-medium text-slate-800">{ch.name} (brány {ch.gates[0]}-{ch.gates[1]})</p>
+                <p className="text-sm font-medium text-slate-800">{displayName(HD_CHANNEL_DISPLAY, ch.name, language)} (brány {ch.gates[0]}-{ch.gates[1]})</p>
                 <p className="text-xs text-slate-500">
-                  {language === 'sk' ? `${name1} prináša bránu ${ch.gates[0]}, ${name2} prináša bránu ${ch.gates[1]}. Spolu aktivujete energiu ${ch.name} – oblasť, kde ste najsilnejší AKO PÁR.` : `${name1} brings gate ${ch.gates[0]}, ${name2} brings gate ${ch.gates[1]}. Together you activate the energy of ${ch.name} – the area where you are strongest AS A COUPLE.`}
+                  {language === 'sk' ? `${name1} prináša bránu ${ch.gates[0]}, ${name2} prináša bránu ${ch.gates[1]}. Spolu aktivujete energiu ${displayName(HD_CHANNEL_DISPLAY, ch.name, language)} – oblasť, kde ste najsilnejší AKO PÁR.` : `${name1} brings gate ${ch.gates[0]}, ${name2} brings gate ${ch.gates[1]}. Together you activate the energy of ${displayName(HD_CHANNEL_DISPLAY, ch.name, language)} – the area where you are strongest AS A COUPLE.`}
                 </p>
                 {gk1 && (
                   <div className="pl-2 border-l-2 border-amber-300">
@@ -264,7 +265,7 @@ export function PartnerBodygraph({ result1, result2, name1, name2 }: PartnerBody
                 )}
                 {gk1 && gk2 && (
                   <p className="text-[10px] text-amber-700 italic">
-                    {language === 'sk' ? `Spoločný príbeh: ${name1} prináša „${gk1.gift.toLowerCase()}" a ${name2} „${gk2.gift.toLowerCase()}". Spolu vytvárate energiu kanálu ${ch.name}.` : `Shared story: ${name1} brings "${gk1.gift.toLowerCase()}" and ${name2} "${gk2.gift.toLowerCase()}". Together you create the energy of channel ${ch.name}.`}
+                    {language === 'sk' ? `Spoločný príbeh: ${name1} prináša „${gk1.gift.toLowerCase()}" a ${name2} „${gk2.gift.toLowerCase()}". Spolu vytvárate energiu kanálu ${displayName(HD_CHANNEL_DISPLAY, ch.name, language)}.` : `Shared story: ${name1} brings "${gk1.gift.toLowerCase()}" and ${name2} "${gk2.gift.toLowerCase()}". Together you create the energy of channel ${displayName(HD_CHANNEL_DISPLAY, ch.name, language)}.`}
                   </p>
                 )}
               </div>
@@ -283,8 +284,8 @@ export function PartnerBodygraph({ result1, result2, name1, name2 }: PartnerBody
               const gk2 = getGeneKeyByGate(ch.gates[1], language);
               return (
               <div key={i} className="p-3 rounded-lg bg-purple-50 border border-purple-200 mb-2 space-y-1">
-                <p className="text-sm font-medium text-slate-800">{ch.name} (brány {ch.gates[0]}-{ch.gates[1]})</p>
-                <p className="text-xs text-slate-500">{language === 'sk' ? `Obaja máte energiu "${ch.name}" – zdieľate rovnakú silu, čo môže vytvárať harmóniu AJ súťaž.` : `You both have the energy of "${ch.name}" – you share the same power, which can create harmony AND competition.`}</p>
+                <p className="text-sm font-medium text-slate-800">{displayName(HD_CHANNEL_DISPLAY, ch.name, language)} (brány {ch.gates[0]}-{ch.gates[1]})</p>
+                <p className="text-xs text-slate-500">{language === 'sk' ? `Obaja máte energiu "${displayName(HD_CHANNEL_DISPLAY, ch.name, language)}" – zdieľate rovnakú silu, čo môže vytvárať harmóniu AJ súťaž.` : `You both have the energy of "${displayName(HD_CHANNEL_DISPLAY, ch.name, language)}" – you share the same power, which can create harmony AND competition.`}</p>
                 {gk1 && <p className="text-[10px] text-slate-600">{language === 'sk' ? 'Brána' : 'Gate'} {ch.gates[0]}: {gk1.gift} — {gk1.giftDescription}</p>}
                 {gk2 && <p className="text-[10px] text-slate-600">{language === 'sk' ? 'Brána' : 'Gate'} {ch.gates[1]}: {gk2.gift} — {gk2.giftDescription}</p>}
               </div>
@@ -302,7 +303,7 @@ export function PartnerBodygraph({ result1, result2, name1, name2 }: PartnerBody
               const gk = getGeneKeyByGate(ch.gates[0], language);
               return (
               <div key={i} className="p-2 rounded-lg bg-rose-50 border border-rose-200 mb-2">
-                <p className="text-sm text-slate-800"><strong className="text-rose-600">{name1}</strong> {language === 'sk' ? 'vedie oblasť' : 'leads area'}: {ch.name}</p>
+                <p className="text-sm text-slate-800"><strong className="text-rose-600">{name1}</strong> {language === 'sk' ? 'vedie oblasť' : 'leads area'}: {displayName(HD_CHANNEL_DISPLAY, ch.name, language)}</p>
                 <p className="text-xs text-slate-500">{language === 'sk' ? `${name1} má v tejto oblasti stabilnú energiu — prirodzene ju vo vzťahu riadi. ${name2} sa tu od neho/nej učí.` : `${name1} has stable energy in this area — naturally leads in the relationship. ${name2} learns from them here.`}</p>
                 {gk && <p className="text-[10px] text-slate-600">{language === 'sk' ? 'Dar' : 'Gift'}: {gk.gift} — {gk.giftDescription}</p>}
               </div>
@@ -312,7 +313,7 @@ export function PartnerBodygraph({ result1, result2, name1, name2 }: PartnerBody
               const gk = getGeneKeyByGate(ch.gates[0], language);
               return (
               <div key={i} className="p-2 rounded-lg bg-indigo-50 border border-indigo-200 mb-2">
-                <p className="text-sm text-slate-800"><strong className="text-indigo-600">{name2}</strong> {language === 'sk' ? 'vedie oblasť' : 'leads area'}: {ch.name}</p>
+                <p className="text-sm text-slate-800"><strong className="text-indigo-600">{name2}</strong> {language === 'sk' ? 'vedie oblasť' : 'leads area'}: {displayName(HD_CHANNEL_DISPLAY, ch.name, language)}</p>
                 <p className="text-xs text-slate-500">{language === 'sk' ? `${name2} má v tejto oblasti stabilnú energiu — prirodzene ju vo vzťahu riadi. ${name1} sa tu od neho/nej učí.` : `${name2} has stable energy in this area — naturally leads in the relationship. ${name1} learns from them here.`}</p>
                 {gk && <p className="text-[10px] text-slate-600">{language === 'sk' ? 'Dar' : 'Gift'}: {gk.gift} — {gk.giftDescription}</p>}
               </div>
@@ -388,7 +389,7 @@ export function PartnerBodygraph({ result1, result2, name1, name2 }: PartnerBody
               const gk2 = getGeneKeyByGate(ch.gates[1], language);
               return (
                 <div key={i} className="p-3 rounded-lg bg-white border border-green-200 mb-3 space-y-3">
-                  <p className="text-sm font-medium text-slate-800">{language === 'sk' ? 'Kanál' : 'Channel'} {ch.name} ({ch.gates[0]}-{ch.gates[1]})</p>
+                  <p className="text-sm font-medium text-slate-800">{language === 'sk' ? 'Kanál' : 'Channel'} {displayName(HD_CHANNEL_DISPLAY, ch.name, language)} ({ch.gates[0]}-{ch.gates[1]})</p>
                   {gk1 && (
                     <div className="pl-3 border-l-2 border-rose-200 space-y-1">
                       <p className="text-xs text-slate-700">
@@ -416,7 +417,7 @@ export function PartnerBodygraph({ result1, result2, name1, name2 }: PartnerBody
                         {language === 'sk' ? `Vo vzťahu sa stretnete cez spoločný tieň: ${name1} prináša „${gk1.shadow.toLowerCase()}" a ${name2} „${gk2.shadow.toLowerCase()}". Tieto tiene sa navzájom spúšťajú — partner je vaše zrkadlo.` : `In the relationship you meet through shared shadow: ${name1} brings "${gk1.shadow.toLowerCase()}" and ${name2} "${gk2.shadow.toLowerCase()}". These shadows trigger each other — partner is your mirror.`}
                       </p>
                       <p className="text-xs text-slate-700">
-                        {language === 'sk' ? `Keď obaja vedome pracujete na transformácii, kanál sa premení na spoločný dar: ${name1} žije „${gk1.gift.toLowerCase()}" a ${name2} „${gk2.gift.toLowerCase()}". Spolu vytvárate energiu ${ch.name.toLowerCase()}.` : `When both consciously work on transformation, the channel becomes a shared gift: ${name1} lives "${gk1.gift.toLowerCase()}" and ${name2} "${gk2.gift.toLowerCase()}". Together you create the energy of ${ch.name.toLowerCase()}.`}
+                        {language === 'sk' ? `Keď obaja vedome pracujete na transformácii, kanál sa premení na spoločný dar: ${name1} žije „${gk1.gift.toLowerCase()}" a ${name2} „${gk2.gift.toLowerCase()}". Spolu vytvárate energiu ${displayName(HD_CHANNEL_DISPLAY, ch.name, language).toLowerCase()}.` : `When both consciously work on transformation, the channel becomes a shared gift: ${name1} lives "${gk1.gift.toLowerCase()}" and ${name2} "${gk2.gift.toLowerCase()}". Together you create the energy of ${displayName(HD_CHANNEL_DISPLAY, ch.name, language).toLowerCase()}.`}
                       </p>
                       <p className="text-xs text-green-700 italic">
                         {language === 'sk' ? `Najvyšší potenciál: ${gk1.siddhi} + ${gk2.siddhi} — to je to, čo váš vzťah prináša do sveta keď ste obaja v najvyššej frekvencii.` : `Highest potential: ${gk1.siddhi} + ${gk2.siddhi} — this is what your relationship brings to the world when you are both at the highest frequency.`}

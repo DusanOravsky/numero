@@ -18,6 +18,7 @@ import { ClientRelationships } from '../components/ClientRelationships';
 import { ClientExport } from '../components/ClientExport';
 import { SkeletonClientDashboard } from '../components/Skeleton';
 import { getTimezoneFromCoords } from '../data/cities';
+import { displayName, HD_TYPE_DISPLAY, HD_AUTHORITY_DISPLAY, HD_STRATEGY_DISPLAY, HD_NOT_SELF_THEME_DISPLAY, ZODIAC_DISPLAY, ELEMENT_DISPLAY } from '../i18n/entityNames';
 
 export function ClientDashboard() {
   const { t, language } = useTranslation();
@@ -48,9 +49,9 @@ export function ClientDashboard() {
     const astrology = calculateAstrology(d, m, y, h ?? 12, min ?? 0, lat, lon, tz);
     const humanDesign = calculateHumanDesign(d, m, y, h ?? 12, min ?? 0, tz);
     const gridCounts = getGridCount(numerology.grid);
-    const chakras = evaluateChakras(numerology.lifePathNumber, gridCounts, numerology.isolatedNumbers, humanDesign.definedCenters, astrology.dominantElement);
+    const chakras = evaluateChakras(numerology.lifePathNumber, gridCounts, numerology.isolatedNumbers, humanDesign.definedCenters, astrology.dominantElement, language);
     const lp = numerology.lifePathNumber > 9 ? reduceToSingle(numerology.lifePathNumber) : numerology.lifePathNumber;
-    const kabalah = calculateKabalah(lp, reduceToSingle(d));
+    const kabalah = calculateKabalah(lp, reduceToSingle(d), language);
     const theta = calculateThetaHealing(lp, language);
     return { numerology, devNumerology, astrology, humanDesign, chakras, kabalah, theta };
   }, [client, language]);
@@ -102,18 +103,18 @@ export function ClientDashboard() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="p-3 rounded-lg bg-white/5">
             <p className="text-xs text-slate-500 mb-0.5">{t('clients.coreIdentity')}</p>
-            <p className="text-sm font-medium text-indigo-900">ŽČ {numerology.lifePathNumber} — {humanDesign.type}</p>
-            <p className="text-[11px] text-slate-500 mt-1">Stratégia: „{humanDesign.strategy.toLowerCase()}"</p>
+            <p className="text-sm font-medium text-indigo-900">{language === 'sk' ? 'ŽČ' : 'LP'} {numerology.lifePathNumber} — {displayName(HD_TYPE_DISPLAY, humanDesign.type, language)}</p>
+            <p className="text-[11px] text-slate-500 mt-1">{language === 'sk' ? 'Stratégia' : 'Strategy'}: „{displayName(HD_STRATEGY_DISPLAY, humanDesign.strategy, language).toLowerCase()}"</p>
           </div>
           <div className="p-3 rounded-lg bg-white/5">
             <p className="text-xs text-slate-500 mb-0.5">{t('clients.howDecides')}</p>
-            <p className="text-sm font-medium text-indigo-900">{humanDesign.authority}</p>
-            <p className="text-[11px] text-slate-500 mt-1">Nie-ja téma: „{humanDesign.notSelfTheme.toLowerCase()}"</p>
+            <p className="text-sm font-medium text-indigo-900">{displayName(HD_AUTHORITY_DISPLAY, humanDesign.authority, language)}</p>
+            <p className="text-[11px] text-slate-500 mt-1">{language === 'sk' ? 'Nie-ja téma' : 'Not-self theme'}: „{displayName(HD_NOT_SELF_THEME_DISPLAY, humanDesign.notSelfTheme, language).toLowerCase()}"</p>
           </div>
           <div className="p-3 rounded-lg bg-white/5">
             <p className="text-xs text-slate-500 mb-0.5">{t('clients.currentEnergy')}</p>
-            <p className="text-sm font-medium text-indigo-900">{astrology.sunSign.name} / {astrology.moonSign.name}</p>
-            <p className="text-[11px] text-slate-500 mt-1">Element: {astrology.dominantElement}</p>
+            <p className="text-sm font-medium text-indigo-900">{displayName(ZODIAC_DISPLAY, astrology.sunSign.name, language)} / {displayName(ZODIAC_DISPLAY, astrology.moonSign.name, language)}</p>
+            <p className="text-[11px] text-slate-500 mt-1">{language === 'sk' ? 'Element' : 'Element'}: {displayName(ELEMENT_DISPLAY, astrology.dominantElement, language)}</p>
           </div>
         </div>
       </div>

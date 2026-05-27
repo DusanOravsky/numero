@@ -173,12 +173,13 @@ export const characterMissingNumbers = sk;
 /**
  * Vráti komentáre pre všetky chýbajúce čísla v Charakterovej mriežke.
  */
-export function findMissingCharacterNumbers(grid: { value: number; isBase: boolean }[][]): MissingNumberInfo[] {
+export function findMissingCharacterNumbers(grid: { value: number; isBase: boolean }[][], lang: Language = 'sk'): MissingNumberInfo[] {
+  const dict = dicts[lang] ?? dicts.sk;
   const missing: MissingNumberInfo[] = [];
   for (let i = 1; i <= 9; i++) {
     const count = grid[i]?.length || 0;
     if (count === 0) {
-      missing.push(characterMissingNumbers[i]);
+      missing.push(dict[i]);
     }
   }
   return missing;

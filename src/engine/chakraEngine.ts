@@ -1,3 +1,20 @@
+import type { Language } from '../store/useStore';
+
+const CHAKRA_COLOR_EN: Record<string, string> = {
+  'Červená': 'Red', 'Oranžová': 'Orange', 'Žltá': 'Yellow',
+  'Zelená': 'Green', 'Modrá': 'Blue', 'Indigo': 'Indigo', 'Fialová': 'Violet'
+};
+
+const CHAKRA_NAME_EN: Record<string, string> = {
+  'Koreňová čakra': 'Root Chakra',
+  'Sakrálna čakra': 'Sacral Chakra',
+  'Čakra solárneho plexu': 'Solar Plexus Chakra',
+  'Srdcová čakra': 'Heart Chakra',
+  'Krčná čakra': 'Throat Chakra',
+  'Čakra tretieho oka': 'Third Eye Chakra',
+  'Korunná čakra': 'Crown Chakra',
+};
+
 export interface Chakra {
   number: number;
   name: string;
@@ -150,7 +167,8 @@ export function evaluateChakras(
   gridCounts: Map<number, number>,
   isolatedNumbers: number[],
   definedHDCenters: string[],
-  dominantElement: string
+  dominantElement: string,
+  lang: Language = 'sk'
 ): ChakraState[] {
   return CHAKRAS.map(chakra => {
     let score = 50;
@@ -198,13 +216,25 @@ export function evaluateChakras(
     else status = 'balanced';
 
     const recommendations: string[] = [];
+    const nameLocalized = lang === 'sk' ? chakra.name.toLowerCase() : (CHAKRA_NAME_EN[chakra.name] || chakra.name).toLowerCase();
+    const colorLocalized = lang === 'sk' ? chakra.color : (CHAKRA_COLOR_EN[chakra.color] || chakra.color);
     if (status === 'blocked') {
-      recommendations.push(`Venujte pozornosť oblasti: ${chakra.themes.join(', ')}`);
-      recommendations.push(`Meditácia na farbu: ${chakra.color}`);
-      recommendations.push(`Afirmácia: "Otváram sa energii ${chakra.name.toLowerCase()}."`);
+      recommendations.push(lang === 'sk'
+        ? `Venujte pozornosť oblasti: ${chakra.themes.join(', ')}`
+        : `Focus on areas: ${chakra.themes.join(', ')}`);
+      recommendations.push(lang === 'sk'
+        ? `Meditácia na farbu: ${colorLocalized}`
+        : `Color meditation: ${colorLocalized}`);
+      recommendations.push(lang === 'sk'
+        ? `Afirmácia: "Otváram sa energii ${nameLocalized}."`
+        : `Affirmation: "I open myself to the energy of ${nameLocalized}."`);
     } else if (status === 'hyperactive') {
-      recommendations.push(`Uzemňovacia prax pre ${chakra.name.toLowerCase()}`);
-      recommendations.push('Rovnováha medzi dávaním a prijímaním');
+      recommendations.push(lang === 'sk'
+        ? `Uzemňovacia prax pre ${nameLocalized}`
+        : `Grounding practice for ${nameLocalized}`);
+      recommendations.push(lang === 'sk'
+        ? 'Rovnováha medzi dávaním a prijímaním'
+        : 'Balance between giving and receiving');
     }
 
     return { chakra, status, score, recommendations };

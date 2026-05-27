@@ -67,6 +67,7 @@ export const HD_AUTHORITY_DISPLAY: NameMap = {
   'Ego': { sk: 'Ego', en: 'Ego' },
   'Sebaprojektovaná': { sk: 'Sebaprojektovaná', en: 'Self-Projected' },
   'G centrum': { sk: 'G centrum', en: 'G Center' },
+  'G Centrum': { sk: 'G Centrum', en: 'G Center' },
   'Mentálna / Environmentálna': { sk: 'Mentálna / Environmentálna', en: 'Mental / Environmental' },
   'Mentálna/Environmentálna': { sk: 'Mentálna/Environmentálna', en: 'Mental / Environmental' },
   'Lunárna': { sk: 'Lunárna', en: 'Lunar' },
@@ -82,6 +83,61 @@ export const HD_CENTER_DISPLAY: NameMap = {
   'Sakrálne': { sk: 'Sakrálne', en: 'Sacral' },
   'Slezina': { sk: 'Slezina', en: 'Spleen' },
   'Koreň': { sk: 'Koreň', en: 'Root' },
+};
+
+export const HD_CHANNEL_DISPLAY: NameMap = {
+  'Inšpirácia': { sk: 'Inšpirácia', en: 'Inspiration' },
+  'Bubeník': { sk: 'Bubeník', en: 'The Beat' },
+  'Mutácia': { sk: 'Mutácia', en: 'Mutation' },
+  'Logika': { sk: 'Logika', en: 'Logic' },
+  'Rytmus': { sk: 'Rytmus', en: 'Rhythm' },
+  'Intimita': { sk: 'Intimita', en: 'Intimacy' },
+  'Alfa': { sk: 'Alfa', en: 'The Alpha' },
+  'Sústredenie': { sk: 'Sústredenie', en: 'Concentration' },
+  'Prebudenie': { sk: 'Prebudenie', en: 'Awakening' },
+  'Prieskum': { sk: 'Prieskum', en: 'Exploration' },
+  'Dokonalosť formy': { sk: 'Dokonalosť formy', en: 'Perfected Form' },
+  'Zvedavosť': { sk: 'Zvedavosť', en: 'Curiosity' },
+  'Otvorenosť': { sk: 'Otvorenosť', en: 'Openness' },
+  'Márnotratník': { sk: 'Márnotratník', en: 'The Prodigal' },
+  'Talent': { sk: 'Talent', en: 'Talent' },
+  'Prijatie': { sk: 'Prijatie', en: 'Acceptance' },
+  'Súd': { sk: 'Súd', en: 'Judgment' },
+  'Syntéza': { sk: 'Syntéza', en: 'Synthesis' },
+  'Charizma': { sk: 'Charizma', en: 'Charisma' },
+  'Mozgová vlna': { sk: 'Mozgová vlna', en: 'The Brainwave' },
+  'Peňažný kanál': { sk: 'Peňažný kanál', en: 'The Money Line' },
+  'Štruktúrovanie': { sk: 'Štruktúrovanie', en: 'Structuring' },
+  'Uvedomenie': { sk: 'Uvedomenie', en: 'Awareness' },
+  'Zasvätenie': { sk: 'Zasvätenie', en: 'Initiation' },
+  'Odovzdanie': { sk: 'Odovzdanie', en: 'Surrender' },
+  'Zachovanie': { sk: 'Zachovanie', en: 'Preservation' },
+  'Bojovnosť': { sk: 'Bojovnosť', en: 'Struggle' },
+  'Objavovanie': { sk: 'Objavovanie', en: 'Discovery' },
+  'Uznanie': { sk: 'Uznanie', en: 'Recognition' },
+  'Transformácia': { sk: 'Transformácia', en: 'Transformation' },
+  'Sila': { sk: 'Sila', en: 'Power' },
+  'Pominuteľnosť': { sk: 'Pominuteľnosť', en: 'Transitoriness' },
+  'Komunita': { sk: 'Komunita', en: 'Community' },
+  'Emocionalita': { sk: 'Emocionalita', en: 'Emotionality' },
+  'Dozrievanie': { sk: 'Dozrievanie', en: 'Maturation' },
+  'Abstrakcia': { sk: 'Abstrakcia', en: 'Abstraction' },
+};
+
+export const HD_STRATEGY_DISPLAY: NameMap = {
+  'Reagovať': { sk: 'Reagovať', en: 'To respond' },
+  'Reagovať a informovať': { sk: 'Reagovať a informovať', en: 'To respond & inform' },
+  'Čakať na pozvanie': { sk: 'Čakať na pozvanie', en: 'Wait for invitation' },
+  'Informovať': { sk: 'Informovať', en: 'To inform' },
+  'Čakať 28 dní': { sk: 'Čakať 28 dní', en: 'Wait 28 days' },
+};
+
+export const HD_NOT_SELF_THEME_DISPLAY: NameMap = {
+  'Hnev': { sk: 'Hnev', en: 'Anger' },
+  'Frustrácia': { sk: 'Frustrácia', en: 'Frustration' },
+  'Frustrácia a hnev': { sk: 'Frustrácia a hnev', en: 'Frustration & anger' },
+  'Horkosť': { sk: 'Horkosť', en: 'Bitterness' },
+  'Sklamanie': { sk: 'Sklamanie', en: 'Disappointment' },
 };
 
 export const CHAKRA_NAME_DISPLAY: NameMap = {
@@ -231,6 +287,14 @@ export const MOON_PHASE_DISPLAY: NameMap = {
   'Posledná štvrť': { sk: 'Posledná štvrť', en: 'Last Quarter' },
   'Ubúdajúci polmesiac': { sk: 'Ubúdajúci polmesiac', en: 'Waning Crescent' },
   'Ubúdajúci kosáčik': { sk: 'Ubúdajúci kosáčik', en: 'Waning Crescent' },
+};
+
+export const LOVE_LANGUAGE_DISPLAY: NameMap = {
+  'Fyzický dotyk': { sk: 'Fyzický dotyk', en: 'Physical touch' },
+  'Slová uistenia': { sk: 'Slová uistenia', en: 'Words of affirmation' },
+  'Kvalitný čas': { sk: 'Kvalitný čas', en: 'Quality time' },
+  'Obdarovávanie': { sk: 'Obdarovávanie', en: 'Gift giving' },
+  'Skutky služby': { sk: 'Skutky služby', en: 'Acts of service' },
 };
 
 export const WEEKDAY_SHORT: Record<Language, string[]> = {

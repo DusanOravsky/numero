@@ -20,15 +20,15 @@ export function KabalahPage() {
     if (!profile) return null;
     const lifePath = reduceToSingle(profile.birthDay + profile.birthMonth + profile.birthYear);
     const dayNum = reduceToSingle(profile.birthDay);
-    return calculateKabalah(lifePath, dayNum);
-  }, [profile]);
+    return calculateKabalah(lifePath, dayNum, language);
+  }, [profile, language]);
 
   const result = manualResult ?? profileResult;
 
   const handleCalculate = (day: number, month: number, year: number) => {
     const lifePath = reduceToSingle(day + month + year);
     const dayNum = reduceToSingle(day);
-    setManualResult(calculateKabalah(lifePath, dayNum));
+    setManualResult(calculateKabalah(lifePath, dayNum, language));
   };
 
   return (

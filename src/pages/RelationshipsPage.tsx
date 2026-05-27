@@ -5,7 +5,7 @@ import { useShallow } from 'zustand/react/shallow';
 import type { Client, Language, UserProfile } from '../store/useStore';
 import { getAppUrl } from '../utils/constants';
 import { useTranslation } from '../i18n/useTranslation';
-import { displayName, ELEMENT_DISPLAY, HD_TYPE_DISPLAY, HD_AUTHORITY_DISPLAY, HD_CENTER_DISPLAY } from '../i18n/entityNames';
+import { displayName, ELEMENT_DISPLAY, HD_TYPE_DISPLAY, HD_AUTHORITY_DISPLAY, HD_CENTER_DISPLAY, HD_STRATEGY_DISPLAY, LOVE_LANGUAGE_DISPLAY } from '../i18n/entityNames';
 import { calculateFullNumerology, reduceToSingle, isValidDate } from '../engine/numerologyEngine';
 import { calculateDevelopmentalNumerology } from '../engine/developmentalNumerologyEngine';
 import { calculatePartnerCompatibility, calculateParentChild } from '../engine/compatibilityEngine';
@@ -819,7 +819,7 @@ export function RelationshipsPage() {
               <h4 className="text-sm text-slate-400 mb-2">{t('rel.loveLanguages')}</h4>
               <p className="text-lg font-medium text-slate-800">{compatibility.loveLanguageMatch.score}%</p>
               {compatibility.loveLanguageMatch.matched.length > 0 && (
-                <p className="text-sm text-green-300 mt-1">{t('rel.matched')}: {compatibility.loveLanguageMatch.matched.join(', ')}</p>
+                <p className="text-sm text-green-300 mt-1">{t('rel.matched')}: {compatibility.loveLanguageMatch.matched.map(m => displayName(LOVE_LANGUAGE_DISPLAY, m, language)).join(', ')}</p>
               )}
             </GlassCard>
           </div>
@@ -871,15 +871,15 @@ export function RelationshipsPage() {
                     <div key={name}>
                       <p className="text-xs font-semibold text-slate-700 mb-2">{name}</p>
                       <div className="space-y-1.5">
-                        {langs.map((lang, idx) => {
-                          const widthPct = Math.max(0, Math.min(100, (lang.score + 5) * 8));
+                        {langs.map((ll, idx) => {
+                          const widthPct = Math.max(0, Math.min(100, (ll.score + 5) * 8));
                           return (
-                            <div key={lang.language}>
+                            <div key={ll.language}>
                               <div className="flex items-center justify-between text-[11px] mb-0.5">
                                 <span className={idx === 0 ? 'text-rose-700 font-medium' : 'text-slate-600'}>
-                                  {idx + 1}. {lang.language}
+                                  {idx + 1}. {displayName(LOVE_LANGUAGE_DISPLAY, ll.language, language)}
                                 </span>
-                                <span className="text-slate-500">{lang.score}</span>
+                                <span className="text-slate-500">{ll.score}</span>
                               </div>
                               <div className="h-1.5 bg-slate-200 rounded-full overflow-hidden">
                                 <div
@@ -897,7 +897,7 @@ export function RelationshipsPage() {
                 {compatibility.loveLanguageMatch.mismatched.length > 0 && (
                   <div className="mt-3 p-2 rounded-lg bg-amber-50 border border-amber-200">
                     <p className="text-[11px] text-amber-700">
-                      <strong>{t('rel.mismatch')}:</strong> {compatibility.loveLanguageMatch.mismatched.join(', ')} — {language === 'sk' ? 'tu jeden z vás potrebuje niečo, čo druhému nepríde prirodzene. Komunikácia je kľúč.' : 'here one of you needs something that doesn\'t come naturally to the other. Communication is key.'}
+                      <strong>{t('rel.mismatch')}:</strong> {compatibility.loveLanguageMatch.mismatched.map(m => displayName(LOVE_LANGUAGE_DISPLAY, m, language)).join(', ')} — {language === 'sk' ? 'tu jeden z vás potrebuje niečo, čo druhému nepríde prirodzene. Komunikácia je kľúč.' : 'here one of you needs something that doesn\'t come naturally to the other. Communication is key.'}
                     </p>
                   </div>
                 )}
@@ -1244,17 +1244,17 @@ export function RelationshipsPage() {
                         <div className="grid grid-cols-2 gap-3 mb-2">
                           <div>
                             <p className="text-[10px] text-slate-500">{parent.name}</p>
-                            <p className="text-xs text-slate-800 font-medium">{parentTop}</p>
+                            <p className="text-xs text-slate-800 font-medium">{displayName(LOVE_LANGUAGE_DISPLAY, parentTop, language)}</p>
                           </div>
                           <div>
                             <p className="text-[10px] text-slate-500">{child.name}</p>
-                            <p className="text-xs text-slate-800 font-medium">{childTop}</p>
+                            <p className="text-xs text-slate-800 font-medium">{displayName(LOVE_LANGUAGE_DISPLAY, childTop, language)}</p>
                           </div>
                         </div>
                         {same ? (
                           <p className="text-[11px] text-green-700">{language === 'sk' ? '✓ Rovnaký primárny jazyk — komunikácia je prirodzená. Dieťa sa cíti milované tým, čo robíte intuitívne.' : '✓ Same primary language — communication is natural. The child feels loved by what you do intuitively.'}</p>
                         ) : (
-                          <p className="text-[11px] text-amber-700">{language === 'sk' ? `Rôzne jazyky: vy dávate lásku cez „${parentTop}", ale dieťa ju najlepšie prijíma cez „${childTop}". Skúste vedome pridať jeho jazyk.` : `Different languages: you give love through "${parentTop}", but the child receives it best through "${childTop}". Try to consciously add their language.`}</p>
+                          <p className="text-[11px] text-amber-700">{language === 'sk' ? `Rôzne jazyky: vy dávate lásku cez „${displayName(LOVE_LANGUAGE_DISPLAY, parentTop, language)}", ale dieťa ju najlepšie prijíma cez „${displayName(LOVE_LANGUAGE_DISPLAY, childTop, language)}". Skúste vedome pridať jeho jazyk.` : `Different languages: you give love through "${displayName(LOVE_LANGUAGE_DISPLAY, parentTop, language)}", but the child receives it best through "${displayName(LOVE_LANGUAGE_DISPLAY, childTop, language)}". Try to consciously add their language.`}</p>
                         )}
                       </div>
                     );
@@ -1301,7 +1301,7 @@ export function RelationshipsPage() {
                         )}
                         {parentHd.type !== childHd.type && (
                           <p className="text-[11px] text-amber-300 mt-1">
-                            {language === 'sk' ? `Rôzne typy (${displayName(HD_TYPE_DISPLAY, parentHd.type, language)} vs ${displayName(HD_TYPE_DISPLAY, childHd.type, language)}) — rešpektujte odlišnú stratégiu dieťaťa: „${childHd.strategy.toLowerCase()}".` : `Different types (${displayName(HD_TYPE_DISPLAY, parentHd.type, language)} vs ${displayName(HD_TYPE_DISPLAY, childHd.type, language)}) — respect the child's different strategy: "${childHd.strategy.toLowerCase()}".`}
+                            {language === 'sk' ? `Rôzne typy (${displayName(HD_TYPE_DISPLAY, parentHd.type, language)} vs ${displayName(HD_TYPE_DISPLAY, childHd.type, language)}) — rešpektujte odlišnú stratégiu dieťaťa: „${displayName(HD_STRATEGY_DISPLAY, childHd.strategy, language).toLowerCase()}".` : `Different types (${displayName(HD_TYPE_DISPLAY, parentHd.type, language)} vs ${displayName(HD_TYPE_DISPLAY, childHd.type, language)}) — respect the child's different strategy: "${displayName(HD_STRATEGY_DISPLAY, childHd.strategy, language).toLowerCase()}".`}
                           </p>
                         )}
                       </div>

@@ -15,8 +15,8 @@ import { calculateFullNumerology, calculateORV, calculateOMV, calculateODV } fro
 import type { NumerologyResult } from '../engine/numerologyEngine';
 import { calculateDevelopmentalNumerology } from '../engine/developmentalNumerologyEngine';
 import type { DevelopmentalNumerologyResult } from '../engine/developmentalNumerologyEngine';
-import lifePathsData from '../data/lifePaths';
-import isolatedData from '../data/isolatedNumbers';
+import { getLifePath } from '../data/lifePaths';
+import { getIsolatedNumber } from '../data/isolatedNumbers';
 import { getOrvDescription } from '../data/orvDescriptions';
 import { getOmvDescription } from '../data/omvDescriptions';
 import { getOdvDescription } from '../data/odvDescriptions';
@@ -32,8 +32,6 @@ import { LoveTab } from '../components/numerology/LoveTab';
 import { NameTab } from '../components/numerology/NameTab';
 import { EnneagramTab } from '../components/numerology/EnneagramTab';
 
-const lifePaths = lifePathsData as Record<string, { title: string; keywords: string[]; description: string; gift: string; shadow: string; lesson: string; recommendation: string; career: string[]; relationships: string }>;
-const isolatedInfo = isolatedData as Record<string, { type: string; effect: string; description: string; theme: string; shadow: string; recommendation: string; body: string }>;
 
 export function NumerologyPage() {
   const navigate = useNavigate();
@@ -93,7 +91,7 @@ export function NumerologyPage() {
     setManualDevResult(calculateDevelopmentalNumerology(day, month, year));
   };
 
-  const lifePathInfo = result ? lifePaths[String(result.lifePathNumber)] : null;
+  const lifePathInfo = result ? getLifePath(String(result.lifePathNumber), language) : null;
 
   // Záložky — niektoré sekcie sú špecifické pre Charakterovú metódu
   // (Roviny, Karmické cykly + Pinnacles + Challenges, Jazyky lásky), iné sú spoločné.
@@ -575,7 +573,7 @@ export function NumerologyPage() {
                   <p className="text-sm text-slate-400 mb-4">{t('numerology.isolatedDesc')}</p>
                   <div className="space-y-4">
                     {devResult.isolatedNumbers.map(n => {
-                      const info = isolatedInfo[String(n)];
+                      const info = getIsolatedNumber(String(n), language);
                       return (
                         <div key={n} className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/20">
                           <div className="flex items-center gap-3 mb-2">
@@ -642,7 +640,7 @@ export function NumerologyPage() {
                   <p className="text-sm text-slate-400 mb-4">{t('numerology.isolatedDesc')}</p>
                   <div className="space-y-4">
                     {result.isolatedNumbers.map(n => {
-                      const info = isolatedInfo[String(n)];
+                      const info = getIsolatedNumber(String(n), language);
                       return (
                         <div key={n} className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/20">
                           <div className="flex items-center gap-3 mb-2">
@@ -682,7 +680,7 @@ export function NumerologyPage() {
 
               {/* Chýbajúce čísla 1-9 — len pre Charakterovú */}
               {numerologyMethod === 'characterological' && (() => {
-                const missing = findMissingCharacterNumbers(result.grid);
+                const missing = findMissingCharacterNumbers(result.grid, language);
                 if (missing.length === 0) return null;
                 return (
                   <GlassCard delay={0.35}>

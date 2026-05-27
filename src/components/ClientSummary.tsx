@@ -22,7 +22,7 @@ import { getPlanetSignDescription } from '../data/planetSignDescriptions';
 import { getOrvDescription } from '../data/orvDescriptions';
 import { getGeneKeyByGate } from '../data/geneKeys';
 import { useTranslation } from '../i18n/useTranslation';
-import { displayName, ZODIAC_DISPLAY, ELEMENT_DISPLAY, HD_TYPE_DISPLAY, HD_AUTHORITY_DISPLAY, HD_CENTER_DISPLAY } from '../i18n/entityNames';
+import { displayName, ZODIAC_DISPLAY, ELEMENT_DISPLAY, HD_TYPE_DISPLAY, HD_AUTHORITY_DISPLAY, HD_CENTER_DISPLAY, HD_STRATEGY_DISPLAY, HD_NOT_SELF_THEME_DISPLAY, LOVE_LANGUAGE_DISPLAY } from '../i18n/entityNames';
 import { getCellMeaning } from '../data/developmentalMeanings';
 import { getLoveLanguageDescription } from '../data/orvDescriptions';
 import { deriveArchetype } from '../engine/archetypeEngine';
@@ -31,9 +31,7 @@ import { calculateKua } from '../engine/kuaEngine';
 import { getDailyCrystal, getZodiacCrystals } from '../data/crystals';
 import { getOmvDescription } from '../data/omvDescriptions';
 import { getOdvDescription } from '../data/odvDescriptions';
-import lifePathsData from '../data/lifePaths';
-
-const lifePaths = lifePathsData as Record<string, { title: string; keywords: string[]; description: string; gift: string; shadow: string }>;
+import { getLifePath } from '../data/lifePaths';
 
 interface ClientSummaryProps {
   clientName: string;
@@ -57,7 +55,7 @@ export function ClientSummary({ clientName, birthDay, birthMonth, birthYear, num
   const showBoth = !respectMethodPreference;
   const showCharacter = showBoth || storedMethod === 'characterological';
   const showDevelopmental = showBoth || storedMethod === 'developmental';
-  const lpInfo = lifePaths[String(numerology.lifePathNumber)] || lifePaths[String(reduceToSingle(numerology.lifePathNumber))];
+  const lpInfo = getLifePath(String(numerology.lifePathNumber), language) || getLifePath(String(reduceToSingle(numerology.lifePathNumber)), language);
 
   // Vývojová mriežka — používame explicit props ak sú dostupné,
   // inak (legacy callers) sfallback-ujeme cez regex z formuly.
@@ -115,8 +113,8 @@ export function ClientSummary({ clientName, birthDay, birthMonth, birthYear, num
               <p className="text-xs font-semibold text-indigo-800 mb-1">2. {t('summary.howToFunction')}</p>
               <p className="text-xs text-slate-700">
                 {language === 'sk'
-                  ? <>HD typ <strong>{displayName(HD_TYPE_DISPLAY, humanDesign.type, language)}</strong> + stratégia „{humanDesign.strategy.toLowerCase()}" + autorita <strong>{displayName(HD_AUTHORITY_DISPLAY, humanDesign.authority, language)}</strong> — toto je tvoj denný „operačný systém". Keď cítiš {humanDesign.notSelfTheme.toLowerCase()}, niečo nie je pre teba.</>
-                  : <>HD type <strong>{displayName(HD_TYPE_DISPLAY, humanDesign.type, language)}</strong> + strategy "{humanDesign.strategy.toLowerCase()}" + authority <strong>{displayName(HD_AUTHORITY_DISPLAY, humanDesign.authority, language)}</strong> — this is your daily "operating system". When you feel {humanDesign.notSelfTheme.toLowerCase()}, something is not for you.</>}
+                  ? <>HD typ <strong>{displayName(HD_TYPE_DISPLAY, humanDesign.type, language)}</strong> + stratégia „{displayName(HD_STRATEGY_DISPLAY, humanDesign.strategy, language).toLowerCase()}" + autorita <strong>{displayName(HD_AUTHORITY_DISPLAY, humanDesign.authority, language)}</strong> — toto je tvoj denný „operačný systém". Keď cítiš {displayName(HD_NOT_SELF_THEME_DISPLAY, humanDesign.notSelfTheme, language).toLowerCase()}, niečo nie je pre teba.</>
+                  : <>HD type <strong>{displayName(HD_TYPE_DISPLAY, humanDesign.type, language)}</strong> + strategy "{displayName(HD_STRATEGY_DISPLAY, humanDesign.strategy, language).toLowerCase()}" + authority <strong>{displayName(HD_AUTHORITY_DISPLAY, humanDesign.authority, language)}</strong> — this is your daily "operating system". When you feel {displayName(HD_NOT_SELF_THEME_DISPLAY, humanDesign.notSelfTheme, language).toLowerCase()}, something is not for you.</>}
               </p>
             </div>
 
@@ -151,7 +149,7 @@ export function ClientSummary({ clientName, birthDay, birthMonth, birthYear, num
             </div>
             <div className="text-center">
               <p className="text-2xl font-serif font-bold text-indigo-700">{displayName(HD_TYPE_DISPLAY, humanDesign.type, language)}</p>
-              <p className="text-xs text-slate-700 font-medium">{humanDesign.strategy}</p>
+              <p className="text-xs text-slate-700 font-medium">{displayName(HD_STRATEGY_DISPLAY, humanDesign.strategy, language)}</p>
               <p className="text-[10px] text-slate-500 mt-0.5">{t('summary.howToFunction')}</p>
             </div>
             <div className="text-center">
@@ -306,14 +304,14 @@ export function ClientSummary({ clientName, birthDay, birthMonth, birthYear, num
                  humanDesign.type === 'Manifestor' ? ' Ako Manifestor je tu aby začínal a inicioval. Musí informovať ostatných pred konaním, čím redukuje odpor okolia.' :
                  humanDesign.type === 'Projektor' ? ' Ako Projektor nemá konzistentnú vlastnú energiu, ale vidí systémy a ľudí hlboko. Musí čakať na pozvanie do veľkých životných rozhodnutí.' :
                  ' Ako Reflektor odráža prostredie okolo seba a musí čakať 28 dní pred veľkými rozhodnutiami.'}
-                {' '}Stratégia: <strong>{humanDesign.strategy}</strong>. Profil <strong>{humanDesign.profile.line1}/{humanDesign.profile.line2}</strong> ({humanDesign.profile.name}) – {humanDesign.profile.description}</>
+                {' '}Stratégia: <strong>{displayName(HD_STRATEGY_DISPLAY, humanDesign.strategy, language)}</strong>. Profil <strong>{humanDesign.profile.line1}/{humanDesign.profile.line2}</strong> ({humanDesign.profile.name}) – {humanDesign.profile.description}</>
               : <>In <strong>Human Design</strong>, the type is <strong>{displayName(HD_TYPE_DISPLAY, humanDesign.type, language)}</strong> with <strong>{displayName(HD_AUTHORITY_DISPLAY, humanDesign.authority, language)}</strong> authority.
                 {humanDesign.type === 'Generátor' ? ' As a Generator, they have enormous life energy, but must wait for the right stimuli – not initiate from the mind. When responding to what truly "lights them up", they are tireless.' :
                  humanDesign.type === 'Manifestujúci Generátor' ? ' Combines Generator energy with Manifestor initiative – fast, multi-talented, but must respond AND inform others.' :
                  humanDesign.type === 'Manifestor' ? ' As a Manifestor, they are here to start and initiate. They must inform others before acting, which reduces resistance.' :
                  humanDesign.type === 'Projektor' ? ' As a Projector, they lack consistent own energy, but see systems and people deeply. They must wait for invitation into major life decisions.' :
                  ' As a Reflector, they mirror their environment and must wait 28 days before major decisions.'}
-                {' '}Strategy: <strong>{humanDesign.strategy}</strong>. Profile <strong>{humanDesign.profile.line1}/{humanDesign.profile.line2}</strong> ({humanDesign.profile.name}) – {humanDesign.profile.description}</>}
+                {' '}Strategy: <strong>{displayName(HD_STRATEGY_DISPLAY, humanDesign.strategy, language)}</strong>. Profile <strong>{humanDesign.profile.line1}/{humanDesign.profile.line2}</strong> ({humanDesign.profile.name}) – {humanDesign.profile.description}</>}
           </p>
 
           <p>
@@ -390,7 +388,7 @@ export function ClientSummary({ clientName, birthDay, birthMonth, birthYear, num
                         {language === 'sk' ? `Primárny jazyk – ${top.score} bodov` : `Primary language – ${top.score} points`}
                       </span>
                     </div>
-                    <p className="font-semibold text-slate-800 text-base">{top.language}</p>
+                    <p className="font-semibold text-slate-800 text-base">{displayName(LOVE_LANGUAGE_DISPLAY, top.language, language)}</p>
                     {info && (
                       <>
                         <p className="text-xs text-slate-700 mt-1.5">{info.description}</p>
@@ -417,7 +415,7 @@ export function ClientSummary({ clientName, birthDay, birthMonth, birthYear, num
                         {language === 'sk' ? `Sekundárny jazyk – ${second.score} bodov` : `Secondary language – ${second.score} points`}
                       </span>
                     </div>
-                    <p className="font-medium text-slate-800">{second.language}</p>
+                    <p className="font-medium text-slate-800">{displayName(LOVE_LANGUAGE_DISPLAY, second.language, language)}</p>
                     {info && <p className="text-xs text-slate-600 mt-1">{info.description}</p>}
                   </div>
                 );
@@ -434,7 +432,7 @@ export function ClientSummary({ clientName, birthDay, birthMonth, birthYear, num
                     <div key={lang.language}>
                       <div className="flex items-center justify-between text-xs mb-0.5">
                         <span className={idx === 0 ? 'text-slate-800 font-medium' : 'text-slate-600'}>
-                          {idx + 1}. {lang.language}
+                          {idx + 1}. {displayName(LOVE_LANGUAGE_DISPLAY, lang.language, language)}
                         </span>
                         <span className="text-slate-500">{lang.score}</span>
                       </div>
@@ -482,7 +480,7 @@ export function ClientSummary({ clientName, birthDay, birthMonth, birthYear, num
           {/* Čakry */}
           {(() => {
             const gridCounts = getGridCount(numerology.grid);
-            const chakras = evaluateChakras(numerology.lifePathNumber, gridCounts, numerology.isolatedNumbers, humanDesign.definedCenters, astrology.dominantElement);
+            const chakras = evaluateChakras(numerology.lifePathNumber, gridCounts, numerology.isolatedNumbers, humanDesign.definedCenters, astrology.dominantElement, language);
             if (!chakras) return null;
             const blocked = chakras.filter(c => c.status === 'blocked');
             const hyperactive = chakras.filter(c => c.status === 'hyperactive');
@@ -544,7 +542,7 @@ export function ClientSummary({ clientName, birthDay, birthMonth, birthYear, num
                     {astrology.sunSign.element === 'Oheň' ? ' ti dáva akčnosť a vášeň' :
                      astrology.sunSign.element === 'Zem' ? ' ti dáva praktickosť a vytrvalosť' :
                      astrology.sunSign.element === 'Vzduch' ? ' ti dáva komunikačný talent a analytické myslenie' :
-                     ' ti dáva emočnú hĺbku a intuíciu'} — a Human Design dopĺňa <em>ako</em> túto energiu správne používať: si <strong>{displayName(HD_TYPE_DISPLAY, humanDesign.type, language)}</strong>, čiže tvoja stratégia je „{humanDesign.strategy.toLowerCase()}".
+                     ' ti dáva emočnú hĺbku a intuíciu'} — a Human Design dopĺňa <em>ako</em> túto energiu správne používať: si <strong>{displayName(HD_TYPE_DISPLAY, humanDesign.type, language)}</strong>, čiže tvoja stratégia je „{displayName(HD_STRATEGY_DISPLAY, humanDesign.strategy, language).toLowerCase()}".
                     {humanDesign.type === 'Generátor' || humanDesign.type === 'Manifestujúci Generátor'
                       ? ' Máš obrovskú energiu, ale musíš čakať na správny podnet — nie iniciovať z hlavy.'
                       : humanDesign.type === 'Projektor'
@@ -556,7 +554,7 @@ export function ClientSummary({ clientName, birthDay, birthMonth, birthYear, num
                     {astrology.sunSign.element === 'Oheň' ? ' gives you drive and passion' :
                      astrology.sunSign.element === 'Zem' ? ' gives you practicality and persistence' :
                      astrology.sunSign.element === 'Vzduch' ? ' gives you communication talent and analytical thinking' :
-                     ' gives you emotional depth and intuition'} — and Human Design adds <em>how</em> to use this energy correctly: you are a <strong>{displayName(HD_TYPE_DISPLAY, humanDesign.type, language)}</strong>, so your strategy is "{humanDesign.strategy.toLowerCase()}".
+                     ' gives you emotional depth and intuition'} — and Human Design adds <em>how</em> to use this energy correctly: you are a <strong>{displayName(HD_TYPE_DISPLAY, humanDesign.type, language)}</strong>, so your strategy is "{displayName(HD_STRATEGY_DISPLAY, humanDesign.strategy, language).toLowerCase()}".
                     {humanDesign.type === 'Generátor' || humanDesign.type === 'Manifestujúci Generátor'
                       ? ' You have enormous energy, but must wait for the right stimulus — not initiate from the mind.'
                       : humanDesign.type === 'Projektor'
@@ -623,8 +621,8 @@ export function ClientSummary({ clientName, birthDay, birthMonth, birthYear, num
               </p>
               <p>
                 {language === 'sk'
-                  ? <><strong>2. Energia:</strong> Ako {displayName(HD_TYPE_DISPLAY, humanDesign.type, language)} je tvoja stratégia „{humanDesign.strategy.toLowerCase()}". Keď cítiš {humanDesign.notSelfTheme.toLowerCase()} — je to signál, že niečo nie je pre teba.</>
-                  : <><strong>2. Energy:</strong> As a {displayName(HD_TYPE_DISPLAY, humanDesign.type, language)} your strategy is "{humanDesign.strategy.toLowerCase()}". When you feel {humanDesign.notSelfTheme.toLowerCase()} — it is a signal that something is not for you.</>}
+                  ? <><strong>2. Energia:</strong> Ako {displayName(HD_TYPE_DISPLAY, humanDesign.type, language)} je tvoja stratégia „{displayName(HD_STRATEGY_DISPLAY, humanDesign.strategy, language).toLowerCase()}". Keď cítiš {displayName(HD_NOT_SELF_THEME_DISPLAY, humanDesign.notSelfTheme, language).toLowerCase()} — je to signál, že niečo nie je pre teba.</>
+                  : <><strong>2. Energy:</strong> As a {displayName(HD_TYPE_DISPLAY, humanDesign.type, language)} your strategy is "{displayName(HD_STRATEGY_DISPLAY, humanDesign.strategy, language).toLowerCase()}". When you feel {displayName(HD_NOT_SELF_THEME_DISPLAY, humanDesign.notSelfTheme, language).toLowerCase()} — it is a signal that something is not for you.</>}
               </p>
               <p>
                 {language === 'sk'
@@ -649,7 +647,7 @@ export function ClientSummary({ clientName, birthDay, birthMonth, birthYear, num
               <div className="p-3 rounded-xl bg-indigo-50 border border-indigo-200">
                 <p className="text-indigo-700 font-semibold mb-1">{language === 'sk' ? 'Kde si teraz' : 'Where you are now'}</p>
                 <p>{language === 'sk' ? 'ŽČ' : 'LP'} {numerology.lifePathNumber} ({lpInfo?.title}), ORV {numerology.orv}</p>
-                <p className="mt-1">HD: {displayName(HD_TYPE_DISPLAY, humanDesign.type, language)}, {language === 'sk' ? 'stratégia' : 'strategy'} "{humanDesign.strategy.toLowerCase()}"</p>
+                <p className="mt-1">HD: {displayName(HD_TYPE_DISPLAY, humanDesign.type, language)}, {language === 'sk' ? 'stratégia' : 'strategy'} "{displayName(HD_STRATEGY_DISPLAY, humanDesign.strategy, language).toLowerCase()}"</p>
               </div>
               <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200">
                 <p className="text-emerald-700 font-semibold mb-1">{language === 'sk' ? 'Kam smeruješ' : 'Where you are heading'}</p>

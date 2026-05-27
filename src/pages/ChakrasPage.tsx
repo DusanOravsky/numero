@@ -15,7 +15,7 @@ import { SkeletonChakraList } from '../components/Skeleton';
 import { getEtikoterapiaForChakra } from '../data/etikoterapia';
 import { displayName, CHAKRA_NAME_DISPLAY, CHAKRA_LOCATION_DISPLAY, CHAKRA_ELEMENT_DISPLAY, CHAKRA_THEME_DISPLAY, CHAKRA_STATUS_TEXT } from '../i18n/entityNames';
 
-function computeChakras(day: number, month: number, year: number, hour: number = 12, minute: number = 0, lat: number = 48.15, lon: number = 17.11, tz: number = 1): ChakraState[] {
+function computeChakras(day: number, month: number, year: number, hour: number = 12, minute: number = 0, lat: number = 48.15, lon: number = 17.11, tz: number = 1, lang: 'sk' | 'en' = 'sk'): ChakraState[] {
   const numerology = calculateFullNumerology(day, month, year);
   const hd = calculateHumanDesign(day, month, year, hour, minute, tz);
   const astro = calculateAstrology(day, month, year, hour, minute, lat, lon, tz);
@@ -25,7 +25,8 @@ function computeChakras(day: number, month: number, year: number, hour: number =
     gridCounts,
     numerology.isolatedNumbers,
     hd.definedCenters,
-    astro.dominantElement
+    astro.dominantElement,
+    lang
   );
 }
 
@@ -45,14 +46,15 @@ export function ChakrasPage() {
       profile.birthMinute ?? 0,
       profile.birthLatitude ?? 48.15,
       profile.birthLongitude ?? 17.11,
-      profile.timezoneOffset
+      profile.timezoneOffset,
+      language
     );
-  }, [profile]);
+  }, [profile, language]);
 
   const chakras = manualChakras ?? profileChakras;
 
   const handleCalculate = (day: number, month: number, year: number, hour: number = 12, minute: number = 0) => {
-    setManualChakras(computeChakras(day, month, year, hour, minute));
+    setManualChakras(computeChakras(day, month, year, hour, minute, 48.15, 17.11, 1, language));
   };
 
   return (

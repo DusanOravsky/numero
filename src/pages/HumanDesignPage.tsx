@@ -12,7 +12,7 @@ import { getGeneKeysForGates } from '../data/geneKeys';
 import { getHDLine, getHDProfilePhase, getHDAuthorityInfo, getHDDefinitionInfo } from '../data/hdLines';
 import type { GeneKey } from '../data/geneKeys';
 import { useTranslation } from '../i18n/useTranslation';
-import { displayName, HD_TYPE_DISPLAY, HD_AUTHORITY_DISPLAY, HD_CENTER_DISPLAY } from '../i18n/entityNames';
+import { displayName, HD_TYPE_DISPLAY, HD_AUTHORITY_DISPLAY, HD_CENTER_DISPLAY, HD_STRATEGY_DISPLAY, HD_NOT_SELF_THEME_DISPLAY, HD_CHANNEL_DISPLAY } from '../i18n/entityNames';
 import type { Language } from '../store/useStore';
 
 function getTypeDescription(type: string, lang: Language): string {
@@ -338,16 +338,16 @@ export function HumanDesignPage() {
                   <p className="text-xs text-emerald-700 font-semibold mb-1">{language === 'sk' ? '2. Ako fungovať vo svete' : '2. How to operate in the world'}</p>
                   <p className="text-xs text-slate-700">
                     {language === 'sk'
-                      ? <>Ako <strong>{displayName(HD_TYPE_DISPLAY, result.type, language)}</strong> je tvoja stratégia „<strong>{result.strategy.toLowerCase()}</strong>". To nie je obmedzenie — je to spôsob, ako sa ti otvárajú správne príležitosti.</>
-                      : <>As a <strong>{displayName(HD_TYPE_DISPLAY, result.type, language)}</strong>, your strategy is "<strong>{result.strategy.toLowerCase()}</strong>". This is not a limitation — it is how the right opportunities open up for you.</>}
+                      ? <>Ako <strong>{displayName(HD_TYPE_DISPLAY, result.type, language)}</strong> je tvoja stratégia „<strong>{displayName(HD_STRATEGY_DISPLAY, result.strategy, language).toLowerCase()}</strong>". To nie je obmedzenie — je to spôsob, ako sa ti otvárajú správne príležitosti.</>
+                      : <>As a <strong>{displayName(HD_TYPE_DISPLAY, result.type, language)}</strong>, your strategy is "<strong>{displayName(HD_STRATEGY_DISPLAY, result.strategy, language).toLowerCase()}</strong>". This is not a limitation — it is how the right opportunities open up for you.</>}
                   </p>
                 </div>
                 <div className="p-3 rounded-xl bg-rose-50 border border-rose-200">
                   <p className="text-xs text-rose-700 font-semibold mb-1">{language === 'sk' ? '3. Kedy niečo nie je pre teba' : '3. When something is not for you'}</p>
                   <p className="text-xs text-slate-700">
                     {language === 'sk'
-                      ? <>Keď cítiš „<strong>{result.notSelfTheme.toLowerCase()}</strong>" — je to signál, že žiješ mimo svoj dizajn. Nie je to chyba, len navigačný bod.</>
-                      : <>When you feel "<strong>{result.notSelfTheme.toLowerCase()}</strong>" — it is a signal that you are living outside your design. It is not a mistake, just a navigation point.</>}
+                      ? <>Keď cítiš „<strong>{displayName(HD_NOT_SELF_THEME_DISPLAY, result.notSelfTheme, language).toLowerCase()}</strong>" — je to signál, že žiješ mimo svoj dizajn. Nie je to chyba, len navigačný bod.</>
+                      : <>When you feel "<strong>{displayName(HD_NOT_SELF_THEME_DISPLAY, result.notSelfTheme, language).toLowerCase()}</strong>" — it is a signal that you are living outside your design. It is not a mistake, just a navigation point.</>}
                   </p>
                 </div>
               </div>
@@ -371,8 +371,8 @@ export function HumanDesignPage() {
                 <div className="p-3 rounded-xl bg-indigo-500/10 border border-indigo-500/20">
                   <p className="text-xs font-semibold text-indigo-300 mb-1">
                     {language === 'sk'
-                      ? <>Si {displayName(HD_TYPE_DISPLAY, result.type, language)} — tvoja stratégia: „{result.strategy.toLowerCase()}"</>
-                      : <>You are a {displayName(HD_TYPE_DISPLAY, result.type, language)} — your strategy: "{result.strategy.toLowerCase()}"</>}
+                      ? <>Si {displayName(HD_TYPE_DISPLAY, result.type, language)} — tvoja stratégia: „{displayName(HD_STRATEGY_DISPLAY, result.strategy, language).toLowerCase()}"</>
+                      : <>You are a {displayName(HD_TYPE_DISPLAY, result.type, language)} — your strategy: "{displayName(HD_STRATEGY_DISPLAY, result.strategy, language).toLowerCase()}"</>}
                   </p>
                   <p className="text-xs text-slate-300">{getTypeDescription(result.type, language)}</p>
                   <p className="text-xs text-slate-400 mt-2 italic">
@@ -431,13 +431,13 @@ export function HumanDesignPage() {
                 <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20">
                   <p className="text-xs font-semibold text-rose-300 mb-1">
                     {language === 'sk'
-                      ? `Keď cítiš „${result.notSelfTheme.toLowerCase()}" — žiješ mimo dizajn`
-                      : `When you feel "${result.notSelfTheme.toLowerCase()}" — you are living outside your design`}
+                      ? `Keď cítiš „${displayName(HD_NOT_SELF_THEME_DISPLAY, result.notSelfTheme, language).toLowerCase()}" — žiješ mimo dizajn`
+                      : `When you feel "${displayName(HD_NOT_SELF_THEME_DISPLAY, result.notSelfTheme, language).toLowerCase()}" — you are living outside your design`}
                   </p>
                   <p className="text-xs text-slate-300">
                     {language === 'sk'
-                      ? `Nie je to chyba ani problém. Je to navigačný signál — niečo v tvojom živote nefunguje podľa tvojho dizajnu. Vráť sa k stratégii (${result.strategy.toLowerCase()}) a autorite (${result.authority.toLowerCase()}).`
-                      : `This is not a mistake or a problem. It is a navigation signal — something in your life is not working according to your design. Return to your strategy (${result.strategy.toLowerCase()}) and authority (${result.authority.toLowerCase()}).`}
+                      ? `Nie je to chyba ani problém. Je to navigačný signál — niečo v tvojom živote nefunguje podľa tvojho dizajnu. Vráť sa k stratégii (${displayName(HD_STRATEGY_DISPLAY, result.strategy, language).toLowerCase()}) a autorite (${displayName(HD_AUTHORITY_DISPLAY, result.authority, language).toLowerCase()}).`
+                      : `This is not a mistake or a problem. It is a navigation signal — something in your life is not working according to your design. Return to your strategy (${displayName(HD_STRATEGY_DISPLAY, result.strategy, language).toLowerCase()}) and authority (${displayName(HD_AUTHORITY_DISPLAY, result.authority, language).toLowerCase()}).`}
                   </p>
                 </div>
 
@@ -461,7 +461,7 @@ export function HumanDesignPage() {
               <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
                   <p className="text-xs text-slate-500">{t('hd.strategy')}</p>
-                  <p className="text-sm font-medium text-slate-900">{result.strategy}</p>
+                  <p className="text-sm font-medium text-slate-900">{displayName(HD_STRATEGY_DISPLAY, result.strategy, language)}</p>
                 </div>
                 <div>
                   <p className="text-xs text-slate-500">{t('hd.authority')}</p>
@@ -469,7 +469,7 @@ export function HumanDesignPage() {
                 </div>
                 <div>
                   <p className="text-xs text-slate-500">{t('hd.notSelfTheme')}</p>
-                  <p className="text-sm font-medium text-rose-600">{result.notSelfTheme}</p>
+                  <p className="text-sm font-medium text-rose-600">{displayName(HD_NOT_SELF_THEME_DISPLAY, result.notSelfTheme, language)}</p>
                 </div>
               </div>
             </div>
@@ -484,7 +484,7 @@ export function HumanDesignPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <GlassCard>
-              <h3 className="font-medium text-white mb-2">{t('hd.strategy')}: {result.strategy}</h3>
+              <h3 className="font-medium text-white mb-2">{t('hd.strategy')}: {displayName(HD_STRATEGY_DISPLAY, result.strategy, language)}</h3>
               <p className="text-sm text-slate-300">{getStrategyDescription(result.strategy, language)}</p>
             </GlassCard>
             <GlassCard>
@@ -821,10 +821,10 @@ export function HumanDesignPage() {
                     className="p-3 rounded-xl glass-light"
                   >
                     <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-white">{channel.name}</span>
+                      <span className="text-sm font-medium text-white">{displayName(HD_CHANNEL_DISPLAY, channel.name, language)}</span>
                       <span className="text-xs text-indigo-300">{channel.gates[0]}-{channel.gates[1]}</span>
                     </div>
-                    <span className="text-xs text-slate-400">{channel.centers[0]} → {channel.centers[1]}</span>
+                    <span className="text-xs text-slate-400">{displayName(HD_CENTER_DISPLAY, channel.centers[0], language)} → {displayName(HD_CENTER_DISPLAY, channel.centers[1], language)}</span>
                   </motion.div>
                 ))}
               </div>

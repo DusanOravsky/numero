@@ -184,6 +184,8 @@ test.describe('i18n audit — no SK text in EN mode', () => {
       { path: '/kabalah', name: 'Kabalah' },
       { path: '/theta-healing', name: 'Theta Healing' },
       { path: '/modality', name: 'Modality' },
+      { path: '/settings?tab=ai', name: 'Settings AI' },
+      { path: '/settings?tab=about', name: 'Settings About' },
     ];
 
     const allViolations: string[] = [];

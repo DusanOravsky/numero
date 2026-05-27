@@ -4,7 +4,7 @@ import { useSubject } from '../hooks/useSubject';
 import { useTranslation } from '../i18n/useTranslation';
 import { GlassCard } from '../components/GlassCard';
 import { DateInput } from '../components/DateInput';
-import { calculateKabalah, SEFIROT } from '../engine/kabalahEngine';
+import { calculateKabalah, SEFIROT, SEFIROT_EN } from '../engine/kabalahEngine';
 import type { KabalahResult } from '../engine/kabalahEngine';
 import { reduceToSingle } from '../engine/numerologyEngine';
 import { motion } from 'framer-motion';
@@ -378,7 +378,7 @@ export function KabalahPage() {
           <GlassCard>
             <h3 className="font-medium text-white mb-4">{t('kabalah.treeOfLife')}</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {SEFIROT.map((sefira, idx) => (
+              {(language === 'en' ? SEFIROT_EN : SEFIROT).map((sefira, idx) => (
                 <motion.div
                   key={sefira.number}
                   initial={{ opacity: 0, scale: 0.95 }}

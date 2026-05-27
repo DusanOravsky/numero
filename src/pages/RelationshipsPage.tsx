@@ -1874,8 +1874,9 @@ export function RelationshipsPage() {
             <h3 className="font-medium text-slate-900 mb-3">{t('rel.constReadingTitle')}</h3>
             <div className="space-y-2 text-sm text-slate-300">
               <p>
-                Rodina <strong className="text-slate-900">{constFather.name} & {constMother.name}</strong> + <strong className="text-slate-900">{constChildren.filter(isPersonValid).length}</strong> {constChildren.filter(isPersonValid).length === 1 ? 'dieťa' : 'deti'}.
-                Partnerský vzťah rodičov (<strong className="text-slate-900">{constellationResult.partnerCompat.overallScore}%</strong>) je základ — jeho kvalita sa odráža na celej rodine.
+                {language === 'sk'
+                  ? <>Rodina <strong className="text-slate-900">{constFather.name} & {constMother.name}</strong> + <strong className="text-slate-900">{constChildren.filter(isPersonValid).length}</strong> {constChildren.filter(isPersonValid).length === 1 ? 'dieťa' : 'deti'}. Partnerský vzťah rodičov (<strong className="text-slate-900">{constellationResult.partnerCompat.overallScore}%</strong>) je základ — jeho kvalita sa odráža na celej rodine.</>
+                  : <>Family <strong className="text-slate-900">{constFather.name} & {constMother.name}</strong> + <strong className="text-slate-900">{constChildren.filter(isPersonValid).length}</strong> {constChildren.filter(isPersonValid).length === 1 ? 'child' : 'children'}. Partner relationship (<strong className="text-slate-900">{constellationResult.partnerCompat.overallScore}%</strong>) is the foundation — its quality reflects on the whole family.</>}
               </p>
               <p>
                 {language === 'sk'

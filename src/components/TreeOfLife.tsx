@@ -1,6 +1,7 @@
 import { GlassCard } from './GlassCard';
 import { SEFIROT } from '../engine/kabalahEngine';
 import type { KabalahResult } from '../engine/kabalahEngine';
+import { useTranslation } from '../i18n/useTranslation';
 
 interface Props {
   result: KabalahResult;
@@ -35,6 +36,7 @@ const PATHS: [number, number][] = [
 ];
 
 export function TreeOfLife({ result }: Props) {
+  const { language } = useTranslation();
   const size = 320;
   const primaryNum = result.primarySefira.number;
   const secondaryNum = result.secondarySefira.number;
@@ -46,13 +48,14 @@ export function TreeOfLife({ result }: Props) {
 
   return (
     <GlassCard>
-      <h3 className="font-medium text-white mb-1">Strom života</h3>
+      <h3 className="font-medium text-white mb-1">{language === 'sk' ? 'Strom života' : 'Tree of Life'}</h3>
       <p className="text-xs text-slate-500 mb-3">
-        Kabalistický strom s 10 sefírami a 22 cestami. Vaša primárna sefira ({result.primarySefira.name})
-        a sekundárna sefira ({result.secondarySefira.name}) sú zvýraznené, cesta z nich do Malchut je vyznačená.
+        {language === 'sk'
+          ? `Kabalistický strom s 10 sefírami a 22 cestami. Vaša primárna sefira (${result.primarySefira.name}) a sekundárna sefira (${result.secondarySefira.name}) sú zvýraznené, cesta z nich do Malchut je vyznačená.`
+          : `Kabbalistic tree with 10 sefirot and 22 paths. Your primary sefira (${result.primarySefira.name}) and secondary sefira (${result.secondarySefira.name}) are highlighted, the path from them to Malchut is marked.`}
       </p>
       <div className="flex justify-center">
-        <svg width={size} height={size * 1.05} viewBox={`0 0 ${size} ${size * 1.05}`} role="img" aria-label="Kabalistický strom života — 10 sefír a 22 ciest">
+        <svg width={size} height={size * 1.05} viewBox={`0 0 ${size} ${size * 1.05}`} role="img" aria-label={language === 'sk' ? 'Kabalistický strom života — 10 sefír a 22 ciest' : 'Kabbalistic Tree of Life — 10 sefirot and 22 paths'}>
           {/* 22 paths */}
           {PATHS.map(([a, b], i) => {
             const pa = xy(a);

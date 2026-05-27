@@ -21,6 +21,7 @@ import type { KabalahResult } from './kabalahEngine';
 import type { ThetaHealingResult } from './thetaHealingEngine';
 import type { DevelopmentalNumerologyResult } from './developmentalNumerologyEngine';
 import type { EnneagramResult } from './enneagramEngine';
+import { safeGet, safeSet, safeRemove } from '../utils/safeStorage';
 
 const ANTHROPIC_API_KEY_STORAGE = 'anthropic-api-key';
 const ANTHROPIC_MODEL_STORAGE = 'anthropic-model';
@@ -40,21 +41,21 @@ export const CLAUDE_MODELS: Array<{ id: ClaudeModel; label: string; cost: string
 ];
 
 export function getApiKey(): string {
-  return localStorage.getItem(ANTHROPIC_API_KEY_STORAGE) || '';
+  return safeGet(ANTHROPIC_API_KEY_STORAGE) || '';
 }
 
 export function setApiKey(key: string) {
-  if (key) localStorage.setItem(ANTHROPIC_API_KEY_STORAGE, key);
-  else localStorage.removeItem(ANTHROPIC_API_KEY_STORAGE);
+  if (key) safeSet(ANTHROPIC_API_KEY_STORAGE, key);
+  else safeRemove(ANTHROPIC_API_KEY_STORAGE);
 }
 
 export function getModel(): ClaudeModel {
-  const v = localStorage.getItem(ANTHROPIC_MODEL_STORAGE) as ClaudeModel | null;
+  const v = safeGet(ANTHROPIC_MODEL_STORAGE) as ClaudeModel | null;
   return v && CLAUDE_MODELS.some(m => m.id === v) ? v : 'claude-sonnet-4-6';
 }
 
 export function setModel(m: ClaudeModel) {
-  localStorage.setItem(ANTHROPIC_MODEL_STORAGE, m);
+  safeSet(ANTHROPIC_MODEL_STORAGE, m);
 }
 
 export function hasApiKey(): boolean {
@@ -95,12 +96,12 @@ export const INTERPRETATION_LENSES: Array<{ id: InterpretationLens; label: strin
 ];
 
 export function getLens(): InterpretationLens {
-  const v = localStorage.getItem(ANTHROPIC_LENS_STORAGE) as InterpretationLens | null;
+  const v = safeGet(ANTHROPIC_LENS_STORAGE) as InterpretationLens | null;
   return v && INTERPRETATION_LENSES.some(l => l.id === v) ? v : 'default';
 }
 
 export function setLens(l: InterpretationLens) {
-  localStorage.setItem(ANTHROPIC_LENS_STORAGE, l);
+  safeSet(ANTHROPIC_LENS_STORAGE, l);
 }
 
 export interface ProfileContext {

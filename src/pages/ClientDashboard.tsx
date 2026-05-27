@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import { useShallow } from 'zustand/react/shallow';
+import { safeSet } from '../utils/safeStorage';
 import { useTranslation } from '../i18n/useTranslation';
 import { calculateFullNumerology, getGridCount, reduceToSingle } from '../engine/numerologyEngine';
 import { calculateDevelopmentalNumerology } from '../engine/developmentalNumerologyEngine';
@@ -28,7 +29,7 @@ export function ClientDashboard() {
   const client = clients.find(c => c.id === id);
 
   useEffect(() => {
-    if (client) localStorage.setItem('last-viewed-client', client.id);
+    if (client) safeSet('last-viewed-client', client.id);
   }, [client]);
 
   const [showPartnerSelect, setShowPartnerSelect] = useState(false);

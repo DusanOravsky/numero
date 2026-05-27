@@ -4,6 +4,26 @@ All notable changes to this project are documented in this file. Dates are
 in ISO 8601 (YYYY-MM-DD). The format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 4.3.4 — 2026-05-27
+
+**PATCH**: Hĺbkové review pass 2 — robustnosť, type safety, a11y.
+
+### Robustnosť
+- **safeStorage helper** (`utils/safeStorage.ts`): bezpečný wrapper okolo localStorage. iOS Safari privátny mód a vyčerpaná quota už nezhodia appku cez ErrorBoundary. Aplikované na: App, Dashboard, ClientDashboard, PWAPrompts, SettingsPage, OnboardingReveal, aiInterpretation engine.
+- **AIChat abort trim**: pri zrušení streaming response sa text trimne na poslednú dokončenú vetu. Nezachováva sa polovičné slovo v chat histórii.
+
+### Type safety
+- **profileToPerson() helper** v RelationshipsPage: nahradený `as unknown as Client` cast. UserProfile → PersonInput cez explicitný helper.
+
+### Konfig
+- **getAppUrl() / getAppUrlDisplay()** (`utils/constants.ts`): centralizovaná base URL derivovaná z `window.location.origin + import.meta.env.BASE_URL`. Nahradilo 3× hardcoded `https://dusanoravsky.github.io/numero/`. Pripravené pre TWA / migráciu domény.
+
+### A11y
+- **OnboardingReveal**: pridaný Escape key handler na zatvorenie. Backdrop click + Skip button už fungovali.
+
+### Cleanup
+- Odstránený broken smoke test `lazy-loaded numerology page renders` — používal localStorage seed, ale store je v IndexedDB od v2.22.0. Nahradený realistickým UI flow testom v `v433-regression.spec.ts`.
+
 ## 4.3.3 — 2026-05-27
 
 **PATCH**: Self code review nálezy z v4.3.2.

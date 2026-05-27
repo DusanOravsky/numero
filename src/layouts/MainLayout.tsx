@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation, type TranslationKey } from '../i18n/useTranslation';
 import { useStore } from '../store/useStore';
 import { useShallow } from 'zustand/react/shallow';
+import { getAppUrl } from '../utils/constants';
 import { APP_VERSION } from '../components/PWAPrompts';
 import { GlobalAIDrawer } from '../components/GlobalAIDrawer';
 import { SubjectPicker } from '../components/SubjectPicker';
@@ -128,7 +129,7 @@ export function MainLayout() {
               navigator.share?.({
                 title: 'Integrálna mapa bytia',
                 text: language === 'sk' ? 'Objavte svoju integrálnu mapu bytia — numerológia, astrológia, Human Design a ďalšie systémy na jednom mieste.' : 'Discover your integral map of being — numerology, astrology, Human Design and more systems in one place.',
-                url: 'https://dusanoravsky.github.io/numero/',
+                url: getAppUrl(),
               }).catch(() => {});
             }}
             className="w-full py-1.5 rounded-md text-xs font-medium bg-emerald-50 text-emerald-700 hover:bg-emerald-100 transition-colors border border-emerald-200"

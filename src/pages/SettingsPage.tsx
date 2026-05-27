@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useStore } from '../store/useStore';
 import { useShallow } from 'zustand/react/shallow';
 import type { NumerologyMethod } from '../store/useStore';
+import { safeGet, safeSet, safeRemove } from '../utils/safeStorage';
 import { GlassCard } from '../components/GlassCard';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { APP_VERSION, forceUpdate, checkForUpdate, clearAIData } from '../components/PWAPrompts';
@@ -547,7 +548,7 @@ export function SettingsPage() {
         </p>
         <button
           onClick={() => {
-            const current = localStorage.getItem('daily-notification') === 'true';
+            const current = safeGet('daily-notification') === 'true';
             if (!current) {
               if (typeof Notification === 'undefined') {
                 alert(t('settings.reminderNotSupported'));
@@ -555,24 +556,24 @@ export function SettingsPage() {
               }
               Notification.requestPermission().then(perm => {
                 if (perm === 'granted') {
-                  localStorage.setItem('daily-notification', 'true');
+                  safeSet('daily-notification', 'true');
                   alert(t('settings.reminderOn'));
                 } else {
                   alert(t('settings.reminderDenied'));
                 }
               });
             } else {
-              localStorage.removeItem('daily-notification');
+              safeRemove('daily-notification');
               alert(t('settings.reminderOff'));
             }
           }}
           className={`w-full py-2.5 rounded-xl text-sm font-medium ${
-            localStorage.getItem('daily-notification') === 'true'
+            safeGet('daily-notification') === 'true'
               ? 'bg-emerald-600 hover:bg-emerald-500'
               : 'bg-indigo-600 hover:bg-indigo-500'
           }`}
                  >
-          {localStorage.getItem('daily-notification') === 'true' ? t('settings.reminderDisable') : t('settings.reminderEnable')}
+          {safeGet('daily-notification') === 'true' ? t('settings.reminderDisable') : t('settings.reminderEnable')}
         </button>
       </GlassCard>
       </>

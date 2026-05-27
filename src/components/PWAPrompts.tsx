@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from '../i18n/useTranslation';
+import { safeGet, safeSet, safeRemove } from '../utils/safeStorage';
 
 declare const __APP_VERSION__: string;
 const APP_VERSION = __APP_VERSION__;
@@ -55,14 +56,14 @@ export function PWAPrompts() {
     // Auto-update prompt: porovná lokálnu APP_VERSION s version.json na serveri.
     // Ak sú rôzne → zobrazí popup. Toto funguje aj s CacheFirst stratégiou,
     // lebo version.json fetchujeme s cache: 'no-store'.
-    const lastVersion = localStorage.getItem('app-version');
+    const lastVersion = safeGet('app-version');
     if (lastVersion && lastVersion !== APP_VERSION) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setShowUpdate(true);
-      localStorage.removeItem('pwa-install-dismissed');
-      localStorage.removeItem('pwa-ios-hint-dismissed');
+      safeRemove('pwa-install-dismissed');
+      safeRemove('pwa-ios-hint-dismissed');
     } else {
-      if (!lastVersion) localStorage.setItem('app-version', APP_VERSION);
+      if (!lastVersion) safeSet('app-version', APP_VERSION);
       // Network check — fetch version.json aby sme zistili či je nová verzia (3 pokusy)
       const fetchVersion = (attempt: number) => {
         fetch(`${import.meta.env.BASE_URL}version.json`, { cache: 'no-store' })
@@ -128,7 +129,7 @@ export function PWAPrompts() {
     // iOS Safari nepodporuje beforeinstallprompt — zobrazíme manuálny tip
     let iosTimer: ReturnType<typeof setTimeout> | null = null;
     if (isIOS()) {
-      const iosDismissed = localStorage.getItem('pwa-ios-hint-dismissed');
+      const iosDismissed = safeGet('pwa-ios-hint-dismissed');
       if (!iosDismissed) {
         iosTimer = setTimeout(() => setShowIOSHint(true), 3000);
       }
@@ -140,7 +141,7 @@ export function PWAPrompts() {
       const promptEvent = e as BeforeInstallPromptEvent;
       setInstallPrompt(promptEvent);
       window._deferredInstallPrompt = promptEvent;
-      const dismissed = localStorage.getItem('pwa-install-dismissed');
+      const dismissed = safeGet('pwa-install-dismissed');
       if (!dismissed) setShowInstall(true);
     };
     window.addEventListener('beforeinstallprompt', handler);
@@ -162,17 +163,17 @@ export function PWAPrompts() {
 
   const dismissInstall = () => {
     setShowInstall(false);
-    localStorage.setItem('pwa-install-dismissed', 'true');
+    safeSet('pwa-install-dismissed', 'true');
   };
 
   const dismissIOSHint = () => {
     setShowIOSHint(false);
-    localStorage.setItem('pwa-ios-hint-dismissed', 'true');
+    safeSet('pwa-ios-hint-dismissed', 'true');
   };
 
   const handleUpdate = async () => {
     setShowUpdate(false);
-    localStorage.setItem('app-version', APP_VERSION);
+    safeSet('app-version', APP_VERSION);
 
     // Ak je nový SW v waiting state, aktivujeme ho cez SKIP_WAITING + reload
     if ('serviceWorker' in navigator) {
@@ -196,7 +197,7 @@ export function PWAPrompts() {
   const dismissUpdate = () => {
     setShowUpdate(false);
     // Synchronizujeme verziu — prompt sa znova neukáže pri ďalšom otvorení
-    localStorage.setItem('app-version', APP_VERSION);
+    safeSet('app-version', APP_VERSION);
   };
 
   return (
@@ -333,7 +334,7 @@ export async function checkForUpdate(): Promise<{ online: boolean; updated: bool
   // Server je online — bezpečne môžeme vyčistiť cache (app sa po reload
   // dokáže nabootovať z čerstvej siete).
   try {
-    localStorage.setItem('app-version', APP_VERSION);
+    safeSet('app-version', APP_VERSION);
     if ('serviceWorker' in navigator) {
       const regs = await navigator.serviceWorker.getRegistrations();
       await Promise.all(regs.map(r => r.unregister()));
@@ -368,7 +369,7 @@ export async function forceUpdate(): Promise<{ online: boolean }> {
   }
 
   try {
-    localStorage.setItem('app-version', APP_VERSION);
+    safeSet('app-version', APP_VERSION);
     if ('serviceWorker' in navigator) {
       const regs = await navigator.serviceWorker.getRegistrations();
       await Promise.all(regs.map(r => r.unregister()));

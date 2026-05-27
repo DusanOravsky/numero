@@ -2,7 +2,8 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { GlassCard } from '../components/GlassCard';
 import { useStore } from '../store/useStore';
 import { useShallow } from 'zustand/react/shallow';
-import type { Client, Language } from '../store/useStore';
+import type { Client, Language, UserProfile } from '../store/useStore';
+import { getAppUrl } from '../utils/constants';
 import { useTranslation } from '../i18n/useTranslation';
 import { displayName, ELEMENT_DISPLAY, HD_TYPE_DISPLAY, HD_AUTHORITY_DISPLAY, HD_CENTER_DISPLAY } from '../i18n/entityNames';
 import { calculateFullNumerology, reduceToSingle, isValidDate } from '../engine/numerologyEngine';
@@ -40,6 +41,18 @@ function clientToPerson(c: Client): PersonInput {
     hour: c.birthHour !== undefined ? String(c.birthHour) : '',
     minute: c.birthMinute !== undefined ? String(c.birthMinute) : '',
     birthPlace: c.birthPlace ?? '',
+  };
+}
+
+function profileToPerson(p: UserProfile): PersonInput {
+  return {
+    name: p.name,
+    day: String(p.birthDay),
+    month: String(p.birthMonth),
+    year: String(p.birthYear),
+    hour: p.birthHour !== undefined ? String(p.birthHour) : '',
+    minute: p.birthMinute !== undefined ? String(p.birthMinute) : '',
+    birthPlace: p.birthPlace ?? '',
   };
 }
 
@@ -81,7 +94,7 @@ function ClientPickerButton({ onPick, includeProfile = true }: { onPick: (p: Per
           {includeProfile && activeProfile && (
             <button
               type="button"
-              onClick={() => { onPick(clientToPerson(activeProfile as unknown as Client)); setOpen(false); }}
+              onClick={() => { onPick(profileToPerson(activeProfile)); setOpen(false); }}
               className="w-full text-left px-3 py-2 rounded-lg text-sm hover:bg-indigo-50 flex items-center gap-2 text-slate-800"
             >
               <span className="text-indigo-600">◉</span>
@@ -595,7 +608,7 @@ export function RelationshipsPage() {
       birthMinute: profile.birthMinute,
     });
     const encoded = btoa(unescape(encodeURIComponent(payload)));
-    const url = `https://dusanoravsky.github.io/numero/share?data=${encoded}`;
+    const url = `${getAppUrl()}share?data=${encoded}`;
     if (navigator.share) {
       navigator.share({
         title: language === 'sk' ? 'Integrálna mapa bytia' : 'Integral Map of Being',

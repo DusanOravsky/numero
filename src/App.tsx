@@ -7,6 +7,7 @@ import { OnboardingTour } from './components/OnboardingTour';
 import { useTheme } from './hooks/useTheme';
 import { useStore } from './store/useStore';
 import { useTranslation } from './i18n/useTranslation';
+import { safeGet } from './utils/safeStorage';
 import { MainLayout } from './layouts/MainLayout';
 import { Dashboard } from './pages/Dashboard';
 
@@ -44,7 +45,7 @@ function AnimatedRoutes() {
   const location = useLocation();
   useTheme();
   const hasProfiles = useStore(s => s.profiles.length > 0);
-  const [onboardingDone] = useState(() => !!localStorage.getItem('onboarding-completed'));
+  const [onboardingDone] = useState(() => !!safeGet('onboarding-completed'));
   const showOnboarding = hasProfiles && !onboardingDone;
 
   return (

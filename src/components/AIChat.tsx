@@ -30,6 +30,24 @@ const DEFAULT_INITIAL =
   'Vyhotov mi prosím integratívny duchovný výklad celej mojej osobnosti — spoj všetky systémy do jedného uceleného textu.';
 
 /**
+ * Pri abort streaming response trimnúť text na poslednú dokončenú vetu.
+ * Predchádza zachovaniu polovičných slov v chat histórii.
+ */
+function trimToLastSentence(text: string): string {
+  const trimmed = text.trimEnd();
+  const lastSentenceEnd = Math.max(
+    trimmed.lastIndexOf('. '),
+    trimmed.lastIndexOf('! '),
+    trimmed.lastIndexOf('? '),
+    trimmed.lastIndexOf('.\n'),
+    trimmed.lastIndexOf('!\n'),
+    trimmed.lastIndexOf('?\n'),
+  );
+  if (lastSentenceEnd === -1) return trimmed;
+  return trimmed.slice(0, lastSentenceEnd + 1);
+}
+
+/**
  * Ľahký markdown rendering — nadpisy + odseky + bullets, bez external lib.
  */
 function renderMarkdown(text: string): React.ReactNode {
@@ -164,7 +182,9 @@ export function AIChat({ context, title, initialUserMessage, storageKey }: Props
   const cancelStream = () => {
     abortRef.current?.abort();
     if (streamingText) {
-      setMessages(prev => [...prev, { id: crypto.randomUUID(), role: 'assistant', content: streamingText + '\n\n' + t('ai.interrupted') }]);
+      // Trim na poslednú dokončenú vetu — predchádza zachovaniu polovičných slov v histórii
+      const trimmed = trimToLastSentence(streamingText);
+      setMessages(prev => [...prev, { id: crypto.randomUUID(), role: 'assistant', content: trimmed + '\n\n' + t('ai.interrupted') }]);
     }
     setStreamingText('');
     setStreaming(false);

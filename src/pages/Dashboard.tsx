@@ -32,6 +32,7 @@ import { calculateBiorhythm } from '../engine/biorhythmEngine';
 import { getDailyCrystal } from '../data/crystals';
 import { generateDailyStory, generateProfileCard, shareOrDownload } from '../components/ShareStory';
 import { getAffirmationsPool, getDailyRituals } from '../data/affirmations';
+import { safeGet, safeSet, safeRemove } from '../utils/safeStorage';
 
 export function Dashboard() {
   const navigate = useNavigate();
@@ -40,7 +41,7 @@ export function Dashboard() {
   );
   const { t, language } = useTranslation();
   const profile = profiles.find(p => p.id === activeProfileId);
-  const [lastViewedId, setLastViewedId] = useState<string | null>(() => localStorage.getItem('last-viewed-client'));
+  const [lastViewedId, setLastViewedId] = useState<string | null>(() => safeGet('last-viewed-client'));
   const lastClient = lastViewedId ? clients.find(c => c.id === lastViewedId) : null;
 
   const [today] = useState(() => new Date());
@@ -51,15 +52,15 @@ export function Dashboard() {
   // Lokálna notifikácia — raz denne pri otvorení appky
   useEffect(() => {
     if (!profile) return;
-    const enabled = localStorage.getItem('daily-notification') === 'true';
+    const enabled = safeGet('daily-notification') === 'true';
     if (!enabled) return;
     if (typeof Notification === 'undefined' || Notification.permission !== 'granted') return;
 
     const todayKey = today.toISOString().split('T')[0];
-    const lastNotif = localStorage.getItem('last-daily-notif');
+    const lastNotif = safeGet('last-daily-notif');
     if (lastNotif === todayKey) return;
 
-    localStorage.setItem('last-daily-notif', todayKey);
+    safeSet('last-daily-notif', todayKey);
 
     const orv = calculateORV(profile.birthDay, profile.birthMonth, currentYear, currentMonth, currentDay);
     const odv = calculateODV(orv, currentDay, currentMonth);
@@ -182,7 +183,7 @@ export function Dashboard() {
             <span className="text-amber-600 text-sm">→</span>
           </button>
           <button
-            onClick={(e) => { e.stopPropagation(); localStorage.removeItem('last-viewed-client'); setLastViewedId(null); }}
+            onClick={(e) => { e.stopPropagation(); safeRemove('last-viewed-client'); setLastViewedId(null); }}
             className="absolute top-1 right-1 w-6 h-6 rounded-full flex items-center justify-center text-amber-400 hover:text-amber-700 hover:bg-amber-100 transition-colors"
             aria-label={t('dashboard.hideLastClient')}
           >

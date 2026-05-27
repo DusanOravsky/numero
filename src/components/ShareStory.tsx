@@ -1,8 +1,8 @@
 import type { Language } from '../store/useStore';
+import { getAppUrlDisplay } from '../utils/constants';
 
 const W = 1080;
 const H = 1920;
-const APP_URL = 'dusanoravsky.github.io/numero';
 
 interface DailyStoryParams {
   odvNumber: number;
@@ -63,7 +63,7 @@ function drawFooter(ctx: CanvasRenderingContext2D, isDark: boolean, text: string
   ctx.textAlign = 'center';
   ctx.fillText(text, W / 2, H - 120);
   ctx.font = '28px system-ui, sans-serif';
-  ctx.fillText(APP_URL, W / 2, H - 70);
+  ctx.fillText(getAppUrlDisplay(), W / 2, H - 70);
 }
 
 function wrapText(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, maxWidth: number, lineHeight: number): number {

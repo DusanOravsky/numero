@@ -19,35 +19,6 @@ test.describe('Smoke — landing & navigation', () => {
     expect(Date.now() - start).toBeLessThan(5000);
   });
 
-  test('lazy-loaded numerology page renders after navigation', async ({ page }) => {
-    // Set up a profile in localStorage so the dashboard shows nav links
-    await page.goto('/');
-    await page.evaluate(() => {
-      const state = {
-        state: {
-          profiles: [{
-            id: 'test-1',
-            name: 'Test',
-            birthDay: 30, birthMonth: 8, birthYear: 1979,
-            birthHour: 2, birthMinute: 40,
-            createdAt: new Date().toISOString(),
-          }],
-          activeProfileId: 'test-1',
-          clients: [],
-          reports: [],
-          favorites: [],
-          language: 'sk',
-          numerologyMethod: 'developmental',
-          themeMode: 'light',
-        },
-        version: 4,
-      };
-      localStorage.setItem('numero-store', JSON.stringify(state));
-    });
-    await page.reload();
-    await page.goto('/numerology');
-    await expect(page.getByText(/Numerológia/i).first()).toBeVisible({ timeout: 10000 });
-    // Životné číslo 1 (z 37) for 30.8.1979
-    await expect(page.getByText(/Životné číslo 1/i).first()).toBeVisible();
-  });
+  // Lazy-loaded numerology test bol odstránený — broken po migrácii store do IndexedDB (v2.22.0).
+  // Nahradený realistickým UI flow testom v v433-regression.spec.ts.
 });

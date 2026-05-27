@@ -8,6 +8,7 @@ import { calculateHumanDesign } from '../engine/humanDesignEngine';
 import { calculateAstrology } from '../engine/astrologyEngine';
 import { evaluateChakras } from '../engine/chakraEngine';
 import { getLifePath } from '../data/lifePaths';
+import { safeGet, safeSet } from '../utils/safeStorage';
 
 const STORAGE_KEY = 'onboarding-completed';
 const TOTAL_CARDS = 5;
@@ -76,7 +77,7 @@ export function OnboardingReveal() {
   }, [numerology]);
 
   useEffect(() => {
-    const completed = localStorage.getItem(STORAGE_KEY);
+    const completed = safeGet(STORAGE_KEY);
     if (!completed) {
       const timer = setTimeout(() => setVisible(true), 800);
       return () => clearTimeout(timer);
@@ -84,9 +85,17 @@ export function OnboardingReveal() {
   }, []);
 
   const dismiss = () => {
-    localStorage.setItem(STORAGE_KEY, '1');
+    safeSet(STORAGE_KEY, '1');
     setVisible(false);
   };
+
+  // Escape key zatvára reveal (a11y + ergonómia)
+  useEffect(() => {
+    if (!visible) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') dismiss(); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [visible]);
 
   const next = () => {
     if (card < TOTAL_CARDS - 1) {

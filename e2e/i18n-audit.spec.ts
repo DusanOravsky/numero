@@ -1,34 +1,103 @@
 import { test, expect, Page } from '@playwright/test';
 
 const SK_PATTERNS = [
+  // Numerology
   /Tvoje čítanie/,
   /Životné číslo/,
   /Izolované čísla/,
   /Chýbajúce čísla/,
-  /Reagovať/,
-  /Informovať/,
-  /Čakať na pozvanie/,
-  /Frustrácia/,
-  /Horkosť/,
   /Fyzický dotyk/,
   /Slová uistenia/,
   /Kvalitný čas/,
   /Obdarovávanie/,
   /Skutky služby/,
+  // HD
+  /Reagovať/,
+  /Informovať/,
+  /Čakať na pozvanie/,
+  /Frustrácia(?! &)/,  // avoid matching EN "Frustration & anger"
+  /Horkosť/,
+  /Nie-ja téma/,
+  /Stratégia:/,
+  /\bBrána\b/,
+  /\bbrány\b/,
+  // Chakras
   /Venujte pozornosť/,
   /Meditácia na farbu/,
   /Uzemňovacia prax/,
   /Rovnováha medzi/,
-  /Koruna/,  // kabalah meaning
-  /Milosrdenstvo/,  // kabalah pillar
-  /Prísnosť/,  // kabalah pillar
-  /Jednota/,  // kabalah theme
+  /Koreňová čakra/,
+  /Sakrálna čakra/,
+  /Krčná čakra/,
+  /Srdcová čakra/,
+  /Korunná čakra/,
+  // Kabalah
+  /Koruna/,
+  /Milosrdenstvo/,
+  /Prísnosť/,
+  /Jednota/,
   /Božská vôľa/,
-  /Stratégia:/,  // raw label without EN
-  /Nie-ja téma/,
+  /Strom života/,
+  /Kabalistický strom/,
+  // Chinese zodiac
+  /\bKoza\b/,
+  /\bHad\b/,
+  /\bDrak\b/,
+  /\bOpica\b/,
+  /\bKohút\b/,
+  /\bPes\b/,
+  /\bPrasa\b/,
+  /\bKôň\b/,
+  // Planets (SK names in astro context)
+  /\bSlnko\b/,
+  /\bMesiac\b/,
+  /\bMerkúr\b/,
+  /\bVenuša\b/,
+  /\bMars\b/,
+  /\bJupiter\b/,
+  /\bSaturn\b/,
+  /\bUrán\b/,
+  /\bNeptún\b/,
+  /\bPluto\b/,
+  // Zodiac (SK names)
+  /\bBaran\b/,
+  /\bBýk\b/,
+  /\bBlíženci\b/,
+  /\bRak\b/,
+  /\bLev\b/,
+  /\bPanna\b/,
+  /\bVáhy\b/,
+  /\bŠkorpión\b/,
+  /\bStrelec\b/,
+  /\bKozorožec\b/,
+  /\bVodnár\b/,
+  /\bRyby\b/,
+  // Elements
+  /\bOheň\b/,
+  /\bZem\b/,
+  /\bVzduch\b/,
+  /\bVoda\b/,
+  // Settings / UI
   /Meditácia \/ Timer/,
   /Vyber dĺžku/,
-  /Štart/,
+  /\bŠtart\b/,
+  /rýchly, lacný/,
+  /kvalitný.*odporúčaný/,
+  /najlepší, drahší/,
+  /výklad/,
+  /Integratívny ezoterický/,
+  /Logické úrovne/,
+  /Etikoterapia/,
+  /Koučing/,
+  // Conditioning
+  /podmieňuje/,
+  /preberá spôsob/,
+  /môže cítiť falošnú/,
+  // Relationships
+  /Partnerský vzťah rodičov/,
+  /Súrodenecký vzťah/,
+  /cieľ vzťahu/,
+  /\. dom\b/,
 ];
 
 // Known exceptions — SK words that appear in EN mode legitimately (names, untranslatable terms)

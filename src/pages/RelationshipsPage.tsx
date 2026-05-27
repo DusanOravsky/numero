@@ -5,7 +5,7 @@ import { useShallow } from 'zustand/react/shallow';
 import type { Client, Language, UserProfile } from '../store/useStore';
 import { getAppUrl } from '../utils/constants';
 import { useTranslation } from '../i18n/useTranslation';
-import { displayName, ELEMENT_DISPLAY, HD_TYPE_DISPLAY, HD_AUTHORITY_DISPLAY, HD_CENTER_DISPLAY, HD_STRATEGY_DISPLAY, LOVE_LANGUAGE_DISPLAY } from '../i18n/entityNames';
+import { displayName, ELEMENT_DISPLAY, HD_TYPE_DISPLAY, HD_AUTHORITY_DISPLAY, HD_CENTER_DISPLAY, HD_STRATEGY_DISPLAY, LOVE_LANGUAGE_DISPLAY, ZODIAC_DISPLAY } from '../i18n/entityNames';
 import { calculateFullNumerology, reduceToSingle, isValidDate } from '../engine/numerologyEngine';
 import { calculateDevelopmentalNumerology } from '../engine/developmentalNumerologyEngine';
 import { calculatePartnerCompatibility, calculateParentChild } from '../engine/compatibilityEngine';

@@ -297,6 +297,36 @@ export const LOVE_LANGUAGE_DISPLAY: NameMap = {
   'Skutky služby': { sk: 'Skutky služby', en: 'Acts of service' },
 };
 
+export const HOUSE_THEME_DISPLAY: Record<number, Record<Language, string>> = {
+  1: { sk: 'Ja, telo, prvý dojem, vitalita', en: 'Self, body, first impression, vitality' },
+  2: { sk: 'Hodnoty, financie, hmotné zdroje, sebahodnota', en: 'Values, finances, material resources, self-worth' },
+  3: { sk: 'Komunikácia, súrodenci, krátke cesty, učenie', en: 'Communication, siblings, short trips, learning' },
+  4: { sk: 'Domov, rodina, korene, súkromie, otec/matka', en: 'Home, family, roots, privacy, father/mother' },
+  5: { sk: 'Tvorba, deti, romantika, hra, sebavyjadrenie', en: 'Creation, children, romance, play, self-expression' },
+  6: { sk: 'Práca, zdravie, denné rutiny, služba', en: 'Work, health, daily routines, service' },
+  7: { sk: 'Partnerstvá, manželstvo, otvorené konflikty, "iný"', en: 'Partnerships, marriage, open conflicts, "the other"' },
+  8: { sk: 'Transformácia, intimita, smrť/znovuzrodenie, zdieľané zdroje', en: 'Transformation, intimacy, death/rebirth, shared resources' },
+  9: { sk: 'Filozofia, ďaleké cesty, vyššie štúdium, viera', en: 'Philosophy, long journeys, higher education, faith' },
+  10: { sk: 'Kariéra, verejný obraz, ambície, autorita', en: 'Career, public image, ambitions, authority' },
+  11: { sk: 'Priatelia, komunita, sny, kolektív', en: 'Friends, community, dreams, collective' },
+  12: { sk: 'Podvedomie, izolácia, duchovno, skryté veci', en: 'Subconscious, isolation, spirituality, hidden things' },
+};
+
+export const CHINESE_ANIMAL_GENITIVE: Record<string, Record<Language, string>> = {
+  'Potkan': { sk: 'Potkana', en: 'of the Rat' },
+  'Byvol': { sk: 'Byvola', en: 'of the Ox' },
+  'Tiger': { sk: 'Tigra', en: 'of the Tiger' },
+  'Zajac': { sk: 'Zajaca', en: 'of the Rabbit' },
+  'Drak': { sk: 'Draka', en: 'of the Dragon' },
+  'Had': { sk: 'Hada', en: 'of the Snake' },
+  'Kôň': { sk: 'Koňa', en: 'of the Horse' },
+  'Koza': { sk: 'Kozy', en: 'of the Goat' },
+  'Opica': { sk: 'Opice', en: 'of the Monkey' },
+  'Kohút': { sk: 'Kohúta', en: 'of the Rooster' },
+  'Pes': { sk: 'Psa', en: 'of the Dog' },
+  'Prasa': { sk: 'Prasaťa', en: 'of the Pig' },
+};
+
 export const WEEKDAY_SHORT: Record<Language, string[]> = {
   sk: ['Po', 'Ut', 'St', 'Št', 'Pi', 'So', 'Ne'],
   en: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],

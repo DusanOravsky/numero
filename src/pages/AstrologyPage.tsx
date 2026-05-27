@@ -17,7 +17,7 @@ import { calculateChineseZodiac } from '../engine/chineseZodiacEngine';
 import { getChineseAnimalInfo, getChineseElementInfo } from '../data/chineseZodiac';
 import { useTranslation } from '../i18n/useTranslation';
 import type { Language } from '../store/useStore';
-import { displayName, ZODIAC_DISPLAY, PLANET_DISPLAY, ELEMENT_DISPLAY, QUALITY_DISPLAY, MOON_PHASE_DISPLAY, CHINESE_ANIMAL_DISPLAY, CHINESE_ELEMENT_DISPLAY } from '../i18n/entityNames';
+import { displayName, ZODIAC_DISPLAY, PLANET_DISPLAY, ELEMENT_DISPLAY, QUALITY_DISPLAY, MOON_PHASE_DISPLAY, CHINESE_ANIMAL_DISPLAY, CHINESE_ELEMENT_DISPLAY, HOUSE_THEME_DISPLAY, CHINESE_ANIMAL_GENITIVE } from '../i18n/entityNames';
 
 function getSunSignDescription(sign: string, lang: Language): string {
   const sk: Record<string, string> = {
@@ -654,7 +654,7 @@ export function AstrologyPage() {
 
                     <div className="p-3 rounded-xl bg-slate-500/10 border border-slate-500/20">
                       <p className="text-xs text-slate-400">
-                        {t('astrology.chineseNextYear')} {chinese.animalGenitive} {chinese.animalEmoji}: <strong className="text-white">{chinese.nextYear}</strong>
+                        {t('astrology.chineseNextYear')} {CHINESE_ANIMAL_GENITIVE[chinese.animal]?.[language] ?? chinese.animalGenitive} {chinese.animalEmoji}: <strong className="text-white">{chinese.nextYear}</strong>
                         <span className="text-slate-500"> ({language === 'sk' ? 'za' : 'in'} {chinese.nextYear - new Date().getFullYear()} {language === 'sk' ? (chinese.nextYear - new Date().getFullYear() === 1 ? 'rok' : chinese.nextYear - new Date().getFullYear() < 5 ? 'roky' : 'rokov') : (chinese.nextYear - new Date().getFullYear() === 1 ? 'year' : 'years')})</span>
                       </p>
                     </div>
@@ -796,11 +796,11 @@ export function AstrologyPage() {
                           <span className="text-xs font-bold text-amber-700">{h.number}. {h.sign.symbol}</span>
                           <span className="text-[10px] text-slate-500">{displayName(ZODIAC_DISPLAY, h.sign.name, language)}</span>
                         </div>
-                        <p className="text-[10px] text-slate-600 mt-0.5 leading-tight">{h.theme}</p>
+                        <p className="text-[10px] text-slate-600 mt-0.5 leading-tight">{HOUSE_THEME_DISPLAY[h.number]?.[language] ?? h.theme}</p>
                         {planetsInHouse.length > 0 && (
                           <div className="flex gap-1 mt-1">
                             {planetsInHouse.map(p => (
-                              <span key={p.name} title={p.name} className="text-sm">{p.symbol}</span>
+                              <span key={p.name} title={displayName(PLANET_DISPLAY, p.name, language)} className="text-sm">{p.symbol}</span>
                             ))}
                           </div>
                         )}

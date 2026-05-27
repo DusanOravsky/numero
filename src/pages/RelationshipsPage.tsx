@@ -5,7 +5,7 @@ import { useShallow } from 'zustand/react/shallow';
 import type { Client, Language, UserProfile } from '../store/useStore';
 import { getAppUrl } from '../utils/constants';
 import { useTranslation } from '../i18n/useTranslation';
-import { displayName, ELEMENT_DISPLAY, HD_TYPE_DISPLAY, HD_AUTHORITY_DISPLAY, HD_CENTER_DISPLAY, HD_STRATEGY_DISPLAY, LOVE_LANGUAGE_DISPLAY, ZODIAC_DISPLAY } from '../i18n/entityNames';
+import { displayName, ELEMENT_DISPLAY, HD_TYPE_DISPLAY, HD_AUTHORITY_DISPLAY, HD_CENTER_DISPLAY, HD_STRATEGY_DISPLAY, LOVE_LANGUAGE_DISPLAY, ZODIAC_DISPLAY, PLANET_DISPLAY } from '../i18n/entityNames';
 import { calculateFullNumerology, reduceToSingle, isValidDate } from '../engine/numerologyEngine';
 import { calculateDevelopmentalNumerology } from '../engine/developmentalNumerologyEngine';
 import { calculatePartnerCompatibility, calculateParentChild } from '../engine/compatibilityEngine';
@@ -1582,8 +1582,8 @@ export function RelationshipsPage() {
                 const v2 = getPlanetByName(synastryResult.person2.result, 'Venuša');
                 return (
                   <>
-                    {v1 && <p className="text-xs text-slate-600 mb-2">{synastryResult.person1.name}: {v1.sign.symbol} {v1.sign.name} ({v1.sign.element})</p>}
-                    {v2 && <p className="text-xs text-slate-600 mb-2">{synastryResult.person2.name}: {v2.sign.symbol} {v2.sign.name} ({v2.sign.element})</p>}
+                    {v1 && <p className="text-xs text-slate-600 mb-2">{synastryResult.person1.name}: {v1.sign.symbol} {displayName(ZODIAC_DISPLAY, v1.sign.name, language)} ({displayName(ELEMENT_DISPLAY, v1.sign.element, language)})</p>}
+                    {v2 && <p className="text-xs text-slate-600 mb-2">{synastryResult.person2.name}: {v2.sign.symbol} {displayName(ZODIAC_DISPLAY, v2.sign.name, language)} ({displayName(ELEMENT_DISPLAY, v2.sign.element, language)})</p>}
                   </>
                 );
               })()}
@@ -1600,8 +1600,8 @@ export function RelationshipsPage() {
                 const m2 = getPlanetByName(synastryResult.person2.result, 'Mars');
                 return (
                   <>
-                    {m1 && <p className="text-xs text-slate-600 mb-2">{synastryResult.person1.name}: {m1.sign.symbol} {m1.sign.name} ({m1.sign.element})</p>}
-                    {m2 && <p className="text-xs text-slate-600 mb-2">{synastryResult.person2.name}: {m2.sign.symbol} {m2.sign.name} ({m2.sign.element})</p>}
+                    {m1 && <p className="text-xs text-slate-600 mb-2">{synastryResult.person1.name}: {m1.sign.symbol} {displayName(ZODIAC_DISPLAY, m1.sign.name, language)} ({displayName(ELEMENT_DISPLAY, m1.sign.element, language)})</p>}
+                    {m2 && <p className="text-xs text-slate-600 mb-2">{synastryResult.person2.name}: {m2.sign.symbol} {displayName(ZODIAC_DISPLAY, m2.sign.name, language)} ({displayName(ELEMENT_DISPLAY, m2.sign.element, language)})</p>}
                   </>
                 );
               })()}
@@ -1683,9 +1683,9 @@ export function RelationshipsPage() {
                         <div className="flex items-center justify-between gap-2">
                           <div className="flex items-center gap-2 text-sm">
                             <span className="text-base">{planetSymbols[a.planet1] || ''}</span>
-                            <strong className="text-slate-800">{a.planet1}</strong>
+                            <strong className="text-slate-800">{displayName(PLANET_DISPLAY, a.planet1, language)}</strong>
                             <span className={`text-base ${iconColor}`}>{a.symbol}</span>
-                            <strong className="text-slate-800">{a.planet2}</strong>
+                            <strong className="text-slate-800">{displayName(PLANET_DISPLAY, a.planet2, language)}</strong>
                             <span className="text-base">{planetSymbols[a.planet2] || ''}</span>
                           </div>
                           <span className="text-[10px] text-slate-500 shrink-0">orb {a.orb.toFixed(1)}°</span>
@@ -1782,8 +1782,8 @@ export function RelationshipsPage() {
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                     {composite.planets.map(p => (
                       <div key={p.name} className="p-2 rounded-lg bg-violet-500/10 border border-violet-500/20">
-                        <p className="text-xs text-violet-700">{p.symbol} {p.name}</p>
-                        <p className="text-sm text-white">{p.signSymbol} {p.signName}</p>
+                        <p className="text-xs text-violet-700">{p.symbol} {displayName(PLANET_DISPLAY, p.name, language)}</p>
+                        <p className="text-sm text-white">{p.signSymbol} {displayName(ZODIAC_DISPLAY, p.signName, language)}</p>
                         <p className="text-[10px] text-slate-400">{p.degree.toFixed(1)}°</p>
                       </div>
                     ))}

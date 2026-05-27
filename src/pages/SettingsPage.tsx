@@ -472,8 +472,14 @@ export function SettingsPage() {
                     className="accent-indigo-600"
                   />
                   <div className="flex-1">
-                    <p className="text-sm text-slate-800">{m.label}</p>
-                    <p className="text-[11px] text-slate-500 font-mono">{m.id} · {m.cost}</p>
+                    <p className="text-sm text-slate-800">{
+                      language === 'sk' ? m.label : (
+                        m.id === 'claude-haiku-4-5-20251001' ? 'Claude Haiku 4.5 (fast, affordable)' :
+                        m.id === 'claude-sonnet-4-6' ? 'Claude Sonnet 4.6 (quality — recommended)' :
+                        'Claude Opus 4.7 (best, more expensive)'
+                      )
+                    }</p>
+                    <p className="text-[11px] text-slate-500 font-mono">{m.id} · {language === 'sk' ? m.cost : m.cost.replace('výklad', 'reading')}</p>
                   </div>
                 </label>
               ))}
@@ -500,8 +506,22 @@ export function SettingsPage() {
                     className="accent-violet-600 mt-1"
                   />
                   <div className="flex-1">
-                    <p className="text-sm text-slate-800">{l.label}</p>
-                    <p className="text-[11px] text-slate-500 leading-relaxed">{l.description}</p>
+                    <p className="text-sm text-slate-800">{
+                      language === 'sk' ? l.label : (
+                        l.id === 'default' ? 'Integrative esoteric' :
+                        l.id === 'logical-levels' ? 'Logical Levels (NLP — Dilts)' :
+                        l.id === 'etikoterapia' ? 'Ethicotherapy (Vogeltanz, Bezděk)' :
+                        'Coaching (GROW model)'
+                      )
+                    }</p>
+                    <p className="text-[11px] text-slate-500 leading-relaxed">{
+                      language === 'sk' ? l.description : (
+                        l.id === 'default' ? 'Connects all systems (numerology, astrology, HD, Kabbalah) into a spiritual reading.' :
+                        l.id === 'logical-levels' ? 'Structures the reading through 6 layers: environment → behavior → capabilities → values → identity → mission.' :
+                        l.id === 'etikoterapia' ? 'Maps themes to ethical causes (virtues / vices) and practical work with heart and conscience.' :
+                        'Guides through questions: Goal → Reality → Options → Will. Less interpretation, more action.'
+                      )
+                    }</p>
                   </div>
                 </label>
               ))}
@@ -650,14 +670,14 @@ export function SettingsPage() {
                 <div className="p-2 rounded-lg bg-cyan-500/10 border border-cyan-500/30">
                   <p className="text-[10px] text-cyan-300 uppercase">LCP (Largest Contentful Paint)</p>
                   <p className="text-lg text-white font-mono">{lcp.duration}<span className="text-xs text-slate-400 ml-1">ms</span></p>
-                  <p className="text-[10px] text-slate-500">cieľ: &lt; 2500ms</p>
+                  <p className="text-[10px] text-slate-500">{language === 'sk' ? 'cieľ' : 'target'}: &lt; 2500ms</p>
                 </div>
               )}
               {cls && (
                 <div className="p-2 rounded-lg bg-purple-500/10 border border-purple-500/30">
                   <p className="text-[10px] text-purple-300 uppercase">CLS (Cumulative Layout Shift)</p>
                   <p className="text-lg text-white font-mono">{cls.duration}</p>
-                  <p className="text-[10px] text-slate-500">cieľ: &lt; 0.1</p>
+                  <p className="text-[10px] text-slate-500">{language === 'sk' ? 'cieľ' : 'target'}: &lt; 0.1</p>
                 </div>
               )}
             </div>
@@ -704,7 +724,7 @@ export function SettingsPage() {
                 </div>
               ))}
               {log.length > 5 && (
-                <p className="text-[11px] text-slate-500 text-center">… a ďalších {log.length - 5}</p>
+                <p className="text-[11px] text-slate-500 text-center">{language === 'sk' ? `… a ďalších ${log.length - 5}` : `… and ${log.length - 5} more`}</p>
               )}
             </div>
             <button
@@ -803,7 +823,7 @@ export function SettingsPage() {
                       }
                       const importedProfiles = parsed.profiles.length;
                       const importedClients = parsed.clients?.length || 0;
-                      if (!confirm(`${t('settings.importConfirm')} (${importedProfiles} profilov, ${importedClients} klientov)`)) return;
+                      if (!confirm(`${t('settings.importConfirm')} (${importedProfiles} ${language === 'sk' ? 'profilov' : 'profiles'}, ${importedClients} ${language === 'sk' ? 'klientov' : 'clients'})`)) return;
                       const store = useStore.getState();
                       if (parsed.profiles) useStore.setState({ profiles: parsed.profiles });
                       if (parsed.activeProfileId) useStore.setState({ activeProfileId: parsed.activeProfileId });
@@ -813,7 +833,7 @@ export function SettingsPage() {
                       if (parsed.numerologyMethod) store.setNumerologyMethod(parsed.numerologyMethod);
                       if (parsed.themeMode) store.setThemeMode(parsed.themeMode);
                       if (parsed.language) store.setLanguage(parsed.language);
-                      alert(`${t('settings.importSuccess')} ${importedProfiles} profilov, ${importedClients} klientov.`);
+                      alert(`${t('settings.importSuccess')} ${importedProfiles} ${language === 'sk' ? 'profilov' : 'profiles'}, ${importedClients} ${language === 'sk' ? 'klientov' : 'clients'}.`);
                     } catch {
                       alert(t('settings.importError'));
                     }

@@ -128,9 +128,10 @@ export function Dashboard() {
     const todayNames = getTodayNameDays();
     if (todayNames.length === 0) return null;
     const profileFirstName = profile ? getFirstName(profile.name) : '';
-    const isProfileNameDay = todayNames.some(n => n.toLowerCase() === profileFirstName.toLowerCase());
+    const norm = (s: string) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+    const isProfileNameDay = todayNames.some(n => norm(n) === norm(profileFirstName));
     const clientMatches = clients
-      .filter(c => todayNames.some(n => n.toLowerCase() === getFirstName(c.name).toLowerCase()))
+      .filter(c => todayNames.some(n => norm(n) === norm(getFirstName(c.name))))
       .map(c => c.name);
     return { todayNames, isProfileNameDay, clientMatches };
   }, [language, profile, clients]);

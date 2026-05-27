@@ -120,6 +120,18 @@ function getConditioningAnalysis(result1: HumanDesignResult, result2: HumanDesig
   return { p1ConditionsP2, p2ConditionsP1 };
 }
 
+const CENTER_THEMES_EN: Record<string, string> = {
+  'Hlava': 'Inspiration and questions',
+  'Ajna': 'Thinking and conceptualization',
+  'Hrdlo': 'Communication and manifestation',
+  'G': 'Identity, direction and love',
+  'Srdce/Ego': 'Willpower and value',
+  'Sakrálne': 'Life force and fertility',
+  'Solárny plexus': 'Emotions and feelings',
+  'Slezina': 'Intuition, health and time',
+  'Koreň': 'Pressure and adrenaline',
+};
+
 export function PartnerBodygraph({ result1, result2, name1, name2 }: PartnerBodygraphProps) {
   const { language } = useTranslation();
   const definedKeys1 = new Set(result1.definedCenters.map(n => nameToKey[n] || n));
@@ -247,7 +259,7 @@ export function PartnerBodygraph({ result1, result2, name1, name2 }: PartnerBody
               const gk2 = getGeneKeyByGate(ch.gates[1], language);
               return (
               <div key={i} className="p-3 rounded-lg bg-amber-50 border border-amber-200 mb-2 space-y-2">
-                <p className="text-sm font-medium text-slate-800">{displayName(HD_CHANNEL_DISPLAY, ch.name, language)} (brány {ch.gates[0]}-{ch.gates[1]})</p>
+                <p className="text-sm font-medium text-slate-800">{displayName(HD_CHANNEL_DISPLAY, ch.name, language)} ({language === 'sk' ? 'brány' : 'gates'} {ch.gates[0]}-{ch.gates[1]})</p>
                 <p className="text-xs text-slate-500">
                   {language === 'sk' ? `${name1} prináša bránu ${ch.gates[0]}, ${name2} prináša bránu ${ch.gates[1]}. Spolu aktivujete energiu ${displayName(HD_CHANNEL_DISPLAY, ch.name, language)} – oblasť, kde ste najsilnejší AKO PÁR.` : `${name1} brings gate ${ch.gates[0]}, ${name2} brings gate ${ch.gates[1]}. Together you activate the energy of ${displayName(HD_CHANNEL_DISPLAY, ch.name, language)} – the area where you are strongest AS A COUPLE.`}
                 </p>
@@ -259,7 +271,7 @@ export function PartnerBodygraph({ result1, result2, name1, name2 }: PartnerBody
                 )}
                 {gk2 && (
                   <div className="pl-2 border-l-2 border-amber-300">
-                    <p className="text-[11px] text-slate-700"><strong>Brána {ch.gates[1]}</strong> ({name2}): <span className="text-rose-600">{gk2.shadow}</span> → <span className="text-amber-600">{gk2.gift}</span> → <span className="text-emerald-600">{gk2.siddhi}</span></p>
+                    <p className="text-[11px] text-slate-700"><strong>{language === 'sk' ? 'Brána' : 'Gate'} {ch.gates[1]}</strong> ({name2}): <span className="text-rose-600">{gk2.shadow}</span> → <span className="text-amber-600">{gk2.gift}</span> → <span className="text-emerald-600">{gk2.siddhi}</span></p>
                     <p className="text-[10px] text-slate-500">{gk2.giftDescription}</p>
                   </div>
                 )}
@@ -284,7 +296,7 @@ export function PartnerBodygraph({ result1, result2, name1, name2 }: PartnerBody
               const gk2 = getGeneKeyByGate(ch.gates[1], language);
               return (
               <div key={i} className="p-3 rounded-lg bg-purple-50 border border-purple-200 mb-2 space-y-1">
-                <p className="text-sm font-medium text-slate-800">{displayName(HD_CHANNEL_DISPLAY, ch.name, language)} (brány {ch.gates[0]}-{ch.gates[1]})</p>
+                <p className="text-sm font-medium text-slate-800">{displayName(HD_CHANNEL_DISPLAY, ch.name, language)} ({language === 'sk' ? 'brány' : 'gates'} {ch.gates[0]}-{ch.gates[1]})</p>
                 <p className="text-xs text-slate-500">{language === 'sk' ? `Obaja máte energiu "${displayName(HD_CHANNEL_DISPLAY, ch.name, language)}" – zdieľate rovnakú silu, čo môže vytvárať harmóniu AJ súťaž.` : `You both have the energy of "${displayName(HD_CHANNEL_DISPLAY, ch.name, language)}" – you share the same power, which can create harmony AND competition.`}</p>
                 {gk1 && <p className="text-[10px] text-slate-600">{language === 'sk' ? 'Brána' : 'Gate'} {ch.gates[0]}: {gk1.gift} — {gk1.giftDescription}</p>}
                 {gk2 && <p className="text-[10px] text-slate-600">{language === 'sk' ? 'Brána' : 'Gate'} {ch.gates[1]}: {gk2.gift} — {gk2.giftDescription}</p>}
@@ -331,18 +343,29 @@ export function PartnerBodygraph({ result1, result2, name1, name2 }: PartnerBody
               <p className="text-xs text-rose-600 font-medium">{language === 'sk' ? `${name1} podmieňuje ${name2} v oblastiach:` : `${name1} conditions ${name2} in areas:`}</p>
               {conditioning.p1ConditionsP2.map(center => (
                 <div key={center} className="pl-3 border-l-2 border-rose-200">
-                  <p className="text-xs font-medium text-slate-700">{center} {CENTER_THEMES[center] ? `— ${CENTER_THEMES[center]}` : ''}</p>
+                  <p className="text-xs font-medium text-slate-700">{center} {(language === 'en' ? CENTER_THEMES_EN[center] : CENTER_THEMES[center]) ? `— ${language === 'en' ? CENTER_THEMES_EN[center] : CENTER_THEMES[center]}` : ''}</p>
                   <p className="text-[11px] text-slate-500">
-                    {center === 'Sakrálne' ? `${name2} môže cítiť falošnú energiu a nadšenie od ${name1}. Otázka: "Je toto moja energia alebo partnerova?"` :
-                     center === 'Solárny plexus' ? `${name2} absorbuje emócie od ${name1} a zosilňuje ich. Môže si zamieňať partnerove nálady za vlastné.` :
-                     center === 'Srdce/Ego' ? `${name2} môže cítiť tlak dokazovať svoju hodnotu podľa štandardov ${name1}.` :
-                     center === 'G' ? `${name2} môže stratiť vlastný smer a identitu v prítomnosti ${name1}. Otázka: "Kam chcem JÁ, nie kam ma ťahá partner?"` :
-                     center === 'Hrdlo' ? `${name2} môže hovoriť a konať pod vplyvom ${name1} — nie vlastným hlasom.` :
-                     center === 'Ajna' ? `${name2} preberá spôsob myslenia od ${name1}. Otázka: "Je toto MÔJ názor?"` :
-                     center === 'Hlava' ? `${name2} môže byť zaplavený otázkami a inšpiráciami od ${name1} — nie vlastnými.` :
-                     center === 'Slezina' ? `${name2} môže cítiť falošný pocit bezpečia v prítomnosti ${name1}. Pozor na ignorovanie vlastnej intuície.` :
-                     center === 'Koreň' ? `${name2} môže cítiť konštantný tlak a stres od ${name1} — akoby vždy niečo "musí".` :
-                     `${name2} v tejto oblasti absorbuje energiu od ${name1}.`}
+                    {language === 'sk'
+                      ? (center === 'Sakrálne' ? `${name2} môže cítiť falošnú energiu a nadšenie od ${name1}. Otázka: "Je toto moja energia alebo partnerova?"` :
+                         center === 'Solárny plexus' ? `${name2} absorbuje emócie od ${name1} a zosilňuje ich. Môže si zamieňať partnerove nálady za vlastné.` :
+                         center === 'Srdce/Ego' ? `${name2} môže cítiť tlak dokazovať svoju hodnotu podľa štandardov ${name1}.` :
+                         center === 'G' ? `${name2} môže stratiť vlastný smer a identitu v prítomnosti ${name1}. Otázka: "Kam chcem JÁ, nie kam ma ťahá partner?"` :
+                         center === 'Hrdlo' ? `${name2} môže hovoriť a konať pod vplyvom ${name1} — nie vlastným hlasom.` :
+                         center === 'Ajna' ? `${name2} preberá spôsob myslenia od ${name1}. Otázka: "Je toto MÔJ názor?"` :
+                         center === 'Hlava' ? `${name2} môže byť zaplavený otázkami a inšpiráciami od ${name1} — nie vlastnými.` :
+                         center === 'Slezina' ? `${name2} môže cítiť falošný pocit bezpečia v prítomnosti ${name1}. Pozor na ignorovanie vlastnej intuície.` :
+                         center === 'Koreň' ? `${name2} môže cítiť konštantný tlak a stres od ${name1} — akoby vždy niečo "musí".` :
+                         `${name2} v tejto oblasti absorbuje energiu od ${name1}.`)
+                      : (center === 'Sakrálne' ? `${name2} may feel false energy and enthusiasm from ${name1}. Question: "Is this my energy or my partner's?"` :
+                         center === 'Solárny plexus' ? `${name2} absorbs emotions from ${name1} and amplifies them. They may mistake their partner's moods for their own.` :
+                         center === 'Srdce/Ego' ? `${name2} may feel pressure to prove their worth by ${name1}'s standards.` :
+                         center === 'G' ? `${name2} may lose their own direction and identity in the presence of ${name1}. Question: "Where do I want to go, not where my partner pulls me?"` :
+                         center === 'Hrdlo' ? `${name2} may speak and act under the influence of ${name1} — not with their own voice.` :
+                         center === 'Ajna' ? `${name2} adopts the way of thinking from ${name1}. Question: "Is this MY opinion?"` :
+                         center === 'Hlava' ? `${name2} may be flooded with questions and inspirations from ${name1} — not their own.` :
+                         center === 'Slezina' ? `${name2} may feel a false sense of security in the presence of ${name1}. Be careful about ignoring your own intuition.` :
+                         center === 'Koreň' ? `${name2} may feel constant pressure and stress from ${name1} — as if they always "must" do something.` :
+                         `${name2} absorbs energy from ${name1} in this area.`)}
                   </p>
                 </div>
               ))}
@@ -353,18 +376,29 @@ export function PartnerBodygraph({ result1, result2, name1, name2 }: PartnerBody
               <p className="text-xs text-indigo-600 font-medium">{language === 'sk' ? `${name2} podmieňuje ${name1} v oblastiach:` : `${name2} conditions ${name1} in areas:`}</p>
               {conditioning.p2ConditionsP1.map(center => (
                 <div key={center} className="pl-3 border-l-2 border-indigo-200">
-                  <p className="text-xs font-medium text-slate-700">{center} {CENTER_THEMES[center] ? `— ${CENTER_THEMES[center]}` : ''}</p>
+                  <p className="text-xs font-medium text-slate-700">{center} {(language === 'en' ? CENTER_THEMES_EN[center] : CENTER_THEMES[center]) ? `— ${language === 'en' ? CENTER_THEMES_EN[center] : CENTER_THEMES[center]}` : ''}</p>
                   <p className="text-[11px] text-slate-500">
-                    {center === 'Sakrálne' ? `${name1} môže cítiť falošnú energiu od ${name2}. Pozor na preberanie cudzieho nadšenia.` :
-                     center === 'Solárny plexus' ? `${name1} absorbuje emócie od ${name2}. Otázka: "Je to čo cítim MOJE, alebo partnerove?"` :
-                     center === 'Srdce/Ego' ? `${name1} môže cítiť tlak na výkon podľa štandardov ${name2}.` :
-                     center === 'G' ? `${name1} môže stratiť vlastný smer identity v blízkosti ${name2}.` :
-                     center === 'Hrdlo' ? `${name1} môže hovoriť pod vplyvom ${name2} — nie vlastným hlasom.` :
-                     center === 'Ajna' ? `${name1} preberá spôsob myslenia od ${name2}.` :
-                     center === 'Hlava' ? `${name1} môže byť zaplavený mentálnou energiou od ${name2}.` :
-                     center === 'Slezina' ? `${name1} môže cítiť falošné bezpečie od ${name2}. Pozor na vlastnú intuíciu.` :
-                     center === 'Koreň' ? `${name1} cíti konštantný tlak od ${name2} — potreba spomaľovať.` :
-                     `${name1} v tejto oblasti absorbuje energiu od ${name2}.`}
+                    {language === 'sk'
+                      ? (center === 'Sakrálne' ? `${name1} môže cítiť falošnú energiu od ${name2}. Pozor na preberanie cudzieho nadšenia.` :
+                         center === 'Solárny plexus' ? `${name1} absorbuje emócie od ${name2}. Otázka: "Je to čo cítim MOJE, alebo partnerove?"` :
+                         center === 'Srdce/Ego' ? `${name1} môže cítiť tlak na výkon podľa štandardov ${name2}.` :
+                         center === 'G' ? `${name1} môže stratiť vlastný smer identity v blízkosti ${name2}.` :
+                         center === 'Hrdlo' ? `${name1} môže hovoriť pod vplyvom ${name2} — nie vlastným hlasom.` :
+                         center === 'Ajna' ? `${name1} preberá spôsob myslenia od ${name2}.` :
+                         center === 'Hlava' ? `${name1} môže byť zaplavený mentálnou energiou od ${name2}.` :
+                         center === 'Slezina' ? `${name1} môže cítiť falošné bezpečie od ${name2}. Pozor na vlastnú intuíciu.` :
+                         center === 'Koreň' ? `${name1} cíti konštantný tlak od ${name2} — potreba spomaľovať.` :
+                         `${name1} v tejto oblasti absorbuje energiu od ${name2}.`)
+                      : (center === 'Sakrálne' ? `${name1} may feel false energy from ${name2}. Be careful about adopting someone else's enthusiasm.` :
+                         center === 'Solárny plexus' ? `${name1} absorbs emotions from ${name2}. Question: "Is what I feel MINE, or my partner's?"` :
+                         center === 'Srdce/Ego' ? `${name1} may feel pressure to perform by ${name2}'s standards.` :
+                         center === 'G' ? `${name1} may lose their own direction and identity near ${name2}.` :
+                         center === 'Hrdlo' ? `${name1} may speak under the influence of ${name2} — not with their own voice.` :
+                         center === 'Ajna' ? `${name1} adopts the way of thinking from ${name2}.` :
+                         center === 'Hlava' ? `${name1} may be flooded with mental energy from ${name2}.` :
+                         center === 'Slezina' ? `${name1} may feel a false sense of security from ${name2}. Be careful about your own intuition.` :
+                         center === 'Koreň' ? `${name1} feels constant pressure from ${name2} — a need to slow down.` :
+                         `${name1} absorbs energy from ${name2} in this area.`)}
                   </p>
                 </div>
               ))}

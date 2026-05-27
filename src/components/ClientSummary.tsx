@@ -22,7 +22,7 @@ import { getPlanetSignDescription } from '../data/planetSignDescriptions';
 import { getOrvDescription } from '../data/orvDescriptions';
 import { getGeneKeyByGate } from '../data/geneKeys';
 import { useTranslation } from '../i18n/useTranslation';
-import { displayName, ZODIAC_DISPLAY, ELEMENT_DISPLAY, HD_TYPE_DISPLAY, HD_AUTHORITY_DISPLAY, HD_CENTER_DISPLAY, HD_STRATEGY_DISPLAY, HD_NOT_SELF_THEME_DISPLAY, LOVE_LANGUAGE_DISPLAY } from '../i18n/entityNames';
+import { displayName, ZODIAC_DISPLAY, ELEMENT_DISPLAY, HD_TYPE_DISPLAY, HD_AUTHORITY_DISPLAY, HD_CENTER_DISPLAY, HD_STRATEGY_DISPLAY, HD_NOT_SELF_THEME_DISPLAY, LOVE_LANGUAGE_DISPLAY, CHINESE_ANIMAL_DISPLAY, CHINESE_ELEMENT_DISPLAY, CHAKRA_NAME_DISPLAY } from '../i18n/entityNames';
 import { getCellMeaning } from '../data/developmentalMeanings';
 import { getLoveLanguageDescription } from '../data/orvDescriptions';
 import { deriveArchetype } from '../engine/archetypeEngine';
@@ -469,7 +469,7 @@ export function ClientSummary({ clientName, birthDay, birthMonth, birthYear, num
                   {language === 'sk' ? 'Čínsky horoskop' : 'Chinese horoscope'}
                 </p>
                 <p className="text-xs text-slate-700">
-                  <strong>{cz.animal}</strong> ({cz.element}, {cz.polarity}).{' '}
+                  <strong>{displayName(CHINESE_ANIMAL_DISPLAY, cz.animal, language)}</strong> ({displayName(CHINESE_ELEMENT_DISPLAY, cz.element, language)}, {cz.polarity}).{' '}
                   {animalInfo?.traits}{' '}
                   {animalInfo && <><strong>{language === 'sk' ? 'Silné stránky:' : 'Strengths:'}</strong> {animalInfo.strengths}. <strong>{language === 'sk' ? 'Výzvy:' : 'Challenges:'}</strong> {animalInfo.challenges}.</>}
                 </p>
@@ -492,7 +492,7 @@ export function ClientSummary({ clientName, birthDay, birthMonth, birthYear, num
                 </p>
                 <p className="text-xs text-slate-700">
                   {blocked.length > 0 && (
-                    <><strong>{language === 'sk' ? 'Blokované:' : 'Blocked:'}</strong> {blocked.map(c => `${c.chakra.name} (${c.score})`).join(', ')} — {language === 'sk' ? 'oblasti kde energia neprúdi voľne, vyžadujú vedomú pozornosť.' : 'areas where energy does not flow freely, requiring conscious attention.'} </>
+                    <><strong>{language === 'sk' ? 'Blokované:' : 'Blocked:'}</strong> {blocked.map(c => `${displayName(CHAKRA_NAME_DISPLAY, c.chakra.name, language)} (${c.score})`).join(', ')} — {language === 'sk' ? 'oblasti kde energia neprúdi voľne, vyžadujú vedomú pozornosť.' : 'areas where energy does not flow freely, requiring conscious attention.'} </>
                   )}
                   {hyperactive.length > 0 && (
                     <><strong>{language === 'sk' ? 'Hyperaktívne:' : 'Hyperactive:'}</strong> {hyperactive.map(c => `${c.chakra.name} (${c.score})`).join(', ')} — {language === 'sk' ? 'nadbytok energie, potrebné vyváženie.' : 'excess energy, balancing needed.'} </>

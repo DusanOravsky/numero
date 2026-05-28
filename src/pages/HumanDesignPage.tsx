@@ -855,53 +855,52 @@ export function HumanDesignPage() {
             return (
               <>
                 <GlassCard>
-                  <details open>
-                    <summary className="cursor-pointer hover:text-indigo-300 transition-colors">
-                      <span className="font-medium text-white">{language === 'sk' ? 'Tvoje čítanie — ako pracovať s Génovými kľúčmi' : 'Your reading — how to work with Gene Keys'}</span>
-                    </summary>
-                    <div className="space-y-3 text-sm text-slate-300 mt-3">
-                      <p>
-                        {language === 'sk'
-                          ? <>Génové kľúče (Gene Keys) sú systém sebapoznania vytvorený Richardom Ruddom. Vychádzajú z 64 hexagramov I-Ťing — rovnako ako brány v Human Designe. Každá brána, ktorú máš aktívnu vo svojom dizajne, je zároveň <strong className="text-white">génový kľúč</strong> — cesta transformácie od nevedomého vzorca (tieň) cez vedomé žitie (dar) k najvyššiemu potenciálu (siddhi).</>
-                          : <>Gene Keys is a self-knowledge system created by Richard Rudd. They stem from the 64 hexagrams of the I Ching — the same as gates in Human Design. Each gate active in your design is also a <strong className="text-white">Gene Key</strong> — a path of transformation from an unconscious pattern (shadow) through conscious living (gift) to the highest potential (siddhi).</>}
-                      </p>
-                      <p>
-                        {language === 'sk'
-                          ? <>Každá brána v tvojom dizajne má <strong className="text-white">tri frekvencie</strong> — ako tri poschodia toho istého domu:</>
-                          : <>Each gate in your design has <strong className="text-white">three frequencies</strong> — like three floors of the same house:</>}
-                      </p>
-                      <div className="grid grid-cols-3 gap-2">
-                        <div className="text-center p-2 rounded-lg bg-red-500/10 border border-red-500/20">
-                          <p className="text-xs font-bold text-red-300">{language === 'sk' ? 'Tieň' : 'Shadow'}</p>
-                          <p className="text-[10px] text-slate-400">{language === 'sk' ? 'Keď si pod tlakom, nevedomý. Kde „uviazneš".' : 'When under pressure, unconscious. Where you get "stuck".'}</p>
-                        </div>
-                        <div className="text-center p-2 rounded-lg bg-amber-500/10 border border-amber-500/20">
-                          <p className="text-xs font-bold text-amber-300">{language === 'sk' ? 'Dar' : 'Gift'}</p>
-                          <p className="text-[10px] text-slate-400">{language === 'sk' ? 'Keď si vedomý a autentický. Tvoja sila.' : 'When conscious and authentic. Your strength.'}</p>
-                        </div>
-                        <div className="text-center p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
-                          <p className="text-xs font-bold text-emerald-300">Siddhi</p>
-                          <p className="text-[10px] text-slate-400">{language === 'sk' ? 'Najvyššia forma. Vzácna, ale ukazuje smer.' : 'Highest form. Rare, but shows the direction.'}</p>
-                        </div>
+                  <h3 className="font-medium text-white mb-3">{t('hd.geneKeys')}</h3>
+                  <div className="space-y-3 text-sm text-slate-300">
+                    <p>
+                      {language === 'sk'
+                        ? <>Génové kľúče (Gene Keys) sú systém sebapoznania vytvorený Richardom Ruddom. Vychádzajú z 64 hexagramov I-Ťing — rovnako ako brány v Human Designe. Každá brána, ktorú máš aktívnu vo svojom dizajne, je zároveň <strong className="text-white">génový kľúč</strong> — cesta transformácie od nevedomého vzorca (tieň) cez vedomé žitie (dar) k najvyššiemu potenciálu (siddhi).</>
+                        : <>Gene Keys is a self-knowledge system created by Richard Rudd. They stem from the 64 hexagrams of the I Ching — the same as gates in Human Design. Each gate active in your design is also a <strong className="text-white">Gene Key</strong> — a path of transformation from an unconscious pattern (shadow) through conscious living (gift) to the highest potential (siddhi).</>}
+                    </p>
+                    <p>
+                      {language === 'sk'
+                        ? <>Každá brána v tvojom dizajne má <strong className="text-white">tri frekvencie</strong> — ako tri poschodia toho istého domu:</>
+                        : <>Each gate in your design has <strong className="text-white">three frequencies</strong> — like three floors of the same house:</>}
+                    </p>
+                    <div className="grid grid-cols-3 gap-2">
+                      <div className="text-center p-2 rounded-lg bg-red-500/10 border border-red-500/20">
+                        <p className="text-xs font-bold text-red-300">{language === 'sk' ? 'Tieň' : 'Shadow'}</p>
+                        <p className="text-[10px] text-slate-400">{language === 'sk' ? 'Keď si pod tlakom, nevedomý. Kde „uviazneš".' : 'When under pressure, unconscious. Where you get "stuck".'}</p>
                       </div>
-                      <p className="text-xs text-slate-500 italic">
-                        {language === 'sk'
-                          ? 'Prakticky: rozpoznaj tieň (bez súdenia), žij dar (vedomá voľba). Siddhi príde samo, keď prestaneš tlačiť.'
-                          : 'Practically: recognize the shadow (without judgment), live the gift (conscious choice). Siddhi comes on its own when you stop pushing.'}
-                      </p>
+                      <div className="text-center p-2 rounded-lg bg-amber-500/10 border border-amber-500/20">
+                        <p className="text-xs font-bold text-amber-300">{language === 'sk' ? 'Dar' : 'Gift'}</p>
+                        <p className="text-[10px] text-slate-400">{language === 'sk' ? 'Keď si vedomý a autentický. Tvoja sila.' : 'When conscious and authentic. Your strength.'}</p>
+                      </div>
+                      <div className="text-center p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+                        <p className="text-xs font-bold text-emerald-300">Siddhi</p>
+                        <p className="text-[10px] text-slate-400">{language === 'sk' ? 'Najvyššia forma. Vzácna, ale ukazuje smer.' : 'Highest form. Rare, but shows the direction.'}</p>
+                      </div>
                     </div>
-                  </details>
+                    <p className="text-xs text-slate-500 italic">
+                      {language === 'sk'
+                        ? 'Prakticky: rozpoznaj tieň (bez súdenia), žij dar (vedomá voľba). Siddhi príde samo, keď prestaneš tlačiť.'
+                        : 'Practically: recognize the shadow (without judgment), live the gift (conscious choice). Siddhi comes on its own when you stop pushing.'}
+                    </p>
+                  </div>
                 </GlassCard>
 
-                {/* Primárne kľúče — Slnko + Zem (najdôležitejšie) */}
+                {/* Primárne kľúče — Tvoje čítanie */}
                 {primaryKeys.length > 0 && (
                   <GlassCard glow>
-                    <h3 className="font-medium text-white mb-2">{language === 'sk' ? 'Tvoje hlavné génové kľúče' : 'Your main Gene Keys'}</h3>
-                    <p className="text-xs text-slate-500 mb-4">
-                      {language === 'sk'
-                        ? <>Tieto sú z tvojho vedomého Slnka a Zeme — definujú tvoju <strong>životnú tému</strong>. Ak pracuješ len s dvoma kľúčmi, vyber si tieto.</>
-                        : <>These come from your conscious Sun and Earth — they define your <strong>life theme</strong>. If you work with only two keys, choose these.</>}
-                    </p>
+                    <details open>
+                      <summary className="cursor-pointer hover:text-indigo-300 transition-colors">
+                        <span className="font-medium text-white">{language === 'sk' ? 'Tvoje čítanie — tvoje hlavné génové kľúče' : 'Your reading — your main Gene Keys'}</span>
+                      </summary>
+                      <p className="text-xs text-slate-500 mt-2 mb-4">
+                        {language === 'sk'
+                          ? <>Tieto sú z tvojho vedomého Slnka a Zeme — definujú tvoju <strong>životnú tému</strong>. Ak pracuješ len s dvoma kľúčmi, vyber si tieto.</>
+                          : <>These come from your conscious Sun and Earth — they define your <strong>life theme</strong>. If you work with only two keys, choose these.</>}
+                      </p>
                     <div className="space-y-4">
                       {primaryKeys.map(gk => (
                         <div key={gk.gate} className="p-4 rounded-xl bg-indigo-500/10 border border-indigo-500/30">
@@ -938,6 +937,7 @@ export function HumanDesignPage() {
                         </div>
                       ))}
                     </div>
+                    </details>
                   </GlassCard>
                 )}
 

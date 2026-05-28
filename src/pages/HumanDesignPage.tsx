@@ -845,10 +845,11 @@ export function HumanDesignPage() {
             const geneKeysList: GeneKey[] = getGeneKeysForGates(allGates, language);
             if (geneKeysList.length === 0) return null;
 
-            // Najdôležitejšie: Slnko personality + Slnko design (inkarnačný kríž)
+            // 3 hlavné: Slnko (Life's Work), Zem (Evolution), Mars (Radiance)
             const sunGate = result.personalityGates.find(g => g.planet === 'Slnko')?.gate;
             const earthGate = result.personalityGates.find(g => g.planet === 'Zem')?.gate;
-            const primaryGates = [sunGate, earthGate].filter((g): g is number => g !== undefined);
+            const marsGate = result.personalityGates.find(g => g.planet === 'Mars')?.gate;
+            const primaryGates = [sunGate, earthGate, marsGate].filter((g): g is number => g !== undefined);
             const primaryKeys = geneKeysList.filter(gk => primaryGates.includes(gk.gate));
             const secondaryKeys = geneKeysList.filter(gk => !primaryGates.includes(gk.gate));
 
@@ -898,8 +899,8 @@ export function HumanDesignPage() {
                       </summary>
                       <p className="text-xs text-slate-500 mt-2 mb-4">
                         {language === 'sk'
-                          ? <>Tieto sú z tvojho vedomého Slnka a Zeme — definujú tvoju <strong>životnú tému</strong>. Ak pracuješ len s dvoma kľúčmi, vyber si tieto.</>
-                          : <>These come from your conscious Sun and Earth — they define your <strong>life theme</strong>. If you work with only two keys, choose these.</>}
+                          ? <>Tieto tri kľúče tvoria tvoju <strong>Aktivačnú sekvenciu</strong> — Slnko (životné dielo), Zem (zakotvenie) a Mars (vyžarovanie). Sú najdôležitejšie pre tvoju transformáciu.</>
+                          : <>These three keys form your <strong>Activation Sequence</strong> — Sun (life's work), Earth (grounding) and Mars (radiance). They are the most important for your transformation.</>}
                       </p>
                     <div className="space-y-4">
                       {primaryKeys.map(gk => (
@@ -908,7 +909,7 @@ export function HumanDesignPage() {
                             <span className="w-9 h-9 rounded-full bg-indigo-500/30 text-indigo-200 font-bold flex items-center justify-center">{gk.gate}</span>
                             <div>
                               <p className="text-sm font-medium text-white">{language === 'sk' ? 'Génový kľúč' : 'Gene Key'} {gk.gate}</p>
-                              <p className="text-[10px] text-slate-400">{gk.gate === sunGate ? (language === 'sk' ? 'Vedomé Slnko — tvoja hlavná životná téma' : 'Conscious Sun — your main life theme') : (language === 'sk' ? 'Vedomá Zem — tvoje zakotvenie' : 'Conscious Earth — your grounding')}</p>
+                              <p className="text-[10px] text-slate-400">{gk.gate === sunGate ? (language === 'sk' ? 'Vedomé Slnko — Life\'s Work (životné dielo)' : 'Conscious Sun — Life\'s Work') : gk.gate === earthGate ? (language === 'sk' ? 'Vedomá Zem — Evolution (zakotvenie)' : 'Conscious Earth — Evolution (grounding)') : (language === 'sk' ? 'Vedomý Mars — Radiance (vyžarovanie)' : 'Conscious Mars — Radiance')}</p>
                             </div>
                           </div>
 

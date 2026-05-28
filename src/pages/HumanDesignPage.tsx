@@ -4,7 +4,7 @@ import { useSubject } from '../hooks/useSubject';
 import { GlassCard } from '../components/GlassCard';
 import { EnergyCard } from '../components/EnergyCard';
 import { DateInput } from '../components/DateInput';
-import { calculateHumanDesign, CENTER_THEMES } from '../engine/humanDesignEngine';
+import { calculateHumanDesign, CENTER_THEMES, GATES_BY_CENTER } from '../engine/humanDesignEngine';
 import type { HumanDesignResult } from '../engine/humanDesignEngine';
 import { Bodygraph } from '../components/Bodygraph';
 import { motion } from 'framer-motion';
@@ -903,13 +903,17 @@ export function HumanDesignPage() {
                           : <>These three keys form your <strong>Activation Sequence</strong> — Sun (life's work), Earth (grounding) and Mars (radiance). They are the most important for your transformation.</>}
                       </p>
                     <div className="space-y-4">
-                      {primaryKeys.map(gk => (
+                      {primaryKeys.map(gk => {
+                        const center = Object.entries(GATES_BY_CENTER).find(([, gates]) => gates.includes(gk.gate))?.[0] || '';
+                        const line = result.personalityGates.find(g => g.gate === gk.gate)?.line || result.designGates.find(g => g.gate === gk.gate)?.line || 0;
+                        return (
                         <div key={gk.gate} className="p-4 rounded-xl bg-indigo-500/10 border border-indigo-500/30">
                           <div className="flex items-center gap-2 mb-3">
                             <span className="w-9 h-9 rounded-full bg-indigo-500/30 text-indigo-200 font-bold flex items-center justify-center">{gk.gate}</span>
                             <div>
-                              <p className="text-sm font-medium text-white">{language === 'sk' ? 'Génový kľúč' : 'Gene Key'} {gk.gate}</p>
+                              <p className="text-sm font-medium text-white">{language === 'sk' ? 'Génový kľúč' : 'Gene Key'} {gk.gate}{line ? `.${line}` : ''}</p>
                               <p className="text-[10px] text-slate-400">{gk.gate === sunGate ? (language === 'sk' ? 'Vedomé Slnko — Life\'s Work (životné dielo)' : 'Conscious Sun — Life\'s Work') : gk.gate === earthGate ? (language === 'sk' ? 'Vedomá Zem — Evolution (zakotvenie)' : 'Conscious Earth — Evolution (grounding)') : (language === 'sk' ? 'Vedomý Mars — Radiance (vyžarovanie)' : 'Conscious Mars — Radiance')}</p>
+                              {center && <p className="text-[10px] text-indigo-300">{language === 'sk' ? `Brána ${gk.gate} v centre ${center}` : `Gate ${gk.gate} in ${center} center`}</p>}
                             </div>
                           </div>
 
@@ -936,7 +940,8 @@ export function HumanDesignPage() {
                             </p>
                           </div>
                         </div>
-                      ))}
+                        );
+                      })}
                     </div>
                     </details>
                   </GlassCard>

@@ -17,6 +17,7 @@ import { PartnerBodygraph } from '../components/PartnerBodygraph';
 import { getGeneKeyByGate } from '../data/geneKeys';
 import { findCity, getTimezoneFromCoords } from '../data/cities';
 import { motion } from 'framer-motion';
+import { safeGet, safeSet, safeRemove } from '../utils/safeStorage';
 
 type Mode = 'partner' | 'family' | 'astro' | 'constellation';
 
@@ -352,20 +353,20 @@ function getAspectMeaning(planet1: string, planet2: string, nature: string, lang
 
 function loadSavedPartners(): { p1: PersonInput; p2: PersonInput } | null {
   try {
-    const raw = localStorage.getItem('relationships-partners');
+    const raw = safeGet('relationships-partners');
     return raw ? JSON.parse(raw) : null;
   } catch { return null; }
 }
 
 export function RelationshipsPage() {
   const saved = loadSavedPartners();
-  const savedFamily = (() => { try { const r = localStorage.getItem('relationships-family'); return r ? JSON.parse(r) : null; } catch { return null; } })();
-  const savedAstro = (() => { try { const r = localStorage.getItem('relationships-astro'); return r ? JSON.parse(r) : null; } catch { return null; } })();
+  const savedFamily = (() => { try { const r = safeGet('relationships-family'); return r ? JSON.parse(r) : null; } catch { return null; } })();
+  const savedAstro = (() => { try { const r = safeGet('relationships-astro'); return r ? JSON.parse(r) : null; } catch { return null; } })();
   const [mode, setModeState] = useState<Mode>(() => {
-    const savedMode = localStorage.getItem('relationships-mode');
+    const savedMode = safeGet('relationships-mode');
     return (savedMode === 'partner' || savedMode === 'family' || savedMode === 'astro' || savedMode === 'constellation') ? savedMode : 'partner';
   });
-  const setMode = (m: Mode) => { setModeState(m); localStorage.setItem('relationships-mode', m); };
+  const setMode = (m: Mode) => { setModeState(m); safeSet('relationships-mode', m); };
   const [partner1, setPartner1] = useState<PersonInput>(saved?.p1 || emptyPerson());
   const [partner2, setPartner2] = useState<PersonInput>(saved?.p2 || emptyPerson());
   const [parent, setParent] = useState<PersonInput>(savedFamily?.parent || emptyPerson());
@@ -418,7 +419,7 @@ export function RelationshipsPage() {
   // Rodinná konštelácia
   const [editing, setEditing] = useState(false);
 
-  const savedConst = (() => { try { const r = localStorage.getItem('relationships-constellation'); return r ? JSON.parse(r) : null; } catch { return null; } })();
+  const savedConst = (() => { try { const r = safeGet('relationships-constellation'); return r ? JSON.parse(r) : null; } catch { return null; } })();
   const [constFather, setConstFather] = useState<PersonInput>(savedConst?.father || emptyPerson());
   const [constMother, setConstMother] = useState<PersonInput>(savedConst?.mother || emptyPerson());
   const [constChildren, setConstChildren] = useState<PersonInput[]>(savedConst?.children?.length ? savedConst.children : [emptyPerson()]);
@@ -492,7 +493,7 @@ export function RelationshipsPage() {
     ];
 
     setConstellationResult({ partnerCompat, fatherChildren, motherChildren, siblingCompats, familyNumbers });
-    localStorage.setItem('relationships-constellation', JSON.stringify({ father: constFather, mother: constMother, children: validKids }));
+    safeSet('relationships-constellation', JSON.stringify({ father: constFather, mother: constMother, children: validKids }));
   };
 
   const handlePartnerCalc = () => {
@@ -500,7 +501,7 @@ export function RelationshipsPage() {
     const p1 = calculateFullNumerology(parseInt(partner1.day, 10), parseInt(partner1.month, 10), parseInt(partner1.year, 10));
     const p2 = calculateFullNumerology(parseInt(partner2.day, 10), parseInt(partner2.month, 10), parseInt(partner2.year, 10));
     setCompatibility(calculatePartnerCompatibility(p1, p2, useStore.getState().language));
-    localStorage.setItem('relationships-partners', JSON.stringify({ p1: partner1, p2: partner2 }));
+    safeSet('relationships-partners', JSON.stringify({ p1: partner1, p2: partner2 }));
   };
 
   const handleAstroCalc = () => {
@@ -522,7 +523,7 @@ export function RelationshipsPage() {
       currentLang
     );
     setSynastryResult(result);
-    localStorage.setItem('relationships-astro', JSON.stringify({ p1: astroPartner1, p2: astroPartner2 }));
+    safeSet('relationships-astro', JSON.stringify({ p1: astroPartner1, p2: astroPartner2 }));
   };
 
   const handleFamilyCalc = () => {
@@ -537,7 +538,7 @@ export function RelationshipsPage() {
       return { child, result: calculateParentChild(parentNum, childNum, currentLangFamily) };
     });
     setFamilyResults(results);
-    localStorage.setItem('relationships-family', JSON.stringify({ parent, children: validChildren }));
+    safeSet('relationships-family', JSON.stringify({ parent, children: validChildren }));
   };
 
   const addChild = () => setChildren([...children, emptyPerson()]);
@@ -546,16 +547,16 @@ export function RelationshipsPage() {
   const reset = () => {
     if (mode === 'partner') {
       setPartner1(emptyPerson()); setPartner2(emptyPerson()); setCompatibility(null);
-      localStorage.removeItem('relationships-partners');
+      safeRemove('relationships-partners');
     } else if (mode === 'family') {
       setParent(emptyPerson()); setChildren([emptyPerson()]); setFamilyResults(null);
-      localStorage.removeItem('relationships-family');
+      safeRemove('relationships-family');
     } else if (mode === 'astro') {
       setAstroPartner1(emptyAstroPerson()); setAstroPartner2(emptyAstroPerson()); setSynastryResult(null);
-      localStorage.removeItem('relationships-astro');
+      safeRemove('relationships-astro');
     } else if (mode === 'constellation') {
       setConstFather(emptyPerson()); setConstMother(emptyPerson()); setConstChildren([emptyPerson()]); setConstellationResult(null);
-      localStorage.removeItem('relationships-constellation');
+      safeRemove('relationships-constellation');
     }
   };
 
@@ -590,6 +591,48 @@ export function RelationshipsPage() {
     const d2 = calculateDevelopmentalNumerology(parseInt(partner2.day, 10), parseInt(partner2.month, 10), parseInt(partner2.year, 10));
     return { d1, d2 };
   }, [partner1, partner2]);
+
+  // Pre-compute family mode engine results (numerology + HD per child + parent HD)
+  const familyCalcs = useMemo(() => {
+    if (!familyResults || !isPersonValid(parent)) return null;
+    const parentCityHd = findCity(parent.birthPlace);
+    const parentTzHd = getTimezoneFromCoords(parentCityHd?.lat ?? 48.15, parentCityHd?.lon ?? 17.11);
+    const parentHd = calculateHumanDesign(parseInt(parent.day, 10), parseInt(parent.month, 10), parseInt(parent.year, 10), parent.hour ? parseInt(parent.hour, 10) : 12, parent.minute ? parseInt(parent.minute, 10) : 0, parentTzHd);
+    const parentNum = calculateFullNumerology(parseInt(parent.day, 10), parseInt(parent.month, 10), parseInt(parent.year, 10));
+    const childrenData = familyResults.map(({ child }) => {
+      const childNum = calculateFullNumerology(parseInt(child.day, 10), parseInt(child.month, 10), parseInt(child.year, 10));
+      const childDev = calculateDevelopmentalNumerology(parseInt(child.day, 10), parseInt(child.month, 10), parseInt(child.year, 10));
+      const childCityHd = findCity(child.birthPlace);
+      const childTzHd = getTimezoneFromCoords(childCityHd?.lat ?? 48.15, childCityHd?.lon ?? 17.11);
+      const childHd = calculateHumanDesign(parseInt(child.day, 10), parseInt(child.month, 10), parseInt(child.year, 10), child.hour ? parseInt(child.hour, 10) : 12, child.minute ? parseInt(child.minute, 10) : 0, childTzHd);
+      return { childNum, childDev, childHd };
+    });
+    return { parentHd, parentNum, childrenData };
+  }, [familyResults, parent]);
+
+  // Pre-compute constellation mode engine results (father/mother HD+num, children HD+num+dev)
+  const constellationCalcs = useMemo(() => {
+    if (!constellationResult) return null;
+    const fatherCityHd = findCity(constFather.birthPlace);
+    const motherCityHd = findCity(constMother.birthPlace);
+    const fatherTzHd = getTimezoneFromCoords(fatherCityHd?.lat ?? 48.15, fatherCityHd?.lon ?? 17.11);
+    const motherTzHd = getTimezoneFromCoords(motherCityHd?.lat ?? 48.15, motherCityHd?.lon ?? 17.11);
+    const hdF = calculateHumanDesign(parseInt(constFather.day, 10), parseInt(constFather.month, 10), parseInt(constFather.year, 10), constFather.hour ? parseInt(constFather.hour, 10) : 12, constFather.minute ? parseInt(constFather.minute, 10) : 0, fatherTzHd);
+    const hdM = calculateHumanDesign(parseInt(constMother.day, 10), parseInt(constMother.month, 10), parseInt(constMother.year, 10), constMother.hour ? parseInt(constMother.hour, 10) : 12, constMother.minute ? parseInt(constMother.minute, 10) : 0, motherTzHd);
+    const numF = calculateFullNumerology(parseInt(constFather.day, 10), parseInt(constFather.month, 10), parseInt(constFather.year, 10));
+    const numM = calculateFullNumerology(parseInt(constMother.day, 10), parseInt(constMother.month, 10), parseInt(constMother.year, 10));
+    // Pre-compute per-child data for father-children, mother-children, siblings sections
+    const allChildren = constellationResult.fatherChildren.map(({ child }) => child);
+    const childrenData = allChildren.map(child => {
+      const cn = calculateFullNumerology(parseInt(child.day, 10), parseInt(child.month, 10), parseInt(child.year, 10));
+      const cd = calculateDevelopmentalNumerology(parseInt(child.day, 10), parseInt(child.month, 10), parseInt(child.year, 10));
+      const chCity = findCity(child.birthPlace);
+      const chTz = getTimezoneFromCoords(chCity?.lat ?? 48.15, chCity?.lon ?? 17.11);
+      const chHd = calculateHumanDesign(parseInt(child.day, 10), parseInt(child.month, 10), parseInt(child.year, 10), child.hour ? parseInt(child.hour, 10) : 12, child.minute ? parseInt(child.minute, 10) : 0, chTz);
+      return { cn, cd, chHd };
+    });
+    return { hdF, hdM, numF, numM, childrenData };
+  }, [constellationResult, constFather, constMother]);
 
   const { t, language } = useTranslation();
   const { profiles, activeProfileId } = useStore(
@@ -1057,22 +1100,12 @@ export function RelationshipsPage() {
           </div>
 
           {/* Human Design composite comparison + Gene Keys */}
-          {(() => {
-            const pCity1 = findCity(partner1.birthPlace);
-            const pCity2 = findCity(partner2.birthPlace);
-            const pTz1 = getTimezoneFromCoords(pCity1?.lat ?? 48.15, pCity1?.lon ?? 17.11);
-            const pTz2 = getTimezoneFromCoords(pCity2?.lat ?? 48.15, pCity2?.lon ?? 17.11);
-            const hd1 = calculateHumanDesign(parseInt(partner1.day, 10), parseInt(partner1.month, 10), parseInt(partner1.year, 10), partner1.hour !== '' ? parseInt(partner1.hour, 10) : 12, partner1.minute !== '' ? parseInt(partner1.minute, 10) : 0, pTz1);
-            const hd2 = calculateHumanDesign(parseInt(partner2.day, 10), parseInt(partner2.month, 10), parseInt(partner2.year, 10), partner2.hour !== '' ? parseInt(partner2.hour, 10) : 12, partner2.minute !== '' ? parseInt(partner2.minute, 10) : 0, pTz2);
-            return (
-              <>
-              <GlassCard>
-                <h3 className="font-medium text-purple-300 mb-3">{t('rel.hdCompatibility')}</h3>
-                <PartnerBodygraph result1={hd1} result2={hd2} name1={partner1.name} name2={partner2.name} />
-              </GlassCard>
-              </>
-            );
-          })()}
+          {partnerAstroHD && (
+            <GlassCard>
+              <h3 className="font-medium text-purple-300 mb-3">{t('rel.hdCompatibility')}</h3>
+              <PartnerBodygraph result1={partnerAstroHD.hd1} result2={partnerAstroHD.hd2} name1={partner1.name} name2={partner2.name} />
+            </GlassCard>
+          )}
 
           <div className="flex justify-end">
             <button
@@ -1165,8 +1198,8 @@ export function RelationshipsPage() {
           <p className="text-sm text-slate-600">{t('rel.parent')}: <span className="text-white font-medium">{parent.name}</span></p>
 
           {familyResults.map(({ child, result }, idx) => {
-            const childNum = calculateFullNumerology(parseInt(child.day, 10), parseInt(child.month, 10), parseInt(child.year, 10));
-            const childDev = calculateDevelopmentalNumerology(parseInt(child.day, 10), parseInt(child.month, 10), parseInt(child.year, 10));
+            const childNum = familyCalcs!.childrenData[idx].childNum;
+            const childDev = familyCalcs!.childrenData[idx].childDev;
             return (
             <motion.div key={idx} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.1 }}>
               <GlassCard>
@@ -1231,8 +1264,7 @@ export function RelationshipsPage() {
 
                   {/* Jazyky lásky rodič↔dieťa — komunikačný štýl */}
                   {(() => {
-                    const parentNum = calculateFullNumerology(parseInt(parent.day, 10), parseInt(parent.month, 10), parseInt(parent.year, 10));
-                    const parentLangs = parentNum.loveLanguages;
+                    const parentLangs = familyCalcs!.parentNum.loveLanguages;
                     const childLangs = childNum.loveLanguages;
                     if (!parentLangs?.length || !childLangs?.length) return null;
                     const parentTop = parentLangs[0].language;
@@ -1262,12 +1294,8 @@ export function RelationshipsPage() {
 
                   {/* HD porovnanie rodič↔dieťa */}
                   {(() => {
-                    const parentCityHd = findCity(parent.birthPlace);
-                    const childCityHd = findCity(child.birthPlace);
-                    const parentTzHd = getTimezoneFromCoords(parentCityHd?.lat ?? 48.15, parentCityHd?.lon ?? 17.11);
-                    const childTzHd = getTimezoneFromCoords(childCityHd?.lat ?? 48.15, childCityHd?.lon ?? 17.11);
-                    const parentHd = calculateHumanDesign(parseInt(parent.day, 10), parseInt(parent.month, 10), parseInt(parent.year, 10), parent.hour ? parseInt(parent.hour, 10) : 12, parent.minute ? parseInt(parent.minute, 10) : 0, parentTzHd);
-                    const childHd = calculateHumanDesign(parseInt(child.day, 10), parseInt(child.month, 10), parseInt(child.year, 10), child.hour ? parseInt(child.hour, 10) : 12, child.minute ? parseInt(child.minute, 10) : 0, childTzHd);
+                    const parentHd = familyCalcs!.parentHd;
+                    const childHd = familyCalcs!.childrenData[idx].childHd;
                     const sharedDefined = parentHd.definedCenters.filter(c => childHd.definedCenters.includes(c));
                     const parentOnly = parentHd.definedCenters.filter(c => !childHd.definedCenters.includes(c));
                     const childOnly = childHd.definedCenters.filter(c => !parentHd.definedCenters.includes(c));
@@ -1351,15 +1379,11 @@ export function RelationshipsPage() {
               <h3 className="font-medium text-slate-900 mb-3">{t('rel.siblingInteractions')}</h3>
               {familyResults.map(({ child: c1 }, i) =>
                 familyResults.slice(i + 1).map(({ child: c2 }, j) => {
-                  const n1 = calculateFullNumerology(parseInt(c1.day, 10), parseInt(c1.month, 10), parseInt(c1.year, 10));
-                  const n2 = calculateFullNumerology(parseInt(c2.day, 10), parseInt(c2.month, 10), parseInt(c2.year, 10));
+                  const n1 = familyCalcs!.childrenData[i].childNum;
+                  const n2 = familyCalcs!.childrenData[i + 1 + j].childNum;
                   const compat = calculatePartnerCompatibility(n1, n2, language);
-                  const c1City = findCity(c1.birthPlace);
-                  const c2City = findCity(c2.birthPlace);
-                  const c1Tz = getTimezoneFromCoords(c1City?.lat ?? 48.15, c1City?.lon ?? 17.11);
-                  const c2Tz = getTimezoneFromCoords(c2City?.lat ?? 48.15, c2City?.lon ?? 17.11);
-                  const hd1 = calculateHumanDesign(parseInt(c1.day, 10), parseInt(c1.month, 10), parseInt(c1.year, 10), c1.hour ? parseInt(c1.hour, 10) : 12, c1.minute ? parseInt(c1.minute, 10) : 0, c1Tz);
-                  const hd2 = calculateHumanDesign(parseInt(c2.day, 10), parseInt(c2.month, 10), parseInt(c2.year, 10), c2.hour ? parseInt(c2.hour, 10) : 12, c2.minute ? parseInt(c2.minute, 10) : 0, c2Tz);
+                  const hd1 = familyCalcs!.childrenData[i].childHd;
+                  const hd2 = familyCalcs!.childrenData[i + 1 + j].childHd;
                   const g1 = new Set([...hd1.personalityGates.map(g => g.gate), ...hd1.designGates.map(g => g.gate)]);
                   const g2 = new Set([...hd2.personalityGates.map(g => g.gate), ...hd2.designGates.map(g => g.gate)]);
                   const childGK = [...g1].filter(g => g2.has(g)).slice(0, 3).map(g => getGeneKeyByGate(g, language)).filter(Boolean);
@@ -1977,25 +2001,17 @@ export function RelationshipsPage() {
           </GlassCard>
 
           {/* HD rodičov */}
-          {(() => {
-            const fatherCityHd = findCity(constFather.birthPlace);
-            const motherCityHd = findCity(constMother.birthPlace);
-            const fatherTzHd = getTimezoneFromCoords(fatherCityHd?.lat ?? 48.15, fatherCityHd?.lon ?? 17.11);
-            const motherTzHd = getTimezoneFromCoords(motherCityHd?.lat ?? 48.15, motherCityHd?.lon ?? 17.11);
-            const hdF = calculateHumanDesign(parseInt(constFather.day, 10), parseInt(constFather.month, 10), parseInt(constFather.year, 10), constFather.hour ? parseInt(constFather.hour, 10) : 12, constFather.minute ? parseInt(constFather.minute, 10) : 0, fatherTzHd);
-            const hdM = calculateHumanDesign(parseInt(constMother.day, 10), parseInt(constMother.month, 10), parseInt(constMother.year, 10), constMother.hour ? parseInt(constMother.hour, 10) : 12, constMother.minute ? parseInt(constMother.minute, 10) : 0, motherTzHd);
-            return (
-              <GlassCard>
-                <h3 className="font-medium text-purple-300 mb-3">{t('rel.hdParentPair')}</h3>
-                <PartnerBodygraph result1={hdF} result2={hdM} name1={constFather.name} name2={constMother.name} />
-              </GlassCard>
-            );
-          })()}
+          {constellationCalcs && (
+            <GlassCard>
+              <h3 className="font-medium text-purple-300 mb-3">{t('rel.hdParentPair')}</h3>
+              <PartnerBodygraph result1={constellationCalcs.hdF} result2={constellationCalcs.hdM} name1={constFather.name} name2={constMother.name} />
+            </GlassCard>
+          )}
 
           {/* Charakterová synastria rodičov */}
           {(() => {
-            const numF = calculateFullNumerology(parseInt(constFather.day, 10), parseInt(constFather.month, 10), parseInt(constFather.year, 10));
-            const numM = calculateFullNumerology(parseInt(constMother.day, 10), parseInt(constMother.month, 10), parseInt(constMother.year, 10));
+            if (!constellationCalcs) return null;
+            const { numF, numM } = constellationCalcs;
             const sharedFull = numF.fullPlanes.filter(p => numM.fullPlanes.includes(p));
             const sharedEmpty = numF.emptyPlanes.filter(p => numM.emptyPlanes.includes(p));
             const sharedIsolated = numF.isolatedNumbers.filter(n => numM.isolatedNumbers.includes(n));
@@ -2080,14 +2096,10 @@ export function RelationshipsPage() {
             <h3 className="font-medium text-slate-900 mb-3">{constFather.name} ↔ {t('rel.fatherChildren')}</h3>
             <div className="space-y-3">
               {constellationResult.fatherChildren.map(({ child, result: r }, idx) => {
-                const cn = calculateFullNumerology(parseInt(child.day, 10), parseInt(child.month, 10), parseInt(child.year, 10));
-                const cd = calculateDevelopmentalNumerology(parseInt(child.day, 10), parseInt(child.month, 10), parseInt(child.year, 10));
-                const fCityConst = findCity(constFather.birthPlace);
-                const chCityConst = findCity(child.birthPlace);
-                const fTzConst = getTimezoneFromCoords(fCityConst?.lat ?? 48.15, fCityConst?.lon ?? 17.11);
-                const chTzConst = getTimezoneFromCoords(chCityConst?.lat ?? 48.15, chCityConst?.lon ?? 17.11);
-                const fatherHd = calculateHumanDesign(parseInt(constFather.day, 10), parseInt(constFather.month, 10), parseInt(constFather.year, 10), constFather.hour ? parseInt(constFather.hour, 10) : 12, constFather.minute ? parseInt(constFather.minute, 10) : 0, fTzConst);
-                const childHd = calculateHumanDesign(parseInt(child.day, 10), parseInt(child.month, 10), parseInt(child.year, 10), child.hour ? parseInt(child.hour, 10) : 12, child.minute ? parseInt(child.minute, 10) : 0, chTzConst);
+                const cn = constellationCalcs!.childrenData[idx].cn;
+                const cd = constellationCalcs!.childrenData[idx].cd;
+                const fatherHd = constellationCalcs!.hdF;
+                const childHd = constellationCalcs!.childrenData[idx].chHd;
                 const sharedDef = fatherHd.definedCenters.filter(c => childHd.definedCenters.includes(c));
                 const fatherOnly = fatherHd.definedCenters.filter(c => !childHd.definedCenters.includes(c));
                 const fGates = new Set([...fatherHd.personalityGates.map(g => g.gate), ...fatherHd.designGates.map(g => g.gate)]);
@@ -2137,14 +2149,10 @@ export function RelationshipsPage() {
             <h3 className="font-medium text-slate-900 mb-3">{constMother.name} ↔ {t('rel.motherChildren')}</h3>
             <div className="space-y-3">
               {constellationResult.motherChildren.map(({ child, result: r }, idx) => {
-                const cn = calculateFullNumerology(parseInt(child.day, 10), parseInt(child.month, 10), parseInt(child.year, 10));
-                const cd = calculateDevelopmentalNumerology(parseInt(child.day, 10), parseInt(child.month, 10), parseInt(child.year, 10));
-                const mCityConst = findCity(constMother.birthPlace);
-                const mchCityConst = findCity(child.birthPlace);
-                const mTzConst = getTimezoneFromCoords(mCityConst?.lat ?? 48.15, mCityConst?.lon ?? 17.11);
-                const mchTzConst = getTimezoneFromCoords(mchCityConst?.lat ?? 48.15, mchCityConst?.lon ?? 17.11);
-                const motherHd = calculateHumanDesign(parseInt(constMother.day, 10), parseInt(constMother.month, 10), parseInt(constMother.year, 10), constMother.hour ? parseInt(constMother.hour, 10) : 12, constMother.minute ? parseInt(constMother.minute, 10) : 0, mTzConst);
-                const childHd = calculateHumanDesign(parseInt(child.day, 10), parseInt(child.month, 10), parseInt(child.year, 10), child.hour ? parseInt(child.hour, 10) : 12, child.minute ? parseInt(child.minute, 10) : 0, mchTzConst);
+                const cn = constellationCalcs!.childrenData[idx].cn;
+                const cd = constellationCalcs!.childrenData[idx].cd;
+                const motherHd = constellationCalcs!.hdM;
+                const childHd = constellationCalcs!.childrenData[idx].chHd;
                 const sharedDef = motherHd.definedCenters.filter(c => childHd.definedCenters.includes(c));
                 const motherOnly = motherHd.definedCenters.filter(c => !childHd.definedCenters.includes(c));
                 const mGates = new Set([...motherHd.personalityGates.map(g => g.gate), ...motherHd.designGates.map(g => g.gate)]);
@@ -2198,15 +2206,13 @@ export function RelationshipsPage() {
               </p>
               <div className="space-y-3">
                 {constellationResult.siblingCompats.map(({ child1, child2, compat }, idx) => {
-                  const n1 = calculateFullNumerology(parseInt(child1.day, 10), parseInt(child1.month, 10), parseInt(child1.year, 10));
-                  const n2 = calculateFullNumerology(parseInt(child2.day, 10), parseInt(child2.month, 10), parseInt(child2.year, 10));
+                  const c1Idx = constellationResult.fatherChildren.findIndex(fc => fc.child === child1);
+                  const c2Idx = constellationResult.fatherChildren.findIndex(fc => fc.child === child2);
+                  const n1 = constellationCalcs!.childrenData[c1Idx >= 0 ? c1Idx : 0].cn;
+                  const n2 = constellationCalcs!.childrenData[c2Idx >= 0 ? c2Idx : 0].cn;
                   const relationshipGoal = reduceToSingle(n1.lifePathNumber + n2.lifePathNumber);
-                  const s1City = findCity(child1.birthPlace);
-                  const s2City = findCity(child2.birthPlace);
-                  const s1Tz = getTimezoneFromCoords(s1City?.lat ?? 48.15, s1City?.lon ?? 17.11);
-                  const s2Tz = getTimezoneFromCoords(s2City?.lat ?? 48.15, s2City?.lon ?? 17.11);
-                  const hd1 = calculateHumanDesign(parseInt(child1.day, 10), parseInt(child1.month, 10), parseInt(child1.year, 10), child1.hour ? parseInt(child1.hour, 10) : 12, child1.minute ? parseInt(child1.minute, 10) : 0, s1Tz);
-                  const hd2 = calculateHumanDesign(parseInt(child2.day, 10), parseInt(child2.month, 10), parseInt(child2.year, 10), child2.hour ? parseInt(child2.hour, 10) : 12, child2.minute ? parseInt(child2.minute, 10) : 0, s2Tz);
+                  const hd1 = constellationCalcs!.childrenData[c1Idx >= 0 ? c1Idx : 0].chHd;
+                  const hd2 = constellationCalcs!.childrenData[c2Idx >= 0 ? c2Idx : 0].chHd;
                   const g1 = new Set([...hd1.personalityGates.map(g => g.gate), ...hd1.designGates.map(g => g.gate)]);
                   const g2 = new Set([...hd2.personalityGates.map(g => g.gate), ...hd2.designGates.map(g => g.gate)]);
                   const siblingGK = [...g1].filter(g => g2.has(g)).slice(0, 3).map(g => getGeneKeyByGate(g, language)).filter(Boolean);

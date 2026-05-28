@@ -132,15 +132,35 @@ export function Dashboard() {
 
   const dailyRituals = useMemo(() => getDailyRituals(language), [language]);
 
+  const biorhythm = useMemo(() => {
+    if (!profile) return null;
+    return calculateBiorhythm(profile.birthDay, profile.birthMonth, profile.birthYear);
+  }, [profile]);
+
   const mantraTone: MantraTone = useMemo(() => {
-    if (!profile) return 'neutral';
-    const br = calculateBiorhythm(profile.birthDay, profile.birthMonth, profile.birthYear);
-    const hasCritical = br.physicalPhase === 'critical' || br.emotionalPhase === 'critical' || br.intellectualPhase === 'critical';
+    if (!biorhythm) return 'neutral';
+    const hasCritical = biorhythm.physicalPhase === 'critical' || biorhythm.emotionalPhase === 'critical' || biorhythm.intellectualPhase === 'critical';
     if (hasCritical) return 'grounding';
-    const hasPeak = br.physical > 60 || br.emotional > 60 || br.intellectual > 60;
+    const hasPeak = biorhythm.physical > 60 || biorhythm.emotional > 60 || biorhythm.intellectual > 60;
     if (hasPeak) return 'peak';
     return 'neutral';
-  }, [profile]);
+  }, [biorhythm]);
+
+  const calendarData = useMemo(() => {
+    if (!profile) return null;
+    const daysInMonth = new Date(currentYear, currentMonth, 0).getDate();
+    const startIdx = (new Date(currentYear, currentMonth - 1, 1).getDay() + 6) % 7;
+    const days: { day: number; odv: number; category: 'creative' | 'work' | 'heart' | 'inner' }[] = [];
+    for (let d = 1; d <= daysInMonth; d++) {
+      const dayOrv = calculateORV(profile.birthDay, profile.birthMonth, currentYear, currentMonth, d);
+      const dayOdv = calculateODV(dayOrv, d, currentMonth);
+      const category = (dayOdv === 1 || dayOdv === 3 || dayOdv === 8) ? 'creative' as const :
+                       (dayOdv === 4 || dayOdv === 9) ? 'work' as const :
+                       (dayOdv === 2 || dayOdv === 6) ? 'heart' as const : 'inner' as const;
+      days.push({ day: d, odv: dayOdv, category });
+    }
+    return { startIdx, days };
+  }, [profile, currentYear, currentMonth]);
 
   const nameDayInfo = useMemo(() => {
     if (language !== 'sk') return null;
@@ -353,8 +373,7 @@ export function Dashboard() {
               <span className="text-lg">〰️</span>
               <p className="text-xs text-slate-500 uppercase font-medium">{t('dashboard.biorhythm')}</p>
             </div>
-            {(() => {
-              const br = calculateBiorhythm(profile.birthDay, profile.birthMonth, profile.birthYear);
+            {biorhythm && (() => {
               const bar = (val: number, color: string) => (
                 <div className="flex items-center gap-2">
                   <div className="flex-1 h-2 rounded-full bg-slate-200 overflow-hidden">
@@ -367,20 +386,20 @@ export function Dashboard() {
                 <div className="space-y-2">
                   <div>
                     <p className="text-[10px] text-red-400 uppercase">{t('dashboard.physical')}</p>
-                    {bar(br.physical, br.physical > 0 ? 'bg-red-400' : 'bg-red-200')}
+                    {bar(biorhythm.physical, biorhythm.physical > 0 ? 'bg-red-400' : 'bg-red-200')}
                   </div>
                   <div>
                     <p className="text-[10px] text-blue-400 uppercase">{t('dashboard.emotional')}</p>
-                    {bar(br.emotional, br.emotional > 0 ? 'bg-blue-400' : 'bg-blue-200')}
+                    {bar(biorhythm.emotional, biorhythm.emotional > 0 ? 'bg-blue-400' : 'bg-blue-200')}
                   </div>
                   <div>
                     <p className="text-[10px] text-green-400 uppercase">{t('dashboard.intellectual')}</p>
-                    {bar(br.intellectual, br.intellectual > 0 ? 'bg-green-400' : 'bg-green-200')}
+                    {bar(biorhythm.intellectual, biorhythm.intellectual > 0 ? 'bg-green-400' : 'bg-green-200')}
                   </div>
                   <p className="text-[9px] text-slate-400 mt-1">
-                    {br.physicalPhase === 'critical' || br.emotionalPhase === 'critical' || br.intellectualPhase === 'critical'
+                    {biorhythm.physicalPhase === 'critical' || biorhythm.emotionalPhase === 'critical' || biorhythm.intellectualPhase === 'critical'
                       ? `⚠️ ${t('dashboard.bioTipCritical')}`
-                      : br.physical > 70 || br.intellectual > 70 || br.emotional > 70 ? `💪 ${t('dashboard.bioTipHigh')}`
+                      : biorhythm.physical > 70 || biorhythm.intellectual > 70 || biorhythm.emotional > 70 ? `💪 ${t('dashboard.bioTipHigh')}`
                       : `${t('dashboard.bioTipLow')}`}
                   </p>
                 </div>
@@ -620,40 +639,32 @@ export function Dashboard() {
                 {WEEKDAY_SHORT[language].map(d => (
                   <p key={d} className="text-[9px] text-slate-500 font-medium">{d}</p>
                 ))}
-                {(() => {
-                  const firstDay = new Date(currentYear, currentMonth - 1, 1);
-                  const daysInMonth = new Date(currentYear, currentMonth, 0).getDate();
-                  const startIdx = (firstDay.getDay() + 6) % 7;
-                  const cells = [];
-                  for (let i = 0; i < startIdx; i++) cells.push(<div key={`e${i}`} />);
-                  for (let d = 1; d <= daysInMonth; d++) {
-                    const dayOrv = calculateORV(profile.birthDay, profile.birthMonth, currentYear, currentMonth, d);
-                    const dayOdv = calculateODV(dayOrv, d, currentMonth);
-                    const isT = d === currentDay;
-                    const cat = (dayOdv === 1 || dayOdv === 3 || dayOdv === 8) ? 'creative' :
-                                (dayOdv === 4 || dayOdv === 9) ? 'work' :
-                                (dayOdv === 2 || dayOdv === 6) ? 'heart' : 'inner';
-                    cells.push(
-                      <div key={d} className={`p-0.5 rounded ${
-                        isT ? 'ring-2 ring-indigo-400' : ''
-                      } ${
-                        cat === 'creative' ? 'bg-green-500/15' :
-                        cat === 'work' ? 'bg-amber-500/15' :
-                        cat === 'heart' ? 'bg-rose-500/15' :
-                        'bg-violet-500/15'
-                      }`}>
-                        <p className="text-[10px] text-slate-700 font-medium">{d}</p>
-                        <p className={`text-xs font-bold ${
-                          cat === 'creative' ? 'text-green-600' :
-                          cat === 'work' ? 'text-amber-600' :
-                          cat === 'heart' ? 'text-rose-600' :
-                          'text-violet-600'
-                        }`}>{dayOdv}</p>
-                      </div>
-                    );
-                  }
-                  return cells;
-                })()}
+                {calendarData && (
+                  <>
+                    {Array.from({ length: calendarData.startIdx }, (_, i) => <div key={`e${i}`} />)}
+                    {calendarData.days.map(({ day, odv: dayOdv, category }) => {
+                      const isT = day === currentDay;
+                      return (
+                        <div key={day} className={`p-0.5 rounded ${
+                          isT ? 'ring-2 ring-indigo-400' : ''
+                        } ${
+                          category === 'creative' ? 'bg-green-500/15' :
+                          category === 'work' ? 'bg-amber-500/15' :
+                          category === 'heart' ? 'bg-rose-500/15' :
+                          'bg-violet-500/15'
+                        }`}>
+                          <p className="text-[10px] text-slate-700 font-medium">{day}</p>
+                          <p className={`text-xs font-bold ${
+                            category === 'creative' ? 'text-green-600' :
+                            category === 'work' ? 'text-amber-600' :
+                            category === 'heart' ? 'text-rose-600' :
+                            'text-violet-600'
+                          }`}>{dayOdv}</p>
+                        </div>
+                      );
+                    })}
+                  </>
+                )}
               </div>
               <div className="flex flex-wrap gap-3 mt-3 text-[10px] text-slate-500">
                 <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-green-500"></span>{t('dashboard.creative')}</span>

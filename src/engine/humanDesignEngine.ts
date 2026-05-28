@@ -1,5 +1,6 @@
 import * as Astronomy from 'astronomy-engine';
 import { memoize, birthKey } from './engineCache';
+import { getTrueNodeLongitude, getTimezoneOffset } from './astronomyHelpers';
 
 export type HDType = 'Manifestor' | 'Generátor' | 'Manifestujúci Generátor' | 'Projektor' | 'Reflektor';
 export type HDAuthority = 'Emocionálna' | 'Sakrálna' | 'Slezinová' | 'Ego' | 'Sebaprojektovaná' | 'Mentálna/Environmentálna' | 'Lunárna';
@@ -276,24 +277,6 @@ function getMoonLongitude(date: Date): number {
   return ecl.elon;
 }
 
-function getTrueNodeLongitude(date: Date): number {
-  // True Node so periodickými korekciami (presnejšie ako Mean Node)
-  const jd = date.getTime() / 86400000 + 2440587.5;
-  const T = (jd - 2451545.0) / 36525.0;
-  const meanOmega = 125.04452 - 1934.136261 * T + 0.0020708 * T * T + T * T * T / 450000;
-  const D = 297.8501921 + 445267.1114034 * T;
-  const M = 357.5291092 + 35999.0502909 * T;
-  const Mp = 134.9633964 + 477198.8675055 * T;
-  const F = 93.2720950 + 483202.0175233 * T;
-  const deg = Math.PI / 180;
-  const correction =
-    -1.4979 * Math.sin((2 * D - 2 * F) * deg) +
-    -0.1500 * Math.sin(M * deg) +
-    -0.1226 * Math.sin((2 * D) * deg) +
-    0.1176 * Math.sin((2 * F) * deg) +
-    -0.0801 * Math.sin((2 * Mp - 2 * F) * deg);
-  return (((meanOmega + correction) % 360) + 360) % 360;
-}
 
 function findDesignDate(birthDate: Date): Date {
   const natalSunLon = getSunLongitude(birthDate);
@@ -487,29 +470,13 @@ function getNotSelfTheme(type: HDType): HDNotSelfTheme {
   }
 }
 
-function getTimezoneOffsetHD(day: number, month: number, year: number, baseOffset: number): number {
-  // CET/CEST: Československo nemalo letný čas pred 1979
-  if (baseOffset === 1 || baseOffset === 2) {
-    if (year < 1979) return 1;
-    const marchLast = new Date(year, 2, 31);
-    const marchSunday = 31 - marchLast.getDay();
-    const octLast = new Date(year, 9, 31);
-    const octSunday = 31 - octLast.getDay();
-    const dayOfYear = Math.floor((new Date(year, month - 1, day).getTime() - new Date(year, 0, 1).getTime()) / 86400000) + 1;
-    const marchSundayDOY = Math.floor((new Date(year, 2, marchSunday).getTime() - new Date(year, 0, 1).getTime()) / 86400000) + 1;
-    const octSundayDOY = Math.floor((new Date(year, 9, octSunday).getTime() - new Date(year, 0, 1).getTime()) / 86400000) + 1;
-    if (dayOfYear >= marchSundayDOY && dayOfYear < octSundayDOY) return 2; // CEST
-    return 1; // CET
-  }
-  return baseOffset;
-}
 
 function _calculateHumanDesignImpl(
   day: number, month: number, year: number,
   hour: number = 12, minute: number = 0,
   timezoneOffsetHours: number = 1
 ): HumanDesignResult {
-  const tz = getTimezoneOffsetHD(day, month, year, timezoneOffsetHours);
+  const tz = getTimezoneOffset(day, month, year, timezoneOffsetHours);
   const utcHour = hour - tz;
   const birthDate = new Date(Date.UTC(year, month - 1, day, utcHour, minute));
   const designDate = findDesignDate(birthDate);

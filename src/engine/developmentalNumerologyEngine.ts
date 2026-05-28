@@ -1,3 +1,5 @@
+import { NEIGHBORS } from './numerologyEngine';
+
 // Vývojová numerológia (podľa knihy "Duchovná numerológia" – Lívia)
 // Zdroj výpočtu: prednáška Červenáka + kniha Lívie Mičkovej (Duchovná numerológia,
 // Duchovná numerológia pre deti). Postup:
@@ -51,8 +53,9 @@ export interface DevelopmentalNumerologyResult {
 }
 
 function reduceTwoDigit(n: number): number {
-  if (n < 10) return n;
-  return String(n).split('').reduce((s, d) => s + parseInt(d, 10), 0);
+  const abs = Math.abs(n);
+  if (abs < 10) return abs;
+  return String(abs).split('').reduce((s, d) => s + parseInt(d, 10), 0);
 }
 
 function digitsOf(n: number): number[] {
@@ -146,11 +149,6 @@ export function calculateDevelopmentalNumerology(
     oneCount === 0 ? 'none' : oneCount % 2 === 0 ? 'feminine' : 'masculine';
 
   // Izolované čísla — rovnaká logika ako v charakterovej (susedia na 3×3 mriežke)
-  const NEIGHBORS: Record<number, number[]> = {
-    1: [2, 4, 5], 2: [1, 3, 4, 5, 6], 3: [2, 5, 6],
-    4: [1, 2, 5, 7, 8], 5: [1, 2, 3, 4, 6, 7, 8, 9], 6: [2, 3, 5, 8, 9],
-    7: [4, 5, 8], 8: [4, 5, 6, 7, 9], 9: [5, 6, 8],
-  };
   const isolatedNumbers: number[] = [];
   for (let i = 1; i <= 9; i++) {
     if ((counts[i] || 0) > 0) {

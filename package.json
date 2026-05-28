@@ -10,8 +10,10 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
     "test:watch": "vitest",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "typecheck": "tsc --noEmit --project tsconfig.app.json"
   },
   "dependencies": {
     "astronomy-engine": "^2.1.19",

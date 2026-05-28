@@ -49,9 +49,11 @@ function AnimatedRoutes() {
   const showOnboarding = hasProfiles && !onboardingDone;
 
   return (
-    <AnimatePresence mode="wait">
-      {showOnboarding && <OnboardingTour />}
-      <Routes location={location} key={location.pathname}>
+    <>
+      <AnimatePresence>
+        {showOnboarding && <OnboardingTour />}
+      </AnimatePresence>
+      <Routes location={location}>
         <Route path="/" element={<MainLayout />}>
           <Route index element={<Dashboard />} />
           <Route
@@ -169,7 +171,7 @@ function AnimatedRoutes() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
       </Routes>
-    </AnimatePresence>
+    </>
   );
 }
 

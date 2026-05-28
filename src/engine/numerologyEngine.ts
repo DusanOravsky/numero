@@ -158,7 +158,7 @@ export function calculatePlanes(grid: { value: number; isBase: boolean }[][]): {
   return { full, empty };
 }
 
-const NEIGHBORS: Record<number, number[]> = {
+export const NEIGHBORS: Record<number, number[]> = {
   1: [2, 4, 5],
   2: [1, 3, 4, 5, 6],
   3: [2, 5, 6],

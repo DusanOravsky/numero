@@ -175,18 +175,43 @@ Anthropic Claude priamo z prehliadača (header `anthropic-dangerous-direct-brows
 - `404.html` pre SPA redirect na GitHub Pages
 - **URL: https://dusanoravsky.github.io/numero/**
 
-## TWA — Google Play distribúcia (v4.3.1)
+## TWA — Google Play distribúcia (v4.4.0)
 
 Android obal cez Trusted Web Activity (Bubblewrap). TWA otvára existujúcu PWA URL — žiadny natívny kód.
 
 - **Package:** `com.integralmap.app`
 - **App name:** Integral Map
+- **Play Console developer account:** 6568001312833923722
+- **Play Console app ID:** 4974241101388552570
+- **Stav:** Interné testovanie funguje, fullscreen (bez URL baru) ✓
 - **Projekt:** `twa/` (Bubblewrap-generated gradle projekt)
 - **Build:** výhradne cez GitHub Actions (`.github/workflows/build-twa.yml`, manual trigger `workflow_dispatch`)
 - **Keystore:** `twa/android.keystore` — NIKDY v gite, uložený ako GitHub Secret `TWA_KEYSTORE_BASE64`
-- **Digital Asset Links:** `public/.well-known/assetlinks.json` — SHA-256 fingerprint z Play Console App Signing (aktuálne PLACEHOLDER)
+- **Keystore heslo:** v GitHub Secret `TWA_KEYSTORE_PASSWORD` (= `TWA_KEY_PASSWORD`)
 - **Notifikácie:** `enableNotifications: true` — TWA deleguje Web Push na SW
 - **Lokálny build nefunguje** — firemný SSL proxy blokuje Gradle. Preto CI-only.
+
+### Digital Asset Links (assetlinks.json)
+
+TWA vyžaduje verifikáciu cez `https://{host}/.well-known/assetlinks.json`. Android **vždy** hľadá na root doméne, nie pod subpath (`/numero/`).
+
+- **Repo:** `DusanOravsky/dusanoravsky.github.io` (user-level GitHub Pages)
+- **Súbor:** `.well-known/assetlinks.json`
+- **Dôležité:** repo musí mať `.nojekyll` súbor (inak Jekyll ignoruje dot-directories)
+- **App signing SHA-256:** `8B:71:DA:8A:11:68:C8:00:B4:15:1D:5D:31:D1:75:21:A3:8D:7A:9B:3E:A2:7C:5C:98:79:AD:B9:A0:0A:A7:8C`
+- **Upload key SHA-256:** `57:D9:C1:65:DD:AF:94:BE:3B:6F:1F:9A:BB:F1:23:41:BB:02:8E:6D:BD:38:57:80:9E:0A:32:B3:B6:EF:03:0B`
+- Oba fingerprints sú v `sha256_cert_fingerprints` poli
+
+Kópia assetlinks je aj v `public/.well-known/assetlinks.json` (pre referenciu, ale tá sa nepoužíva — Android číta root).
+
+### Ďalšie kroky pre produkčné vydanie
+
+1. **Store listing** — názov, krátky popis (80 chars), plný popis (4000 chars), screenshoty (min 2, phone), feature graphic (1024×500)
+2. **Content rating** — vyplniť IARC dotazník
+3. **Cieľová skupina** — 18+ (ezoterický obsah)
+4. **Kategória** — Lifestyle alebo Health & Fitness
+5. **Kontaktné údaje** — email
+6. **Produkčné vydanie** — presunúť z interného testovania
 
 **GitHub Secrets:** `TWA_KEYSTORE_BASE64`, `TWA_KEYSTORE_PASSWORD`, `TWA_KEY_PASSWORD`
 
@@ -338,12 +363,14 @@ safeRemove('key');                          // boolean
 - Všetky módy: localStorage persistence, editing mode (✎ button), reset len pre aktívny tab
 - **Client picker** (v2.45.0+) — vo všetkých 4 módoch tlačidlo "📋 Vybrať z klientov" nad PersonForm; otvorí dropdown s klientmi + vlastným profilom. `clientToPerson()` helper konvertuje `Client` → `PersonInput` (string fields).
 
-## Dashboard (v2.59.0)
+## Dashboard (v4.4.0)
 
-Rozdelený na 3 vrstvy:
-- **Ranný brief** (vždy viditeľné) — privítanie, ODV/OMV/ORV (poradie: denná prvá), Jedna vec na dnes, Biorytmus + Kryštál dňa, Dnešná energia (sezónny kontext + rotujúca afirmácia)
-- **Detaily a inšpirácie** (`<details open>`) — Detail dennej energie (odvDescriptions), Detail mesačnej energie (omvDescriptions), Mantra/Citát/Tarot (s mesačnou kartou), Kalendár energie
+Rozdelený na 3 vrstvy (optimalizované pre mobile-first UX):
+- **Ranný brief** (vždy viditeľné) — privítanie, **ODV karta** (kompaktná, menší padding na mobile), **OMV+ORV pod `<details>`** s chevron ikonou (↓) a preview hodnotami, **🎯 Jedna vec na dnes** (hneď za ODV), Biorytmus + Kryštál dňa, **Mantra + Citát + Tarot**, Dnešná energia (sezónny kontext + rotujúca afirmácia)
+- **Detaily a inšpirácie** (`<details open>`) — Detail dennej energie (odvDescriptions), Detail mesačnej energie (omvDescriptions), Kalendár energie
 - **Hlbší profil** (`<details>` default closed) — Integrálny súhrn (ClientSummary), Export PDF
+
+**Mantra je napojená na biorytmus** (v4.4.0): `getDailyMantra(odv, date, lang, tone)` kde tone = `'grounding'` (kritická fáza biorytmu), `'peak'` (>60%), `'neutral'` (default). Grounding mantry sú z prvej tretiny poľa (pokojnejšie), peak z poslednej (akčné). Seed rotácia: `day*31 + month*7 + year` pre veľké skoky medzi dňami.
 
 Plus **Posledný klient shortcut** — amber karta hneď pod headerom, naviguje na `/clients/{id}` posledne otvoreného klienta (persisted v `localStorage['last-viewed-client']` cez `ClientDashboard` mount effect). Má ✕ dismiss button (v2.50.0+).
 

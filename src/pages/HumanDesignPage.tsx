@@ -307,13 +307,15 @@ export function HumanDesignPage() {
             )}
           </div>
 
-          <GlassCard>
-            <p className="text-sm text-slate-400">
-              <strong className="text-white">Human Design</strong> {language === 'sk'
-                ? 'je systém sebapoznania, ktorý kombinuje astrológiu, I-Ching, Kabalu, hinduistický systém čakier a kvantovú fyziku. Ukazuje, ako ste energeticky navrhnutí -- ako správne rozhodovať, kde máte konzistentnú energiu a kde ste otvorení vonkajším vplyvom.'
-                : 'is a self-knowledge system that combines astrology, I-Ching, Kabbalah, the Hindu chakra system, and quantum physics. It shows how you are energetically designed — how to make correct decisions, where you have consistent energy, and where you are open to external influences.'}
-            </p>
-          </GlassCard>
+          {activeTab === 'overview' && (
+            <GlassCard>
+              <p className="text-sm text-slate-400">
+                <strong className="text-white">Human Design</strong> {language === 'sk'
+                  ? 'je systém sebapoznania, ktorý kombinuje astrológiu, I-Ching, Kabalu, hinduistický systém čakier a kvantovú fyziku. Ukazuje, ako ste energeticky navrhnutí -- ako správne rozhodovať, kde máte konzistentnú energiu a kde ste otvorení vonkajším vplyvom.'
+                  : 'is a self-knowledge system that combines astrology, I-Ching, Kabbalah, the Hindu chakra system, and quantum physics. It shows how you are energetically designed — how to make correct decisions, where you have consistent energy, and where you are open to external influences.'}
+              </p>
+            </GlassCard>
+          )}
 
           {activeTab === 'overview' && <>
           {/* Jednoducho povedané — personalizované takeaway */}

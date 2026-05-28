@@ -4,7 +4,10 @@
     "target": {
       "namespace": "android_app",
       "package_name": "com.integralmap.app",
-      "sha256_cert_fingerprints": ["PLACEHOLDER:REPLACE_WITH_PLAY_APP_SIGNING_SHA256"]
+      "sha256_cert_fingerprints": [
+        "8B:71:DA:8A:11:68:C8:00:B4:15:1D:5D:31:D1:75:21:A3:8D:7A:9B:3E:A2:7C:5C:98:79:AD:B9:A0:0A:A7:8C",
+        "57:D9:C1:65:DD:AF:94:BE:3B:6F:1F:9A:BB:F1:23:41:BB:02:8E:6D:BD:38:57:80:9E:0A:32:B3:B6:EF:03:0B"
+      ]
     }
   }
 ]

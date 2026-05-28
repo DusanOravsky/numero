@@ -905,15 +905,25 @@ export function HumanDesignPage() {
                     <div className="space-y-4">
                       {primaryKeys.map(gk => {
                         const center = Object.entries(GATES_BY_CENTER).find(([, gates]) => gates.includes(gk.gate))?.[0] || '';
-                        const line = result.personalityGates.find(g => g.gate === gk.gate)?.line || result.designGates.find(g => g.gate === gk.gate)?.line || 0;
+                        const centerTheme = center ? CENTER_THEMES[center] || '' : '';
+                        const roleLabel = gk.gate === sunGate
+                          ? (language === 'sk' ? 'Tvoje životné dielo' : 'Your life\'s work')
+                          : gk.gate === earthGate
+                          ? (language === 'sk' ? 'Tvoje zakotvenie' : 'Your grounding')
+                          : (language === 'sk' ? 'Tvoje vyžarovanie' : 'Your radiance');
+                        const roleDesc = gk.gate === sunGate
+                          ? (language === 'sk' ? 'Hlavná téma, s ktorou pracuješ celý život' : 'The main theme you work with your whole life')
+                          : gk.gate === earthGate
+                          ? (language === 'sk' ? 'Oblasť, kde nachádzaš stabilitu a oporu' : 'The area where you find stability and support')
+                          : (language === 'sk' ? 'Energia, ktorú vyžaruješ do sveta' : 'The energy you radiate into the world');
                         return (
                         <div key={gk.gate} className="p-4 rounded-xl bg-indigo-500/10 border border-indigo-500/30">
                           <div className="flex items-center gap-2 mb-3">
                             <span className="w-9 h-9 rounded-full bg-indigo-500/30 text-indigo-200 font-bold flex items-center justify-center">{gk.gate}</span>
                             <div>
-                              <p className="text-sm font-medium text-white">{language === 'sk' ? 'Génový kľúč' : 'Gene Key'} {gk.gate}{line ? `.${line}` : ''}</p>
-                              <p className="text-[10px] text-slate-400">{gk.gate === sunGate ? (language === 'sk' ? 'Vedomé Slnko — Life\'s Work (životné dielo)' : 'Conscious Sun — Life\'s Work') : gk.gate === earthGate ? (language === 'sk' ? 'Vedomá Zem — Evolution (zakotvenie)' : 'Conscious Earth — Evolution (grounding)') : (language === 'sk' ? 'Vedomý Mars — Radiance (vyžarovanie)' : 'Conscious Mars — Radiance')}</p>
-                              {center && <p className="text-[10px] text-indigo-300">{language === 'sk' ? `Brána ${gk.gate} v centre ${center}` : `Gate ${gk.gate} in ${center} center`}</p>}
+                              <p className="text-sm font-medium text-white">{roleLabel}</p>
+                              <p className="text-[10px] text-slate-400">{roleDesc}</p>
+                              {centerTheme && <p className="text-[10px] text-indigo-300">{language === 'sk' ? `Oblasť: ${centerTheme}` : `Area: ${centerTheme}`}</p>}
                             </div>
                           </div>
 

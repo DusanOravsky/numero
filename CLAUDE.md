@@ -1,6 +1,6 @@
 # Integrálna mapa bytia (Número)
 
-Offline-first PWA pre numerológiu, astrológiu, Human Design, etikoterapiu, kabalu, Theta Healing, Enneagram, Ayurvédu, TCM, biorytmus, Jungove archetypy, kristaloterapiu, Feng Shui (Kua) a sebarozvoj. **v4.5.1**
+Offline-first PWA pre numerológiu, astrológiu, Human Design, etikoterapiu, kabalu, Theta Healing, Enneagram, Ayurvédu, TCM, biorytmus, Jungove archetypy, kristaloterapiu, Feng Shui (Kua) a sebarozvoj. **v4.6.0**
 
 > 📁 **Nested CLAUDE.md súbory:**
 > - `src/engine/CLAUDE.md` — engine pravidlá, numerológia/astrológia/HD matematika
@@ -142,6 +142,7 @@ Anthropic Claude priamo z prehliadača (header `anthropic-dangerous-direct-brows
 ## Doplnkové modality
 
 - **Etikoterapia** (`src/data/etikoterapia.ts`) — slovensko-česká liečebná tradícia (Vogeltanz, Bezděk). Mapuje 7 čakier na etické príčiny + cnosti + orgány + reflexné otázky + praktickú cestu. Renderuje sa ako collapsible sekcia v ChakrasPage pri každej čakrovej karte. **Nie je medicínsky nástroj** — vždy s disclaimerom. Pri blokovanej čakre auto-open.
+- **Mantra audio** (`public/audio/mantras/`) — 7 meditačných slučiek (LAM 396hz, VAM 417hz, RAM 528hz, YAM 639hz, HAM 741hz, OM 852hz, AUM 963hz) od Steadyandtrue (Pixabay, royalty-free). Kliknutím na ikonu čakry v `ChakraBody` alebo na button v detail karte sa spustí looping audio. Hook: `useMantraAudio.ts`, komponent: `MantraButton.tsx`.
 - **Enneagram** (`src/engine/enneagramEngine.ts`) — typ 1-9 derivovaný z ŽČ/K3, krídla, integrácia/dezintegrácia. Tab v NumerologyPage, riadky v ComparePage.
 - **Ayurvéda** (`src/engine/ayurvedaEngine.ts`) — 3 dóše (Vata/Pitta/Kapha) derivované z astro elementu + HD typu + ŽČ. Stránka `/modality`.
 - **TCM 5 elementov** (`src/engine/tcmEngine.ts`) — Drevo/Oheň/Zem/Kov/Voda derivované z astro + ŽČ. Stránka `/modality`.

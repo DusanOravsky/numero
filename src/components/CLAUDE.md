@@ -217,7 +217,8 @@ Lens je v `localStorage` pod `anthropic-lens`. `aiInterpretation.ts` má `buildS
 | `NatalWheel` | SVG natálne koliesko 12 sektorov + planéty (prepísaný: korektná arc math, anti-collision) |
 | `Bodygraph` | HD bodygraph s aktívnymi bránami pri každom centre |
 | `TreeOfLife` | SVG kabalistický strom 10 sefír + 22 ciest |
-| `ChakraBody` | 7 čakier vertikálne s mantrami (LAM→AUM), progress bary, glow podľa stavu |
+| `ChakraBody` | 7 čakier vertikálne s mantrami (LAM→AUM), progress bary, glow podľa stavu, klikateľné ikony pre audio mantry |
+| `MantraButton` | Animovaný play/pause button pre čakrové mantry (pulse glow, ⏸ pri prehrávaní) |
 | `ORVLifeHistogram` | Lifetime ORV cez 9-ročné cykly |
 | `PersonalYearTimeline` | ±5 rokov ORV chronologicky |
 | `LunarTimeline` | 15-dňový pás fáz Mesiaca |

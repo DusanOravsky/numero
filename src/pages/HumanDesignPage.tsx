@@ -358,11 +358,8 @@ export function HumanDesignPage() {
 
           {/* Tvoje čítanie — personalizovaný sprievodca HD */}
           <GlassCard>
-            <details open>
-              <summary className="cursor-pointer hover:text-indigo-300 transition-colors">
-                <span className="font-medium text-white">{t('hd.yourReading')}</span>
-              </summary>
-              <div className="mt-4 space-y-4">
+              <h3 className="font-medium text-white mb-4">{t('hd.yourReading')}</h3>
+              <div className="space-y-4">
                 <p className="text-xs text-slate-400">
                   {language === 'sk'
                     ? 'Human Design nie je návod „ako byť". Je to mapa tvojho energetického systému — ukazuje, ako si navrhnutý fungovať, keď si v súlade sám so sebou. Nie je čo opravovať, len pochopiť.'
@@ -452,7 +449,6 @@ export function HumanDesignPage() {
                   </p>
                 </div>
               </div>
-            </details>
           </GlassCard>
 
           <GlassCard glow>

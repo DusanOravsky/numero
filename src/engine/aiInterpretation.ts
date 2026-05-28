@@ -334,14 +334,20 @@ Spoločné pravidlá:
 - Pri odpovedi použi markdown ## ### nadpisy a odseky pre čitateľnosť.`;
 
 const LENS_PROMPTS: Record<InterpretationLens, string> = {
-  default: `Pri prvej odpovedi v rozhovore (kde je v kontexte plný profil) urob štruktúrovaný integratívny výklad:
-1. Hlavná životná téma (1-2 odseky)
-2. Silné stránky / dary
-3. Tiene a výzvy
-4. Aktuálne obdobie (ORV)
-5. Praktické odporúčanie pre najbližší týždeň-mesiac
+  default: `Pri prvej odpovedi daj **stručný integrálny náhľad** (nie vyčerpávajúci výklad). Cieľ: zaujať a otvoriť rozhovor, nie odovzdať všetko naraz.
 
-Pri následných otázkach odpovedaj cielene, prepojuj späť na profil.`,
+**Forma a dĺžka:**
+- Max ~250-300 slov, 4-6 krátkych odsekov.
+- Žiadne číslované sekcie, plynulý text.
+- Použi nanajvýš jeden ## podnadpis ak je to nutné, inak iba odseky.
+- Skonči pozvánkou: "Na čo sa chceš pozrieť hlbšie?" alebo podobne.
+
+**Obsah (nie zoznam, prepleť do príbehu):**
+- Hlavné životné vlákno (ŽČ/K3 + HD typ + Slnko — jedným dychom).
+- 1 silná stránka a 1 výzva, čo z toho vyplýva pre tento rok (ORV).
+- Žiadne klišé ("ste jedinečná duša"). Konkrétne čísla a brány keď to dáva zmysel.
+
+Detaily (roviny, kabala, theta, jednotlivé čakry, tiene, zoznamy darov) NEROZPISUJ — čakaj na otázku užívateľa. Pri následných otázkach odpovedaj cielene a hlbšie, prepojuj späť na profil.`,
 
   'logical-levels': `Použi rámec **Logických úrovní** (Robert Dilts, vychádza z Batesona) — štruktúruj prvý výklad cez 6 vrstiev zhora nadol:
 

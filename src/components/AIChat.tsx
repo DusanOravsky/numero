@@ -27,7 +27,7 @@ interface Props {
 }
 
 const DEFAULT_INITIAL =
-  'Vyhotov mi prosím integratívny duchovný výklad celej mojej osobnosti — spoj všetky systémy do jedného uceleného textu.';
+  'Daj mi krátky, výstižný integrálny náhľad mojej osobnosti — 4-6 odsekov, max ~250 slov. Spoj kľúčové vlákna z numerológie, HD a astrológie do jedného príbehu. Detailom sa povenujeme keď sa na ne opýtam.';
 
 /**
  * Pri abort streaming response trimnúť text na poslednú dokončenú vetu.
@@ -55,24 +55,24 @@ function renderMarkdown(text: string): React.ReactNode {
     const trimmed = line.trim();
     if (!trimmed) return <br key={i} />;
     if (trimmed.startsWith('### ')) {
-      return <h4 key={i} className="font-medium text-indigo-300 mt-3 mb-1">{trimmed.slice(4)}</h4>;
+      return <h4 key={i} className="font-medium text-indigo-600 mt-3 mb-1">{trimmed.slice(4)}</h4>;
     }
     if (trimmed.startsWith('## ')) {
-      return <h3 key={i} className="font-semibold text-indigo-200 mt-4 mb-2">{trimmed.slice(3)}</h3>;
+      return <h3 key={i} className="font-semibold text-indigo-700 mt-4 mb-2">{trimmed.slice(3)}</h3>;
     }
     if (trimmed.startsWith('# ')) {
-      return <h2 key={i} className="font-bold text-white mt-4 mb-2 text-lg">{trimmed.slice(2)}</h2>;
+      return <h2 key={i} className="font-bold text-slate-900 mt-4 mb-2 text-lg">{trimmed.slice(2)}</h2>;
     }
     if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
-      return <p key={i} className="ml-4 text-slate-300">• {trimmed.slice(2)}</p>;
+      return <p key={i} className="ml-4 text-slate-700">• {trimmed.slice(2)}</p>;
     }
     // Inline bold **text**
     const parts = trimmed.split(/(\*\*[^*]+\*\*)/g);
     return (
-      <p key={i} className="text-slate-300">
+      <p key={i} className="text-slate-700">
         {parts.map((p, j) =>
           p.startsWith('**') && p.endsWith('**')
-            ? <strong key={j} className="text-white">{p.slice(2, -2)}</strong>
+            ? <strong key={j} className="text-slate-900 font-semibold">{p.slice(2, -2)}</strong>
             : <span key={j}>{p}</span>
         )}
       </p>
@@ -257,13 +257,18 @@ export function AIChat({ context, title, initialUserMessage, storageKey }: Props
 
       {/* Empty state — start conversation */}
       {messages.length === 0 && !streaming && (
-        <div className="text-center py-6">
-          <p className="text-sm text-slate-400 mb-4">
-            Vygeneruj ucelený duchovný výklad spájajúci numerológiu, astrológiu, Human Design, Kabalu a Theta Healing do jedného prirodzene napísaného textu — a potom sa AI môžeš pýtať na čokoľvek.
+        <div className="text-center py-8 px-2">
+          <div className="text-3xl mb-3">✦</div>
+          <p className="text-sm text-slate-700 mb-1 font-medium">
+            Stručný integrálny náhľad na začiatok
+          </p>
+          <p className="text-xs text-slate-500 mb-5 leading-relaxed">
+            Krátky úvod (~250 slov) ktorý spojí numerológiu, HD a astrológiu do jedného príbehu. Detaily potom postupne v rozhovore.
           </p>
           <button
             onClick={startConversation}
-            className="px-6 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-medium hover:from-indigo-500 hover:to-violet-500 glow"
+            className="px-6 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-medium hover:from-indigo-500 hover:to-violet-500 shadow-md hover:shadow-lg transition-shadow"
+            style={{ color: '#ffffff' }}
           >
             {t('ai.createReading')}
           </button>
@@ -277,35 +282,39 @@ export function AIChat({ context, title, initialUserMessage, storageKey }: Props
       {(messages.length > 0 || streaming) && (
         <div
           ref={scrollRef}
-          className="max-h-[60vh] overflow-y-auto space-y-3 pr-1"
+          className="max-h-[60vh] overflow-y-auto space-y-3 p-3 rounded-2xl bg-gradient-to-b from-indigo-50 to-violet-50 border border-indigo-100"
         >
           {messages.map((m, i) => (
             <div
               key={m.id || i}
-              className={`p-3 rounded-xl border ${
+              className={
                 m.role === 'user'
-                  ? 'bg-indigo-500/15 border-indigo-500/30 ml-8'
-                  : 'bg-slate-800/40 border-slate-700/50 mr-4'
-              }`}
+                  ? 'p-3 rounded-2xl rounded-tr-md ml-8 shadow-sm bg-gradient-to-br from-indigo-600 to-violet-600 text-white'
+                  : 'p-4 rounded-2xl rounded-tl-md mr-4 shadow-sm bg-white border border-indigo-100'
+              }
             >
-              <p className="text-[10px] uppercase mb-1 opacity-60 text-slate-400">
-                {m.role === 'user' ? t('ai.you') : t('ai.assistant')}
+              <p className={`text-[10px] uppercase tracking-wide mb-1 font-medium ${
+                m.role === 'user' ? 'text-indigo-100' : 'text-indigo-500'
+              }`}>
+                {m.role === 'user' ? t('ai.you') : `✦ ${t('ai.assistant')}`}
               </p>
               <div className="text-sm leading-relaxed">
-                {m.role === 'assistant' ? renderMarkdown(m.content) : <p className="text-slate-200">{m.content}</p>}
+                {m.role === 'assistant'
+                  ? renderMarkdown(m.content)
+                  : <p style={{ color: '#ffffff' }} className="whitespace-pre-wrap">{m.content}</p>}
               </div>
             </div>
           ))}
 
           {/* Active streaming bubble */}
           {streaming && (
-            <div className="p-3 rounded-xl border bg-slate-800/40 border-indigo-500/40 mr-4">
-              <p className="text-[10px] uppercase mb-1 opacity-60 text-slate-400 flex items-center gap-2">
+            <div className="p-4 rounded-2xl rounded-tl-md mr-4 shadow-sm bg-white border border-indigo-200">
+              <p className="text-[10px] uppercase tracking-wide mb-1 font-medium text-indigo-500 flex items-center gap-2">
                 <motion.span
                   animate={{ opacity: [1, 0.3, 1] }}
                   transition={{ duration: 1.5, repeat: Infinity }}
                 >
-                  {t('ai.writing')}
+                  ✦ {t('ai.writing')}
                 </motion.span>
               </p>
               <div className="text-sm leading-relaxed min-h-[2rem]">

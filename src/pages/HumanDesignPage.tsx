@@ -923,7 +923,7 @@ export function HumanDesignPage() {
                             <div>
                               <p className="text-sm font-medium text-white">{roleLabel}</p>
                               <p className="text-[10px] text-slate-400">{roleDesc}</p>
-                              {centerTheme && <p className="text-[10px] text-indigo-300">{language === 'sk' ? `Oblasť: ${centerTheme}` : `Area: ${centerTheme}`}</p>}
+                              {center && <p className="text-[10px] text-indigo-300">{language === 'sk' ? `Brána ${gk.gate} · ${center}` : `Gate ${gk.gate} · ${center}`}{centerTheme ? ` — ${centerTheme}` : ''}</p>}
                             </div>
                           </div>
 

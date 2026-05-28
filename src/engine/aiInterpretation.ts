@@ -5,7 +5,8 @@
 // Použité modely (v poradí preferencie):
 // - claude-haiku-4-5-20251001 (rýchly, lacný — default)
 // - claude-sonnet-4-6 (kvalitnejší)
-// - claude-opus-4-7 (najsilnejší)
+// - claude-opus-4-7 (silný)
+// - claude-opus-4-8 (najnovší, najsilnejší)
 //
 // Bezpečnosť: API kľúč sa nikam neposiela okrem Anthropic. Ak používateľ
 // vyčistí storage / odinštaluje appku, kľúč zmizne.
@@ -32,12 +33,14 @@ const ANTHROPIC_API_VERSION = '2023-06-01';
 export type ClaudeModel =
   | 'claude-haiku-4-5-20251001'
   | 'claude-sonnet-4-6'
-  | 'claude-opus-4-7';
+  | 'claude-opus-4-7'
+  | 'claude-opus-4-8';
 
 export const CLAUDE_MODELS: Array<{ id: ClaudeModel; label: string; cost: string }> = [
   { id: 'claude-haiku-4-5-20251001', label: 'Claude Haiku 4.5 (rýchly, lacný)', cost: '~$0.003 / výklad' },
   { id: 'claude-sonnet-4-6', label: 'Claude Sonnet 4.6 (kvalitný — odporúčaný)', cost: '~$0.04 / výklad' },
-  { id: 'claude-opus-4-7', label: 'Claude Opus 4.7 (najlepší, drahší)', cost: '~$0.20 / výklad' },
+  { id: 'claude-opus-4-7', label: 'Claude Opus 4.7 (silný, drahší)', cost: '~$0.20 / výklad' },
+  { id: 'claude-opus-4-8', label: 'Claude Opus 4.8 (najnovší, top kvalita)', cost: '~$0.20 / výklad' },
 ];
 
 export function getApiKey(): string {

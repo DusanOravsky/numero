@@ -476,7 +476,8 @@ export function SettingsPage() {
                       language === 'sk' ? m.label : (
                         m.id === 'claude-haiku-4-5-20251001' ? 'Claude Haiku 4.5 (fast, affordable)' :
                         m.id === 'claude-sonnet-4-6' ? 'Claude Sonnet 4.6 (quality — recommended)' :
-                        'Claude Opus 4.7 (best, more expensive)'
+                        m.id === 'claude-opus-4-7' ? 'Claude Opus 4.7 (strong, more expensive)' :
+                        'Claude Opus 4.8 (newest, top quality)'
                       )
                     }</p>
                     <p className="text-[11px] text-slate-500 font-mono">{m.id} · {language === 'sk' ? m.cost : m.cost.replace('výklad', 'reading')}</p>

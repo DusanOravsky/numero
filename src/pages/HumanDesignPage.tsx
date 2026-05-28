@@ -945,14 +945,14 @@ export function HumanDesignPage() {
                             <p className="text-xs text-slate-300">
                               <strong className="text-rose-300">{language === 'sk' ? 'Rozpoznaj signál:' : 'Recognize the signal:'}</strong>{' '}
                               {language === 'sk'
-                                ? <>Keď sa prichytíš pri <em>{gk.shadow.toLowerCase()}</em> — neznamená to, že niečo robíš zle. Je to len signál, že si práve v tieni tohto kľúča.</>
-                                : <>When you catch yourself in <em>{gk.shadow.toLowerCase()}</em> — it doesn't mean you're doing something wrong. It's just a signal that you're in the shadow of this key.</>}
+                                ? <>Keď cítiš energiu „<em>{gk.shadow.toLowerCase()}</em>" — nie je to chyba. Je to signál, že si práve v tieni tohto kľúča.</>
+                                : <>When you feel the energy of "<em>{gk.shadow.toLowerCase()}</em>" — it's not a flaw. It's a signal that you're in the shadow of this key.</>}
                             </p>
                             <p className="text-xs text-slate-300">
                               <strong className="text-amber-300">{language === 'sk' ? 'Vedomý krok:' : 'Conscious step:'}</strong>{' '}
                               {language === 'sk'
-                                ? <>Zastav sa, vydýchni a opýtaj sa: „Ako by som teraz mohol/a žiť <em>{gk.gift.toLowerCase()}</em>?" Nemusíš to zvládnuť dokonale — stačí jeden malý posun.</>
-                                : <>Pause, breathe, and ask: "How could I live <em>{gk.gift.toLowerCase()}</em> right now?" You don't need to do it perfectly — one small shift is enough.</>}
+                                ? <>Zastav sa, vydýchni a opýtaj sa: „Ako by som teraz mohol/a prejsť k energii ‚<em>{gk.gift.toLowerCase()}</em>'?" Nemusíš to zvládnuť dokonale — stačí jeden malý posun.</>
+                                : <>Pause, breathe, and ask: "How could I shift toward '<em>{gk.gift.toLowerCase()}</em>' right now?" You don't need to do it perfectly — one small shift is enough.</>}
                             </p>
                             {gk.nlpTechnique && (
                               <p className="text-xs text-slate-400 italic">

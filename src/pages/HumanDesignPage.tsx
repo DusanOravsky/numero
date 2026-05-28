@@ -956,7 +956,17 @@ export function HumanDesignPage() {
                               <span className="text-slate-500">→</span>
                               <span className="px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300">{gk.siddhi}</span>
                             </div>
-                            <p className="text-xs text-slate-400">{gk.shadowDescription}</p>
+                            <div className="space-y-1.5 text-xs text-slate-400">
+                              <p><span className="text-red-400 font-medium">{language === 'sk' ? 'Tieň' : 'Shadow'}:</span> {gk.shadowDescription}</p>
+                              <p><span className="text-amber-400 font-medium">{language === 'sk' ? 'Dar' : 'Gift'}:</span> {gk.giftDescription}</p>
+                              <p><span className="text-emerald-400 font-medium">Siddhi:</span> {gk.siddhiDescription}</p>
+                            </div>
+                            {gk.nlpTechnique && (
+                              <div className="mt-2 p-2 rounded-lg bg-violet-500/10 border border-violet-500/20">
+                                <p className="text-[10px] text-violet-300 font-medium mb-0.5">{gk.nlpTechnique}</p>
+                                <p className="text-[10px] text-slate-400">{gk.nlpDescription}</p>
+                              </div>
+                            )}
                           </div>
                         ))}
                       </div>

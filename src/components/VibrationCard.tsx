@@ -26,18 +26,18 @@ export const VibrationCard = memo(function VibrationCard({ title, value, subtitl
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ delay, duration: 0.4 }}
-      className={`relative bg-gradient-to-br ${colorClasses[color] || colorClasses.indigo} border rounded-2xl p-5 backdrop-blur-sm cursor-pointer ${showTooltip ? 'z-50' : 'z-0'}`}
+      className={`relative bg-gradient-to-br ${colorClasses[color] || colorClasses.indigo} border rounded-2xl p-3 sm:p-5 backdrop-blur-sm cursor-pointer ${showTooltip ? 'z-50' : 'z-0'}`}
       onMouseEnter={() => setShowTooltip(true)}
       onMouseLeave={() => setShowTooltip(false)}
       onClick={() => setShowTooltip(!showTooltip)}
     >
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-xs text-slate-500 uppercase tracking-wider">{title}</p>
-          <p className="text-3xl font-serif font-bold mt-1 text-slate-800">
+          <p className="text-[10px] sm:text-xs text-slate-500 uppercase tracking-wider leading-tight">{title}</p>
+          <p className="text-2xl sm:text-3xl font-serif font-bold mt-0.5 sm:mt-1 text-slate-800">
             {value}
           </p>
-          <p className="text-sm text-slate-500 mt-1">{subtitle}</p>
+          <p className="text-xs sm:text-sm text-slate-500 mt-0.5 sm:mt-1">{subtitle}</p>
         </div>
         <span className="text-2xl opacity-60">{icon}</span>
       </div>

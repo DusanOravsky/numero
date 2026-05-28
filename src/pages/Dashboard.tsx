@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import { useShallow } from 'zustand/react/shallow';
 import { useTranslation } from '../i18n/useTranslation';
-import { WEEKDAY_SHORT, MONTH_NAMES, displayName, ELEMENT_DISPLAY, ZODIAC_DISPLAY, HD_TYPE_DISPLAY } from '../i18n/entityNames';
+import { WEEKDAY_SHORT, MONTH_NAMES } from '../i18n/entityNames';
 import { GlassCard } from '../components/GlassCard';
 import { VibrationCard } from '../components/VibrationCard';
 import { ClientSummary } from '../components/ClientSummary';
@@ -30,7 +30,6 @@ import { getTimezoneFromCoords } from '../data/cities';
 import { getGeneKeyByGate } from '../data/geneKeys';
 import { calculateBiorhythm } from '../engine/biorhythmEngine';
 import { getDailyCrystal } from '../data/crystals';
-import { generateDailyStory, generateProfileCard, shareOrDownload } from '../components/ShareStory';
 import { getAffirmationsPool, getDailyRituals } from '../data/affirmations';
 import { safeGet, safeSet, safeRemove } from '../utils/safeStorage';
 import { getTodayNameDays, getFirstName } from '../data/namedays';
@@ -249,43 +248,9 @@ export function Dashboard() {
         <div className="flex-1 h-px bg-gradient-to-r from-indigo-300 to-transparent"></div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <VibrationCard
-          title={language === 'sk' ? 'ODV – Denná vibrácia' : 'ODV – Daily vibration'}
-          value={odv}
-          subtitle={language === 'sk' ? 'Osobná denná vibrácia' : 'Personal daily vibration'}
-          icon="☀"
-          color="gold"
-          delay={0.1}
-          formula={`D(${currentDay}) + M(${currentMonth}) + ORV(${orv}) = ${currentDay + currentMonth + orv} → ${odv}`}
-          description={language === 'sk' ? 'ODV je charakteristická energia dnešného dňa. Určuje úlohu a tému konkrétneho dňa – čomu by ste mali venovať pozornosť a aké aktivity sú podporované.' : 'ODV is the characteristic energy of today. It determines the task and theme of the specific day — what you should pay attention to and which activities are supported.'}
-        />
-        <VibrationCard
-          title={language === 'sk' ? 'OMV – Mesačná vibrácia' : 'OMV – Monthly vibration'}
-          value={omv}
-          subtitle={language === 'sk' ? 'Osobná mesačná vibrácia' : 'Personal monthly vibration'}
-          icon="☽"
-          color="purple"
-          delay={0.2}
-          formula={`M(${currentMonth}) + ORV(${orv}) = ${currentMonth + orv} → ${omv}`}
-          description={language === 'sk' ? 'OMV špecifikuje energiu aktuálneho mesiaca vo vašom osobnom roku. Ukazuje, aké úlohy a témy sú pre vás dôležité práve tento mesiac.' : 'OMV specifies the energy of the current month in your personal year. It shows what tasks and themes are important for you this month.'}
-        />
-        <VibrationCard
-          title={language === 'sk' ? 'ORV – Ročná vibrácia' : 'ORV – Yearly vibration'}
-          value={orv}
-          subtitle={language === 'sk' ? 'Osobná ročná vibrácia' : 'Personal yearly vibration'}
-          icon="✦"
-          color="indigo"
-          delay={0.3}
-          formula={profile ? `D(${profile.birthDay}) + M(${profile.birthMonth}) + R(${currentMonth < profile.birthMonth || (currentMonth === profile.birthMonth && currentDay < profile.birthDay) ? currentYear - 1 : currentYear}) → ${orv}` : ''}
-          description={language === 'sk' ? 'ORV ukazuje energiu celého roka od narodenín do narodenín. Určuje hlavné témy a úlohy, na ktoré sa v danom roku zameriavate. Počíta sa z dňa a mesiaca narodenia + aktuálny rok (od posledných narodenín).' : 'ORV shows the energy of the entire year from birthday to birthday. It determines the main themes and tasks you focus on in a given year. It is calculated from the day and month of birth + current year (from the last birthday).'}
-        />
-      </div>
-
-
-      {/* JEDNA VEC NA DNES — syntetizovaná akcia zo všetkých systémov */}
+      {/* JEDNA VEC NA DNES — prvá vec čo užívateľ vidí */}
       {fullResults && getOdvDescription(odv, language) && (
-        <GlassCard glow delay={0.33}>
+        <GlassCard glow delay={0.1}>
           <div className="flex items-start gap-4">
             <div className="w-14 h-14 rounded-full bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center text-2xl shrink-0">
               🎯
@@ -323,6 +288,50 @@ export function Dashboard() {
           </div>
         </GlassCard>
       )}
+
+      {/* ODV viditeľné, OMV+ORV v rozbaľovacom */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <VibrationCard
+          title={language === 'sk' ? 'ODV – Denná vibrácia' : 'ODV – Daily vibration'}
+          value={odv}
+          subtitle={language === 'sk' ? 'Osobná denná vibrácia' : 'Personal daily vibration'}
+          icon="☀"
+          color="gold"
+          delay={0.1}
+          formula={`D(${currentDay}) + M(${currentMonth}) + ORV(${orv}) = ${currentDay + currentMonth + orv} → ${odv}`}
+          description={language === 'sk' ? 'ODV je charakteristická energia dnešného dňa. Určuje úlohu a tému konkrétneho dňa – čomu by ste mali venovať pozornosť a aké aktivity sú podporované.' : 'ODV is the characteristic energy of today. It determines the task and theme of the specific day — what you should pay attention to and which activities are supported.'}
+        />
+        <div className="sm:col-span-2">
+          <details className="h-full">
+            <summary className="cursor-pointer text-xs text-slate-500 hover:text-indigo-500 transition-colors flex items-center gap-2 py-2">
+              <span className="uppercase tracking-wider font-medium">{language === 'sk' ? 'Mesačná & Ročná vibrácia' : 'Monthly & Yearly vibration'}</span>
+              <span className="text-slate-400">OMV {omv} · ORV {orv}</span>
+            </summary>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
+              <VibrationCard
+                title={language === 'sk' ? 'OMV – Mesačná vibrácia' : 'OMV – Monthly vibration'}
+                value={omv}
+                subtitle={language === 'sk' ? 'Osobná mesačná vibrácia' : 'Personal monthly vibration'}
+                icon="☽"
+                color="purple"
+                delay={0}
+                formula={`M(${currentMonth}) + ORV(${orv}) = ${currentMonth + orv} → ${omv}`}
+                description={language === 'sk' ? 'OMV špecifikuje energiu aktuálneho mesiaca vo vašom osobnom roku. Ukazuje, aké úlohy a témy sú pre vás dôležité práve tento mesiac.' : 'OMV specifies the energy of the current month in your personal year. It shows what tasks and themes are important for you this month.'}
+              />
+              <VibrationCard
+                title={language === 'sk' ? 'ORV – Ročná vibrácia' : 'ORV – Yearly vibration'}
+                value={orv}
+                subtitle={language === 'sk' ? 'Osobná ročná vibrácia' : 'Personal yearly vibration'}
+                icon="✦"
+                color="indigo"
+                delay={0}
+                formula={profile ? `D(${profile.birthDay}) + M(${profile.birthMonth}) + R(${currentMonth < profile.birthMonth || (currentMonth === profile.birthMonth && currentDay < profile.birthDay) ? currentYear - 1 : currentYear}) → ${orv}` : ''}
+                description={language === 'sk' ? 'ORV ukazuje energiu celého roka od narodenín do narodenín. Určuje hlavné témy a úlohy, na ktoré sa v danom roku zameriavate. Počíta sa z dňa a mesiaca narodenia + aktuálny rok (od posledných narodenín).' : 'ORV shows the energy of the entire year from birthday to birthday. It determines the main themes and tasks you focus on in a given year. It is calculated from the day and month of birth + current year (from the last birthday).'}
+              />
+            </div>
+          </details>
+        </div>
+      </div>
 
       {/* Biorytmus + Kryštál dňa */}
       {profile && (
@@ -390,54 +399,75 @@ export function Dashboard() {
         </div>
       )}
 
-      {/* Zdieľanie — share buttons */}
-      {profile && fullResults && (
-        <div className="flex gap-2 flex-wrap">
-          <button
-            onClick={async () => {
-              const isDark = document.documentElement.classList.contains('dark');
-              const crystal = getDailyCrystal(odv, language);
-              const blob = await generateDailyStory({
-                odvNumber: odv,
-                affirmation: affirmations[odv] || affirmations[1],
-                crystal: crystal.name,
-                isDark,
-                language,
-              });
-              await shareOrDownload(blob, `energia-${odv}.png`);
-            }}
-            className="px-3 py-1.5 rounded-lg text-xs font-medium border border-indigo-300 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 transition-colors"
-          >
-            {language === 'sk' ? '📤 Denná energia' : '📤 Daily energy'}
-          </button>
-          <button
-            onClick={async () => {
-              const isDark = document.documentElement.classList.contains('dark');
-              const lp = fullResults.numerology.lifePathNumber;
-              const hdType = displayName(HD_TYPE_DISPLAY, fullResults.humanDesign.type, language);
-              const hdProfile = `${fullResults.humanDesign.profile.line1}/${fullResults.humanDesign.profile.line2}`;
-              const element = displayName(ELEMENT_DISPLAY, fullResults.astrology.dominantElement, language);
-              const sunSign = displayName(ZODIAC_DISPLAY, fullResults.astrology.sunSign.name, language);
-              const enneaType = fullResults.enneagram?.coreType ?? 0;
-              const blob = await generateProfileCard({
-                name: profile.name,
-                lifePathNumber: lp,
-                hdType,
-                hdProfile,
-                element,
-                sunSign,
-                enneagramType: enneaType,
-                isDark,
-                language,
-              });
-              await shareOrDownload(blob, `profil-${profile.name}.png`);
-            }}
-            className="px-3 py-1.5 rounded-lg text-xs font-medium border border-violet-300 bg-violet-50 text-violet-700 hover:bg-violet-100 transition-colors"
-          >
-            {language === 'sk' ? '📤 Môj profil' : '📤 My profile'}
-          </button>
-        </div>
-      )}
+      {/* Mantra + Quote + Tarot */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <GlassCard delay={0.42}>
+          <div className="flex items-start gap-3">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center text-lg shrink-0">
+              ॐ
+            </div>
+            <div className="min-w-0">
+              <p className="text-xs text-amber-300 uppercase mb-1">{t('dashboard.todayMantra')}</p>
+              <p className="text-sm text-slate-300 font-serif italic">"{getDailyMantra(odv, undefined, language)}"</p>
+            </div>
+          </div>
+        </GlassCard>
+        <GlassCard delay={0.44}>
+          {(() => {
+            const q = getDailyQuote(odv, undefined, language);
+            return (
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center text-lg shrink-0">
+                  ❝
+                </div>
+                <div className="min-w-0">
+                  <p className="text-xs text-cyan-300 uppercase mb-1">{t('dashboard.todayQuote')}</p>
+                  <p className="text-sm text-slate-300 font-serif italic">"{q.quote}"</p>
+                  <p className="text-xs text-slate-500 mt-1">— {q.author}</p>
+                </div>
+              </div>
+            );
+          })()}
+        </GlassCard>
+        <GlassCard delay={0.46}>
+          {(() => {
+            const tarot = getDailyTarot(odv, language);
+            const mt = getMonthlyTarot(omv, language);
+            return (
+              <div>
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-fuchsia-500 flex items-center justify-center text-lg shrink-0">
+                    {tarot.symbol}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xs text-purple-300 uppercase mb-1">{t('dashboard.tarotOfDay')} {tarot.name}</p>
+                    <p className="text-xs text-slate-400">{tarot.dailyAdvice}</p>
+                  </div>
+                </div>
+                <details className="mt-3">
+                  <summary className="text-[11px] text-purple-400 cursor-pointer hover:text-purple-300">
+                    {t('dashboard.tarotFullReading')} {tarot.name}
+                  </summary>
+                  <div className="mt-2 space-y-2 text-xs">
+                    <p className="text-slate-300"><strong className="text-purple-300">{t('dashboard.tarotMeaning')}</strong> {tarot.meaning}</p>
+                    <p className="text-slate-300"><strong className="text-rose-300">{t('dashboard.tarotShadow')}</strong> {tarot.shadow}</p>
+                    <p className="text-slate-300"><strong className="text-emerald-300">{t('dashboard.tarotAdvice')}</strong> {tarot.advice}</p>
+                  </div>
+                </details>
+                <div className="mt-3 pt-3 border-t border-slate-200">
+                  <div className="flex items-center gap-2">
+                    <span className="text-lg">{mt.symbol}</span>
+                    <div>
+                      <p className="text-[10px] text-indigo-400 uppercase">{t('dashboard.monthCard')} {mt.name}</p>
+                      <p className="text-[10px] text-slate-400">{mt.monthlyAdvice}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
+        </GlassCard>
+      </div>
 
       {/* Dnešná energia — kompaktný prehľad */}
       <GlassCard delay={0.35}>
@@ -514,76 +544,6 @@ export function Dashboard() {
           <p className="text-xs mt-3 text-slate-600"><strong className="text-slate-800">{t('dashboard.eveningLabel')}</strong> {dailyRituals[odv].evening}</p>
         )}
       </GlassCard>
-
-      {/* Mantra + Quote + Tarot — pred Detaily a inšpirácie */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-        <GlassCard delay={0.42}>
-          <div className="flex items-start gap-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center text-lg shrink-0">
-              ॐ
-            </div>
-            <div className="min-w-0">
-              <p className="text-xs text-amber-300 uppercase mb-1">{t('dashboard.todayMantra')}</p>
-              <p className="text-sm text-slate-300 font-serif italic">"{getDailyMantra(odv, undefined, language)}"</p>
-            </div>
-          </div>
-        </GlassCard>
-        <GlassCard delay={0.44}>
-          {(() => {
-            const q = getDailyQuote(odv, undefined, language);
-            return (
-              <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center text-lg shrink-0">
-                  ❝
-                </div>
-                <div className="min-w-0">
-                  <p className="text-xs text-cyan-300 uppercase mb-1">{t('dashboard.todayQuote')}</p>
-                  <p className="text-sm text-slate-300 font-serif italic">"{q.quote}"</p>
-                  <p className="text-xs text-slate-500 mt-1">— {q.author}</p>
-                </div>
-              </div>
-            );
-          })()}
-        </GlassCard>
-        <GlassCard delay={0.46}>
-          {(() => {
-            const tarot = getDailyTarot(odv, language);
-            const mt = getMonthlyTarot(omv, language);
-            return (
-              <div>
-                <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-fuchsia-500 flex items-center justify-center text-lg shrink-0">
-                    {tarot.symbol}
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-xs text-purple-300 uppercase mb-1">{t('dashboard.tarotOfDay')} {tarot.name}</p>
-                    <p className="text-xs text-slate-400">{tarot.dailyAdvice}</p>
-                  </div>
-                </div>
-                <details className="mt-3">
-                  <summary className="text-[11px] text-purple-400 cursor-pointer hover:text-purple-300">
-                    {t('dashboard.tarotFullReading')} {tarot.name}
-                  </summary>
-                  <div className="mt-2 space-y-2 text-xs">
-                    <p className="text-slate-300"><strong className="text-purple-300">{t('dashboard.tarotMeaning')}</strong> {tarot.meaning}</p>
-                    <p className="text-slate-300"><strong className="text-rose-300">{t('dashboard.tarotShadow')}</strong> {tarot.shadow}</p>
-                    <p className="text-slate-300"><strong className="text-emerald-300">{t('dashboard.tarotAdvice')}</strong> {tarot.advice}</p>
-                  </div>
-                </details>
-                <div className="mt-3 pt-3 border-t border-slate-200">
-                  <div className="flex items-center gap-2">
-                    <span className="text-lg">{mt.symbol}</span>
-                    <div>
-                      <p className="text-[10px] text-indigo-400 uppercase">{t('dashboard.monthCard')} {mt.name}</p>
-                      <p className="text-[10px] text-slate-400">{mt.monthlyAdvice}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            );
-          })()}
-        </GlassCard>
-      </div>
 
       {/* ═══ DETAILY A INŠPIRÁCIE — collapsible ═══ */}
       <details className="group" open>

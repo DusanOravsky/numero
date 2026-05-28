@@ -68,9 +68,19 @@ export function Dashboard() {
     const odvLabels: Record<number, string> = { 1: t('dashboard.odvLabels1'), 2: t('dashboard.odvLabels2'), 3: t('dashboard.odvLabels3'), 4: t('dashboard.odvLabels4'), 5: t('dashboard.odvLabels5'), 6: t('dashboard.odvLabels6'), 7: t('dashboard.odvLabels7'), 8: t('dashboard.odvLabels8'), 9: t('dashboard.odvLabels9') };
     const desc = odvLabels[odv] || '';
 
-    new Notification(language === 'sk' ? 'Integrálna mapa bytia' : 'Integral Map of Being', {
-      body: language === 'sk' ? `Dnešná energia (ODV ${odv}): ${desc}` : `Today's energy (ODV ${odv}): ${desc}`,
-      icon: `${import.meta.env.BASE_URL}icons/logo.svg`,
+    const title = language === 'sk' ? 'Integrálna mapa bytia' : 'Integral Map of Being';
+    const body = language === 'sk' ? `Dnešná energia (ODV ${odv}): ${desc}` : `Today's energy (ODV ${odv}): ${desc}`;
+    const icon = `${import.meta.env.BASE_URL}icons/logo.svg`;
+
+    // Na mobile/PWA treba showNotification cez SW registration (new Notification() tam hádže Illegal constructor)
+    navigator.serviceWorker?.getRegistration().then(reg => {
+      if (reg) {
+        reg.showNotification(title, { body, icon });
+      } else {
+        try { new Notification(title, { body, icon }); } catch { /* fallback noop */ }
+      }
+    }).catch(() => {
+      try { new Notification(title, { body, icon }); } catch { /* noop */ }
     });
   }, [profile, today, currentDay, currentMonth, currentYear, language, t]);
 

@@ -857,6 +857,11 @@ export function HumanDesignPage() {
                   <div className="space-y-3 text-sm text-slate-300">
                     <p>
                       {language === 'sk'
+                        ? <>Génové kľúče (Gene Keys) sú systém sebapoznania vytvorený Richardom Ruddom. Vychádzajú z 64 hexagramov I-Ťing — rovnako ako brány v Human Designe. Každá brána, ktorú máš aktívnu vo svojom dizajne, je zároveň <strong className="text-white">génový kľúč</strong> — cesta transformácie od nevedomého vzorca (tieň) cez vedomé žitie (dar) k najvyššiemu potenciálu (siddhi).</>
+                        : <>Gene Keys is a self-knowledge system created by Richard Rudd. They stem from the 64 hexagrams of the I Ching — the same as gates in Human Design. Each gate active in your design is also a <strong className="text-white">Gene Key</strong> — a path of transformation from an unconscious pattern (shadow) through conscious living (gift) to the highest potential (siddhi).</>}
+                    </p>
+                    <p>
+                      {language === 'sk'
                         ? <>Každá brána v tvojom dizajne má <strong className="text-white">tri frekvencie</strong> — ako tri poschodia toho istého domu:</>
                         : <>Each gate in your design has <strong className="text-white">three frequencies</strong> — like three floors of the same house:</>}
                     </p>

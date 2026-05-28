@@ -1,6 +1,6 @@
 # Integrálna mapa bytia (Número)
 
-Offline-first PWA pre numerológiu, astrológiu, Human Design, etikoterapiu, kabalu, Theta Healing, Enneagram, Ayurvédu, TCM, biorytmus, Jungove archetypy, kristaloterapiu, Feng Shui (Kua) a sebarozvoj. **v4.4.0**
+Offline-first PWA pre numerológiu, astrológiu, Human Design, etikoterapiu, kabalu, Theta Healing, Enneagram, Ayurvédu, TCM, biorytmus, Jungove archetypy, kristaloterapiu, Feng Shui (Kua) a sebarozvoj. **v4.5.1**
 
 > 📁 **Nested CLAUDE.md súbory:**
 > - `src/engine/CLAUDE.md` — engine pravidlá, numerológia/astrológia/HD matematika
@@ -28,7 +28,9 @@ npm run dev               # localhost:5173
 npm run build             # dist/
 npm run build:analyze     # ANALYZE=1 → dist/stats.html (rollup-plugin-visualizer)
 npm test                  # vitest unit + component tests
+npm run test:coverage     # vitest + coverage report
 npm run test:e2e          # playwright E2E (boots vite preview na :4173)
+npm run typecheck         # tsc --noEmit (rýchlejší feedback ako build)
 npm run lint              # eslint (react-hooks/set-state-in-effect je strict)
 ```
 
@@ -105,7 +107,7 @@ src/
   store/           # Zustand store s migráciou (IndexedDB persist)
   layouts/         # MainLayout so sidebar/bottom nav
   styles/          # Tailwind + light mode overrides
-  hooks/           # useTheme, useSessionState, usePerformanceMetrics
+  hooks/           # useTheme, useSessionState, usePerformanceMetrics, useProfileAnalysis
   i18n/            # Full bilingual SK/EN system (v4.0.0)
     namespaces/    # 8 namespace files (common, settings, clients, dashboard, numerology, astrology, chakras, relationships)
     registry.ts    # Merges namespaces, exports translate() + TranslationKey union
@@ -162,6 +164,9 @@ Anthropic Claude priamo z prehliadača (header `anthropic-dangerous-direct-brows
 ## Performance & quality
 
 - **Lazy load všetkých routes** okrem Dashboard (`React.lazy + Suspense`). Initial bundle ~220KB (78KB gzip).
+- **Žiadne `key={pathname}` na Routes** — page components si držia lokálny state naprieč navigáciou. AnimatePresence obaľuje len OnboardingTour.
+- **`useProfileAnalysis` hook** (`hooks/useProfileAnalysis.ts`) — zdieľaný výpočet 10 engines pre aktívny profil. Používa `GlobalAIDrawer`. Prijíma `enabled` flag pre lazy computation.
+- **useMemo pre drahé výpočty** — Dashboard kalendár (31 iterácií), biorhythm, RelationshipsPage engine volania (~25 callsites extrahovaných z render IIFEs).
 - **Service Worker runtimeCaching**: NetworkFirst pre navigations, CacheFirst pre /assets/*.js/css a images. `cleanupOutdatedCaches: true`.
 - **Web Vitals** (LCP + CLS) v `hooks/usePerformanceMetrics.ts`, vizualizované v Settings → Výkonnostné metriky.
 - **Error reporting** v `components/ErrorBoundary.tsx` — localStorage log (max 20), copy-to-clipboard, Diagnostika karta v Settings.
@@ -466,11 +471,11 @@ App má pôvodný **dark-mode JSX** (`text-white`, `text-slate-300`, `bg-{color}
 
 ## Testovanie
 
-- **223 unit + component testov** (`npm test`) — 18 test files
+- **272 unit + component testov** (`npm test`) — 21 test files
 - **13 E2E testov** (`npm run test:e2e`) — 3 smoke + 10 v4.3.3+ regression
 - Lock testy pre kritické hodnoty: 30.8.1979 02:40 Bratislava → HD profil 1/3, ŽČ 1 z 37, čakra root score 45, Slnko Panna ~6°, Mesiac Škorpión ~27°, Asc Rak
 - Component testy: PersonalYearTimeline, RadarChart9
-- Engine testy: numerology, developmental, HD, chakra, enneagram, kabalah, ayurveda, tcm, chineseZodiac, compatibility, thetaHealing, interpretation, engineCache, **astrology** (v4.3.2+)
+- Engine testy: numerology, developmental, HD, chakra, enneagram, kabalah, ayurveda, tcm, chineseZodiac, compatibility, thetaHealing, interpretation, engineCache, astrology, **biorhythm**, **archetype**, **kua** (v4.5.0+)
 - E2E regression suite: `e2e/v433-regression.spec.ts` — engine integrity + JS console errors + language switch + RelationshipsPage partner mode
 - Detail Playwright config: `e2e/CLAUDE.md`
 

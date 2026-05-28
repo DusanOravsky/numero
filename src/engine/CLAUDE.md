@@ -31,6 +31,13 @@
 | `archetypeEngine.ts` | 12 Jungových archetypov derivovaných z ŽČ + Enneagram + HD typ |
 | `kuaEngine.ts` | Kua číslo (Feng Shui) — priaznivé/nepriaznivé svetové strany z roku + pohlavia |
 | `aiInterpretation.ts` | Claude API client (single-shot + streaming chat) |
+| `astronomyHelpers.ts` | Shared: `getTrueNodeLongitude` (Meeus True Node), `getTimezoneOffset` (CET/CEST DST) — importujú astro + HD |
+| `engineCache.ts` | LRU memoize HOF pre drahé výpočty |
+
+## Shared moduly
+
+- **`astronomyHelpers.ts`** — spoločná astronomická logika pre `astrologyEngine` a `humanDesignEngine`. Obsahuje True Node (Meeus periodické korekcie) a timezone DST detection. **Nikdy neduplikovať** tieto funkcie v jednotlivých engines.
+- **`NEIGHBORS`** konštanta (3×3 grid adjacency) — exportovaná z `numerologyEngine.ts`, importovaná v `developmentalNumerologyEngine.ts`.
 
 ## Numerológia (podľa PDF Škola NUMERO + Robin Steinová)
 

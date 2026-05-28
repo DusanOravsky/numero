@@ -893,11 +893,8 @@ export function HumanDesignPage() {
                 {/* Primárne kľúče — Tvoje čítanie */}
                 {primaryKeys.length > 0 && (
                   <GlassCard glow>
-                    <details open>
-                      <summary className="cursor-pointer hover:text-indigo-300 transition-colors">
-                        <span className="font-medium text-white">{language === 'sk' ? 'Tvoje čítanie — tvoje hlavné génové kľúče' : 'Your reading — your main Gene Keys'}</span>
-                      </summary>
-                      <p className="text-xs text-slate-500 mt-2 mb-4">
+                    <h3 className="font-medium text-white mb-2">{language === 'sk' ? 'Tvoje čítanie — tvoje hlavné génové kľúče' : 'Your reading — your main Gene Keys'}</h3>
+                      <p className="text-xs text-slate-500 mb-4">
                         {language === 'sk'
                           ? <>Tieto tri kľúče tvoria tvoju <strong>Aktivačnú sekvenciu</strong> — Slnko (životné dielo), Zem (zakotvenie) a Mars (vyžarovanie). Sú najdôležitejšie pre tvoju transformáciu.</>
                           : <>These three keys form your <strong>Activation Sequence</strong> — Sun (life's work), Earth (grounding) and Mars (radiance). They are the most important for your transformation.</>}
@@ -965,7 +962,6 @@ export function HumanDesignPage() {
                         );
                       })}
                     </div>
-                    </details>
                   </GlassCard>
                 )}
 

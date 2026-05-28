@@ -940,14 +940,26 @@ export function HumanDesignPage() {
                             <p><span className="text-amber-400 font-medium">{language === 'sk' ? 'Dar' : 'Gift'}:</span> {gk.giftDescription}</p>
                           </div>
 
-                          <div className="mt-3 p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
-                            <p className="text-[10px] text-emerald-400 uppercase mb-1">{language === 'sk' ? 'Čo s tým prakticky' : 'What to do practically'}</p>
+                          <div className="mt-3 p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 space-y-2">
+                            <p className="text-[10px] text-emerald-400 uppercase font-medium">{language === 'sk' ? 'Ako s tým pracovať' : 'How to work with this'}</p>
                             <p className="text-xs text-slate-300">
+                              <strong className="text-rose-300">{language === 'sk' ? 'Rozpoznaj signál:' : 'Recognize the signal:'}</strong>{' '}
                               {language === 'sk'
-                                ? <>Keď zistíš, že si v tieni (<em>{gk.shadow.toLowerCase()}</em>) — zastav sa. Nie je to chyba, je to signál. Vedomá voľba: prejdi k daru (<em>{gk.gift.toLowerCase()}</em>).</>
-                                : <>When you notice you are in the shadow (<em>{gk.shadow.toLowerCase()}</em>) — pause. It is not a mistake, it is a signal. Conscious choice: move toward the gift (<em>{gk.gift.toLowerCase()}</em>).</>}
-                              {gk.nlpTechnique && <> {language === 'sk' ? 'Technika:' : 'Technique:'} <strong>{gk.nlpTechnique}</strong> — {gk.nlpDescription}</>}
+                                ? <>Keď sa prichytíš pri <em>{gk.shadow.toLowerCase()}</em> — neznamená to, že niečo robíš zle. Je to len signál, že si práve v tieni tohto kľúča.</>
+                                : <>When you catch yourself in <em>{gk.shadow.toLowerCase()}</em> — it doesn't mean you're doing something wrong. It's just a signal that you're in the shadow of this key.</>}
                             </p>
+                            <p className="text-xs text-slate-300">
+                              <strong className="text-amber-300">{language === 'sk' ? 'Vedomý krok:' : 'Conscious step:'}</strong>{' '}
+                              {language === 'sk'
+                                ? <>Zastav sa, vydýchni a opýtaj sa: „Ako by som teraz mohol/a žiť <em>{gk.gift.toLowerCase()}</em>?" Nemusíš to zvládnuť dokonale — stačí jeden malý posun.</>
+                                : <>Pause, breathe, and ask: "How could I live <em>{gk.gift.toLowerCase()}</em> right now?" You don't need to do it perfectly — one small shift is enough.</>}
+                            </p>
+                            {gk.nlpTechnique && (
+                              <p className="text-xs text-slate-400 italic">
+                                <strong className="text-violet-300 not-italic">{language === 'sk' ? 'Cvičenie:' : 'Exercise:'}</strong>{' '}
+                                {gk.nlpDescription}
+                              </p>
+                            )}
                           </div>
                         </div>
                         );

@@ -1437,13 +1437,19 @@ export const QUOTES_BY_ODV = skQuotes;
 export function getDailyMantra(odv: number, date: Date = new Date(), lang: Language = 'sk'): string {
   const mantras = lang === 'en' ? enMantras : skMantras;
   const list = mantras[odv] || mantras[1];
-  const dayOfYear = Math.floor((date.getTime() - new Date(date.getFullYear(), 0, 0).getTime()) / 86400000);
-  return list[dayOfYear % list.length];
+  const day = date.getDate();
+  const month = date.getMonth() + 1;
+  const year = date.getFullYear();
+  const seed = day * 31 + month * 7 + year;
+  return list[seed % list.length];
 }
 
 export function getDailyQuote(odv: number, date: Date = new Date(), lang: Language = 'sk'): { quote: string; author: string } {
   const quotes = lang === 'en' ? enQuotes : skQuotes;
   const list = quotes[odv] || quotes[1];
-  const dayOfYear = Math.floor((date.getTime() - new Date(date.getFullYear(), 0, 0).getTime()) / 86400000);
-  return list[dayOfYear % list.length];
+  const day = date.getDate();
+  const month = date.getMonth() + 1;
+  const year = date.getFullYear();
+  const seed = day * 37 + month * 13 + year;
+  return list[seed % list.length];
 }

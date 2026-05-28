@@ -248,9 +248,55 @@ export function Dashboard() {
         <div className="flex-1 h-px bg-gradient-to-r from-indigo-300 to-transparent"></div>
       </div>
 
-      {/* JEDNA VEC NA DNES — prvá vec čo užívateľ vidí */}
+      {/* ODV na začiatku s OMV/ORV pod details */}
+      <div>
+        <VibrationCard
+          title={language === 'sk' ? 'ODV – Denná vibrácia' : 'ODV – Daily vibration'}
+          value={odv}
+          subtitle={language === 'sk' ? 'Osobná denná vibrácia' : 'Personal daily vibration'}
+          icon="☀"
+          color="gold"
+          delay={0.1}
+          formula={`D(${currentDay}) + M(${currentMonth}) + ORV(${orv}) = ${currentDay + currentMonth + orv} → ${odv}`}
+          description={language === 'sk' ? 'ODV je charakteristická energia dnešného dňa. Určuje úlohu a tému konkrétneho dňa – čomu by ste mali venovať pozornosť a aké aktivity sú podporované.' : 'ODV is the characteristic energy of today. It determines the task and theme of the specific day — what you should pay attention to and which activities are supported.'}
+        />
+        <details className="group/vib mt-2">
+          <summary className="cursor-pointer text-xs text-slate-400 hover:text-indigo-500 transition-colors flex items-center gap-2 py-1.5 px-1 list-none">
+            <svg className="w-4 h-4 text-indigo-400 transition-transform group-open/vib:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+            </svg>
+            <span className="font-medium">{language === 'sk' ? 'Mesačná & Ročná vibrácia' : 'Monthly & Yearly vibration'}</span>
+            <span className="text-slate-500">·</span>
+            <span>OMV {omv} · ORV {orv}</span>
+          </summary>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
+            <VibrationCard
+              title={language === 'sk' ? 'OMV – Mesačná vibrácia' : 'OMV – Monthly vibration'}
+              value={omv}
+              subtitle={language === 'sk' ? 'Osobná mesačná vibrácia' : 'Personal monthly vibration'}
+              icon="☽"
+              color="purple"
+              delay={0}
+              formula={`M(${currentMonth}) + ORV(${orv}) = ${currentMonth + orv} → ${omv}`}
+              description={language === 'sk' ? 'OMV špecifikuje energiu aktuálneho mesiaca vo vašom osobnom roku. Ukazuje, aké úlohy a témy sú pre vás dôležité práve tento mesiac.' : 'OMV specifies the energy of the current month in your personal year. It shows what tasks and themes are important for you this month.'}
+            />
+            <VibrationCard
+              title={language === 'sk' ? 'ORV – Ročná vibrácia' : 'ORV – Yearly vibration'}
+              value={orv}
+              subtitle={language === 'sk' ? 'Osobná ročná vibrácia' : 'Personal yearly vibration'}
+              icon="✦"
+              color="indigo"
+              delay={0}
+              formula={profile ? `D(${profile.birthDay}) + M(${profile.birthMonth}) + R(${currentMonth < profile.birthMonth || (currentMonth === profile.birthMonth && currentDay < profile.birthDay) ? currentYear - 1 : currentYear}) → ${orv}` : ''}
+              description={language === 'sk' ? 'ORV ukazuje energiu celého roka od narodenín do narodenín. Určuje hlavné témy a úlohy, na ktoré sa v danom roku zameriavate. Počíta sa z dňa a mesiaca narodenia + aktuálny rok (od posledných narodenín).' : 'ORV shows the energy of the entire year from birthday to birthday. It determines the main themes and tasks you focus on in a given year. It is calculated from the day and month of birth + current year (from the last birthday).'}
+            />
+          </div>
+        </details>
+      </div>
+
+      {/* JEDNA VEC NA DNES */}
       {fullResults && getOdvDescription(odv, language) && (
-        <GlassCard glow delay={0.1}>
+        <GlassCard glow delay={0.15}>
           <div className="flex items-start gap-4">
             <div className="w-14 h-14 rounded-full bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center text-2xl shrink-0">
               🎯
@@ -288,50 +334,6 @@ export function Dashboard() {
           </div>
         </GlassCard>
       )}
-
-      {/* ODV viditeľné, OMV+ORV v rozbaľovacom */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <VibrationCard
-          title={language === 'sk' ? 'ODV – Denná vibrácia' : 'ODV – Daily vibration'}
-          value={odv}
-          subtitle={language === 'sk' ? 'Osobná denná vibrácia' : 'Personal daily vibration'}
-          icon="☀"
-          color="gold"
-          delay={0.1}
-          formula={`D(${currentDay}) + M(${currentMonth}) + ORV(${orv}) = ${currentDay + currentMonth + orv} → ${odv}`}
-          description={language === 'sk' ? 'ODV je charakteristická energia dnešného dňa. Určuje úlohu a tému konkrétneho dňa – čomu by ste mali venovať pozornosť a aké aktivity sú podporované.' : 'ODV is the characteristic energy of today. It determines the task and theme of the specific day — what you should pay attention to and which activities are supported.'}
-        />
-        <div className="sm:col-span-2">
-          <details className="h-full">
-            <summary className="cursor-pointer text-xs text-slate-500 hover:text-indigo-500 transition-colors flex items-center gap-2 py-2">
-              <span className="uppercase tracking-wider font-medium">{language === 'sk' ? 'Mesačná & Ročná vibrácia' : 'Monthly & Yearly vibration'}</span>
-              <span className="text-slate-400">OMV {omv} · ORV {orv}</span>
-            </summary>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
-              <VibrationCard
-                title={language === 'sk' ? 'OMV – Mesačná vibrácia' : 'OMV – Monthly vibration'}
-                value={omv}
-                subtitle={language === 'sk' ? 'Osobná mesačná vibrácia' : 'Personal monthly vibration'}
-                icon="☽"
-                color="purple"
-                delay={0}
-                formula={`M(${currentMonth}) + ORV(${orv}) = ${currentMonth + orv} → ${omv}`}
-                description={language === 'sk' ? 'OMV špecifikuje energiu aktuálneho mesiaca vo vašom osobnom roku. Ukazuje, aké úlohy a témy sú pre vás dôležité práve tento mesiac.' : 'OMV specifies the energy of the current month in your personal year. It shows what tasks and themes are important for you this month.'}
-              />
-              <VibrationCard
-                title={language === 'sk' ? 'ORV – Ročná vibrácia' : 'ORV – Yearly vibration'}
-                value={orv}
-                subtitle={language === 'sk' ? 'Osobná ročná vibrácia' : 'Personal yearly vibration'}
-                icon="✦"
-                color="indigo"
-                delay={0}
-                formula={profile ? `D(${profile.birthDay}) + M(${profile.birthMonth}) + R(${currentMonth < profile.birthMonth || (currentMonth === profile.birthMonth && currentDay < profile.birthDay) ? currentYear - 1 : currentYear}) → ${orv}` : ''}
-                description={language === 'sk' ? 'ORV ukazuje energiu celého roka od narodenín do narodenín. Určuje hlavné témy a úlohy, na ktoré sa v danom roku zameriavate. Počíta sa z dňa a mesiaca narodenia + aktuálny rok (od posledných narodenín).' : 'ORV shows the energy of the entire year from birthday to birthday. It determines the main themes and tasks you focus on in a given year. It is calculated from the day and month of birth + current year (from the last birthday).'}
-              />
-            </div>
-          </details>
-        </div>
-      </div>
 
       {/* Biorytmus + Kryštál dňa */}
       {profile && (

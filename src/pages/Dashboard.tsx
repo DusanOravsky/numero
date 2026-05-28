@@ -23,7 +23,7 @@ import { deriveTCMElement } from '../engine/tcmEngine';
 import { getOrvDescription } from '../data/orvDescriptions';
 import { getOmvDescription } from '../data/omvDescriptions';
 import { getOdvDescription } from '../data/odvDescriptions';
-import { getDailyMantra, getDailyQuote } from '../data/mantrasAndQuotes';
+import { getDailyMantra, getDailyQuote, type MantraTone } from '../data/mantrasAndQuotes';
 import { getDailyTarot, getMonthlyTarot } from '../data/tarotCards';
 import { ClientExport } from '../components/ClientExport';
 import { getTimezoneFromCoords } from '../data/cities';
@@ -131,6 +131,16 @@ export function Dashboard() {
   }, [language, dayOfYear]);
 
   const dailyRituals = useMemo(() => getDailyRituals(language), [language]);
+
+  const mantraTone: MantraTone = useMemo(() => {
+    if (!profile) return 'neutral';
+    const br = calculateBiorhythm(profile.birthDay, profile.birthMonth, profile.birthYear);
+    const hasCritical = br.physicalPhase === 'critical' || br.emotionalPhase === 'critical' || br.intellectualPhase === 'critical';
+    if (hasCritical) return 'grounding';
+    const hasPeak = br.physical > 60 || br.emotional > 60 || br.intellectual > 60;
+    if (hasPeak) return 'peak';
+    return 'neutral';
+  }, [profile]);
 
   const nameDayInfo = useMemo(() => {
     if (language !== 'sk') return null;
@@ -410,7 +420,7 @@ export function Dashboard() {
             </div>
             <div className="min-w-0">
               <p className="text-xs text-amber-300 uppercase mb-1">{t('dashboard.todayMantra')}</p>
-              <p className="text-sm text-slate-300 font-serif italic">"{getDailyMantra(odv, undefined, language)}"</p>
+              <p className="text-sm text-slate-300 font-serif italic">"{getDailyMantra(odv, undefined, language, mantraTone)}"</p>
             </div>
           </div>
         </GlassCard>

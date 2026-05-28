@@ -1434,14 +1434,20 @@ export const QUOTES_BY_ODV = skQuotes;
  * Vyber dnešnú mantru na základe ODV a aktuálneho dátumu —
  * varianty rotujú každý deň.
  */
-export function getDailyMantra(odv: number, date: Date = new Date(), lang: Language = 'sk'): string {
+export type MantraTone = 'grounding' | 'neutral' | 'peak';
+
+export function getDailyMantra(odv: number, date: Date = new Date(), lang: Language = 'sk', tone: MantraTone = 'neutral'): string {
   const mantras = lang === 'en' ? enMantras : skMantras;
   const list = mantras[odv] || mantras[1];
+  const third = Math.floor(list.length / 3);
+  const slice = tone === 'grounding' ? list.slice(0, third)
+    : tone === 'peak' ? list.slice(list.length - third)
+    : list.slice(third, list.length - third);
   const day = date.getDate();
   const month = date.getMonth() + 1;
   const year = date.getFullYear();
   const seed = day * 31 + month * 7 + year;
-  return list[seed % list.length];
+  return slice[seed % slice.length];
 }
 
 export function getDailyQuote(odv: number, date: Date = new Date(), lang: Language = 'sk'): { quote: string; author: string } {

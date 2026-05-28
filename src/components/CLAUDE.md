@@ -171,9 +171,11 @@ Streaming chat s Claude API:
 - **Persistovaná história** v **IndexedDB** pod kľúčom `ai-chat-{storageKey}`. Storage key: `global-${profileId}` (drawer), `client-${clientId}` (ClientDashboard).
 - **Streaming** cez `streamChat()` s `AbortController` pre cancel.
 - **Abort trim na vetu** (v4.3.4+): pri zrušení mid-stream sa text trimne na poslednú dokončenú vetu (`. !? \n`) cez `trimToLastSentence()` helper. Žiadne polovičné slová v histórii.
-- **Markdown rendering** inline (## ### nadpisy, **bold**, • bullets) bez external lib.
-- **Empty state** s CTA button "Vytvoriť AI výklad" + default úvodná správa.
+- **Markdown rendering** inline (## ### nadpisy, **bold**, • bullets) bez external lib. Light-mode safe farby (slate-700/900, indigo-600/700) — žiadne `text-indigo-200/300` na bielej karte.
+- **Empty state** s ✦ ikonkou + CTA button + default úvodná správa.
 - **Token counter** v patičke + reset rozhovoru.
+- **Štýl bublín (v4.6.2+):** konverzácia je v `bg-gradient-to-b from-indigo-50 to-violet-50` paneli. User bubble = solid indigo→violet gradient s bielym textom (iMessage-style, `rounded-tr-md` na pravo). Assistant bubble = biela karta s `border-indigo-100` + ✦ accent. Predtým `bg-slate-800/40` na assistant a `bg-indigo-500/15` na user → nečitateľné a bez kontrastu v light mode.
+- **Default úvodná správa (v4.6.2+):** `DEFAULT_INITIAL` žiada krátky náhľad (~250 slov), nie kompletný výklad. Spárované s lens prompt v `aiInterpretation.ts` ktorý tiež predpisuje stručnosť. Detaily sa rozpisujú v rozhovore.
 
 ### Globálny AI drawer (v2.33.0+)
 

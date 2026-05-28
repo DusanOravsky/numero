@@ -1,6 +1,6 @@
 # Integrálna mapa bytia (Número)
 
-Offline-first PWA pre numerológiu, astrológiu, Human Design, etikoterapiu, kabalu, Theta Healing, Enneagram, Ayurvédu, TCM, biorytmus, Jungove archetypy, kristaloterapiu, Feng Shui (Kua) a sebarozvoj. **v4.6.0**
+Offline-first PWA pre numerológiu, astrológiu, Human Design, etikoterapiu, kabalu, Theta Healing, Enneagram, Ayurvédu, TCM, biorytmus, Jungove archetypy, kristaloterapiu, Feng Shui (Kua) a sebarozvoj. **v4.6.2**
 
 > 📁 **Nested CLAUDE.md súbory:**
 > - `src/engine/CLAUDE.md` — engine pravidlá, numerológia/astrológia/HD matematika
@@ -130,7 +130,7 @@ Anthropic Claude priamo z prehliadača (header `anthropic-dangerous-direct-brows
 
 - API kľúč len v `localStorage` (nikdy v store ani v bundle)
 - Settings → "✦ AI integrácia (Claude)" — input + Test + Save
-- Modely: Haiku 4.5 / Sonnet 4.6 (default) / Opus 4.7
+- Modely: Haiku 4.5 / Sonnet 4.6 (default) / Opus 4.7 / Opus 4.8
 - **max_tokens**: 4096 (stream chat), 3500 (summarize)
 - **ProfileContext**: 15 systémov (numerológia, astrológia, HD, čakry, kabala, theta, enneagram, dosha, tcm, čínsky horoskop, jazyky lásky, biorytmus, archetyp, kua, kristaloterapia).
 - **Interpretation lenses** (v2.3.0): integratívny ezoterický (default), logické úrovne (NLP/Dilts), etikoterapia (Vogeltanz/Bezděk), koučing (GROW). Volia sa v Settings, perzistované v `localStorage` pod `anthropic-lens`. Lens iba mení system prompt, žiadny vplyv na engine výpočty.

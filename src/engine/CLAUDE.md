@@ -344,7 +344,8 @@ export function calculateAstrology(day, month, year, hour = 12, minute = 0, ...)
 
 - Anthropic Claude direct browser call (`anthropic-dangerous-direct-browser-access: true`)
 - API kľúč v `localStorage` pod `anthropic-api-key`
-- Default model: `claude-sonnet-4-6`
+- Default model: `claude-sonnet-4-6` (možnosti: Haiku 4.5, Sonnet 4.6, Opus 4.7, Opus 4.8)
+- **Lens default prompt** (v4.6.2+) — prvá AI odpoveď je krátky integrálny náhľad (~250-300 slov, 4-6 odsekov, plynulý text bez očíslovaných sekcií, končí pozvánkou na otázku). Detaily sa rozpisujú až pri konkrétnych follow-up otázkach. Predchádza tomu že AI v úvode vychrlí celú knihu.
 - **max_tokens**: 4096 (streamChat), 3500 (summarizeProfile)
 - **ProfileContext**: rozšírený o `enneagram`, `dosha`, `tcm`, `archetype`, `biorhythm`, `kua`, `crystals` polia (15 systémov celkovo)
 - `summarizeProfile(ctx)` — buduje text prompt zo všetkých systémov

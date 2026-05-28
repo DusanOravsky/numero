@@ -4,6 +4,29 @@ All notable changes to this project are documented in this file. Dates are
 in ISO 8601 (YYYY-MM-DD). The format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 4.6.2 — 2026-05-28
+
+**PATCH**: Redesign AI chatu + skrátený prvý sumár.
+
+### Vizuál chat bublín
+- Konverzácia obalená v `bg-gradient-to-b from-indigo-50 to-violet-50` paneli s indigo borderom (predtým plain glass, šedo-blandné).
+- User bubble = solid indigo→violet gradient bubble s bielym textom, iMessage-style zaoblenie (`rounded-tr-md`).
+- Assistant bubble = biela karta s `border-indigo-100` + ✦ accent v hlavičke.
+- Markdown rendering — nadpisy a text prepnuté na slate-700/900 + indigo-600/700 (predtým `text-indigo-200/300` ktoré v light mode neboli viditeľné na bielej karte).
+- Empty state s ✦ ikonkou + jasné copy "Stručný integrálny náhľad na začiatok".
+
+### Prvý AI sumár — kratšie
+- `LENS_PROMPTS.default` v `aiInterpretation.ts` prepísaný: žiada ~250-300 slov, 4-6 odsekov, plynulý text bez očíslovaných sekcií, končí pozvánkou na otázku.
+- `DEFAULT_INITIAL` v AIChat: "Daj mi krátky, výstižný integrálny náhľad — 4-6 odsekov, max ~250 slov".
+- Detaily (roviny, kabala, theta, čakry) sa rozpisujú až v rozhovore. Predtým AI v úvode produkoval kniku.
+
+## 4.6.1 — 2026-05-28
+
+**PATCH**: Pridaný Claude Opus 4.8 ako AI model option.
+
+- Nový najnovší model `claude-opus-4-8` v `CLAUDE_MODELS` výbere v Settings → AI.
+- Default zostáva Sonnet 4.6 (nikomu sa nič neprepne).
+
 ## 4.3.4 — 2026-05-27
 
 **PATCH**: Hĺbkové review pass 2 — robustnosť, type safety, a11y.

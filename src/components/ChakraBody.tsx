@@ -1,11 +1,15 @@
 import { motion } from 'framer-motion';
 import type { ChakraState } from '../engine/chakraEngine';
+import { MantraButton } from './MantraButton';
+import { useMantraAudio } from '../hooks/useMantraAudio';
 
 interface ChakraBodyProps {
   chakras: ChakraState[];
 }
 
 export function ChakraBody({ chakras }: ChakraBodyProps) {
+  const { playing, toggle } = useMantraAudio();
+
   return (
     <div className="flex flex-col items-center gap-3 py-4">
       {[...chakras].reverse().map((state, idx) => (
@@ -16,20 +20,12 @@ export function ChakraBody({ chakras }: ChakraBodyProps) {
           transition={{ delay: idx * 0.1 }}
           className="flex items-center gap-4 w-full max-w-md"
         >
-          <div
-            className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-xs border-2 ${
-              state.status === 'balanced' ? 'opacity-100' :
-              state.status === 'blocked' ? 'opacity-40' : 'opacity-100 animate-glow-pulse'
-            }`}
-            style={{
-              backgroundColor: `${state.chakra.colorHex}30`,
-              borderColor: state.chakra.colorHex,
-              color: state.chakra.colorHex,
-              boxShadow: state.status === 'hyperactive' ? `0 0 15px ${state.chakra.colorHex}60` : 'none',
-            }}
-          >
-            {state.chakra.mantra}
-          </div>
+          <MantraButton
+            mantra={state.chakra.mantra}
+            isPlaying={playing === state.chakra.mantra.toUpperCase()}
+            onToggle={() => toggle(state.chakra.mantra)}
+            colorHex={state.chakra.colorHex}
+          />
           <div className="flex-1">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">

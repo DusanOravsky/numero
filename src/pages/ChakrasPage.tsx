@@ -4,6 +4,8 @@ import { useSubject } from '../hooks/useSubject';
 import { useTranslation } from '../i18n/useTranslation';
 import { GlassCard } from '../components/GlassCard';
 import { ChakraBody } from '../components/ChakraBody';
+import { MantraButton } from '../components/MantraButton';
+import { useMantraAudio } from '../hooks/useMantraAudio';
 import { DateInput } from '../components/DateInput';
 import { calculateFullNumerology, getGridCount } from '../engine/numerologyEngine';
 import { evaluateChakras } from '../engine/chakraEngine';
@@ -35,6 +37,7 @@ export function ChakrasPage() {
   const navigate = useNavigate();
   const profile = useSubject();
   const [manualChakras, setManualChakras] = useState<ChakraState[] | null>(null);
+  const { playing, toggle } = useMantraAudio();
 
   const profileChakras = useMemo<ChakraState[] | null>(() => {
     if (!profile) return null;
@@ -260,7 +263,16 @@ export function ChakrasPage() {
                           </span>
                         </div>
                       </div>
-                      <p className="text-xs text-slate-500 mt-0.5">{state.chakra.sanskrit} | {displayName(CHAKRA_LOCATION_DISPLAY, state.chakra.location, language)}</p>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <p className="text-xs text-slate-500">{state.chakra.sanskrit} | {displayName(CHAKRA_LOCATION_DISPLAY, state.chakra.location, language)}</p>
+                        <MantraButton
+                          mantra={state.chakra.mantra}
+                          isPlaying={playing === state.chakra.mantra.toUpperCase()}
+                          onToggle={() => toggle(state.chakra.mantra)}
+                          colorHex={state.chakra.colorHex}
+                          size="sm"
+                        />
+                      </div>
 
                       {/* Vizualizácia skóre */}
                       <div className="mt-2 h-1.5 bg-slate-200 rounded-full overflow-hidden">

@@ -1,6 +1,6 @@
 # Code Review — Número PWA v4.6.2 (2026-05-30)
 
-> Opravené vo v4.6.3 (batch 1) + v4.6.4 (batch 2) — viď CHANGELOG. Tento dokument je trvalý záznam nálezov + stavu.
+> Opravené vo v4.6.3 (batch 1) + v4.6.4 (batch 2) + v4.6.5 (batch 3) — viď CHANGELOG. **Všetky nálezy vyriešené.**
 
 Plný code review celej aplikácie (4 paralelní recenzenti: engine, components, pages/hooks, store/utils/i18n/config).
 Baseline pri review: `typecheck` čistý, `lint` čistý, **272/272 testov** prešlo.
@@ -15,7 +15,7 @@ Stav: ⬜ TODO · 🔧 IN PROGRESS · ✅ FIXED · ⏭️ SKIP (s dôvodom).
 | C1 | ✅ | `hooks/useMantraAudio.ts` | Žiadny cleanup pri unmount → looping audio hrá ďalej po opustení stránky. |
 | C2 | ✅ | `pages/ChakrasPage.tsx` + `components/ChakraBody.tsx` | Dve nezávislé `useMantraAudio()` inštancie → dve mantry naraz, každá pauzuje len svoju. |
 | C3 | ✅ | `components/MeditationTimer.tsx` | Stale `duration` v intervale + `playEndChime()` volaný vo `setRemaining` updateri (side-effect v reduceri, 2× v StrictMode). |
-| C4 | ⏭️ | `engine/astrologyEngine.ts:191` | Chiron „parallax" korekcia `asin(sin(Δλ)/r)` je geometricky nezmyselná. SKIP: vyžaduje astronomickú referenciu, nie čistý bug-fix; zdokumentované ako známy limit. |
+| C4 | ✅ | `engine/astrologyEngine.ts` | Chiron „parallax" `asin(sin(Δλ)/r)` geometricky nezmyselný. Fix v4.6.5: korektné vektorové geocentrické odčítanie polohy Zeme. |
 
 ## Important
 
@@ -41,7 +41,7 @@ Stav: ⬜ TODO · 🔧 IN PROGRESS · ✅ FIXED · ⏭️ SKIP (s dôvodom).
 | M2 | ✅ | `components/MantraButton.tsx:25` | `title`/`aria-label` natvrdo anglicky („Play/Stop"). |
 | M3 | ⏭️ | `engine/numerologyEngine.ts:289` | Zbytočne komplikovaný `lpBase` výraz (obe vetvy rovnaké). SKIP: kozmetika, nemení výsledok. |
 | M4 | ✅ | `components/ClientExport.tsx` | QR cez externý `api.qrserver.com` → offline-first + PII únik. Fix v4.6.4: lokálny lazy-loaded `qrcode` (separátny 23KB chunk). |
-| M5 | ⏭️ | docs | Duplicitné astro helpery (astro vs HD), `openDB` (chatStorage vs indexedDbStorage), zastaraný popis `translations.ts` v `components/CLAUDE.md`. SKIP: tech-debt poznámky. |
+| M5 | ✅ | `astronomyHelpers.ts`, `store/idbConnection.ts`, `components/CLAUDE.md` | Tech-debt. Fix v4.6.5: zdieľané astro longitude helpery, `createIdbConnection` factory, aktualizovaný i18n doc. |
 
 ## Čo je solídne (potvrdené, žiadny nález)
 - ErrorBoundary redaktuje API kľúče pred logom/clipboardom.

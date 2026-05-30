@@ -1,6 +1,6 @@
 import * as Astronomy from 'astronomy-engine';
 import { memoize, birthKey } from './engineCache';
-import { getTrueNodeLongitude, getTimezoneOffset } from './astronomyHelpers';
+import { getTrueNodeLongitude, getTimezoneOffset, getSunLongitude, getMoonLongitude, getPlanetLongitude } from './astronomyHelpers';
 
 export type HDType = 'Manifestor' | 'Generátor' | 'Manifestujúci Generátor' | 'Projektor' | 'Reflektor';
 export type HDAuthority = 'Emocionálna' | 'Sakrálna' | 'Slezinová' | 'Ego' | 'Sebaprojektovaná' | 'Mentálna/Environmentálna' | 'Lunárna';
@@ -254,27 +254,6 @@ function degreeToGateLine(eclipticLongitude: number): { gate: number; line: numb
   const withinColor = withinLine % COLOR_SIZE;
   const tone = Math.floor(withinColor / TONE_SIZE) + 1;
   return { gate: GATE_ORDER[Math.min(index, 63)], line: Math.min(line, 6), color: Math.min(color, 6), tone: Math.min(tone, 6) };
-}
-
-function getSunLongitude(date: Date): number {
-  const time = Astronomy.MakeTime(date);
-  const ecl = Astronomy.SunPosition(time);
-  return ecl.elon;
-}
-
-function getPlanetLongitude(body: Astronomy.Body, date: Date): number {
-  const time = Astronomy.MakeTime(date);
-  if (body === Astronomy.Body.Sun) return getSunLongitude(date);
-  const vec = Astronomy.GeoVector(body, time, true);
-  const ecl = Astronomy.Ecliptic(vec);
-  return ecl.elon;
-}
-
-function getMoonLongitude(date: Date): number {
-  const time = Astronomy.MakeTime(date);
-  const vec = Astronomy.GeoMoon(time);
-  const ecl = Astronomy.Ecliptic(vec);
-  return ecl.elon;
 }
 
 

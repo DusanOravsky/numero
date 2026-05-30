@@ -1,6 +1,6 @@
 import * as Astronomy from 'astronomy-engine';
 import { memoize, birthKey } from './engineCache';
-import { getTrueNodeLongitude, getTimezoneOffset } from './astronomyHelpers';
+import { getTrueNodeLongitude, getTimezoneOffset, getSunLongitude, getMoonLongitude, getPlanetLongitude } from './astronomyHelpers';
 
 export interface ZodiacSign {
   name: string;
@@ -81,25 +81,9 @@ function getSignFromLongitude(longitude: number): { sign: ZodiacSign; degree: nu
   return { sign: ZODIAC_SIGNS[signIndex], degree };
 }
 
-function getSunLongitude(date: Date): number {
-  const time = Astronomy.MakeTime(date);
-  const ecl = Astronomy.SunPosition(time);
-  return ecl.elon;
-}
-
-function getPlanetLongitudeAtDate(body: Astronomy.Body, date: Date): number {
-  const time = Astronomy.MakeTime(date);
-  const vec = Astronomy.GeoVector(body, time, true);
-  const ecl = Astronomy.Ecliptic(vec);
-  return ecl.elon;
-}
-
-function getMoonLongitude(date: Date): number {
-  const time = Astronomy.MakeTime(date);
-  const vec = Astronomy.GeoMoon(time);
-  const ecl = Astronomy.Ecliptic(vec);
-  return ecl.elon;
-}
+// Longitude helpery (Slnko/Mesiac/planéty) sú zdieľané v astronomyHelpers.ts.
+// getPlanetLongitudeAtDate = alias na getPlanetLongitude (zachovaný kvôli call-site názvu).
+const getPlanetLongitudeAtDate = getPlanetLongitude;
 
 function isRetrograde(body: Astronomy.Body, date: Date): boolean {
   if (body === Astronomy.Body.Sun || body === Astronomy.Body.Moon) return false;
@@ -176,21 +160,23 @@ function getChironLongitude(date: Date): number {
   const cosV = (Math.cos(E) - e) / (1 - e * Math.cos(E));
   const v = Math.atan2(sinV, cosV);
 
-  // Heliocentric ecliptic longitude
+  // Heliocentrické ekliptikálne rektangulárne súradnice Chironu.
+  // u = argument latitude (ω + v), rotácia do ekliptiky cez Ω a sklon i.
   const u = v + omega_small;
-  const lon_helio = Math.atan2(
-    Math.sin(u) * Math.cos(i),
-    Math.cos(u)
-  ) + omega_big;
-
-  // Geocentric correction (simplified — Earth longitude subtraction for parallax)
-  const earthL = (280.46646 + 36000.76983 * T) * Math.PI / 180;
   const r_chiron = a * (1 - e * Math.cos(E));
-  // For distant objects (r >> 1 AU), heliocentric ≈ geocentric with small parallax
-  // Apply approximate parallax correction
-  const parallax = Math.asin(Math.sin(earthL - lon_helio) / r_chiron);
-  const lon_geo = lon_helio + parallax;
+  const xh = r_chiron * (Math.cos(omega_big) * Math.cos(u) - Math.sin(omega_big) * Math.sin(u) * Math.cos(i));
+  const yh = r_chiron * (Math.sin(omega_big) * Math.cos(u) + Math.cos(omega_big) * Math.sin(u) * Math.cos(i));
 
+  // Geocentrická transformácia: odčítame heliocentrickú polohu Zeme (vektorovo, nie
+  // nezmyselný asin "parallax"). Zem helio = Slnko geo + 180° v ekliptike, lat ≈ 0.
+  // r_earth z geocentrickej vzdialenosti Slnka (≈ heliocentrická vzdialenosť Zeme).
+  const sunEcl = Astronomy.SunPosition(Astronomy.MakeTime(date));
+  const earthLonHelio = (sunEcl.elon + 180) * Math.PI / 180;
+  const rEarth = sunEcl.vec.Length();
+  const xe = rEarth * Math.cos(earthLonHelio);
+  const ye = rEarth * Math.sin(earthLonHelio);
+
+  const lon_geo = Math.atan2(yh - ye, xh - xe);
   const deg = ((lon_geo * 180 / Math.PI) % 360 + 360) % 360;
   return deg;
 }

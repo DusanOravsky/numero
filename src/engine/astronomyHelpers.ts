@@ -1,6 +1,25 @@
 /**
  * Shared astronomy helper functions used by both astrologyEngine and humanDesignEngine.
  */
+import * as Astronomy from 'astronomy-engine';
+
+/** Geocentrická ekliptikálna longitúda Slnka (°). */
+export function getSunLongitude(date: Date): number {
+  return Astronomy.SunPosition(Astronomy.MakeTime(date)).elon;
+}
+
+/** Geocentrická ekliptikálna longitúda Mesiaca (°). */
+export function getMoonLongitude(date: Date): number {
+  const vec = Astronomy.GeoMoon(Astronomy.MakeTime(date));
+  return Astronomy.Ecliptic(vec).elon;
+}
+
+/** Geocentrická ekliptikálna longitúda planéty (°). Slnko delegované na getSunLongitude. */
+export function getPlanetLongitude(body: Astronomy.Body, date: Date): number {
+  if (body === Astronomy.Body.Sun) return getSunLongitude(date);
+  const vec = Astronomy.GeoVector(body, Astronomy.MakeTime(date), true);
+  return Astronomy.Ecliptic(vec).elon;
+}
 
 /**
  * True Node longitude with Meeus periodic corrections.

@@ -4,6 +4,18 @@ All notable changes to this project are documented in this file. Dates are
 in ISO 8601 (YYYY-MM-DD). The format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 4.6.5 — 2026-05-30
+
+**PATCH**: Code review batch 3 — Chiron math fix + deduplikácia (posledné backlog položky).
+
+### Korektnosť
+- **Chiron geocentrická transformácia** (C4): predtým `asin(sin(Δλ)/r)` „parallax" korekcia bola geometricky nezmyselná (mohla preklopiť Chiron do susedného znamenia pri hraničných dátumoch). Teraz korektné vektorové odčítanie heliocentrickej polohy Zeme (`atan2(yh−ye, xh−xe)`). Pre referenčné dáta zhodné na ~0.1° so starým, ale bez rizika NaN/preklopenia. Presnosť ±1-2°.
+
+### Deduplikácia (tech-debt)
+- **Astro longitude helpery** (M5a): `getSunLongitude`/`getMoonLongitude`/`getPlanetLongitude` boli duplicitne v `astrologyEngine` aj `humanDesignEngine`. Presunuté do zdieľaného `astronomyHelpers.ts`.
+- **IndexedDB connection factory** (M5b): duplicitná `openDB` logika (instance cache + onclose/onversionchange) v `chatStorage.ts` aj `store/indexedDbStorage.ts` extrahovaná do `store/idbConnection.ts` (`createIdbConnection`).
+- **i18n doc** (M5c): `src/components/CLAUDE.md` aktualizovaný — popisoval zastaraný `translations.ts` (130+ kľúčov), realita je namespace súbory + `registry.ts`.
+
 ## 4.6.4 — 2026-05-30
 
 **PATCH**: Code review batch 2 — backlog položky z `docs/CODE_REVIEW_2026-05.md`.

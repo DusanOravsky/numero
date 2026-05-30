@@ -1,6 +1,6 @@
-const DB_NAME = 'numero-chat';
+import { createIdbConnection } from '../store/idbConnection';
+
 const STORE_NAME = 'chats';
-const DB_VERSION = 1;
 
 const MAX_MESSAGES_PER_CHAT = 50;
 const CHAT_TTL_DAYS = 90;
@@ -12,30 +12,9 @@ export interface PersistedChat {
   updatedAt?: number;
 }
 
-let dbInstance: IDBDatabase | null = null;
-let dbPromise: Promise<IDBDatabase> | null = null;
-
-function openDB(): Promise<IDBDatabase> {
-  if (dbInstance) return Promise.resolve(dbInstance);
-  if (dbPromise) return dbPromise;
-  dbPromise = new Promise((resolve, reject) => {
-    const req = indexedDB.open(DB_NAME, DB_VERSION);
-    req.onupgradeneeded = () => {
-      req.result.createObjectStore(STORE_NAME);
-    };
-    req.onsuccess = () => {
-      dbInstance = req.result;
-      dbInstance.onclose = () => { dbInstance = null; dbPromise = null; };
-      dbInstance.onversionchange = () => { dbInstance?.close(); dbInstance = null; dbPromise = null; };
-      resolve(dbInstance);
-    };
-    req.onerror = () => {
-      dbPromise = null;
-      reject(req.error);
-    };
-  });
-  return dbPromise;
-}
+const { openDb: openDB } = createIdbConnection('numero-chat', 1, (db) => {
+  db.createObjectStore(STORE_NAME);
+});
 
 export async function loadChat(key: string): Promise<PersistedChat | null> {
   try {

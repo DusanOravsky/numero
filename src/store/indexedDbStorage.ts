@@ -1,42 +1,21 @@
 import type { StateStorage } from 'zustand/middleware';
 import { safeGet, safeSet, safeRemove } from '../utils/safeStorage';
+import { createIdbConnection } from './idbConnection';
 
-const DB_NAME = 'numero-db';
 const STORE_NAME = 'zustand';
-const DB_VERSION = 1;
 
-let dbInstance: IDBDatabase | null = null;
-let dbPromise: Promise<IDBDatabase> | null = null;
 let storageDegraded = false;
 
 export function isStorageDegraded(): boolean {
   return storageDegraded;
 }
 
-function openDb(): Promise<IDBDatabase> {
-  if (dbInstance) return Promise.resolve(dbInstance);
-  if (dbPromise) return dbPromise;
-  dbPromise = new Promise((resolve, reject) => {
-    const request = indexedDB.open(DB_NAME, DB_VERSION);
-    request.onupgradeneeded = () => {
-      const db = request.result;
-      if (!db.objectStoreNames.contains(STORE_NAME)) {
-        db.createObjectStore(STORE_NAME);
-      }
-    };
-    request.onsuccess = () => {
-      dbInstance = request.result;
-      dbInstance.onclose = () => { dbInstance = null; dbPromise = null; };
-      dbInstance.onversionchange = () => { dbInstance?.close(); dbInstance = null; dbPromise = null; };
-      resolve(dbInstance);
-    };
-    request.onerror = () => {
-      dbPromise = null;
-      reject(request.error);
-    };
-  });
-  return dbPromise;
-}
+const conn = createIdbConnection('numero-db', 1, (db) => {
+  if (!db.objectStoreNames.contains(STORE_NAME)) {
+    db.createObjectStore(STORE_NAME);
+  }
+});
+const openDb = conn.openDb;
 
 export const indexedDbStorage: StateStorage = {
   getItem: async (name: string): Promise<string | null> => {
@@ -50,7 +29,7 @@ export const indexedDbStorage: StateStorage = {
           request.onsuccess = () => resolve(request.result ?? null);
           request.onerror = () => reject(request.error);
         } catch {
-          dbInstance = null; dbPromise = null;
+          conn.invalidate();
           reject(new Error('Transaction failed, DB connection stale'));
         }
       });
@@ -72,7 +51,7 @@ export const indexedDbStorage: StateStorage = {
           request.onsuccess = () => resolve();
           request.onerror = () => reject(request.error);
         } catch {
-          dbInstance = null; dbPromise = null;
+          conn.invalidate();
           reject(new Error('Transaction failed, DB connection stale'));
         }
       });
@@ -93,7 +72,7 @@ export const indexedDbStorage: StateStorage = {
           request.onsuccess = () => resolve();
           request.onerror = () => reject(request.error);
         } catch {
-          dbInstance = null; dbPromise = null;
+          conn.invalidate();
           reject(new Error('Transaction failed, DB connection stale'));
         }
       });

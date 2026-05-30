@@ -245,11 +245,12 @@ Lens je v `localStorage` pod `anthropic-lens`. `aiInterpretation.ts` má `buildS
 
 ## i18n
 
-- Lightweight in-house dictionary v `src/i18n/translations.ts`
-- Type-safe (TranslationKey union)
-- `t('key')` cez `useTranslation()` hook
-- Default `sk`, fallback z `en` na `sk`
-- 130+ kľúčov
+- In-house dictionary rozdelený do namespace súborov `src/i18n/namespaces/*.ts` (common, settings, clients, dashboard, numerology, astrology, chakras, relationships), zlúčené v `src/i18n/registry.ts`. (`translations.ts` je už len deprecated re-export.)
+- Type-safe — každý namespace je `Record<XKey, string>` pre SK aj EN, takže chýbajúci kľúč v jednom jazyku = TS compile error (vynútené 1:1).
+- `t('key')` cez `useTranslation()` hook → `{ t, language }`
+- Default `sk`, fallback z `en` na `sk` (+ DEV warning pri chýbajúcom kľúči)
+- Entity names (zodiac, planéty, HD typy, čakry…) cez `displayName(MAPA, skKey, lang)` z `entityNames.ts`
+- Detaily a pravidlá: top-level `CLAUDE.md` sekcia „i18n — kompletná bilingválnosť"
 
 ## Form patterns
 

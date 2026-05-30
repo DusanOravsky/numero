@@ -4,6 +4,18 @@ All notable changes to this project are documented in this file. Dates are
 in ISO 8601 (YYYY-MM-DD). The format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 4.6.4 — 2026-05-30
+
+**PATCH**: Code review batch 2 — backlog položky z `docs/CODE_REVIEW_2026-05.md`.
+
+### Robustnosť / UX
+- **Theme flash (FOUC)** (I8): IndexedDB store je async → pri boote blikol light theme pred rehydráciou pre dark userov. `useTheme` teraz zrkadlí `themeMode` do synchrónneho `localStorage` cache (`numero-theme`), `applyStoredTheme()` v `main.tsx` ju aplikuje pred renderom a store initial `themeMode` ju číta synchrónne. Žiadny flash.
+- **QR kód lokálne** (M4): predtým cez externý `api.qrserver.com` — rozbíjalo offline-first a posielalo PII (meno + dátum narodenia) na tretí server. Teraz lokálna generácia cez lazy-loaded `qrcode` lib (23KB separátny chunk, neovplyvňuje initial bundle).
+- **HD aktivácie** (I11): 6× `.find(...)!` non-null assertion nahradené `requireActivation()` helperom s čitateľným errorom (guard proti budúcej zmene `planets` poľa namiesto tichého `undefined` deref).
+
+### Korektnosť
+- **Tranzitné aspekty** (I10): `calculateTransitAspects` počítal z lokálneho času prehliadača (`getHours()`) ale s default tz=1 → nesúlad pre Mesiac. Teraz UTC + tz=0, minúty kvantované na 0 (hodinová granularita) — cache key už nekolíduje per-minútu a efemérne transit záznamy nevytláčajú natálne profily z LRU.
+
 ## 4.6.3 — 2026-05-30
 
 **PATCH**: Code review celej app — bug fixy, robustnosť, perf. Detail v `docs/CODE_REVIEW_2026-05.md`.

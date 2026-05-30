@@ -4,7 +4,9 @@ import './styles/index.css'
 import App from './App.tsx'
 import { captureWebVitals } from './hooks/usePerformanceMetrics'
 import { cleanupOldChats } from './engine/chatStorage'
+import { applyStoredTheme } from './hooks/useTheme'
 
+applyStoredTheme();  // synchrónne pred renderom — zabráni FOUC light theme pre dark userov
 captureWebVitals();
 cleanupOldChats();
 

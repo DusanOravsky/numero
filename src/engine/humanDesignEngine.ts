@@ -348,6 +348,15 @@ function getActivations(date: Date, type: 'personality' | 'design'): GateActivat
   return activations;
 }
 
+/** Nájde aktiváciu pre planétu alebo hodí čitateľný error namiesto tichého
+ *  `undefined!` deref. getActivations vždy pridá Slnko/Zem/uzly, takže v praxi
+ *  nezlyhá — toto je guard proti budúcej zmene `planets` poľa. */
+function requireActivation(acts: GateActivation[], planet: string): GateActivation {
+  const a = acts.find(x => x.planet === planet);
+  if (!a) throw new Error(`HD: chýba aktivácia pre planétu "${planet}"`);
+  return a;
+}
+
 function getDefinedCentersAndChannels(allGates: Set<number>): { defined: Set<string>; channels: HDChannel[] } {
   const defined = new Set<string>();
   const channels: HDChannel[] = [];
@@ -492,18 +501,18 @@ function _calculateHumanDesignImpl(
   const type = determineType(defined, channels);
   const authority = determineAuthority(defined, type);
 
-  const pSunLine = personalityActivations.find(a => a.planet === 'Slnko')!.line;
-  const dSunLine = designActivations.find(a => a.planet === 'Slnko')!.line;
+  const pSunLine = requireActivation(personalityActivations, 'Slnko').line;
+  const dSunLine = requireActivation(designActivations, 'Slnko').line;
   const profileKey = `${pSunLine}/${dSunLine}`;
   const profileData = PROFILES[profileKey] || { name: `${pSunLine}/${dSunLine}`, description: 'Unikátna kombinácia línií' };
   const profile: HDProfile = { line1: pSunLine, line2: dSunLine, name: profileData.name, description: profileData.description };
 
   const openCenters = ALL_CENTERS.filter(c => !defined.has(c));
 
-  const pSunGate = personalityActivations.find(a => a.planet === 'Slnko')!.gate;
-  const pEarthGate = personalityActivations.find(a => a.planet === 'Zem')!.gate;
-  const dSunGate = designActivations.find(a => a.planet === 'Slnko')!.gate;
-  const dEarthGate = designActivations.find(a => a.planet === 'Zem')!.gate;
+  const pSunGate = requireActivation(personalityActivations, 'Slnko').gate;
+  const pEarthGate = requireActivation(personalityActivations, 'Zem').gate;
+  const dSunGate = requireActivation(designActivations, 'Slnko').gate;
+  const dEarthGate = requireActivation(designActivations, 'Zem').gate;
 
   const crossKey = `${pSunGate}-${pEarthGate}-${dSunGate}-${dEarthGate}`;
   const angle = getCrossAngle(pSunLine, dSunLine);
@@ -550,10 +559,10 @@ function _calculateHumanDesignImpl(
     6: 'Subjektívna, osobná pravda. Nemusíš byť objektívny — tvoja perspektíva JE tvoj príspevok.',
   };
 
-  const dSun = designActivations.find(a => a.planet === 'Slnko')!;
-  const dNode = designActivations.find(a => a.planet === 'Severný uzol')!;
-  const pSun = personalityActivations.find(a => a.planet === 'Slnko')!;
-  const pNode = personalityActivations.find(a => a.planet === 'Severný uzol')!;
+  const dSun = requireActivation(designActivations, 'Slnko');
+  const dNode = requireActivation(designActivations, 'Severný uzol');
+  const pSun = requireActivation(personalityActivations, 'Slnko');
+  const pNode = requireActivation(personalityActivations, 'Severný uzol');
 
   const variable: HDVariable = {
     digestion: { color: dSun.color, tone: dSun.tone, name: DIGESTION_NAMES[dSun.color] || `Farba ${dSun.color}`, description: DIGESTION_DESC[dSun.color] || '' },

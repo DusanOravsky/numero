@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { indexedDbStorage } from './indexedDbStorage';
+import { safeGet } from '../utils/safeStorage';
 
 export type Gender = 'male' | 'female';
 
@@ -83,6 +84,14 @@ interface AppState {
 
 const STORE_VERSION = 5;
 
+/** Synchrónny initial themeMode z localStorage cache (anti-FOUC) — IndexedDB
+ *  rehydrácia je async, takže bez tohto by effect v useTheme stihol aplikovať
+ *  default 'light' a prepísať boot-time dark class. Po rehydrácii sa zarovná. */
+function initialThemeMode(): ThemeMode {
+  const cached = safeGet('numero-theme');
+  return (cached === 'dark' || cached === 'light' || cached === 'system') ? cached : 'light';
+}
+
 export const useStore = create<AppState>()(
   persist(
     (set) => ({
@@ -93,7 +102,7 @@ export const useStore = create<AppState>()(
       favorites: [],
       language: 'sk',
       numerologyMethod: 'developmental',
-      themeMode: 'light',
+      themeMode: initialThemeMode(),
 
       addProfile: (profile) => set((state) => ({ profiles: [...state.profiles, profile] })),
       updateProfile: (id, data) => set((state) => ({

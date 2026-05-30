@@ -714,7 +714,15 @@ const TRANSIT_MEANINGS: Record<string, Record<SynastryAspectName, string>> = {
  */
 export function calculateTransitAspects(natal: AstrologyResult, transitDate?: Date): TransitAspect[] {
   const now = transitDate || new Date();
-  const transitChart = calculateAstrology(now.getDate(), now.getMonth() + 1, now.getFullYear(), now.getHours(), now.getMinutes());
+  // UTC + tz=0: now.getHours() je lokálny čas prehliadača a nesúhlasil by s default
+  // tz=1 v calculateAstrology. Minúty kvantujeme na 0 (hodinová granularita) — Mesiac
+  // sa za hodinu pohne ~0.5° (v rámci orbu) a cache key nekolíduje per-minútu, čím by
+  // efemérne transit záznamy inak vytláčali natálne profily z LRU.
+  const transitChart = calculateAstrology(
+    now.getUTCDate(), now.getUTCMonth() + 1, now.getUTCFullYear(),
+    now.getUTCHours(), 0,
+    48.15, 17.11, 0,
+  );
   const results: TransitAspect[] = [];
 
   const outerPlanets = ['Jupiter', 'Saturn', 'Urán', 'Neptún', 'Pluto'];

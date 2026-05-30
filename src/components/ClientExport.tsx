@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { GlassCard } from './GlassCard';
 import { APP_VERSION } from './PWAPrompts';
@@ -62,8 +62,31 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
   const { language } = useTranslation();
   const [shareMsg, setShareMsg] = useState('');
   const [showQR, setShowQR] = useState(false);
+  const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
   const [isExporting, setIsExporting] = useState(false);
   const clients = useStore(s => s.clients);
+
+  // QR sa generuje LOKÁLNE (lazy-loaded qrcode lib) — offline-first + žiadny PII
+  // únik na externý server (predtým api.qrserver.com dostával meno + dátum narodenia).
+  useEffect(() => {
+    if (!showQR) return;
+    let cancelled = false;
+    const json = JSON.stringify({
+      name: client.name,
+      birthDay: client.birthDay,
+      birthMonth: client.birthMonth,
+      birthYear: client.birthYear,
+      birthHour: client.birthHour,
+      birthMinute: client.birthMinute,
+    });
+    const encoded = btoa(String.fromCharCode(...new TextEncoder().encode(json)));
+    const qrUrl = `${window.location.origin + window.location.pathname}#/shared?data=${encoded}`;
+    import('qrcode')
+      .then(({ default: QRCode }) => QRCode.toDataURL(qrUrl, { width: 200, margin: 1 }))
+      .then(url => { if (!cancelled) setQrDataUrl(url); })
+      .catch(() => { if (!cancelled) setQrDataUrl(null); });
+    return () => { cancelled = true; };
+  }, [showQR, client]);
 
   return (
     <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8 }}>
@@ -966,33 +989,22 @@ export function ClientExport({ client, numerology, astrology, humanDesign, kabal
           {language === 'sk' ? 'QR kód' : 'QR Code'}
         </button>
         </div>
-        {showQR && (() => {
-          const qrData = {
-            name: client.name,
-            birthDay: client.birthDay,
-            birthMonth: client.birthMonth,
-            birthYear: client.birthYear,
-            birthHour: client.birthHour,
-            birthMinute: client.birthMinute,
-          };
-          const json = JSON.stringify(qrData);
-          const bytes = new TextEncoder().encode(json);
-          const binary = String.fromCharCode(...bytes);
-          const encoded = btoa(binary);
-          const baseUrl = window.location.origin + window.location.pathname;
-          const qrUrl = `${baseUrl}#/shared?data=${encoded}`;
-          return (
-            <div className="mt-4 p-4 rounded-xl bg-white border border-slate-200 text-center">
-              <img
-                src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrUrl)}`}
-                alt={language === 'sk' ? 'QR kód pre zdieľanie profilu' : 'QR code for sharing profile'}
-                className="mx-auto w-48 h-48"
-              />
-              <p className="text-xs text-slate-500 mt-2">{language === 'sk' ? `Naskenuj pre zobrazenie profilu ${client.name}` : `Scan to view ${client.name}'s profile`}</p>
-              <p className="text-[10px] text-slate-400 mt-1 break-all max-w-xs mx-auto">{qrUrl.slice(0, 80)}...</p>
-            </div>
-          );
-        })()}
+        {showQR && (
+          <div className="mt-4 p-4 rounded-xl bg-white border border-slate-200 text-center">
+            {qrDataUrl ? (
+              <>
+                <img
+                  src={qrDataUrl}
+                  alt={language === 'sk' ? 'QR kód pre zdieľanie profilu' : 'QR code for sharing profile'}
+                  className="mx-auto w-48 h-48"
+                />
+                <p className="text-xs text-slate-500 mt-2">{language === 'sk' ? `Naskenuj pre zobrazenie profilu ${client.name}` : `Scan to view ${client.name}'s profile`}</p>
+              </>
+            ) : (
+              <p className="text-xs text-slate-500 py-16">{language === 'sk' ? 'Generujem QR kód…' : 'Generating QR code…'}</p>
+            )}
+          </div>
+        )}
       </GlassCard>
     </motion.section>
   );

@@ -1,6 +1,6 @@
 # Code Review — Número PWA v4.6.2 (2026-05-30)
 
-> Opravené vo v4.6.3 — viď CHANGELOG. Tento dokument je trvalý záznam nálezov + stavu (SKIP položky sú backlog).
+> Opravené vo v4.6.3 (batch 1) + v4.6.4 (batch 2) — viď CHANGELOG. Tento dokument je trvalý záznam nálezov + stavu.
 
 Plný code review celej aplikácie (4 paralelní recenzenti: engine, components, pages/hooks, store/utils/i18n/config).
 Baseline pri review: `typecheck` čistý, `lint` čistý, **272/272 testov** prešlo.
@@ -28,10 +28,10 @@ Stav: ⬜ TODO · 🔧 IN PROGRESS · ✅ FIXED · ⏭️ SKIP (s dôvodom).
 | I5 | ✅ | `pages/RelationshipsPage.tsx:362-422` | `safeGet`+`JSON.parse` 4× pri každom rendri (nie v lazy initializeri). |
 | I6 | ✅ | `pages/ComparePage.tsx:39-59` | `selected` je nová referencia každý render → `useMemo` s drahými engine volaniami sa nikdy nehitne. |
 | I7 | ✅ | `engine/aiInterpretation.ts` | non-stream `generateAIInterpretation` nemá `abortSignal` (wasted tokeny + setState po unmount). |
-| I8 | ⏭️ | `store/useStore.ts` | Async IndexedDB rehydrácia bez `onRehydrateStorage`/gating → flash of light theme. SKIP zatiaľ: väčší zásah do boot flow, samostatná úloha. |
+| I8 | ✅ | `store/useStore.ts` + `hooks/useTheme.ts` + `main.tsx` | Async IndexedDB rehydrácia → flash of light theme. Fix v4.6.4: synchrónny localStorage cache `numero-theme` + `applyStoredTheme()` pred renderom. |
 | I9 | ✅ | `components/ShareStory.tsx:190` | `canvas.toBlob` callback môže vrátiť `null`, `blob!` potom spadne bez reject. |
-| I10 | ⏭️ | `engine/astrologyEngine.ts:715` + `engineCache.ts` | Transit chart počítaný z lokálneho času + cache key kolíduje per-minútu (LRU eviction natálnych profilov). SKIP: nižšia priorita, samostatná úloha. |
-| I11 | ⏭️ | `engine/humanDesignEngine.ts:495` | 6× `.find(...)!` non-null assertion bez fallbacku. SKIP: v praxi nikdy nezlyhá (activations sú garantované), nízke reálne riziko. |
+| I10 | ✅ | `engine/astrologyEngine.ts:715` | Transit chart z lokálneho času + cache key kolízia per-minútu. Fix v4.6.4: UTC + tz=0, minúty kvantované na 0. |
+| I11 | ✅ | `engine/humanDesignEngine.ts` | 6× `.find(...)!` → `requireActivation()` helper s čitateľným errorom. Fix v4.6.4. |
 
 ## Minor (vybrané, opravené v rámci batchu)
 
@@ -40,7 +40,7 @@ Stav: ⬜ TODO · 🔧 IN PROGRESS · ✅ FIXED · ⏭️ SKIP (s dôvodom).
 | M1 | ✅ | `components/ChakraBody.tsx:40` | Hardcoded SK status texty (`Vyvážená/Blokovaná/Hyperaktívna`) bez i18n → použiť `CHAKRA_STATUS_TEXT`. |
 | M2 | ✅ | `components/MantraButton.tsx:25` | `title`/`aria-label` natvrdo anglicky („Play/Stop"). |
 | M3 | ⏭️ | `engine/numerologyEngine.ts:289` | Zbytočne komplikovaný `lpBase` výraz (obe vetvy rovnaké). SKIP: kozmetika, nemení výsledok. |
-| M4 | ⏭️ | `components/ClientExport.tsx:986` | QR cez externý `api.qrserver.com` → rozbíja offline-first + PII únik. SKIP: vyžaduje QR lib / produktové rozhodnutie. |
+| M4 | ✅ | `components/ClientExport.tsx` | QR cez externý `api.qrserver.com` → offline-first + PII únik. Fix v4.6.4: lokálny lazy-loaded `qrcode` (separátny 23KB chunk). |
 | M5 | ⏭️ | docs | Duplicitné astro helpery (astro vs HD), `openDB` (chatStorage vs indexedDbStorage), zastaraný popis `translations.ts` v `components/CLAUDE.md`. SKIP: tech-debt poznámky. |
 
 ## Čo je solídne (potvrdené, žiadny nález)

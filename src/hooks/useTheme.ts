@@ -1,5 +1,23 @@
 import { useEffect } from 'react';
-import { useStore } from '../store/useStore';
+import { useStore, type ThemeMode } from '../store/useStore';
+import { safeGet, safeSet } from '../utils/safeStorage';
+
+/** Synchrónny cache themeMode v localStorage — IndexedDB store je async a pri
+ *  boote by inak blikol light theme (FOUC) skôr než dobehne rehydrácia. */
+const THEME_CACHE_KEY = 'numero-theme';
+
+function resolveDark(mode: ThemeMode): boolean {
+  if (mode === 'dark') return true;
+  if (mode === 'system') return window.matchMedia('(prefers-color-scheme: dark)').matches;
+  return false;
+}
+
+/** Aplikuje uloženú tému synchrónne pri boote (volané z main.tsx pred renderom). */
+export function applyStoredTheme(): void {
+  const cached = safeGet(THEME_CACHE_KEY);
+  const mode: ThemeMode = (cached === 'dark' || cached === 'light' || cached === 'system') ? cached : 'light';
+  document.documentElement.classList.toggle('dark', resolveDark(mode));
+}
 
 /**
  * Sleduje themeMode v storeve a aplikuje class="dark" na <html>
@@ -14,15 +32,12 @@ export function useTheme() {
     const root = document.documentElement;
 
     const apply = () => {
-      let dark = false;
-      if (themeMode === 'dark') dark = true;
-      else if (themeMode === 'system') {
-        dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      }
-      root.classList.toggle('dark', dark);
+      root.classList.toggle('dark', resolveDark(themeMode));
     };
 
     apply();
+    // Zrkadlí do synchrónneho cache pre ďalší boot (anti-FOUC).
+    safeSet(THEME_CACHE_KEY, themeMode);
 
     if (themeMode === 'system') {
       const mq = window.matchMedia('(prefers-color-scheme: dark)');

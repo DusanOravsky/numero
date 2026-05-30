@@ -39,6 +39,8 @@ interface ClientSummaryProps {
   birthDay?: number;
   birthMonth?: number;
   birthYear?: number;
+  /** Pohlavie — Kua číslo (Feng Shui) sa líši pre mužov a ženy. Default 'male'. */
+  gender?: 'male' | 'female';
   numerology: NumerologyResult;
   astrology: AstrologyResult;
   humanDesign: HumanDesignResult;
@@ -49,7 +51,7 @@ interface ClientSummaryProps {
   respectMethodPreference?: boolean;
 }
 
-export function ClientSummary({ clientName, birthDay, birthMonth, birthYear, numerology, astrology, humanDesign, kabalah, theta, respectMethodPreference = true }: ClientSummaryProps) {
+export function ClientSummary({ clientName, birthDay, birthMonth, birthYear, gender = 'male', numerology, astrology, humanDesign, kabalah, theta, respectMethodPreference = true }: ClientSummaryProps) {
   const { t, language } = useTranslation();
   const storedMethod = useStore(s => s.numerologyMethod);
   const showBoth = !respectMethodPreference;
@@ -675,7 +677,7 @@ export function ClientSummary({ clientName, birthDay, birthMonth, birthYear, num
             </div>
           )}
           {(() => {
-            const kua = calculateKua(year, 'male', language);
+            const kua = calculateKua(year, gender, language);
             return (
               <div className="p-3 rounded-xl bg-orange-500/10 border border-orange-500/20">
                 <p className="text-[10px] text-orange-400 uppercase mb-1">🧭 Kua {kua.kuaNumber}</p>

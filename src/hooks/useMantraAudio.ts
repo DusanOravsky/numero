@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 
 const MANTRA_FILES: Record<string, string> = {
   LAM: 'lam.mp3',
@@ -41,6 +41,13 @@ export function useMantraAudio() {
     audioRef.current?.pause();
     audioRef.current = null;
     setPlaying(null);
+  }, []);
+
+  // Zastaviť looping audio pri unmount (napr. navigácia preč zo stránky čakier),
+  // inak by mantra hrala ďalej donekonečna bez možnosti zastavenia.
+  useEffect(() => () => {
+    audioRef.current?.pause();
+    audioRef.current = null;
   }, []);
 
   return { playing, toggle, stop };

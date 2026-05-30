@@ -36,9 +36,14 @@ export function ComparePage() {
     });
   };
 
-  const selected = selectedIds
-    .map(id => clients.find(c => c.id === id))
-    .filter((c): c is NonNullable<typeof c> => !!c);
+  // Memoizované — inak je `selected` nová referencia pri každom rendri a `computed`
+  // (drahé calculateAstrology/HumanDesign volania) by sa prepočítavalo zbytočne.
+  const selected = useMemo(
+    () => selectedIds
+      .map(id => clients.find(c => c.id === id))
+      .filter((c): c is NonNullable<typeof c> => !!c),
+    [selectedIds, clients],
+  );
 
   const computed = useMemo(() => {
     const allPersons: Array<{ id: string; name: string; birthDay: number; birthMonth: number; birthYear: number; birthHour?: number; birthMinute?: number; gender?: 'male' | 'female'; birthLatitude?: number; birthLongitude?: number }> = [

@@ -122,7 +122,7 @@ export function ChakrasPage() {
           </GlassCard>
 
           <GlassCard glow>
-            <ChakraBody chakras={chakras} />
+            <ChakraBody chakras={chakras} playing={playing} onToggleMantra={toggle} />
             <p className="text-[10px] text-slate-500 text-center mt-2 italic">
               {language === 'sk' ? '🔊 Klikni na ikonu čakry pre pustenie zvukovej mantry' : '🔊 Click a chakra icon to play its mantra sound'}
             </p>

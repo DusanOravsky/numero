@@ -35,6 +35,11 @@ describe('reduceToSingle', () => {
     expect(reduceToSingle(0)).toBe(0);
     expect(reduceToSingle(-5)).toBe(1);
   });
+  it('NaN/Infinity vracia 0 (fail-safe namiesto tichej NaN propagácie)', () => {
+    expect(reduceToSingle(NaN)).toBe(0);
+    expect(reduceToSingle(Infinity)).toBe(0);
+    expect(reduceToSingle(-Infinity)).toBe(0);
+  });
 });
 
 describe('reduceDigits', () => {
@@ -42,6 +47,10 @@ describe('reduceDigits', () => {
     expect(reduceDigits(28)).toBe(10);
     expect(reduceDigits(9)).toBe(9);
     expect(reduceDigits(1979)).toBe(26);
+  });
+  it('NaN/Infinity vracia 0', () => {
+    expect(reduceDigits(NaN)).toBe(0);
+    expect(reduceDigits(Infinity)).toBe(0);
   });
 });
 

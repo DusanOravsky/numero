@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { useTranslation } from '../i18n/useTranslation';
 
 interface MantraButtonProps {
   mantra: string;
@@ -9,7 +10,12 @@ interface MantraButtonProps {
 }
 
 export function MantraButton({ mantra, isPlaying, onToggle, colorHex, size = 'md' }: MantraButtonProps) {
+  const { language } = useTranslation();
   const sizeClasses = size === 'sm' ? 'w-8 h-8 text-[10px]' : 'w-12 h-12 text-xs';
+  const verb = isPlaying
+    ? (language === 'sk' ? 'Zastaviť' : 'Stop')
+    : (language === 'sk' ? 'Prehrať' : 'Play');
+  const mantraWord = language === 'sk' ? 'mantru' : 'mantra';
 
   return (
     <motion.button
@@ -22,8 +28,8 @@ export function MantraButton({ mantra, isPlaying, onToggle, colorHex, size = 'md
         color: colorHex,
         boxShadow: isPlaying ? `0 0 20px ${colorHex}80, 0 0 40px ${colorHex}40` : 'none',
       }}
-      title={isPlaying ? `Stop ${mantra}` : `Play ${mantra}`}
-      aria-label={isPlaying ? `Stop ${mantra} mantra` : `Play ${mantra} mantra`}
+      title={`${verb} ${mantra}`}
+      aria-label={`${verb} ${mantra} ${mantraWord}`}
     >
       {isPlaying && (
         <motion.span

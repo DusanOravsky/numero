@@ -4,6 +4,7 @@ import { useTranslation } from '../i18n/useTranslation';
 import { GlassCard } from './GlassCard';
 import { EnergyCard } from './EnergyCard';
 import { ChakraBody } from './ChakraBody';
+import { useMantraAudio } from '../hooks/useMantraAudio';
 import type { NumerologyResult } from '../engine/numerologyEngine';
 import type { DevelopmentalNumerologyResult } from '../engine/developmentalNumerologyEngine';
 import type { AstrologyResult } from '../engine/astrologyEngine';
@@ -31,6 +32,7 @@ interface ClientNumerologyProps {
 export function ClientNumerology({ numerology, devNumerology, astrology, humanDesign, chakras, kabalah, theta, clientId, gender }: ClientNumerologyProps) {
   const navigate = useNavigate();
   const { language } = useTranslation();
+  const { playing, toggle } = useMantraAudio();
   const q = clientId ? `?client=${clientId}` : '';
   const lpInfo = lifePaths[String(numerology.lifePathNumber)] || lifePaths[String(reduceToSingle(numerology.lifePathNumber))];
 
@@ -159,7 +161,7 @@ export function ClientNumerology({ numerology, devNumerology, astrology, humanDe
           <button onClick={() => navigate('/chakras' + q)} className="text-xs text-slate-400 hover:text-indigo-600">{language === 'sk' ? 'Otvoriť detail →' : 'Open detail →'}</button>
         </div>
         <GlassCard>
-          <ChakraBody chakras={chakras} />
+          <ChakraBody chakras={chakras} playing={playing} onToggleMantra={toggle} />
         </GlassCard>
       </motion.section>
 

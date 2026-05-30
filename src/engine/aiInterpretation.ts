@@ -406,7 +406,7 @@ export interface AICallResult {
  * Pošle dáta na Claude API a vráti naratívny výklad.
  * Throws Error ak chýba kľúč alebo API zlyhá.
  */
-export async function generateAIInterpretation(ctx: ProfileContext): Promise<AICallResult> {
+export async function generateAIInterpretation(ctx: ProfileContext, abortSignal?: AbortSignal): Promise<AICallResult> {
   const apiKey = getApiKey();
   if (!apiKey) throw new Error('Anthropic API kľúč nie je nastavený. Pridaj ho v Nastaveniach.');
 
@@ -431,6 +431,7 @@ Pripomienka:
       'anthropic-version': ANTHROPIC_API_VERSION,
       'anthropic-dangerous-direct-browser-access': 'true',
     },
+    signal: abortSignal,
     body: JSON.stringify({
       model,
       max_tokens: 3500,

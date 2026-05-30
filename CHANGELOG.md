@@ -4,6 +4,31 @@ All notable changes to this project are documented in this file. Dates are
 in ISO 8601 (YYYY-MM-DD). The format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 4.6.3 — 2026-05-30
+
+**PATCH**: Code review celej app — bug fixy, robustnosť, perf. Detail v `docs/CODE_REVIEW_2026-05.md`.
+
+### Bug fixy (Critical)
+- **Mantra audio leak**: `useMantraAudio` nemal cleanup pri unmount → looping mantra hrala ďalej po opustení stránky. Pridaný unmount cleanup (pause + null).
+- **Dvojitá audio inštancia**: ChakrasPage aj ChakraBody mali vlastný `useMantraAudio` → dve mantry naraz. Hook zdvihnutý do rodiča, ChakraBody dostáva `playing`/`onToggleMantra` cez props (jediná inštancia na stránke).
+- **MeditationTimer**: `playEndChime()` + `setRunning` sa volali vnútri `setRemaining` updatera (side-effect v reduceri → 2× gong v StrictMode). Koniec časomiery presunutý do separátneho efektu na `remaining === 0`.
+
+### Robustnosť (Important)
+- **NameTab** prešiel z priameho `localStorage` na `safeGet/safeSet` (crash v iOS Safari private mode pri mount-time read).
+- **indexedDbStorage** fallback v `setItem`/`removeItem` obalený cez `safeSet`/`safeRemove` (predtým neošetrený `localStorage` v catch vetve hodil v iOS private mode).
+- **`reduceToSingle`/`reduceDigits`** dostali `Number.isFinite` guard — NaN/Infinity sa ticho šírilo cez celý numerologický reťazec (čakry, kabala). Teraz vracajú 0. +2 testy.
+- **Kua v ClientSummary** sa počítal vždy s `'male'` → nesprávne Feng Shui číslo pre ženy. Pridaný `gender` prop, prepojený z profilu/klienta.
+- **`generateAIInterpretation`** dostal voliteľný `abortSignal` (predtým iba `streamChat`).
+- **ShareStory `toBlob`**: callback môže vrátiť `null` → reject namiesto `blob!` crashu.
+
+### Performance
+- **ComparePage**: `selected` memoizované — predtým nová referencia každý render rušila `useMemo` s drahými `calculateAstrology`/`calculateHumanDesign`.
+- **RelationshipsPage**: 4× `safeGet`+`JSON.parse` presunuté do `useMemo([])` — predtým bežali pri každom keystroke.
+
+### i18n / a11y
+- **ChakraBody** status badge (Vyvážená/Blokovaná/Hyperaktívna) prešiel na `t('chakras.*')` — predtým hardcoded SK aj v EN mode.
+- **MantraButton** `title`/`aria-label` lokalizované (predtým natvrdo anglicky).
+
 ## 4.6.2 — 2026-05-28
 
 **PATCH**: Redesign AI chatu + skrátený prvý sumár.

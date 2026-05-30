@@ -1,15 +1,18 @@
 import { motion } from 'framer-motion';
 import type { ChakraState } from '../engine/chakraEngine';
 import { MantraButton } from './MantraButton';
-import { useMantraAudio } from '../hooks/useMantraAudio';
+import { useTranslation } from '../i18n/useTranslation';
 
 interface ChakraBodyProps {
   chakras: ChakraState[];
+  /** Aktuálne hrajúca mantra (uppercase key) — zdieľané z rodiča, aby existovala jediná audio inštancia. */
+  playing: string | null;
+  /** Toggle mantry — zdieľaný z rodiča (ChakrasPage). */
+  onToggleMantra: (mantra: string) => void;
 }
 
-export function ChakraBody({ chakras }: ChakraBodyProps) {
-  const { playing, toggle } = useMantraAudio();
-
+export function ChakraBody({ chakras, playing, onToggleMantra }: ChakraBodyProps) {
+  const { t } = useTranslation();
   return (
     <div className="flex flex-col items-center gap-3 py-4">
       {[...chakras].reverse().map((state, idx) => (
@@ -23,7 +26,7 @@ export function ChakraBody({ chakras }: ChakraBodyProps) {
           <MantraButton
             mantra={state.chakra.mantra}
             isPlaying={playing === state.chakra.mantra.toUpperCase()}
-            onToggle={() => toggle(state.chakra.mantra)}
+            onToggle={() => onToggleMantra(state.chakra.mantra)}
             colorHex={state.chakra.colorHex}
           />
           <div className="flex-1">
@@ -37,8 +40,8 @@ export function ChakraBody({ chakras }: ChakraBodyProps) {
                 state.status === 'blocked' ? 'bg-red-500/20 text-red-700' :
                 'bg-yellow-500/20 text-yellow-700'
               }`}>
-                {state.status === 'balanced' ? 'Vyvážená' :
-                 state.status === 'blocked' ? 'Blokovaná' : 'Hyperaktívna'}
+                {state.status === 'balanced' ? t('chakras.balanced') :
+                 state.status === 'blocked' ? t('chakras.blocked') : t('chakras.hyperactive')}
               </span>
             </div>
             <div className="mt-1 h-2 bg-slate-200 rounded-full overflow-hidden" role="progressbar" aria-valuenow={state.score} aria-valuemin={0} aria-valuemax={100} aria-label={`${state.chakra.name}: ${state.score}%`}>

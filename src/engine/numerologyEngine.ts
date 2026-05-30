@@ -43,6 +43,9 @@ export interface KarmicDebt {
 const MASTER_NUMBERS = [11, 22, 33];
 
 export function reduceToSingle(n: number, preserveMaster = false): number {
+  // Fail-safe: NaN/Infinity by inak ticho prešli (while(NaN>9) je false) a šírili
+  // sa cez čakry, kabalu, atď. ako NaN. Vrátime 0 namiesto kontaminácie výsledkov.
+  if (!Number.isFinite(n)) return 0;
   if (n < 0) return 1;
   if (n === 0) return 0;
   while (n > 9) {
@@ -53,6 +56,7 @@ export function reduceToSingle(n: number, preserveMaster = false): number {
 }
 
 export function reduceDigits(n: number): number {
+  if (!Number.isFinite(n)) return 0;
   if (n <= 9) return n;
   return String(n).split('').reduce((sum, d) => sum + parseInt(d, 10), 0);
 }

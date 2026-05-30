@@ -359,9 +359,11 @@ function loadSavedPartners(): { p1: PersonInput; p2: PersonInput } | null {
 }
 
 export function RelationshipsPage() {
-  const saved = loadSavedPartners();
-  const savedFamily = (() => { try { const r = safeGet('relationships-family'); return r ? JSON.parse(r) : null; } catch { return null; } })();
-  const savedAstro = (() => { try { const r = safeGet('relationships-astro'); return r ? JSON.parse(r) : null; } catch { return null; } })();
+  // Načítané z localStorage iba raz pri mounte (slúži pre lazy useState initializery
+  // nižšie). Bez useMemo by safeGet+JSON.parse bežalo pri každom keystroke v PersonForm.
+  const saved = useMemo(() => loadSavedPartners(), []);
+  const savedFamily = useMemo(() => { try { const r = safeGet('relationships-family'); return r ? JSON.parse(r) : null; } catch { return null; } }, []);
+  const savedAstro = useMemo(() => { try { const r = safeGet('relationships-astro'); return r ? JSON.parse(r) : null; } catch { return null; } }, []);
   const [mode, setModeState] = useState<Mode>(() => {
     const savedMode = safeGet('relationships-mode');
     return (savedMode === 'partner' || savedMode === 'family' || savedMode === 'astro' || savedMode === 'constellation') ? savedMode : 'partner';
@@ -419,7 +421,7 @@ export function RelationshipsPage() {
   // Rodinná konštelácia
   const [editing, setEditing] = useState(false);
 
-  const savedConst = (() => { try { const r = safeGet('relationships-constellation'); return r ? JSON.parse(r) : null; } catch { return null; } })();
+  const savedConst = useMemo(() => { try { const r = safeGet('relationships-constellation'); return r ? JSON.parse(r) : null; } catch { return null; } }, []);
   const [constFather, setConstFather] = useState<PersonInput>(savedConst?.father || emptyPerson());
   const [constMother, setConstMother] = useState<PersonInput>(savedConst?.mother || emptyPerson());
   const [constChildren, setConstChildren] = useState<PersonInput[]>(savedConst?.children?.length ? savedConst.children : [emptyPerson()]);

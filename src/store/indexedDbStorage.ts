@@ -1,4 +1,5 @@
 import type { StateStorage } from 'zustand/middleware';
+import { safeGet, safeSet, safeRemove } from '../utils/safeStorage';
 
 const DB_NAME = 'numero-db';
 const STORE_NAME = 'zustand';
@@ -54,8 +55,10 @@ export const indexedDbStorage: StateStorage = {
         }
       });
     } catch {
+      // Fallback na localStorage cez safeGet — v iOS private mode hodí výnimku
+      // aj samotný localStorage, safeGet ju zachytí a vráti null.
       storageDegraded = true;
-      return localStorage.getItem(name);
+      return safeGet(name);
     }
   },
   setItem: async (name: string, value: string): Promise<void> => {
@@ -74,8 +77,9 @@ export const indexedDbStorage: StateStorage = {
         }
       });
     } catch {
+      // safeSet je tolerantný voči localStorage výnimkám (iOS private mode, quota).
       storageDegraded = true;
-      localStorage.setItem(name, value);
+      safeSet(name, value);
     }
   },
   removeItem: async (name: string): Promise<void> => {
@@ -95,7 +99,7 @@ export const indexedDbStorage: StateStorage = {
       });
     } catch {
       storageDegraded = true;
-      localStorage.removeItem(name);
+      safeRemove(name);
     }
   },
 };

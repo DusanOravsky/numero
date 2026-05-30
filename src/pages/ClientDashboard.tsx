@@ -176,6 +176,7 @@ export function ClientDashboard() {
         birthDay={client.birthDay}
         birthMonth={client.birthMonth}
         birthYear={client.birthYear}
+        gender={client.gender}
         numerology={numerology}
         astrology={astrology}
         humanDesign={humanDesign}

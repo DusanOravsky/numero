@@ -696,6 +696,7 @@ export function Dashboard() {
           birthDay={profile.birthDay}
           birthMonth={profile.birthMonth}
           birthYear={profile.birthYear}
+          gender={profile.gender}
           numerology={fullResults.numerology}
           astrology={fullResults.astrology}
           humanDesign={fullResults.humanDesign}

@@ -27,23 +27,28 @@ export function MeditationTimer() {
   const [running, setRunning] = useState(false);
   const intervalRef = useRef<number | null>(null);
 
+  // Tikanie: interval iba dekrementuje, nikdy nevolá side-effecty (chime) ani
+  // setRunning vnútri updatera — to porušuje React purity (v StrictMode 2× tón).
   useEffect(() => {
-    if (running) {
-      intervalRef.current = window.setInterval(() => {
-        setRemaining(prev => {
-          if (prev <= 1) {
-            setRunning(false);
-            playEndChime();
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-    }
+    if (!running) return;
+    intervalRef.current = window.setInterval(() => {
+      setRemaining(prev => (prev <= 1 ? 0 : prev - 1));
+    }, 1000);
     return () => {
       if (intervalRef.current !== null) clearInterval(intervalRef.current);
     };
   }, [running]);
+
+  // Koniec časomiery rieši separátny efekt — zastaví beh a zahrá gong práve raz.
+  // setState v efekte je tu legitímny side-effect (reakcia na dosiahnutie nuly),
+  // nie state-derivation; chime sa musí spustiť mimo render/updater.
+  useEffect(() => {
+    if (running && remaining === 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setRunning(false);
+      playEndChime();
+    }
+  }, [running, remaining]);
 
   const setPreset = (sec: number) => {
     setDuration(sec);

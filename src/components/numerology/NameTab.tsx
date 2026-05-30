@@ -4,6 +4,7 @@ import { EnergyCard } from '../EnergyCard';
 import { calculateNameNumerology } from '../../engine/nameNumerologyEngine';
 import type { NameNumerologyResult } from '../../engine/nameNumerologyEngine';
 import { useTranslation } from '../../i18n/useTranslation';
+import { safeGet, safeSet } from '../../utils/safeStorage';
 
 interface NameTabProps {
   defaultName?: string;
@@ -16,7 +17,7 @@ export function NameTab({ defaultName, storageKey }: NameTabProps) {
 
   const [nameInput, setNameInput] = useState(() => {
     if (persistKey) {
-      const saved = localStorage.getItem(persistKey);
+      const saved = safeGet(persistKey);
       if (saved) return saved;
     }
     return defaultName || '';
@@ -24,7 +25,7 @@ export function NameTab({ defaultName, storageKey }: NameTabProps) {
 
   const [nameResult, setNameResult] = useState<NameNumerologyResult | null>(() => {
     if (persistKey) {
-      const saved = localStorage.getItem(persistKey);
+      const saved = safeGet(persistKey);
       if (saved) return calculateNameNumerology(saved);
     }
     if (defaultName) return calculateNameNumerology(defaultName);
@@ -34,7 +35,7 @@ export function NameTab({ defaultName, storageKey }: NameTabProps) {
   // Persist meno pri zmene
   useEffect(() => {
     if (persistKey && nameResult) {
-      localStorage.setItem(persistKey, nameInput);
+      safeSet(persistKey, nameInput);
     }
   }, [nameInput, nameResult, persistKey]);
 

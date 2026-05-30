@@ -131,8 +131,8 @@ export async function generateDailyStory(params: DailyStoryParams): Promise<Blob
   drawDivider(ctx, 1200, isDark);
   drawFooter(ctx, isDark, language === 'sk' ? 'Integrálna mapa bytia' : 'Integral Map of Being');
 
-  return new Promise<Blob>((resolve) => {
-    canvas.toBlob((blob) => resolve(blob!), 'image/png');
+  return new Promise<Blob>((resolve, reject) => {
+    canvas.toBlob((blob) => blob ? resolve(blob) : reject(new Error('Canvas toBlob zlyhalo')), 'image/png');
   });
 }
 
@@ -187,8 +187,8 @@ export async function generateProfileCard(params: ProfileCardParams): Promise<Bl
   );
   drawFooter(ctx, isDark, language === 'sk' ? 'Integrálna mapa bytia' : 'Integral Map of Being');
 
-  return new Promise<Blob>((resolve) => {
-    canvas.toBlob((blob) => resolve(blob!), 'image/png');
+  return new Promise<Blob>((resolve, reject) => {
+    canvas.toBlob((blob) => blob ? resolve(blob) : reject(new Error('Canvas toBlob zlyhalo')), 'image/png');
   });
 }
 
